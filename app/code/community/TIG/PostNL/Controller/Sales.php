@@ -293,8 +293,10 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
 
         $labels = $postnlShipment->getReturnLabels();
 
-        $postnlShipment->setReturnLabelsPrinted(1)
-                       ->save();
+        if (!$postnlShipment->getReturnLabelsPrinted()) {
+            $postnlShipment->setReturnLabelsPrinted(true)
+                           ->save();
+        }
 
         return $labels;
     }

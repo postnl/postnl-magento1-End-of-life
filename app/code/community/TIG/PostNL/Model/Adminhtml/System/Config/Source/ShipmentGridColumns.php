@@ -84,6 +84,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'label' => $helper->__('Labels Printed')
             ),
             array(
+                'value' => 'return_labels_printed',
+                'label' => $helper->__('Return Labels Printed')
+            ),
+            array(
                 'value' => 'is_parcelware_exported',
                 'label' => $helper->__('Exported to Parcelware')
             ),
@@ -94,6 +98,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
             array(
                 'value' => 'shipping_phase',
                 'label' => $helper->__('Shipping Phase')
+            ),
+            array(
+                'value' => 'return_phase',
+                'label' => $helper->__('Return Phase')
             ),
         );
 

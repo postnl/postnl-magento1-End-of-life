@@ -128,6 +128,21 @@ if (!$conn->tableColumnExists($tableName, 'expected_delivery_time_end')) {
     );
 }
 
+if (!$conn->tableColumnExists($tableName, 'return_phase')) {
+    $conn->addColumn(
+        $tableName,
+        'return_phase',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+            'length'   => '2',
+            'nullable' => true,
+            'unsigned' => true,
+            'comment'  => 'Return Phase',
+            'after'    => 'shipping_phase',
+        )
+    );
+}
+
 /***********************************************************************************************************************
  * POSTNL SHIPMENT BARCODE
  **********************************************************************************************************************/

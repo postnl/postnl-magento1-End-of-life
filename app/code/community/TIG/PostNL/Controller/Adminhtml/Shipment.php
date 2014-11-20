@@ -536,9 +536,17 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
 
         $labels = $postnlShipment->getReturnLabels();
 
-        $postnlShipment->setLabelsPrinted(1)
-                       ->setReturnLabelsPrinted(1)
-                       ->save();
+        if (!$postnlShipment->getLabelsPrinted()) {
+            $postnlShipment->setLabelsPrinted(true);
+        }
+
+        if (!$postnlShipment->getReturnLabelsPrinted()) {
+            $postnlShipment->setReturnLabelsPrinted(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
 
         return $labels;
     }
@@ -549,8 +557,9 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
-     * @param boolean $confirm Optional parameter to also confirm the shipment
-     * @param boolean|null $includeReturnLabels
+     * @param boolean                                                        $confirm Optional parameter to also
+     *                                                                                confirm the shipment
+     * @param boolean|null                                                   $includeReturnLabels
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]
      *
@@ -589,22 +598,26 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             if ($confirm === true && !$postnlShipment->isConfirmed() && $postnlShipment->canConfirm()) {
                 $this->_confirmShipment($postnlShipment);
             }
-
-            $labels = $postnlShipment->getlabels($includeReturnLabels);
         } else {
             /**
              * Generate the required labels.
              */
             $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, $confirm);
-
-            $labels = $postnlShipment->getLabels($includeReturnLabels);
         }
 
-        $postnlShipment->setLabelsPrinted(1);
-        if ($includeReturnLabels) {
-            $postnlShipment->setReturnLabelsPrinted(1);
+        $labels = $postnlShipment->getlabels($includeReturnLabels);
+
+        if (!$postnlShipment->getLabelsPrinted()) {
+            $postnlShipment->setLabelsPrinted(true);
         }
-        $postnlShipment->save();
+
+        if ($includeReturnLabels && !$postnlShipment->getReturnLabelsPrinted()) {
+            $postnlShipment->setReturnLabelsPrinted(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
 
         return $labels;
     }

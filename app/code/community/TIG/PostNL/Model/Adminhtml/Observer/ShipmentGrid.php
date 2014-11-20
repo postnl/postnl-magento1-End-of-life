@@ -213,6 +213,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *     `postnl_shipment`.`is_parcelware_exported`,
      *     `postnl_shipment`.`product_code`,
      *     `postnl_shipment`.`extra_cover_amount`,
+     *     `postnl_shipment`.`return_labels_printed`,
+     *     `postnl_shipment`.`return_phase`,
      *     `postnl_order`.`is_pakje_gemak`,
      *     `postnl_order`.`delivery_date`,
      *     `postnl_order`.`is_pakketautomaat`,
@@ -278,7 +280,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'main_barcode'           => 'postnl_shipment.main_barcode',
                 'confirm_status'         => 'postnl_shipment.confirm_status',
                 'labels_printed'         => 'postnl_shipment.labels_printed',
+                'return_labels_printed'  => 'postnl_shipment.return_labels_printed',
                 'shipping_phase'         => 'postnl_shipment.shipping_phase',
+                'return_phase'           => 'postnl_shipment.return_phase',
                 'parcel_count'           => 'postnl_shipment.parcel_count',
                 'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
                 'product_code'           => 'postnl_shipment.product_code',
@@ -524,6 +528,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $after = 'labels_printed';
         }
 
+        if (in_array('return_labels_printed', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'return_labels_printed',
+                array(
+                    'header'         => $helper->__('Return Labels Printed'),
+                    'type'           => 'options',
+                    'index'          => 'return_labels_printed',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'frame_callback' => array($this, 'decorateYesNo'),
+                    'options'        => array(
+                        1 => $helper->__('Yes'),
+                        0 => $helper->__('No'),
+                    ),
+                ),
+                $after
+            );
+
+            $after = 'return_labels_printed';
+        }
+
         if (in_array('is_parcelware_exported', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'is_parcelware_exported',
@@ -574,6 +598,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 ),
                 $after
             );
+
+            $after = 'shipping_phase';
+        }
+
+        if (in_array('return_phase', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'return_phase',
+                array(
+                    'header'         => $helper->__('Return Phase'),
+                    'align'          => 'left',
+                    'index'          => 'return_phase',
+                    'type'           => 'options',
+                    'options'        => Mage::helper('postnl/cif')->getShippingPhases(),
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+                    'frame_callback' => array($this, 'decorateShippingPhase'),
+                ),
+                $after
+            );
+
+            $after = 'return_phase'; //Defined in case of future additions to the grid.
         }
 
         $actionColumn = $block->getColumn('action');
