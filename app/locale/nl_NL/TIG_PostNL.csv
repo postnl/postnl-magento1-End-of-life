@@ -1185,3 +1185,4 @@ TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
 TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
 TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
+TIG_PostNL::Post office address:,Postkantoor adres:

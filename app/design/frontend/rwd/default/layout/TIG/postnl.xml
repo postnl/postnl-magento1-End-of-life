@@ -475,4 +475,14 @@
         </reference>
     </sales_email_order_creditmemo_items>
 
+    <!-- EMAIL TEMPLATES -->
+
+    <postnl_email_order_pakjegemak_address>
+        <block type="core/template" template="TIG/PostNL/core/sales/order/email/pakjegemak_address.phtml"/>
+    </postnl_email_order_pakjegemak_address>
+
+    <postnl_email_order_delivery_options>
+        <block type="core/template" template="TIG/PostNL/core/sales/order/email/delivery_options.phtml"/>
+    </postnl_email_order_delivery_options>
+
 </layout>
