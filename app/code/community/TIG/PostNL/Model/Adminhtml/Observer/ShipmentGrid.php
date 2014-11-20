@@ -50,7 +50,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * The block we want to edit
      */
-    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_shipment_grid';
+    const SHIPMENT_GRID_CLASS_NAME       = 'adminhtml/sales_shipment_grid';
+    const POSTNL_RETURNS_GRID_CLASS_NAME = 'postnl_adminhtml/sales_returns_grid';
 
     /**
      * variable name for shipment grid filter
@@ -145,9 +146,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Unfortunately there is no unique event for this block
          */
         $block = $observer->getBlock();
-        $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
+        $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_CLASS_NAME);
+        $postnlReturnsGridClass = Mage::getConfig()->getBlockClassName(self::POSTNL_RETURNS_GRID_CLASS_NAME);
 
-        if (!($block instanceof $shipmentGridClass)) {
+        if (!($block instanceof $shipmentGridClass) || ($block instanceof $postnlReturnsGridClass)) {
             return $this;
         }
 

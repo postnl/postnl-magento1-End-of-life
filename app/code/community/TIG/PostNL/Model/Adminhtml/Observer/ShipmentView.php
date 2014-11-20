@@ -94,6 +94,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
 
         $this->addPostnlButtons($block, $shipment);
 
+        /**
+         * Update the back button if the 'come_from' parameter is set.
+         */
+        if (Mage::app()->getRequest()->getParam('come_from')) {
+            $comeFrom = Mage::helper('core')->urlDecode(Mage::app()->getRequest()->getParam('come_from'));
+            $comeFromurl = $block->getUrl($comeFrom);
+
+            $block->updateButton('back', 'onclick', 'setLocation(\'' . $comeFromurl . '\')');
+        }
+
         return $this;
     }
 

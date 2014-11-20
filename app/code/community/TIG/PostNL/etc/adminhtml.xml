@@ -39,6 +39,17 @@
  */
 -->
 <config>
+    <menu>
+        <sales>
+            <children>
+                <postnl_returns translate="title" module="postnl">
+                    <title>PostNL Returns</title>
+                    <action>postnl_admin/adminhtml_returns</action>
+                    <sort_order>35</sort_order>
+                </postnl_returns>
+            </children>
+        </sales>
+    </menu>
     <acl>
     	<resources>
             <admin>
@@ -137,6 +148,14 @@
                             </shipment>
                         </children>
                     </postnl>
+                    <sales>
+                        <children>
+                            <postnl_returns  translate="title" module="postnl">
+                                <title>PostNL Returns</title>
+                                <sort_order>35</sort_order>
+                            </postnl_returns>
+                        </children>
+                    </sales>
 				</children>
 			</admin>
         </resources>
