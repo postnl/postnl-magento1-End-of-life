@@ -447,6 +447,105 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
+     * Update return shipment status for all shipments whose return labels have been printed.
+     *
+     * @return $this
+     */
+    public function updateReturnStatus()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+
+        $helper->cronLog('UpdateReturnStatus cron starting...');
+
+        /**
+         * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
+         */
+        $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
+        $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
+
+        /**
+         * Get all postnl shipments with a barcode, that are confirmed and are not yet delivered.
+         */
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipmentCollection->addFieldToFilter(
+                                     'return_labels_printed',
+                                     array('eq' => 1)
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirm_status',
+                                     array('eq' => $confirmedStatus)
+                                 )
+                                 ->addFieldToFilter(
+                                     'return_phase',
+                                     array(
+                                         array('neq' => $deliveredStatus),
+                                         array('null' => true)
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
+                                 );
+
+        if ($postnlShipmentCollection->getSize() < 1) {
+            $helper->cronLog('No valid shipments found. Exiting cron.');
+            return $this;
+        }
+
+        $helper->cronLog("Return status will be updated for {$postnlShipmentCollection->getSize()} shipments.");
+
+        /**
+         * Request a return status update
+         */
+        foreach ($postnlShipmentCollection as $postnlShipment) {
+            /**
+             * Attempt to update the return status. Continue with the next one if it fails.
+             */
+            try{
+                if (!$postnlShipment->getShipment(false)) {
+                    continue;
+                }
+
+                $helper->cronLog("Updating return status for shipment #{$postnlShipment->getShipment()->getId()}");
+
+                if (!$postnlShipment->canUpdateReturnStatus()) {
+                    $postnlShipment->unlock();
+                    $helper->cronLog(
+                        "Updating return status for shipment #{$postnlShipment->getShipment()->getId()} is not " .
+                        "allowed. Continuing with next shipment."
+                    );
+                    continue;
+                }
+
+                $postnlShipment->updateReturnStatus()
+                               ->save();
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                $postnlShipment->unlock();
+
+                $this->_parseErrorCodes($e, $postnlShipment);
+            } catch (Exception $e) {
+                $postnlShipment->unlock();
+
+                Mage::helper('postnl')->logException($e);
+            }
+        }
+
+        $helper->cronLog('UpdateShippingStatus cron has finished.');
+
+        return $this;
+    }
+
+    /**
      * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process specific error codes
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
