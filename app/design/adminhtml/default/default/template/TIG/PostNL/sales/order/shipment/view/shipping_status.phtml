@@ -62,13 +62,47 @@
         <span class="end"></span>
     </div>
 </div>
+<?php $_returnStatus = $this->getReturnStatus($_shipment) ?>
+<?php if ($_returnStatus): ?>
+    <div id="postnl_return_bar" class="progress-wrapper return <?php echo $_returnStatus; ?>">
+        <div class="progress progress-delivered">
+            <span class="end"></span>
+            <strong><?php echo $_helper->__('Delivered') ?></strong>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="progress progress-transit">
+            <strong><?php echo $_helper->__('In Distribution') ?></strong>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="progress progress-distribution">
+            <strong><?php echo $_helper->__('Sorted') ?></strong>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="progress progress-collection">
+            <strong><?php echo $_helper->__('Reported at PostNL') ?></strong>
+            <span class="begin"></span>
+        </div>
+    </div>
+<?php endif; ?>
 
 <script type="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
-        statusBar = $('postnl_status_bar');
+        var contentTop = $('sales_shipment_view_tabs_shipment_info_content');
+
         //insert the status bar at the top of the information tab
-        $('sales_shipment_view_tabs_shipment_info_content').insert({
+        var returnStatusBar = $('postnl_return_bar');
+        if (returnStatusBar) {
+            contentTop.insert({
+                top: returnStatusBar
+            });
+        }
+
+        var statusBar = $('postnl_status_bar');
+        contentTop.insert({
             top: statusBar
         });
     });

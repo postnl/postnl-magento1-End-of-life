@@ -46,6 +46,9 @@
                     <title>PostNL Returns</title>
                     <action>postnl_admin/adminhtml_returns</action>
                     <sort_order>35</sort_order>
+                    <depends>
+                        <config>postnl/returns/return_labels_active</config>
+                    </depends>
                 </postnl_returns>
             </children>
         </sales>

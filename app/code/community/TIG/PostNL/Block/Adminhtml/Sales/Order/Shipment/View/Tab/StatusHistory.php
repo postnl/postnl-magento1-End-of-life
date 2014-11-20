@@ -54,7 +54,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
          */
         $this->setEmptyText(Mage::helper('postnl')->__('No status history available.'));
         $this->setId('sales_order_shipment_status_history_grid');
-        $this->setDefaultSort('timestamp');
+        $this->setDefaultSort('date');
         $this->setDefaultDir('DESC');
         $this->setUseAjax(true);
 
@@ -95,7 +95,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     {
         $helper = Mage::helper('postnl');
 
-        $this->addColumn('date',
+        $this->addColumn(
+            'date',
             array(
                 'header'      => $helper->__('Date'),
                 'index'       => 'timestamp',
@@ -104,9 +105,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
                 'width'       => '150px',
                 'renderer'    => 'adminhtml/widget_grid_column_renderer_date',
                 'filter_time' => true,
-        ));
+            )
+        );
 
-        $this->addColumn('timestamp',
+        $this->addColumn(
+            'timestamp',
             array(
                 'header'   => $helper->__('Time'),
                 'index'    => 'timestamp',
@@ -114,23 +117,43 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
                 'width'    => '150px',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_time',
                 'filter'   => false,
-                'sortable' => false,
-        ));
+            )
+        );
 
-        $this->addColumn('code',
+        if (Mage::helper('postnl/cif')->isReturnsEnabled()) {
+            $this->addColumn(
+                'shipment_type',
+                array(
+                    'header'   => $helper->__('Type'),
+                    'index'    => 'shipment_type',
+                    'width'    => '150px',
+                    'type'     => 'options',
+                    'options'  => array(
+                        'shipment' => $helper->__('Shipment'),
+                        'return'   => $helper->__('Return shipment')
+                    ),
+                )
+            );
+        }
+
+        $this->addColumn(
+            'code',
             array(
                 'header' => $helper->__('Status Code'),
                 'index'  => 'code',
                 'width'  => '100px',
-        ));
+            )
+        );
 
-        $this->addColumn('description',
+        $this->addColumn(
+            'description',
             array(
                 'header'   => $helper->__('Description'),
                 'index'    => 'description',
                 'align'    => 'left',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_translate',
-        ));
+            )
+        );
 
         return parent::_prepareColumns();
     }
