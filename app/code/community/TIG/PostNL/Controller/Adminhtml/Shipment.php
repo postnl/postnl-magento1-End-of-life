@@ -771,8 +771,6 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
-     * Update a shipment's shipping and return status if applicable.
-     *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
      * @return $this

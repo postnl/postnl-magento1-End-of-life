@@ -889,6 +889,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
+        $printPackingSlipsAndConfirmOptions = array(
+            'label' => $helper->__('PostNL - Print packing slips & confirm shipment'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingSlipsAndConfirm'),
+        );
+
         $printOptions = array(
             'label' => $helper->__('PostNL - Print shipping labels'),
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
@@ -956,6 +961,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_print_labels_and_confirm':
                 $printAndConfirmOptions['selected'] = true;
                 break;
+            case 'postnl_print_packing_slips_and_confirm':
+                $printPackingSlipsAndConfirmOptions['selected'] = true;
+                break;
             case 'postnl_print_labels':
                 $printOptions['selected'] = true;
                 break;
@@ -987,6 +995,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'postnl_print_labels_and_confirm',
                 $printAndConfirmOptions
             );
+
+            if ($packingSlipAllowed) {
+                $massactionBlock->addItem(
+                    'postnl_print_packing_slips_and_confirm',
+                    $printPackingSlipsAndConfirmOptions
+                );
+            }
         }
 
         if ($printAllowed) {
