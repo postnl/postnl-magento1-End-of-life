@@ -1923,7 +1923,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
-        $this->setLabels($labelCollection);
+        $this->setLabels($labelCollection->getItems());
 
         if ($labelCollection->getSize() > 0) {
             return true;
@@ -3650,7 +3650,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setStatusHistoryUpdatedAt($dateModel->gmtTimestamp());
 
-        return $this;
+
     }
 
     /*******************************************************************************************************************
