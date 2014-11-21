@@ -1013,7 +1013,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the default config duration.
          */
         $configDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
-        $durationArray  = array($configDuration);
+        $durationArray  = array();
 
         /**
          * Get all items in the quote, so we can check the corresponding products.
@@ -1061,7 +1061,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 && $product->getData('postnl_shipping_duration') !== ''
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
+            } else {
+                $durationArray[] = $configDuration;
             }
+        }
+
+        if (empty($durationArray)) {
+            $durationArray = array($configDuration);
         }
 
         /**
