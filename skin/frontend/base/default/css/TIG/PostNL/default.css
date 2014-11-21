@@ -120,7 +120,7 @@
 /********** Add Location > */
 #postnl_add_location .popup-window { width:834px; min-height:545px; margin:-273px 0 0 -417px; }
 #postnl_add_location .popup-header { min-height:80px; }
-#postnl_add_location .popup-map { height:265px; }
+#postnl_add_location .popup-map { height:265px; width:834px;}
 #postnl_add_location .popup-content { height:200px; }
 
 /* Search  */

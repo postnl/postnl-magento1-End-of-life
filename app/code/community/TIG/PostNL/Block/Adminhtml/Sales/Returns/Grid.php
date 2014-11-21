@@ -107,7 +107,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         $select->joinLeft(
             array('postnl_shipment_barcode' => $resource->getTableName('postnl_core/shipment_barcode')),
             '`postnl_shipment`.`entity_id`=`postnl_shipment_barcode`.`parent_id` ' .
-            'AND `postnl_shipment_barcode`.`barcode_type` = "return"',
+            'AND `postnl_shipment_barcode`.`barcode_type` = "return" ' .
+            'AND `postnl_shipment_barcode`.`barcode_number` = 0',
             array(
                 'return_barcode' => 'postnl_shipment_barcode.barcode',
             )
@@ -129,8 +130,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
                    ->addFieldToFilter(
                        'return_phase',
                        array(
-                           array('neq'     => $colloNotFoundStatus),
-                           array('notnull' => true)
+                           'neq'     => $colloNotFoundStatus,
+                           'notnull' => true,
                        )
                    )
                    ->addFieldToFilter(

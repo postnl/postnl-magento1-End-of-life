@@ -423,7 +423,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @throws TIG_PostNL_Exception
      *
      * @return StdClass
-     *
      */
     public function getShipmentStatus($barcode)
     {
@@ -485,16 +484,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF including full status history.
      *
-     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string $barcode
      *
      * @throws TIG_PostNL_Exception
      *
      * @return StdClass
-     *
      */
-    public function getCompleteShipmentStatus(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    public function getCompleteShipmentStatus($barcode)
     {
-        $barcode  = $postnlShipment->getMainBarcode();
         $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
 

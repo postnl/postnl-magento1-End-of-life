@@ -251,11 +251,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join sales_flat_order table.
          */
         $select->joinInner(
-            array('order' => $resource->getTableName('sales/order')),
-            '`main_table`.`order_id`=`order`.`entity_id`',
+            array('postnl_join_order' => $resource->getTableName('sales/order')),
+            '`main_table`.`order_id`=`postnl_join_order`.`entity_id`',
             array(
-                'shipping_method'      => 'order.shipping_method',
-                'shipping_description' => 'order.shipping_description',
+                'shipping_method'      => 'postnl_join_order.shipping_method',
+                'shipping_description' => 'postnl_join_order.shipping_description',
             )
         );
 
@@ -263,11 +263,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join sales_flat_order_address table.
          */
         $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array('postnl_join_shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`order_id`=`postnl_join_shipping_address`.`parent_id` AND " .
+            "`postnl_join_shipping_address`.`address_type`='shipping'",
             array(
-                'postcode'   => 'shipping_address.postcode',
-                'country_id' => 'shipping_address.country_id',
+                'postcode'   => 'postnl_join_shipping_address.postcode',
+                'country_id' => 'postnl_join_shipping_address.country_id',
             )
         );
 
@@ -908,6 +909,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massCreateParcelwareExport')
         );
 
+        $updateShippingStatusOptions = array(
+            'label' => $helper->__('PostNL - Update shipping status'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massUpdateShippingStatus')
+        );
+
         /**
          * Add an additional option to the 'label printing' mass actions if the configured label size is A4.
          */
@@ -962,6 +968,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_parcelware_export':
                 $parcelWareOptions['selected'] = true;
                 break;
+            case 'postnl_update_status':
+                $updateShippingStatusOptions['selected'] = true;
+                break;
             // no default
         }
 
@@ -1008,6 +1017,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $parcelWareOptions
             );
         }
+
+        $massactionBlock->addItem(
+            'postnl_update_status',
+            $updateShippingStatusOptions
+        );
 
         return $this;
     }
@@ -1105,6 +1119,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
+        /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
         $column = $block->getColumn($sort);
         if (!$column) {
             return $this;

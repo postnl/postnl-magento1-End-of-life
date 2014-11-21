@@ -30,7 +30,7 @@ TIG_PostNL::Customer Number,Klantnummer
 TIG_PostNL::Customer Code,Klantcode
 "TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
 TIG_PostNL::BLS (location) Code,BLS (locatie) code
-"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","De interne code van het dichtsbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
+"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","De interne code van het dichtstbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
 TIG_PostNL::These fields are only required if you intend to send products to countries outside the EU.,Deze velden zijn alleen verplicht als u van plan bent om producten buiten de EU te gaan versturen.
 TIG_PostNL::Global Barcode Type,Globaal barcode type
 TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 2 letters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
@@ -427,7 +427,7 @@ TIG_PostNL::Invalid confirmShipment response: %s,Ongeldige voormeldbevestigings 
 "TIG_PostNL::Please fill in the fields below to finish the extension registration procedure. Click <a href=""#"" onclick=""%s"">here</a> to reset the registration procedure.","Vul s.v.p. de onderstaande velden in om de registratieprocedure af te ronden. Klik <a href=""#"" onclick=""%s"">hier</a> om de registratieprocedure te resetten."
 TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL Checkout.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te kunnen maken van PostNL Checkout.
 TIG_PostNL::One or more items in the cart are out of stock.,Eén of meer producten in de winkelwagen zijn niet op voorraad.
-TIG_PostNL::Shipping event history,Zending status geschiedenis
+TIG_PostNL::Shipping event history,Zending statusgeschiedenis
 TIG_PostNL::PostNL version %s,PostNL versie %s
 TIG_PostNL::Status Code,Status Code
 TIG_PostNL::Description,Beschrijving
@@ -1051,7 +1051,7 @@ To Letter Box Parcel,Naar Pakket
 To Package,Naar Brievenbuspakje
 Change Product Option,Wijzig Productoptie
 TIG_PostNL::Fits through the mailslot,Past door de brievenbus
-TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtsbijzijnde PostNL ophaalpunten
+TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtstbijzijnde PostNL ophaalpunten
 TIG_PostNL::Filter,Filter
 TIG_PostNL::Select location,Selecteer locatie
 TIG_PostNL::Show map,Toon kaart
@@ -1183,7 +1183,17 @@ TIG_PostNL::An error occurred while retrieving the return labels. Please try aga
 TIG_PostNL::Direct Debit,Automatische Incasso
 TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
+TIG_PostNL::The shipment's parcel count has been changed succesfully.,Het aantal pakketten van deze zending is succesvol gewijzigd.
+TIG_PostNL::The changeParcelCount action is currently unavailable.,De changeParcelCount actie is momenteel niet beschikbaar.
 TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
 TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
 TIG_PostNL::Post office address:,Postkantoor adres:
+TIG_PostNL::Return Phase,Retourfase
+TIG_PostNL::Return Labels Printed,Retourlabels geprint
 TIG_PostNL::PostNL Returns,PostNL Retouren
+TIG_PostNL::Return shipment,Retourzending
+TIG_PostNL::Update shipping status,Verzendstatus updaten
+TIG_PostNL::PostNL - Update shipping status,PostNL - Verzendstatus updaten
+TIG_PostNL::The shipping status has been updated successfully.,De verzendstatus is succesvol geüpdatet.
+"TIG_PostNL::The shipping status of shipment #%s cannot be updated, because it has not yet been confirmed.","De verzendstatus van zending #%s kan niet geüpdatet worden, omdat de zending nog niet voorgemeld is."
+TIG_PostNL::The shipping status of shipment #%s cannot be updated.,De verzendstatus van zending #%s kan niet geüpdatet worden.
