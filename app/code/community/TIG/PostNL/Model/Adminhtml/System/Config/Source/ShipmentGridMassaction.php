@@ -71,6 +71,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
                 'value' => 'postnl_parcelware_export',
                 'label' => $helper->__('Parcelware export'),
             ),
+            array(
+                'value' => 'postnl_update_status',
+                'label' => $helper->__('Update shipping status'),
+            ),
         );
 
         return $options;

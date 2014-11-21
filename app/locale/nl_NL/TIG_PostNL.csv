@@ -427,7 +427,7 @@ TIG_PostNL::Invalid confirmShipment response: %s,Ongeldige voormeldbevestigings 
 "TIG_PostNL::Please fill in the fields below to finish the extension registration procedure. Click <a href=""#"" onclick=""%s"">here</a> to reset the registration procedure.","Vul s.v.p. de onderstaande velden in om de registratieprocedure af te ronden. Klik <a href=""#"" onclick=""%s"">hier</a> om de registratieprocedure te resetten."
 TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL Checkout.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te kunnen maken van PostNL Checkout.
 TIG_PostNL::One or more items in the cart are out of stock.,Eén of meer producten in de winkelwagen zijn niet op voorraad.
-TIG_PostNL::Shipping event history,Zending status geschiedenis
+TIG_PostNL::Shipping event history,Zending statusgeschiedenis
 TIG_PostNL::PostNL version %s,PostNL versie %s
 TIG_PostNL::Status Code,Status Code
 TIG_PostNL::Description,Beschrijving
@@ -1192,3 +1192,8 @@ TIG_PostNL::Return Phase,Retourfase
 TIG_PostNL::Return Labels Printed,Retourlabels geprint
 TIG_PostNL::PostNL Returns,PostNL Retouren
 TIG_PostNL::Return shipment,Retourzending
+TIG_PostNL::Update shipping status,Verzendstatus updaten
+TIG_PostNL::PostNL - Update shipping status,PostNL - Verzendstatus updaten
+TIG_PostNL::The shipping status has been updated successfully.,De verzendstatus is succesvol geüpdatet.
+"TIG_PostNL::The shipping status of shipment #%s cannot be updated, because it has not yet been confirmed.","De verzendstatus van zending #%s kan niet geüpdatet worden, omdat de zending nog niet voorgemeld is."
+TIG_PostNL::The shipping status of shipment #%s cannot be updated.,De verzendstatus van zending #%s kan niet geüpdatet worden.

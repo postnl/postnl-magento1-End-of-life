@@ -771,6 +771,59 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
+     * Update a shipment's shipping and return status if applicable.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     *
+     * @return $this
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     * @throws TIG_PostNL_Model_Core_Cif_Exception
+     */
+    protected function _updateShippingStatus(TIG_PostNL_Model_Core_Shipment $postnlShipment)
+    {
+        /**
+         * Only confirmed shipments cna be updated.
+         */
+        if (!$postnlShipment->isConfirmed()) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'The shipping status of shipment #%s cannot be updated, because it has not yet been confirmed.',
+                    $postnlShipment->getShipmentIncrementId()
+                ),
+                'POSTNL-0206'
+            );
+        }
+
+        /**
+         * Check if the shipment's shipping status or return status may be updated.
+         */
+        if (!$postnlShipment->canUpdateShippingStatus() && !$postnlShipment->canUpdateReturnStatus()) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'The shipping status of shipment #%s cannot be updated.',
+                    $postnlShipment->getShipmentIncrementId()
+                ),
+                'POSTNL-0207'
+            );
+        }
+
+        if ($postnlShipment->canUpdateShippingStatus()) {
+            $postnlShipment->updateShippingStatus(true);
+        }
+
+        if ($postnlShipment->canUpdateReturnStatus()) {
+            $postnlShipment->updateReturnStatus(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
+
+        return $this;
+    }
+
+    /**
      * Load an array of shipments based on an array of shipmentIds and check if they're shipped using PostNL
      *
      * @param array|int $shipmentIds

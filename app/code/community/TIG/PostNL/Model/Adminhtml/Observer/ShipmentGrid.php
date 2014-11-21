@@ -909,6 +909,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massCreateParcelwareExport')
         );
 
+        $updateShippingStatusOptions = array(
+            'label' => $helper->__('PostNL - Update shipping status'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massUpdateShippingStatus')
+        );
+
         /**
          * Add an additional option to the 'label printing' mass actions if the configured label size is A4.
          */
@@ -963,6 +968,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_parcelware_export':
                 $parcelWareOptions['selected'] = true;
                 break;
+            case 'postnl_update_status':
+                $updateShippingStatusOptions['selected'] = true;
+                break;
             // no default
         }
 
@@ -1009,6 +1017,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $parcelWareOptions
             );
         }
+
+        $massactionBlock->addItem(
+            'postnl_update_status',
+            $updateShippingStatusOptions
+        );
 
         return $this;
     }

@@ -1991,4 +1991,107 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             return $this;
         }
     }
+
+    /**
+     * Update the shipping status of the selected shipments.
+     *
+     * @return $this
+     */
+    public function massUpdateShippingStatusAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        try {
+            $shipmentIds = $this->_getShipmentIds();
+
+            /**
+             * Load the shipments and check if they are valid
+             */
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+
+            /**
+             * Updating the shipping status of a lot of shipments may take a while, therefore we need to disable the PHP
+             * execution time limit.
+             */
+            set_time_limit(0);
+
+            /**
+             * Update the shipping status for the shipments.
+             *
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            $errors = 0;
+            foreach ($shipments as $shipment) {
+                try {
+                    $this->_updateShippingStatus($shipment);
+                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                    Mage::helper('postnl/cif')->parseCifException($e);
+
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $errors++;
+                } catch (TIG_PostNL_Exception $e) {
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $errors++;
+                } catch (Exception $e) {
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => null,
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $errors++;
+                }
+            }
+
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $this->_checkForWarnings();
+
+        if ($errors < count($shipments)) {
+            $helper->addSessionMessage(
+                'adminhtml/session', null, 'success',
+                $this->__('The shipping status has been updated successfully.')
+            );
+        } else {
+            $helper->addSessionMessage(
+                'adminhtml/session', null, 'error',
+                $this->__(
+                    'Unfortunately no shipments could be processed. Please check the error messages for more details.'
+                )
+            );
+        }
+
+        $this->_redirect('adminhtml/sales_shipment/index');
+        return $this;
+    }
 }

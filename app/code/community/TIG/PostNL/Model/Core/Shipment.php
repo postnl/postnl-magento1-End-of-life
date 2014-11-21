@@ -3399,11 +3399,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Requests a shipping status update for this shipment
      *
+     * @param boolean $parseColloNotFoundError
+     *
      * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
-    public function updateShippingStatus()
+    public function updateShippingStatus($parseColloNotFoundError = false)
     {
         if (!$this->canUpdateShippingStatus()) {
             throw new TIG_PostNL_Exception(
@@ -3416,7 +3418,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_updateshippingstatus_before', array('shipment' => $this));
 
-        $currentPhase = $this->_getShipmentStatus($this->getMainBarcode());
+        try {
+            $currentPhase = $this->_getShipmentStatus($this->getMainBarcode());
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            if (!$parseColloNotFoundError) {
+                throw $e;
+            }
+
+            $errorNumbers = $e->getErrorNumbers();
+            if (1 === count($errorNumbers)
+                && TIG_PostNL_Model_Core_Cif::SHIPMENT_NOT_FOUND_ERROR_NUMBER == $errorNumbers[0]
+            ) {
+                $currentPhase = self::SHIPPING_PHASE_NOT_APPLICABLE;
+            } else {
+                throw $e;
+            }
+        }
 
         if (!$currentPhase) {
             return $this;
@@ -3441,11 +3458,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Requests a return status update for this shipment
      *
+     * @param boolean $parseColloNotFoundError
+     *
      * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
-    public function updateReturnStatus()
+    public function updateReturnStatus($parseColloNotFoundError = false)
     {
         if (!$this->canUpdateReturnStatus()) {
             throw new TIG_PostNL_Exception(
@@ -3458,7 +3477,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_updatereturnstatus_before', array('shipment' => $this));
 
-        $currentPhase = $this->_getShipmentStatus($this->getReturnBarcode());
+        try {
+            $currentPhase = $this->_getShipmentStatus($this->getReturnBarcode());
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            if (!$parseColloNotFoundError) {
+                throw $e;
+            }
+
+            $errorNumbers = $e->getErrorNumbers();
+            if (1 === count($errorNumbers)
+                && TIG_PostNL_Model_Core_Cif::SHIPMENT_NOT_FOUND_ERROR_NUMBER == $errorNumbers[0]
+            ) {
+                $currentPhase = self::SHIPPING_PHASE_NOT_APPLICABLE;
+            } else {
+                throw $e;
+            }
+        }
 
         if (!$currentPhase) {
             return $this;
@@ -3523,13 +3557,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_before', array('shipment' => $this));
 
+        $this->_updateCompleteStatus($this->getMainBarcode());
+        if ($this->hasReturnBarcode()) {
+            $this->_updateCompleteStatus($this->getReturnBarcode());
+        }
+
+        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_after', array('shipment' => $this));
+
+        $this->unlock();
+
+        return $this;
+    }
+
+    /**
+     * Update the complete status history for the specified barcode.
+     *
+     * @param string $barcode
+     *
+     * @return $this
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _updateCompleteStatus($barcode)
+    {
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
          * @var StdClass $result
          */
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($this->getStoreId());
-        $result = $cif->getCompleteShipmentStatus($this);
+        $result = $cif->getCompleteShipmentStatus($barcode);
 
         /**
          * Update the shipment's shipping phase
@@ -3591,10 +3649,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $this->setStatusHistoryUpdatedAt($dateModel->gmtTimestamp());
-
-        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_after', array('shipment' => $this));
-
-        $this->unlock();
 
         return $this;
     }
