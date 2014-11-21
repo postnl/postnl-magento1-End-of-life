@@ -63,7 +63,7 @@
     </div>
 </div>
 <?php $_returnStatus = $this->getReturnStatus($_shipment) ?>
-<?php if ($_returnStatus || true): ?>
+<?php if ($_returnStatus): ?>
     <div id="postnl_return_bar" class="progress-wrapper return <?php echo $_returnStatus; ?>">
         <div class="progress progress-delivered">
             <span class="end"></span>
