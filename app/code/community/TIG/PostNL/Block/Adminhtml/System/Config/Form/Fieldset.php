@@ -155,8 +155,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
     protected function _getHeaderTitleHtml($element)
     {
         return '<div class="entry-edit-head collapseable" ><a id="' . $element->getHtmlId()
-        . '-head" href="#" onclick="Fieldset.toggleCollapse(\'' . $element->getHtmlId() . '\', \''
-        . $this->getUrl('*/*/state') . '\'); return false;">' . $element->getLegend() . '</a></div>';
+        . '-head" rel="' . $element->getHtmlId() . '-head" href="#" onclick="Fieldset.toggleCollapse(\''
+        . $element->getHtmlId() . '\', \'' . $this->getUrl('*/*/state') . '\'); return false;">'
+        . $element->getLegend() . '</a></div>';
     }
 
     /**

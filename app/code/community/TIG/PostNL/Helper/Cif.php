@@ -979,6 +979,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @param Mage_Sales_Model_Order_Address $address
      *
      * @return array
+     *
+     * @todo make house number only required for countries that actually need it
      */
     protected function _getMultiLineStreetData($storeId, $address)
     {
