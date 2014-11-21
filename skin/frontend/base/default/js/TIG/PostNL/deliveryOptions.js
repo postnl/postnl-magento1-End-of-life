@@ -2941,6 +2941,7 @@ PostnlDeliveryOptions.Map = new Class.create({
              * icon on hover.
              */
             google.maps.event.addListener(marker, "click", this.markerOnClick.bind(this, marker));
+            google.maps.event.addListener(marker, "dblclick", this.markerOnDblClick.bind(this, marker));
             google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
             google.maps.event.addListener(marker, "mousedown", this.markerOnMouseDown.bind(this));
             google.maps.event.addListener(marker, "mouseup", this.markerOnMouseUp.bind(this));
@@ -3266,6 +3267,22 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         this.selectMarker(marker, true, true);
+
+        return this;
+    },
+
+    /**
+     * @param {*} marker
+     *
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    markerOnDblClick : function(marker) {
+        if (this.getIsInfoWindowOpen()) {
+            return this;
+        }
+
+        this.selectMarker(marker, true, true);
+        this.saveLocation();
 
         return this;
     },
@@ -4576,6 +4593,39 @@ PostnlDeliveryOptions.Location = new Class.create({
                     this.getLocationCode()
                 );
             }
+            return true;
+        }.bind(this));
+
+        element.observe('dblclick', function(event) {
+            var map = this.getMap();
+
+            event.stop();
+
+            if (Event.element(event).hasClassName('location-info')) {
+                return false;
+            }
+
+            if (!this.getMarker()) {
+                return false;
+            }
+
+            if (map.getSelectedMarker() == this.getMarker()) {
+                map.saveLocation();
+                return false;
+            }
+
+            this.setOldCenter(this.getMarker().getPosition());
+
+            map.selectMarker(this.getMarker(), false, true);
+
+            if (map.getIsInfoWindowOpen()) {
+                map.openLocationInfoWindow(
+                    this.getMapTooltipHtml(),
+                    this.getLocationCode()
+                );
+            }
+
+            map.saveLocation();
             return true;
         }.bind(this));
 
