@@ -865,6 +865,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($this->hasReturnLabels()) {
             $labels = $this->_getData('return_labels');
 
+            if (!is_array($labels)) {
+                $labels = $labels->getItems();
+            }
             return $labels;
         }
 
@@ -873,6 +876,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if ($this->hasLabels(false)) {
             $labels = $this->_getData('labels');
+            if (!is_array($labels)) {
+                $labels = $labels->getItems();
+            }
 
             /**
              * Filter out all regular shipping labels.
