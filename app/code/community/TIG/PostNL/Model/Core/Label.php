@@ -487,7 +487,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
 
-        if (!is_array($labels)) {
+        if (!is_array($labels)
+            && !(is_object($labels) && $labels instanceof TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection)
+        ) {
             $labels = array($labels);
         }
         /**
