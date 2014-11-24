@@ -1108,7 +1108,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             /**
              * Warnings must have a description.
              */
-            if (!array_key_exists('description', $warning)) {
+            if (empty($warning['description'])) {
                 continue;
             }
 
@@ -1116,17 +1116,38 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
              * Codes are optional for warnings, but must be present in the array. If no code is found in the warning we
              * add an empty one.
              */
-            if (!array_key_exists('code', $warning)) {
-                $warning['code'] = null;
+            if (!isset($warning['code'])) {
+                continue;
+            }
+
+            /**
+             * Translate the individual parts of the message.
+             */
+            $descriptionMessages = explode(PHP_EOL, $warning['description']);
+            $description = array();
+            foreach ($descriptionMessages as $descriptionMessage) {
+                if (empty($descriptionMessage)) {
+                    continue;
+                }
+
+                $description[] = $this->__($descriptionMessage);
+            }
+
+            /**
+             * If the code is empty, replace it with a null value.
+             */
+            $code = $warning['code'];
+            if (empty($code)) {
+                $code = null;
             }
 
             /**
              * Get the formatted warning message.
              */
             $warningText = $helper->getSessionMessage(
-                $warning['code'],
+                $code,
                 'warning',
-                $this->__($warning['description'])
+                implode(' ', $description)
             );
 
             /**
