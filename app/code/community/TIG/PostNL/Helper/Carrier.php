@@ -383,15 +383,15 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $countryCode = null;
         $postcode    = null;
         if (is_array($destination)) {
-            if (!isset($destination['countryCode']) || !isset($destination['postcode'])) {
-                throw new InvalidArgumentException("Destination must contain the 'countryCode' and 'postcode' keys.");
+            if (!isset($destination['countryCode'])) {
+                throw new InvalidArgumentException("Destination must contain a country code.");
             }
 
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         } elseif (is_object($destination) && $destination instanceof Varien_Object) {
-            if (!$destination->getCountry() || !$destination->getPostcode()) {
-                throw new InvalidArgumentException('Destination must have a country and a postcode.');
+            if (!$destination->getCountry()) {
+                throw new InvalidArgumentException('Destination must contain a country code.');
             }
 
             $countryCode = $destination->getCountry();
@@ -401,7 +401,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         /**
-         * Get the dutch track & trace URL for dutch shipments or for the admin
+         * Get the dutch track & trace URL for dutch shipments or for the admin.
          */
         if ($forceNl
             || (!empty($countryCode)
@@ -411,7 +411,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH)
                         . '&b=' . $barcode;
             /**
-             * For dutch shipments add the postcode. For international shipments add an 'international' flag
+             * For dutch shipments add the postcode. For international shipments add an 'international' flag.
              */
             if (!empty($postcode)
                 && !empty($countryCode)
@@ -426,12 +426,15 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         /**
-         * Get a general track & trace URL for all other destinations
+         * Get a general track & trace URL for all other destinations.
          */
         $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH)
                     . '/' . $barcode
-                    . '/' . $countryCode
-                    . '/' . $postcode;
+                    . '/' . $countryCode;
+
+        if (!empty($postcode)) {
+            $barcodeUrl .= '/' . $postcode;
+        }
 
         return $barcodeUrl;
     }

@@ -1611,7 +1611,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $isBuspakje = $this->_getData('is_buspakje');
 
         if (!is_null($isBuspakje)) {
-            return $isBuspakje;
+            return (bool) $isBuspakje;
         }
 
         $isBuspakje = $this->_getIsBuspakje();
@@ -2495,15 +2495,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        if ($this->getConfirmStatus() == self::CONFIRM_STATUS_CONFIRMED) {
+        if ($this->isConfirmed()) {
             return false;
         }
 
         if (!$this->getShipmentId() && !$this->getShipment(false)) {
-            return false;
-        }
-
-        if (!$this->getMainBarcode()) {
             return false;
         }
 
@@ -2705,15 +2701,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canResetConfirmation()
     {
-        $confirmStatus = $this->getConfirmStatus();
-        if ($confirmStatus == self::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+        if ($this->hasCustomBarcode()) {
             return false;
         }
 
-        if ($confirmStatus == self::CONFIRM_STATUS_UNCONFIRMED) {
+        if (!$this->isConfirmed()) {
             return false;
         }
-
         $shippingPhase = $this->getShippingPhase();
         if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
@@ -2825,11 +2819,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canPrintReturnLabels()
     {
-        if ($this->hasReturnLabels()) {
-            return true;
+        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+            return false;
         }
 
-        if ($this->hasReturnBarcode()) {
+        if ($this->hasReturnLabels()) {
             return true;
         }
 
@@ -3656,7 +3650,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setStatusHistoryUpdatedAt($dateModel->gmtTimestamp());
 
-
+        return $this;
     }
 
     /*******************************************************************************************************************
@@ -4275,12 +4269,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * is a buspakje shipment.
          */
         if ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
-            && array_key_exists('is_buspakje', $codes)
+            && isset($codes['is_buspakje'])
             && $codes['is_buspakje'] == '1'
         ) {
             $isBuspakje = true;
         } elseif ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
-            && (!array_key_exists('is_buspakje', $codes)
+            && (!isset($codes['is_buspakje'])
                 || $codes['is_buspakje'] == '-1'
             )
         ) {
@@ -4815,14 +4809,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Set whether labels have printed or not.
          */
         if ($this->getLabelsPrinted() == 0 && $this->hasLabels()) {
-            $this->setLabelsPrinted(1);
+            $this->setLabelsPrinted(true);
         }
 
         /**
          * Set whether return labels have printed or not.
          */
         if ($this->getReturnLabelsPrinted() == 0 && $this->hasReturnLabels()) {
-            $this->setReturnLabelsPrinted(1);
+            $this->setReturnLabelsPrinted(true);
         }
 
         /**
@@ -4853,6 +4847,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (!$this->getConfirmDate()) {
             $this->setConfirmDate();
+        }
+
+        /**
+         * Check if this shipment is a letter box order.
+         */
+        if ($this->isObjectNew() && self::SHIPMENT_TYPE_BUSPAKJE == $this->getShipmentType()) {
+            $this->setIsBuspakje(true);
         }
 
         /**

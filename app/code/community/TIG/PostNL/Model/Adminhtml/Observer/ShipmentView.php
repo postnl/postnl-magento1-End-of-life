@@ -154,12 +154,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
-        if ($printReturnLabelAllowed
-            && ($postnlShipment->hasReturnLabel()
-                || $postnlShipment->hasReturnBarcode()
-                || $postnlShipment->canGenerateReturnBarcode()
-            )
-        ) {
+        if ($printReturnLabelAllowed && $postnlShipment->canPrintReturnLabels()) {
             $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
 
             $block->addButton(
