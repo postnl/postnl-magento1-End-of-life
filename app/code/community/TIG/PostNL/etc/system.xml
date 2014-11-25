@@ -3957,6 +3957,7 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>manual</value>
                                 </buspakje_calculation_mode>
+                                <show_grid_options>1</show_grid_options>
                             </depends>
                         </show_buspakje_option>
                         <shipping_grid_columns_anchor>

@@ -972,7 +972,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         }
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__("The shipment's parcel count has been changed succesfully.")
+            $this->__("The shipment's product option has been changed succesfully.")
         );
 
         $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
@@ -1068,7 +1068,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         }
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__("The shipment's product option has been changed succesfully.")
+            $this->__("The shipment's parcel count has been changed succesfully.")
         );
 
         $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
