@@ -253,7 +253,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
      *
      * @return boolean
      */
-    protected function _canViewPostnlShipment($postnlShipment)
+    protected function _canViewPostnlShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment)
     {
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
         $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
