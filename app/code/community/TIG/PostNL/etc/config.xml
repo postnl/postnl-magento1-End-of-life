@@ -228,11 +228,11 @@
         </events>
         <template>
             <email>
-                <postnl_cif_labels_and_confirming_track_and_trace_email_template translate="label" module="postnl">
+                <postnl_track_and_trace_track_and_trace_email_template translate="label" module="postnl">
                     <label>PostNL Track &amp; Trace Email</label>
                     <file>TIG/PostNL/track_and_trace.html</file>
                     <type>html</type>
-                </postnl_cif_labels_and_confirming_track_and_trace_email_template>
+                </postnl_track_and_trace_track_and_trace_email_template>
             </email>
         </template>
         <payment>
@@ -868,7 +868,7 @@
             </packing_slip>
             <track_and_trace>
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
-                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
+                <track_and_trace_email_template>postnl_track_and_trace_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
                 <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
                 <copy_to/>
                 <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
