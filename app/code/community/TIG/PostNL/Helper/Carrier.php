@@ -265,7 +265,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
          * need to call getStreet with -1
          * to get data in string instead of array
          */
-        $request->setDestStreet($shippingAddress->getStreet($shippingAddress::DEFAULT_DEST_STREET));
+        $request->setDestStreet($shippingAddress->getStreet(-1));
         $request->setDestCity($shippingAddress->getCity());
         $request->setDestPostcode($shippingAddress->getPostcode());
         $request->setPackageValue($shippingAddress->getBaseSubtotal());
