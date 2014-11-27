@@ -365,7 +365,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         $labels = array();
         foreach ($shipments as $shipment) {
             try {
-                $shipmentLabels = $this->_getLabels($shipment, true);
+                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $shipment->getStoreId()
+                );
+
+                $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                 $labels = array_merge($labels, $shipmentLabels);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
@@ -460,7 +464,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                     );
                 }
 
-                $shipmentLabels = $this->_getLabels($shipment, true);
+                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $shipment->getStoreId()
+                );
+
+                $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
@@ -528,7 +536,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             return false;
         }
 
-        if ($postnlShipment->hasLabels()) {
+        if ($postnlShipment->hasReturnLabels()) {
             return $postnlShipment->getReturnLabels();
         }
 
@@ -579,6 +587,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             if (!$this->_checkIsAllowed(array('print_return_labels'))) {
                 $includeReturnLabels = false;
             }
+        }
+
+        /**
+         * Check if printing return labels is allowed.
+         */
+        if (!Mage::helper('postnl')->isReturnsEnabled($shipment->getStoreId())) {
+            $includeReturnLabels = false;
         }
 
         /**
@@ -634,7 +649,6 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      */
     protected function _generateLabels($shipment, $postnlShipment, $confirm = false)
     {
-
         /**
          * If the PostNL shipment is new, set the magento shipment ID.
          */

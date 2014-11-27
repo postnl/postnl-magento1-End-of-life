@@ -82,6 +82,35 @@
         </reference>
     </sales_order_creditmemo>
 
+    <sales_guest_view>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="delivery_options_info" template="TIG/PostNL/delivery_options/sales/order/delivery_options_info.phtml"/>
+        </reference>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_view>
+
+    <sales_guest_invoice>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_invoice>
+
+    <sales_guest_creditmemo>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_creditmemo>
+
+
     <!-- SHIPPING STATUS, PAKJE GEMAK ADDRESS -->
 
     <sales_order_shipment>
@@ -92,6 +121,15 @@
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_shipment>
+
+    <sales_guest_shipment>
+        <reference name="my.account.wrapper">
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/core/sales/order/shipment/shipping_status.phtml" after="-"/>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+    </sales_guest_shipment>
 
     <!-- RETURNS -->
 
@@ -166,22 +204,22 @@
                 <block type="sales/order_info_buttons" as="buttons" name="sales.order.info.buttons" />
                 <action method="addLink" translate="label" module="sales">
                     <name>view</name>
-                    <path>sales/order/view</path>
+                    <path>sales/guest/view</path>
                     <label>Order Information</label>
                 </action>
                 <action method="addLink" translate="label" module="sales">
                     <name>invoice</name>
-                    <path>sales/order/invoice</path>
+                    <path>sales/guest/invoice</path>
                     <label>Invoices</label>
                 </action>
                 <action method="addLink" translate="label" module="sales">
                     <name>shipment</name>
-                    <path>sales/order/shipment</path>
+                    <path>sales/guest/shipment</path>
                     <label>Shipments</label>
                 </action>
                 <action method="addLink" translate="label" module="sales">
                     <name>creditmemo</name>
-                    <path>sales/order/creditmemo</path>
+                    <path>sales/guest/creditmemo</path>
                     <label>Refunds</label>
                 </action>
                 <action method="addLink" translate="label" module="postnl">

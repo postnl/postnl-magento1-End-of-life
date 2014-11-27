@@ -67,6 +67,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
 
     /**
+     * Default destination street. This is defined here, rather tha n in the address model for backwards compatibility.
+     */
+    const DEFAULT_DEST_STREET = '-1';
+
+    /**
      * Array of possible PostNL shipping methods.
      *
      * @var array
@@ -262,10 +267,9 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setDestRegionCode($shippingAddress->getRegionCode());
 
         /**
-         * need to call getStreet with -1
-         * to get data in string instead of array
+         * Need to call getStreet with -1 to get data in string instead of array.
          */
-        $request->setDestStreet($shippingAddress->getStreet($shippingAddress::DEFAULT_DEST_STREET));
+        $request->setDestStreet($shippingAddress->getStreet(self::DEFAULT_DEST_STREET));
         $request->setDestCity($shippingAddress->getCity());
         $request->setDestPostcode($shippingAddress->getPostcode());
         $request->setPackageValue($shippingAddress->getBaseSubtotal());
