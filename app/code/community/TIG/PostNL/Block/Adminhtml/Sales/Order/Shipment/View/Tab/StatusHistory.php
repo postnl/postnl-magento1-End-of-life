@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Core_Shipment getPostnlShipment()
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -120,7 +123,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
             )
         );
 
-        if (Mage::helper('postnl/cif')->isReturnsEnabled()) {
+        $postnlShipment = $this->getPostnlShipment();
+        if (Mage::helper('postnl/cif')->isReturnsEnabled() && $postnlShipment->hasReturnLabelsPrinted()) {
             $this->addColumn(
                 'shipment_type',
                 array(
@@ -168,7 +172,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
         $helper = Mage::helper('postnl');
 
         $postnlShipment = $this->getPostnlShipment();
-        $url = $postnlShipment->getBarcodeUrl();
+        $url            = $postnlShipment->getBarcodeUrl();
 
         $urlTitle = $helper->__('Mijnpakket');
         $urlText = $helper->__('View this shipment in mijnpakket');

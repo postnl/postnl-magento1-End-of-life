@@ -2835,6 +2835,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        /**
+         * If the shipment has a barcode, but no return barcode it cannot print a return label. The barcodes need to be
+         * deleted first so new ones may be requested.
+         */
+        if ($this->hasMainBarcode() && !$this->hasReturnBarcode()) {
+            return false;
+        }
+
         if ($this->canGenerateReturnBarcode()) {
             return true;
         }
@@ -3666,13 +3674,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ******************************************************************************************************************/
 
     /**
-     * Adds Magento tracking information to the order containing the previously retrieved barcode
+     * Add Magento tracking information to the order for the return shipment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @todo call this method after return labels have been printed
+     * @todo find a way to hide this from customers or to mark it properly as a return shipment
+     */
+    public function addReturnTrackingCodeToShipment()
+    {
+        return $this->addTrackingCodeToShipment(true);
+    }
+
+    /**
+     * Add Magento tracking information to the order containing the previously retrieved barcode.
+     *
+     * @param boolean $isReturn
      *
      * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
-    public function addTrackingCodeToShipment()
+    public function addTrackingCodeToShipment($isReturn = false)
     {
         if (!$this->canAddTrackingCode()) {
             throw new TIG_PostNL_Exception(
@@ -3682,7 +3707,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shipment = $this->getShipment();
-        $barcode = $this->getMainBarcode();
+        if (true === $isReturn) {
+            $barcode = $this->getReturnBarcode();
+        } else {
+            $barcode = $this->getMainBarcode();
+        }
 
         if (!$shipment || !$barcode) {
             throw new TIG_PostNL_Exception(
@@ -3693,6 +3722,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $carrierCode = self::POSTNL_CARRIER_CODE;
         $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/name', $shipment->getStoreId());
+        if ($isReturn) {
+            $carrierTitle .= ' - ' . $this->getHelper()->__('return');
+        }
 
         $data = array(
             'carrier_code' => $carrierCode,
@@ -4459,26 +4491,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the number of parcels in this shipment
+     * Get the number of parcels in this shipment.
      *
      * @return int
      */
     protected function _calculateParcelCount()
     {
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments
+         * Only Dutch shipments that are not COD support multi-colli shipments.
          */
         if (!$this->isDutchShipment() || $this->isCod()) {
             return 1;
         }
 
         /**
-         * get this shipment's total weight
+         * Get this shipment's total weight.
          */
         $weight = $this->getTotalWeight(true);
 
         /**
-         * get the weight per parcel.
+         * Get the weight per parcel.
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
@@ -4487,9 +4519,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
 
         /**
-         * calculate the number of parcels needed to ship the total weight of this shipment
+         * Calculate the number of parcels needed to ship the total weight of this shipment.
          */
         $parcelCount = ceil($weight / $weightPerParcel);
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
 
         return $parcelCount;
     }
@@ -4845,7 +4884,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set the parcel count.
          */
-        if (!$this->getParcelCount()) {
+        if (!$this->getParcelCount() || $this->getParcelCount() < 1) {
             $parcelCount = $this->_calculateParcelCount();
             $this->setParcelCount($parcelCount);
         }
