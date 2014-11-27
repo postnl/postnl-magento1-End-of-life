@@ -2827,6 +2827,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
+        /**
+         * If the shipment has labels, but no return labels it cannot print a return label. Instead the existing labels
+         * need to be deleted first.
+         */
+        if ($this->hasLabels()) {
+            return false;
+        }
+
         if ($this->canGenerateReturnBarcode()) {
             return true;
         }

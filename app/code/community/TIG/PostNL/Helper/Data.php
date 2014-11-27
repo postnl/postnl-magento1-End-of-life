@@ -143,10 +143,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Xpaths to return label settings.
      */
-    const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
-    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/return_freepost_number';
-    const XPATH_CUSTOMER_PRINT_LABEL = 'postnl/returns/customer_print_label';
-    const XPATH_GUEST_PRINT_LABEL    = 'postnl/returns/guest_print_label';
+    const XPATH_RETURN_LABELS_ACTIVE                     = 'postnl/returns/return_labels_active';
+    const XPATH_FREEPOST_NUMBER                          = 'postnl/returns/return_freepost_number';
+    const XPATH_CUSTOMER_PRINT_LABEL                     = 'postnl/returns/customer_print_label';
+    const XPATH_GUEST_PRINT_LABEL                        = 'postnl/returns/guest_print_label';
+    const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS = 'postnl/returns/print_return_and_shipping_label';
 
     /**
      * Required configuration fields.
@@ -1720,6 +1721,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return true;
+    }
+
+    /**
+     * Check if return labels can be printed along with shipping labels for the specified store view.
+     *
+     * @param boolean|int $storeId
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabelsWithShippingLabels($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isReturnsEnabled($storeId)) {
+            return false;
+        }
+
+        $printReturnLabels = Mage::getStoreConfigFlag(self::XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS, $storeId);
+        return $printReturnLabels;
     }
 
     /**
