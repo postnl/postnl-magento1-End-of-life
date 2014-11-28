@@ -898,6 +898,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $deliveryDate = $postnlShipment->getDeliveryDate();
         if ($deliveryDate) {
             $deliveryTime = new DateTime($deliveryDate);
+            $deliveryTime->setTimezone(new DateTimeZone('Europe/Berlin'));
+            
             $deliveryDate = $deliveryTime->format('d-m-Y H:i:s');
         }
 
