@@ -580,8 +580,20 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             && isset($data->Voorkeuren->Bezorging->Datum)
         ) {
             $delivery = $data->Voorkeuren->Bezorging;
-            $postnlOrder->setConfirmDate($delivery->VerzendDatum)
-                        ->setDeliveryDate($delivery->Datum);
+            $timeZone = Mage::getStoreConfig(
+                Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+                Mage::app()->getStore()->getId()
+            );
+            $timeZone = new DateTimeZone($timeZone);
+            $utcTimeZone = new DateTimeZone('UTC');
+
+            $confirmDate = new DateTime($delivery->VerzendDatum, $timeZone);
+            $confirmDate->setTimezone($utcTimeZone);
+            $deliveryDate = new DateTime($delivery->Datum, $timeZone);
+            $deliveryDate->setTimezone($utcTimeZone);
+
+            $postnlOrder->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
+                        ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
         }
 
         /**

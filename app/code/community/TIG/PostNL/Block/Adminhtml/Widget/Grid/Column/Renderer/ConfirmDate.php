@@ -40,7 +40,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Additional column name used
+     * Additional column names used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
 

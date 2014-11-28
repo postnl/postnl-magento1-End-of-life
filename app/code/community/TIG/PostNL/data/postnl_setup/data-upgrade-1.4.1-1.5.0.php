@@ -118,4 +118,5 @@ $installer->addAclRules($returnLabelsAclResource, $returnLabelsRequiredResources
           ->addAclRules($postnlReturnsGridAclResource, $postnlReturnsGridRequiredResources)
           ->resetWebserviceVersions($updatedWebservices)
           ->generateReturnStatusCronExpr()
+          ->setDateTimeZoneUpdateCron()
           ->clearConfigCache();
