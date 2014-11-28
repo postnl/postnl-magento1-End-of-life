@@ -124,7 +124,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Calculate the confirm date for a specified delivery date.
      *
-     * @param string $deliveryDate
+     * @param string|DateTime $deliveryDate
      *
      * @return DateTime
      */
@@ -134,12 +134,18 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return $this->_getData('confirm_date');
         }
 
-        $deliveryDate = new DateTime($deliveryDate);
+        if (is_string($deliveryDate)) {
+            $deliveryDate = new DateTime($deliveryDate);
+        }
 
         $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
         $confirmDate = $confirmDate->format('Y-m-d');
 
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate);
+        $timeZone = Mage::getStoreConfig(
+            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+            Mage::app()->getStore()->getId()
+        );
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
@@ -241,7 +247,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
-     * @param $data
+     * Save the specified delivery option.
+     *
+     * @param array $data
      *
      * @return $this
      */
@@ -249,7 +257,8 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
-        $confirmDate = $this->getConfirmDate($data['date'])->getTimestamp();
+        $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
+        $confirmDate = $this->getConfirmDate($deliveryDate)->getTimestamp();
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -263,7 +272,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
-                    ->setDeliveryDate($data['date'])
+                    ->setDeliveryDate($deliveryDate)
                     ->setConfirmDate($confirmDate);
 
         if ($data['type'] == 'PA') {

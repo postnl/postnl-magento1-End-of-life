@@ -870,13 +870,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * saturday.
      *
      * @param string|DateTime $date
+     * @param string|boolean  $timeZone
      *
      * @return DateTime
      */
-    public function getValidConfirmDate($date)
+    public function getValidConfirmDate($date, $timeZone = false)
     {
         if (is_string($date)) {
-            $date = new DateTime($date);
+            if (!is_string($timeZone)) {
+                $timeZone = 'UTC';
+            }
+
+            $date = new DateTime($date, new DateTimeZone($timeZone));
         }
 
         if (!($date instanceof DateTime)) {
