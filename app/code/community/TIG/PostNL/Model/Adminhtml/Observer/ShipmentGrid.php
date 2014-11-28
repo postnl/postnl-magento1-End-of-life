@@ -738,7 +738,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the confirm_status column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport
@@ -784,7 +784,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the labels_printed column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport
