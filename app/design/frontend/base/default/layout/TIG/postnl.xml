@@ -377,6 +377,9 @@
         <reference name="checkout.onepage.shipping">
             <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
         </reference>
+        <reference name="right">
+            <block type="postnl_deliveryoptions/checkout_progress" name="postnl_deliveryoptions.progress" template="TIG/PostNL/delivery_options/progress.phtml"/>
+        </reference>
         <reference name="before_body_end">
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
@@ -403,6 +406,19 @@
             </action>
         </reference>
     </checkout_onepage_progress_shipping_method>
+
+    <checkout_onepage_progress>
+        <reference name="root">
+            <block type="postnl_deliveryoptions/checkout_progress" name="postnl_deliveryoptions.progress" template="TIG/PostNL/delivery_options/progress.phtml"/>
+        </reference>
+    </checkout_onepage_progress>
+
+    <checkout_onepage_progress_postnl_deliveryoptions>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <block type="postnl_deliveryoptions/checkout_progress" name="root" template="TIG/PostNL/delivery_options/onepage/progress/pakje_gemak.phtml" output="toHtml"/>
+    </checkout_onepage_progress_postnl_deliveryoptions>
 
     <!-- MIJNPAKKET ACCOUNTNOTIFICATION -->
 
