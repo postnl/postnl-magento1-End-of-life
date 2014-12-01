@@ -306,6 +306,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         foreach ($quote->getAllAddresses() as $quoteAddress) {
             if ($quoteAddress->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
                 $quoteAddress->isDeleted(true);
+                $quote->removeAddress($quoteAddress->getId());
             }
         }
 
@@ -340,10 +341,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setTelephone($phoneNumber)
                               ->setStreet($street);
 
-            $quote->addAddress($pakjeGemakAddress)
-                  ->save();
+            $quote->addAddress($pakjeGemakAddress);
         }
 
+        $quote->save();
         $postnlOrder->save();
 
         return $this;

@@ -1086,7 +1086,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $streetData = array(
                     'streetname'           => 'Antwoordnummer:',
                     'housenumber'          => $returnAddress['return_freepost_number'],
-                    'housenumberExtension' => $returnAddress['housenumber_extension'],
+                    'housenumberExtension' => '',
                     'fullStreet'           => '',
                 );
 

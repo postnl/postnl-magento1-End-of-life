@@ -554,6 +554,58 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     }
 
     /**
+     * Get the formatted PakjeGemak address if available.
+     *
+     * @return $this
+     */
+    public function getFormattedPakjeGemakAddressAction()
+    {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $pakjeGemakAddress = false;
+        /** @var Mage_Sales_Model_Quote_Address $address */
+        foreach ($quote->getAllAddresses() as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                $pakjeGemakAddress = $address;
+                break;
+            }
+        }
+
+        if (!$pakjeGemakAddress) {
+            $this->getResponse()
+                 ->setBody('not_found');
+
+            return $this;
+        }
+
+        /**
+         * Format the address.
+         */
+        $formattedAddress = $pakjeGemakAddress->format('html');
+        $this->getResponse()
+             ->setBody($formattedAddress);
+
+        return $this;
+    }
+
+    /**
      * Check to see if PostNL delivery options are active and available.
      *
      * @return boolean
