@@ -572,11 +572,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
          */
-        if (isset($data->Voorkeuren)
-            && is_object($data->Voorkeuren)
-            && isset($data->Voorkeuren->Bezorging)
-            && is_object($data->Voorkeuren->Bezorging)
-            && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+        if (isset($data->Voorkeuren->Bezorging->VerzendDatum)
             && isset($data->Voorkeuren->Bezorging->Datum)
         ) {
             $delivery = $data->Voorkeuren->Bezorging;
@@ -589,6 +585,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 
             $confirmDate = new DateTime($delivery->VerzendDatum, $timeZone);
             $confirmDate->setTimezone($utcTimeZone);
+
             $deliveryDate = new DateTime($delivery->Datum, $timeZone);
             $deliveryDate->setTimezone($utcTimeZone);
 

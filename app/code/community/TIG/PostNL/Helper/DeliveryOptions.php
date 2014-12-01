@@ -876,13 +876,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getValidConfirmDate($date, $timeZone = false)
     {
-        if (is_string($date)) {
-            if (!is_string($timeZone)) {
-                $timeZone = 'UTC';
-            }
-
-            $date = new DateTime($date, new DateTimeZone($timeZone));
+        if (!is_string($timeZone)) {
+            $timeZone = 'UTC';
         }
+        $timeZone = new DateTimeZone($timeZone);
+
+        if (is_string($date)) {
+            $date = new DateTime($date, $timeZone);
+        }
+
+        /**
+         * Convert the date to PostNL's time zone.
+         */
+        $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
         if (!($date instanceof DateTime)) {
             throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
@@ -910,6 +916,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         ) {
             $date->modify('last saturday');
         }
+
+        $date->setTimezone($timeZone);
 
         return $date;
     }

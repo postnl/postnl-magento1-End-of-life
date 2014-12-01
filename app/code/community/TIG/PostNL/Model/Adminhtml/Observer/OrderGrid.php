@@ -516,7 +516,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $class = $this->_getConfirmDateClass($value, $row, $column);
 
         $origValue = $row->getData($column->getIndex());
-        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+        $date = new DateTime($origValue);
+        $date->setTimezone(
+            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
+        );
+
+        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
 
         return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
     }

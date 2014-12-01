@@ -257,6 +257,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_changelogUrl;
 
     /**
+     * @var string[]
+     */
+    protected $_storeTimeZones = array();
+
+    /**
      * Get required fields array.
      *
      * @return array
@@ -420,6 +425,59 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getCustomBarcodes()
     {
         return $this->_customBarcodes;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getStoreTimeZones()
+    {
+        return $this->_storeTimeZones;
+    }
+
+    /**
+     * @param string[] $storeTimeZones
+     *
+     * @return $this
+     */
+    public function setStoreTimeZones(array $storeTimeZones)
+    {
+        $this->_storeTimeZones = $storeTimeZones;
+
+        return $this;
+    }
+
+    /**
+     * Get the time zone of the specified store ID.
+     *
+     * @param int|string $storeId
+     * @param boolean    $asDateTimeZone
+     *
+     * @return string|DateTimeZone
+     */
+    public function getStoreTimeZone($storeId, $asDateTimeZone = false)
+    {
+        $storeId = (int) $storeId;
+
+        $storeTimeZones = $this->getStoreTimeZones();
+        if (isset($storeTimeZones[$storeId])) {
+            $timeZone = $storeTimeZones[$storeId];
+            if ($asDateTimeZone) {
+                $timeZone = new DateTimeZone($timeZone);
+            }
+
+            return $timeZone;
+        }
+
+        $timeZone = Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE, $storeId);
+        $storeTimeZones[$storeId] = $timeZone;
+
+        $this->setStoreTimeZones($storeTimeZones);
+
+        if ($asDateTimeZone) {
+            $timeZone = new DateTimeZone($timeZone);
+        }
+        return $timeZone;
     }
 
     /**
