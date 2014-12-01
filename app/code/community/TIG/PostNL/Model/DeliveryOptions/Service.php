@@ -125,26 +125,27 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * Calculate the confirm date for a specified delivery date.
      *
      * @param string|DateTime $deliveryDate
+     * @param string|boolean  $timeZone
      *
      * @return DateTime
      */
-    public function getConfirmDate($deliveryDate)
+    public function getConfirmDate($deliveryDate, $timeZone = false)
     {
         if ($this->hasConfirmDate()) {
             return $this->_getData('confirm_date');
         }
 
+        if (!is_string($timeZone)) {
+            $timeZone = 'UTC';
+        }
+        $timeZone = new DateTimeZone($timeZone);
+
         if (is_string($deliveryDate)) {
-            $deliveryDate = new DateTime($deliveryDate);
+            $deliveryDate = new DateTime($deliveryDate, $timeZone);
         }
 
         $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
-        $confirmDate = $confirmDate->format('Y-m-d');
 
-        $timeZone = Mage::getStoreConfig(
-            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
-            Mage::app()->getStore()->getId()
-        );
         $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
 
         $this->setConfirmDate($confirmDate);
@@ -257,8 +258,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
+        $timeZone = Mage::app()->getLocale()->getTimezone();
+
         $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
-        $confirmDate = $this->getConfirmDate($deliveryDate)->getTimestamp();
+        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -273,7 +276,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($deliveryDate)
-                    ->setConfirmDate($confirmDate);
+                    ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)
