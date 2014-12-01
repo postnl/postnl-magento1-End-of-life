@@ -82,9 +82,19 @@
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery time'); ?></label></td>
                     <?php if (!empty($_deliveryTimeInfo['delivery_time_end'])): ?>
-                        <td class="value"><strong><?php echo $_deliveryTimeInfo['delivery_time_start']; ?> - <?php echo $_deliveryTimeInfo['delivery_time_end']; ?></strong><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php  echo $_deliveryTimeInfo['store_delivery_time_start']; ?> - <?php  echo $_deliveryTimeInfo['store_delivery_time_end']; ?>)<?php endif;?></td>
+                        <td class="value">
+                            <strong><?php echo $_deliveryTimeInfo['delivery_time_start']; ?> - <?php echo $_deliveryTimeInfo['delivery_time_end']; ?></strong><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php  echo $_deliveryTimeInfo['store_delivery_time_start']; ?> - <?php  echo $_deliveryTimeInfo['store_delivery_time_end']; ?>)<?php endif;?>
+                            <div class="field-tooltip">
+                                <div><?php echo $this->__('The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.'); ?></div>
+                            </div>
+                        </td>
                     <?php else: ?>
-                        <td class="value"><strong><?php echo $this->__('from'); ?> <?php echo $_deliveryTimeInfo['delivery_time_start']; ?><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php echo $_deliveryTimeInfo['store_delivery_time_start'] ?>)<?php endif;?></strong></td>
+                        <td class="value">
+                            <strong><?php echo $this->__('from'); ?> <?php echo $_deliveryTimeInfo['delivery_time_start']; ?><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php echo $_deliveryTimeInfo['store_delivery_time_start'] ?>)<?php endif;?></strong>
+                            <div class="field-tooltip">
+                                <div><?php echo $this->__('The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.'); ?></div>
+                            </div>
+                        </td>
                     <?php endif; ?>
                 </tr>
             <?php endif; ?>

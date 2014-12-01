@@ -1200,3 +1200,5 @@ TIG_PostNL::The shipping status of shipment #%s cannot be updated.,De verzendsta
 TIG_PostNL::Print packing slips & confirm shipment,Print pakbon en zending voormelden
 TIG_PostNL::PostNL - Print packing slips & confirm shipment,PostNL - Print pakbonnen en zending voormelden
 TIG_PostNL::This step has been saved successfully!,Deze stap is succesvol opgeslagen!
+TIG_PostNL::The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.,De daadwerkelijke bezorgtijd kan veranderd zijn. Kijk op MijnPakket om de meest accurate bezorgtijd te zien.
+TIG_PostNL::Shipping status,Verzendstatus

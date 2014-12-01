@@ -280,8 +280,15 @@ MijnpakketLogin.prototype = {
 
             $('billing:use_for_shipping_yes').checked = true;
             if (this.isOsc) {
-                $('shipping_address').hide();
-                $('shipping_address_list').hide();
+                var shippingAddress = $('shipping_address');
+                var shippingAddressList = $('shipping_address_list');
+                if (shippingAddress) {
+                    shippingAddress.hide();
+                }
+
+                if (shippingAddressList) {
+                    shippingAddressList.hide();
+                }
             }
         }.bind(this));
 
@@ -551,14 +558,17 @@ MijnpakketLogin.prototype = {
         var virtualStreet1 = $('virtual:billing:street1');
         var virtualStreet2 = $('virtual:billing:street2');
         var virtualStreet3 = $('virtual:billing:street3');
-        if (virtualStreet1) {
-            $('virtual:shipping:street1').setValue(virtualStreet1.getValue());
+        var virtualShippingStreet1 = $('virtual:billing:street1');
+        var virtualShippingStreet2 = $('virtual:billing:street2');
+        var virtualShippingStreet3 = $('virtual:billing:street3');
+        if (virtualStreet1 && virtualShippingStreet1) {
+            virtualShippingStreet1.setValue(virtualStreet1.getValue());
         }
-        if (virtualStreet2) {
-            $('virtual:shipping:street2').setValue(virtualStreet2.getValue());
+        if (virtualStreet2 && virtualShippingStreet2) {
+            virtualShippingStreet2.setValue(virtualStreet2.getValue());
         }
-        if (virtualStreet3) {
-            $('virtual:shipping:street3').setValue(virtualStreet3.getValue());
+        if (virtualStreet3 && virtualShippingStreet3) {
+            virtualShippingStreet3.setValue(virtualStreet3.getValue());
         }
 
         /**

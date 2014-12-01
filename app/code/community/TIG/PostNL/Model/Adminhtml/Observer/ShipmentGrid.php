@@ -679,7 +679,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $origValue = $row->getData($column->getIndex());
-        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+        $date = new DateTime($origValue);
+        $date->setTimezone(
+            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
+        );
+
+        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
 
         return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
     }
@@ -738,7 +743,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the confirm_status column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport
@@ -784,7 +789,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the labels_printed column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport

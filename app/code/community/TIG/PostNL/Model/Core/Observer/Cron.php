@@ -74,6 +74,50 @@ class TIG_PostNL_Model_Core_Observer_Cron
     const MAX_PRODUCTS_TO_UPDATE = 250;
 
     /**
+     * @var array
+     */
+    protected $_timeZones = array();
+
+    /**
+     * @return array
+     */
+    public function getTimeZones()
+    {
+        return $this->_timeZones;
+    }
+
+    /**
+     * @param array $timeZones
+     *
+     * @return $this
+     */
+    public function setTimeZones($timeZones)
+    {
+        $this->_timeZones = $timeZones;
+
+        return $this;
+    }
+
+    /**
+     * @param int|string $storeId
+     *
+     * @return string
+     */
+    public function getTimeZone($storeId)
+    {
+        $timeZones = $this->getTimeZones();
+        if (isset($timeZones[$storeId])) {
+            return $timeZones[$storeId];
+        }
+
+        $timeZone = Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE, $storeId);
+        $timeZones[$storeId] = $timeZone;
+
+        $this->setTimeZones($timeZones);
+        return $timeZone;
+    }
+
+    /**
      * Method to destroy temporary label files that have been stored for too long.
      *
      * By default the PostNL module creates temporary label files in order to merge them into a single shipping label.
@@ -1140,5 +1184,214 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog($helper->__('UpdateProductAttribute cron has finished.'));
 
         return $this;
+    }
+
+    /**
+     * Modify the confirm- and delivery dates for all PostNL orders and shipments. These dates are currently entered in
+     * the storeview's timezone. These should be entered in the UTC timezone.
+     *
+     * @return $this
+     */
+    public function updateDateTimeZone()
+    {
+        $helper = Mage::helper('postnl');
+
+        $helper->cronLog($helper->__('UpdateDateTimeZone cron starting...'));
+
+        $data = Mage::getStoreConfig(
+            TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        if (!$data) {
+            $helper->cronLog($helper->__('No IDs found. Exiting cron.'));
+            return $this;
+        }
+
+        $data = unserialize($data);
+
+        /**
+         * Process the shipments.
+         */
+        if (!empty($data['shipment'])) {
+            $data['shipment'] = $this->_updatePostnlShipmentDateTimeZone($data['shipment']);
+        }
+
+        /**
+         * Process the orders.
+         */
+        if (!empty($data['order'])) {
+            $data['order'] = $this->_updatePostnlOrderDateTimeZone($data['order']);
+        }
+
+        if (empty($data['shipment']) && empty($data['order'])) {
+            /**
+             * All orders and shipments have been processed so we can remove the cron.
+             */
+            $helper->cronLog($helper->__('All orders and shipments have been processed. Removing cron.'));
+
+            Mage::getConfig()->saveConfig(
+                TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+                null,
+                'default',
+                Mage_Core_Model_App::ADMIN_STORE_ID
+            );
+
+            Mage::getModel('core/config_data')
+                ->load(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path')
+                ->setValue(null)
+                ->setPath(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH)
+                ->save();
+        }
+
+        Mage::getConfig()->saveConfig(
+            TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+            serialize($data),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $helper->cronLog($helper->__('UpdateDateTimeZone cron has finished.'));
+
+        return $this;
+    }
+
+    /**
+     * Update the time zone of the confirm- and delivery date value for PostNL shipments.
+     *
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function _updatePostnlShipmentDateTimeZone($ids)
+    {
+        /**
+         * Get all PostNL shipments.
+         */
+        $postnlShipments = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipments->addFieldToFilter('entity_id', array('in' => $ids));
+        $postnlShipments->getSelect()->limit(100);
+
+        $helper = Mage::helper('postnl');
+
+        foreach ($postnlShipments as $postnlShipment) {
+            $helper->cronLog($helper->__('Updating shipment ID: %s', $postnlShipment->getId()));
+
+            /**
+             * Remove this shipment's ID from the IDs array. Even if it fails for this shipment, we don't want to try
+             * again.
+             */
+            $key = array_search($postnlShipment->getId(), $ids);
+            if($key !== false) {
+                unset($ids[$key]);
+            }
+
+            /**
+             * Get the shipment's timezone.
+             */
+            $timeZone = $this->getTimeZone($postnlShipment->getStoreId());
+
+            /**
+             * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
+             */
+            $confirmDate  = $postnlShipment->getConfirmDate();
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+
+            /**
+             * Modify the dates to the UTC timezone.
+             */
+            $confirmDateTime = new DateTime($confirmDate, new DateTimeZone($timeZone));
+            $confirmDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            $deliveryDateTime = new DateTime($deliveryDate, new DateTimeZone($timeZone));
+            $deliveryDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            /**
+             * Update the dates.
+             */
+            $postnlShipment->setConfirmDate($confirmDateTime->getTimestamp())
+                           ->setDeliveryDate($deliveryDateTime->getTimestamp());
+
+            /**
+             * Save the shipment.
+             */
+            try {
+                $postnlShipment->save();
+            } catch (Exception $e) {
+                $helper->cronLog($helper->__('Updating shipment ID %s failed.', $postnlShipment->getId()));
+                $helper->logException($e);
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Update the time zone of the confirm- and delivery date value for PostNL orders.
+     *
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function _updatePostnlOrderDateTimeZone($ids)
+    {
+        /**
+         * Get all PostNL shipments.
+         */
+        $postnlOrders = Mage::getResourceModel('postnl_core/order_collection');
+        $postnlOrders->addFieldToFilter('entity_id', array('in' => $ids));
+        $postnlOrders->getSelect()->limit(100);
+
+        $helper = Mage::helper('postnl');
+
+        foreach ($postnlOrders as $postnlOrder) {
+            $helper->cronLog($helper->__('Updating order ID: %s', $postnlOrder->getId()));
+
+            /**
+             * Remove this order's ID from the IDs array. Even if it fails for this shipment, we don't want to try
+             * again.
+             */
+            $key = array_search($postnlOrder->getId(), $ids);
+            if($key !== false) {
+                unset($ids[$key]);
+            }
+
+            /**
+             * Get the order's timezone.
+             */
+            $timeZone = $this->getTimeZone($postnlOrder->getStoreId());
+
+            /**
+             * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
+             */
+            $confirmDate  = $postnlOrder->getConfirmDate();
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+
+            /**
+             * Modify the dates to the UTC timezone.
+             */
+            $confirmDateTime = new DateTime($confirmDate, new DateTimeZone($timeZone));
+            $confirmDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            $deliveryDateTime = new DateTime($deliveryDate, new DateTimeZone($timeZone));
+            $deliveryDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            /**
+             * Update the dates.
+             */
+            $postnlOrder->setConfirmDate($confirmDateTime->getTimestamp())
+                           ->setDeliveryDate($deliveryDateTime->getTimestamp());
+
+            /**
+             * Save the order.
+             */
+            try {
+                $postnlOrder->save();
+            } catch (Exception $e) {
+                $helper->cronLog($helper->__('Updating order ID %s failed.', $postnlOrder->getId()));
+                $helper->logException($e);
+            }
+        }
+
+        return $ids;
     }
 }

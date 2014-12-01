@@ -100,11 +100,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
         if ($postnlOrder->getId()) {
             if ($postnlOrder->hasConfirmDate()) {
-                $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+                $confirmDate = new DateTime($postnlOrder->getConfirmDate());
+                $postnlShipment->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->hasDeliveryDate()) {
-                $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
+                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate());
+                $postnlShipment->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->getIsPakjeGemak()) {

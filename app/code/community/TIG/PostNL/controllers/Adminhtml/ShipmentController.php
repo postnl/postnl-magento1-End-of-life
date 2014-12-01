@@ -85,10 +85,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 );
             }
 
+            $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                $shipment->getStoreId()
+            );
+
             /**
              * Get the labels from CIF.
              */
-            $labels = $this->_getLabels($shipment);
+            $labels = $this->_getLabels($shipment, false, $printReturnLabels);
 
             /**
              * We need to check for warnings before the label download response
@@ -268,11 +272,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              */
             $shipment = $this->_loadShipment($shipmentId, true);
 
+            $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                $shipment->getStoreId()
+            );
+
             /**
              * Get the labels from CIF and create the packing slip.
              */
             $pdf = new Zend_Pdf();
-            $shipmentLabels = $this->_getLabels($shipment, false);
+            $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
             Mage::getModel('postnl_core/packingSlip')->createPdf($shipmentLabels, $shipment, $pdf);
             $output = $pdf->render();
 
@@ -1443,7 +1451,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $shipmentLabels = $this->_getLabels($shipment, true);
+                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                        $shipment->getStoreId()
+                    );
+
+                    $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                     Mage::helper('postnl/cif')->parseCifException($e);
@@ -1703,7 +1715,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $shipmentLabels = $this->_getLabels($shipment, false);
+                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                        $shipment->getStoreId()
+                    );
+
+                    $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
@@ -1889,7 +1905,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                         );
                     }
 
-                    $shipmentLabels = $this->_getLabels($shipment, false);
+                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                        $shipment->getStoreId()
+                    );
+
+                    $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
                     $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                     Mage::helper('postnl/cif')->parseCifException($e);

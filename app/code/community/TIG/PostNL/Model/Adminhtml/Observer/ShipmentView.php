@@ -154,7 +154,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
-        if ($printReturnLabelAllowed && $postnlShipment->canPrintReturnLabels()) {
+        if ($printReturnLabelAllowed
+            && $postnlShipment->canPrintReturnLabels()
+            && Mage::helper('postnl')->isReturnsEnabled($postnlShipment->getStoreId())
+        ) {
             $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
 
             $block->addButton(

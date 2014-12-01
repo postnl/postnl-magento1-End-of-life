@@ -143,10 +143,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Xpaths to return label settings.
      */
-    const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
-    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/return_freepost_number';
-    const XPATH_CUSTOMER_PRINT_LABEL = 'postnl/returns/customer_print_label';
-    const XPATH_GUEST_PRINT_LABEL    = 'postnl/returns/guest_print_label';
+    const XPATH_RETURN_LABELS_ACTIVE                     = 'postnl/returns/return_labels_active';
+    const XPATH_FREEPOST_NUMBER                          = 'postnl/returns/return_freepost_number';
+    const XPATH_CUSTOMER_PRINT_LABEL                     = 'postnl/returns/customer_print_label';
+    const XPATH_GUEST_PRINT_LABEL                        = 'postnl/returns/guest_print_label';
+    const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS = 'postnl/returns/print_return_and_shipping_label';
 
     /**
      * Required configuration fields.
@@ -254,6 +255,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var string
      */
     protected $_changelogUrl;
+
+    /**
+     * @var string[]
+     */
+    protected $_storeTimeZones = array();
 
     /**
      * Get required fields array.
@@ -419,6 +425,59 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getCustomBarcodes()
     {
         return $this->_customBarcodes;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getStoreTimeZones()
+    {
+        return $this->_storeTimeZones;
+    }
+
+    /**
+     * @param string[] $storeTimeZones
+     *
+     * @return $this
+     */
+    public function setStoreTimeZones(array $storeTimeZones)
+    {
+        $this->_storeTimeZones = $storeTimeZones;
+
+        return $this;
+    }
+
+    /**
+     * Get the time zone of the specified store ID.
+     *
+     * @param int|string $storeId
+     * @param boolean    $asDateTimeZone
+     *
+     * @return string|DateTimeZone
+     */
+    public function getStoreTimeZone($storeId, $asDateTimeZone = false)
+    {
+        $storeId = (int) $storeId;
+
+        $storeTimeZones = $this->getStoreTimeZones();
+        if (isset($storeTimeZones[$storeId])) {
+            $timeZone = $storeTimeZones[$storeId];
+            if ($asDateTimeZone) {
+                $timeZone = new DateTimeZone($timeZone);
+            }
+
+            return $timeZone;
+        }
+
+        $timeZone = Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE, $storeId);
+        $storeTimeZones[$storeId] = $timeZone;
+
+        $this->setStoreTimeZones($storeTimeZones);
+
+        if ($asDateTimeZone) {
+            $timeZone = new DateTimeZone($timeZone);
+        }
+        return $timeZone;
     }
 
     /**
@@ -1720,6 +1779,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return true;
+    }
+
+    /**
+     * Check if return labels can be printed along with shipping labels for the specified store view.
+     *
+     * @param boolean|int $storeId
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabelsWithShippingLabels($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isReturnsEnabled($storeId)) {
+            return false;
+        }
+
+        $printReturnLabels = Mage::getStoreConfigFlag(self::XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS, $storeId);
+        return $printReturnLabels;
     }
 
     /**

@@ -142,8 +142,10 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 
         if ($this->hasOrderId()) {
             $storeId = $this->getOrder()->getStoreId();
-        } else {
+        } elseif ($this->hasQuoteId()) {
             $storeId = $this->getQuote()->getStoreId();
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
         }
 
         $this->setStoreId($storeId);

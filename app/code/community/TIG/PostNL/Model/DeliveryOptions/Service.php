@@ -124,22 +124,29 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Calculate the confirm date for a specified delivery date.
      *
-     * @param string $deliveryDate
+     * @param string|DateTime $deliveryDate
+     * @param string|boolean  $timeZone
      *
      * @return DateTime
      */
-    public function getConfirmDate($deliveryDate)
+    public function getConfirmDate($deliveryDate, $timeZone = false)
     {
         if ($this->hasConfirmDate()) {
             return $this->_getData('confirm_date');
         }
 
-        $deliveryDate = new DateTime($deliveryDate);
+        if (!is_string($timeZone)) {
+            $timeZone = 'UTC';
+        }
+        $timeZone = new DateTimeZone($timeZone);
+
+        if (is_string($deliveryDate)) {
+            $deliveryDate = new DateTime($deliveryDate, $timeZone);
+        }
 
         $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
-        $confirmDate = $confirmDate->format('Y-m-d');
 
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate);
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
@@ -241,7 +248,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
-     * @param $data
+     * Save the specified delivery option.
+     *
+     * @param array $data
      *
      * @return $this
      */
@@ -249,7 +258,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
-        $confirmDate = $this->getConfirmDate($data['date'])->getTimestamp();
+        $timeZone = Mage::app()->getLocale()->getTimezone();
+
+        $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
+        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -263,8 +275,8 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
-                    ->setDeliveryDate($data['date'])
-                    ->setConfirmDate($confirmDate);
+                    ->setDeliveryDate($deliveryDate)
+                    ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)
