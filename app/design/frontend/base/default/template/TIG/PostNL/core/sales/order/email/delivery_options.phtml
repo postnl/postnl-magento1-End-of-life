@@ -43,10 +43,10 @@
 <?php $_deliveryOptions = $_helper->getDeliveryOptionsInfo($_order, false); ?>
 <?php if ($_deliveryOptions && $_helper->canUseDeliveryDays(false)): ?>
     <br />
-    <?php echo $this->formatDate($_deliveryOptions['delivery_date']); ?>
-    <?php if ($_deliveryOptions['delivery_time_start'] && $_deliveryOptions['delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $this->formatTime($_deliveryOptions['delivery_time_start']); ?> - <?php echo $this->formatTime($_deliveryOptions['delivery_time_end']); ?>)
-    <?php elseif ($_deliveryOptions['delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $this->formatTime($_deliveryOptions['delivery_time_start']); ?>)
+    <?php echo $this->formatDate($_deliveryOptions['store_delivery_date']); ?>
+    <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
+        &nbsp;(<?php echo $this->formatTime($_deliveryOptions['store_delivery_time_start']); ?> - <?php echo $this->formatTime($_deliveryOptions['store_delivery_time_end']); ?>)
+    <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
+        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $this->formatTime($_deliveryOptions['store_delivery_time_start']); ?>)
     <?php endif; ?>
 <?php endif; ?>

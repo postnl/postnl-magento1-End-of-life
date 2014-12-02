@@ -279,7 +279,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setPackageQty($shippingAddress->getItemQty());
 
         /**
-         * Need for shipping methods that use insurance based on price of physical products
+         * Need for shipping methods that use insurance based on price of physical products.
          */
         $packagePhysicalValue = $shippingAddress->getBaseVirtualAmount();
         $request->setPackagePhysicalValue($packagePhysicalValue);
@@ -290,7 +290,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setWebsiteId($store->getWebsiteId());
         $request->setFreeShipping($shippingAddress->getFreeShipping());
         /**
-         * Currencies need to convert in free shipping
+         * Currencies need to convert in free shipping.
          */
         $request->setBaseCurrency($store->getBaseCurrency());
         $request->setPackageCurrency($store->getCurrentCurrency());

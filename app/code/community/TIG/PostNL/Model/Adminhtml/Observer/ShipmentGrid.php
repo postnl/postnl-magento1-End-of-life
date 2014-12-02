@@ -686,7 +686,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
 
-        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
+        $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
+        return $html;
     }
 
     /**
