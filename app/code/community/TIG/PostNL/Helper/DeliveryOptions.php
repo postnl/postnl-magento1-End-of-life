@@ -384,7 +384,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param Mage_Core_Model_Abstract $entity
      * @param boolean                  $asVarienObject
      *
-     * @return array|false
+     * @return array|Varien_Object|false
      */
     public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {
@@ -438,20 +438,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * This is the basic, empty array of delivery options info.
          */
         $deliveryOptionsInfo = array(
-            'type'                     => false,
-            'shipment_type'            => false,
-            'formatted_type'           => false,
-            'product_code'             => false,
-            'product_option'           => false,
-            'shipment_costs'           => false,
-            'confirm_date'             => false,
-            'delivery_date'            => false,
-            'pakje_gemak_address'      => false,
-            'confirm_status'           => false,
-            'shipping_phase'           => false,
-            'formatted_shipping_phase' => false,
-            'delivery_time_start'      => false,
-            'delivery_time_end'        => false,
+            'type'                      => false,
+            'shipment_type'             => false,
+            'formatted_type'            => false,
+            'product_code'              => false,
+            'product_option'            => false,
+            'shipment_costs'            => false,
+            'confirm_date'              => false,
+            'delivery_date'             => false,
+            'store_confirm_date'        => false,
+            'store_delivery_date'       => false,
+            'pakje_gemak_address'       => false,
+            'confirm_status'            => false,
+            'shipping_phase'            => false,
+            'formatted_shipping_phase'  => false,
+            'delivery_time_start'       => false,
+            'delivery_time_end'         => false,
+            'store_delivery_time_start' => false,
+            'store_delivery_time_end'   => false,
         );
 
         /**
@@ -471,15 +475,34 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * Get the time zone used by the store in which the order was placed.
+         */
+        $storeTimezone = $this->getStoreTimeZone($postnlOrder->getStoreId(), true);
+
+        /**
          * If the customer chose a specific delivery time, add that to the array.
          */
         if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
-            $deliveryOptionsInfo['delivery_time_start'] = $postnlOrder->getExpectedDeliveryTimeStart();
+            $startTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+
+            $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+            $storeStartTime->setTimezone($storeTimezone);
+
+            $deliveryOptionsInfo['delivery_time_start'] = $startTime->format('H:i');
+            $deliveryOptionsInfo['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+
             /**
              * In the case of PakjeGemak shipments there is only a start time and no end time.
              */
             if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
-                $deliveryOptionsInfo['delivery_time_end'] = $postnlOrder->getExpectedDeliveryTimeEnd();
+                $endTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+
+                $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+                $storeEndTime->setTimezone($storeTimezone);
+
+                $deliveryOptionsInfo['delivery_time_end'] = $endTime->format('H:i');
+                $deliveryOptionsInfo['store_delivery_time_end'] = $storeEndTime->format('H:i');
             }
         }
 
@@ -532,14 +555,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Add the delivery date.
          */
         if ($deliveryDate) {
-            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
+            $deliveryDate = new DateTime($deliveryDate);
+
+            $deliveryOptionsInfo['delivery_date'] = $deliveryDate->format('Y-m-d H:i:s');
+            $deliveryOptionsInfo['store_delivery_date'] = $deliveryDate->setTimezone($storeTimezone)
+                                                                       ->format('Y-m-d H:i:s');
         }
 
         /**
          * Add the confirm date.
          */
         if ($confirmDate) {
-            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
+            $confirmDate = new DateTime($confirmDate);
+
+            $deliveryOptionsInfo['confirm_date'] = $confirmDate->format('Y-m-d H:i:s');
+            $deliveryOptionsInfo['store_confirm_date'] = $confirmDate->setTimezone($storeTimezone)
+                                                                     ->format('Y-m-d H:i:s');
         }
 
         /**

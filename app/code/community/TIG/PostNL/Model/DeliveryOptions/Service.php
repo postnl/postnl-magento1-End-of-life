@@ -276,7 +276,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($deliveryDate)
-                    ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
+                    ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
+                    ->setExpectedDeliveryTimeStart(false)
+                    ->setExpectedDeliveryTimeEnd(false);
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)
