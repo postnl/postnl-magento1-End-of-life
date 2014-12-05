@@ -233,6 +233,11 @@
                     <file>TIG/PostNL/track_and_trace.html</file>
                     <type>html</type>
                 </postnl_track_and_trace_track_and_trace_email_template>
+                <postnl_returns_email_template translate="label" module="postnl">
+                    <label>PostNL Return Label Email</label>
+                    <file>TIG/PostNL/return_label.html</file>
+                    <type>html</type>
+                </postnl_returns_email_template>
             </email>
         </template>
         <payment>
@@ -582,7 +587,7 @@
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
             <postnl_clean_temp_labels>
                 <schedule>
-                	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
+                	<cron_expr>30 * * * *</cron_expr> <!-- every hour at 30 minutes minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
@@ -648,7 +653,7 @@
             <!-- Update the shop's statistics with the extension control system -->
             <postnl_update_notification_feed>
                 <schedule>
-                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                    <cron_expr>15 * * * *</cron_expr> <!-- every hour at 15 minutes on the hour -->
                 </schedule>
                 <run>
                     <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
@@ -846,20 +851,6 @@
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
             </delivery_options>
-            <returns>
-                <return_labels_active>0</return_labels_active> <!-- Do not use return labels -->
-                <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
-                <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
-                <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
-                <return_label_instructions_block/>
-                <return_company/>
-                <return_department/>
-                <return_freepost_number/>
-                <return_postcode/>
-                <return_city/>
-                <return_region/>
-                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
-            </returns>
         	<cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
@@ -907,6 +898,21 @@
                 <copy_to/>
                 <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
             </track_and_trace>
+            <returns>
+                <return_labels_active>0</return_labels_active> <!-- Do not use return labels -->
+                <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
+                <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
+                <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
+                <email_template>postnl_returns_email_template</email_template> <!-- Default template from locale -->
+                <return_label_instructions_block/>
+                <return_company/>
+                <return_department/>
+                <return_freepost_number/>
+                <return_postcode/>
+                <return_city/>
+                <return_region/>
+                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
+            </returns>
             <cod>
                 <account_name/>
                 <iban/>
@@ -1022,7 +1028,7 @@
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
-                <return_expire_days>30</return_expire_days> <!-- 30 days -->
+                <return_expire_days>30</return_expire_days> <!-- 17 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
         		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
@@ -2151,6 +2157,21 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0206>
+            <POSTNL-0207>
+                <message>The sendReturnLabelEmail action is currently unavailable.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0207>
+            <POSTNL-0208>
+                <message>Unable to send return email for shipment #%s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0208>
+            <POSTNL-0209>
+                <message>Unable to send return label email due to missing shipment parameters.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0209>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

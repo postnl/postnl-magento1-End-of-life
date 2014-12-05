@@ -945,7 +945,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * The max qty attribute is only available on simple products.
              */
-            if ($item->getProductType() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+            if ($item->getProduct()->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
                 continue;
             }
 
@@ -1015,6 +1015,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function standardizeWeight($weight, $storeId = null, $toGram = false)
     {
+        if ($weight == 0) {
+            return 0;
+        }
+
         if (is_null($storeId)) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
@@ -1155,6 +1159,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'print_return_label': //no break
             case 'print_return_labels':
                 $aclPath = 'postnl/shipment/actions/print_label/print_return_labels';
+                break;
+            case 'send_return_label_email': //no break
+            case 'send_return_labels_email':
+                $aclPath = 'postnl/shipment/actions/print_label/print_return_labels/send_return_label_email';
                 break;
             case 'convert_to_buspakje':
                 $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
