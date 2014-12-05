@@ -1202,3 +1202,18 @@ TIG_PostNL::PostNL - Print packing slips & confirm shipment,PostNL - Print pakbo
 TIG_PostNL::This step has been saved successfully!,Deze stap is succesvol opgeslagen!
 TIG_PostNL::The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.,De daadwerkelijke bezorgtijd kan veranderd zijn. Kijk op MijnPakket om de meest accurate bezorgtijd te zien.
 TIG_PostNL::Shipping status,Verzendstatus
+TIG_PostNL::Unable to save return_status cron expression: %s,Unable to save return_status cron expression: %s
+TIG_PostNL::Unable to save update_date_time_zone cron expression: %s,Unable to save update_date_time_zone cron expression: %s
+TIG_PostNL::Unable to send track and trace email for shipment #%s.,De track & trace e-mail voor zending #%s kan niet verzonden worden.
+TIG_PostNL::The sendReturnLabelEmail action is currently unavailable.,De sendReturnLabelEmail actie is momenteel niet beschikbaar.
+TIG_PostNL::Unable to send return email for shipment #%s.,Niet in staat om retourlabel te versturen voor zending #%s.
+TIG_PostNL::PostNL return label email has been sent.,PostNL retourlabel e-mail is verstuurd.
+TIG_PostNL::PostNL return label email has been sent for shipment #%s.,PostNL retourlabel e-mailis verstuurd voor zending #%s.
+TIG_PostNL::Unable to send return label email due to missing shipment parameters.,Niet in staat om de retourlabel e-mail te versturen wegens missende zendingparameters.
+TIG_PostNL::You can send the customer an email with the return label attached as a pdf. Please select which transactional email template you would like to use for this email.,Het is mogelijk om de klant een e-mail te sturen met het retourlabel bijgevoegd als pdf. Selecteer s.v.p. welk e-mail template gebruikt moet worden voor deze e-mail.
+Send Return Label Email,Stuur retourlabel e-mail
+Print Return Label,Print retourlabel
+TIG_PostNL::PostNL - Send Return Label Email,PostNL - Verstuur Retourlabel E-mail
+TIG_PostNL::The return label email was sent.,De retourlabel e-mail is verzonden.
+TIG_PostNL::Return label email template,Retourlabel e-mailtemplate
+PostNL Return Label Email,PostNL Retourlabel E-mail

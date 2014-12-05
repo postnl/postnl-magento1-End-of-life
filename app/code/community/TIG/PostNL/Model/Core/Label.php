@@ -90,7 +90,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Output mode. Currently 2 modes are supported: I and S.
      *
-     * @see lib/TIG/PostNL/Fpdf/fpdf.php::Output()
+     * @see FPDF::Output()
      *
      * @var string
      */

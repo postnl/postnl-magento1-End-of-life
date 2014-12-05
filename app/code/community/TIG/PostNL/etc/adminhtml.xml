@@ -104,6 +104,12 @@
                                                     <print_return_labels translate="title" module="postnl">
                                                         <title>Print Return Label</title>
                                                         <sort_order>20</sort_order>
+                                                        <children>
+                                                            <send_return_label_email translate="title" module="postnl">
+                                                                <title>Send Return Label Email</title>
+                                                                <sort_order>10</sort_order>
+                                                            </send_return_label_email>
+                                                        </children>
                                                     </print_return_labels>
                                                 </children>
                                             </print_label>

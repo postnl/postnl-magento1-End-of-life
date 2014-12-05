@@ -72,6 +72,9 @@
  *  - postnl_shipment_add_track_and_trace_email_vars
  *  - postnl_shipment_send_track_and_trace_email_before
  *  - postnl_shipment_send_track_and_trace_email_after
+ *  - postnl_shipment_add_return_label_email_vars
+ *  - postnl_shipment_send_return_label_email_before
+ *  - postnl_shipment_send_return_label_email_after
  *
  * @method boolean                        getIsDutchShipment()
  * @method boolean                        getIsEuShipment()
@@ -137,6 +140,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeStart(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeEnd(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
  *
  * @method boolean                        hasBarcodeUrl()
  * @method boolean                        hasPostnlOrder()
@@ -164,6 +168,7 @@
  * @method boolean                        hasExpectedDeliveryTimeStart()
  * @method boolean                        hasExpectedDeliveryTimeEnd()
  * @method boolean                        hasReturnPhase()
+ * @method boolean                        hasReturnBarcodeUrl()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -253,6 +258,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpath to default GlobalPack shipment type.
      */
     const XPATH_DEFAULT_SHIPMENT_TYPE = 'postnl/cif_globalpack_settings/default_shipment_type';
+
+    /**
+     * Xpath to the email template used to email the customer a return label.
+     */
+    const XPATH_RETURN_LABEL_EMAIL_TEMPLATE = 'postnl/returns/email_template';
 
     /**
      * CIF warning code returned when an EPS combi label is not available.
@@ -1034,19 +1044,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        /**
-         * @var TIG_PostNL_Helper_Carrier $helper
-         */
-        $helper = $this->getHelper('carrier');
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
 
-        $url = '';
-        $shippingAddress = $this->getShippingAddress();
-        if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
+        $this->setBarcodeUrl($barcodeUrl);
+        return $barcodeUrl;
+    }
+
+    /**
+     * Gets the url for this shipment's return barcode.
+     *
+     * @param boolean $forceNl
+     *
+     * @return string
+     *
+     * @see TIG_PostNL_Helper_Carrier::getBarcodeUrl()
+     */
+    public function getReturnBarcodeUrl($forceNl = false)
+    {
+        if ($this->hasReturnBarcodeUrl()) {
+            return $this->_getData('return_barcode_url');
         }
 
-        $this->setBarcodeUrl($url);
-        return $url;
+        $barcode = $this->getReturnBarcode();
+        if (!$barcode) {
+            return false;
+        }
+
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
+
+        $this->setReturnBarcodeUrl($barcodeUrl);
+        return $barcodeUrl;
     }
 
     /**
@@ -2695,6 +2722,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if the return label can be mailed to the customer.
+     *
+     * @return boolean
+     */
+    public function canSendReturnLabelEmail()
+    {
+        if ($this->isLocked()) {
+            return false;
+        }
+
+        if (!$this->hasReturnLabels()) {
+            return false;
+        }
+
+        if (!$this->canPrintReturnLabels()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if this shipment's confirmation status can be reset.
      *
      * @return boolean
@@ -3778,7 +3827,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $helper->logException($e);
             throw new TIG_PostNL_Exception(
                 $helper->__(
-                    'Unable to send track and trace email for shipment #',
+                    'Unable to send track and trace email for shipment #%s.',
                     $this->getShipmentId()
                 ),
                 'POSTNL-0077'
@@ -3998,6 +4047,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Get the barcode URL for the specified barcode.
+     *
+     * @param string  $barcode
+     * @param boolean $forceNl
+     *
+     * @return string
+     */
+    protected function _getBarcodeUrl($barcode, $forceNl = false)
+    {
+        /**
+         * @var TIG_PostNL_Helper_Carrier $helper
+         */
+        $helper = $this->getHelper('carrier');
+
+        $url = '';
+        $shippingAddress = $this->getShippingAddress();
+        if ($shippingAddress) {
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
+        }
+
+        return $url;
+    }
+
     /*******************************************************************************************************************
      * LABEL PROCESSING METHODS
      ******************************************************************************************************************/
@@ -4170,6 +4243,183 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return $labels;
+    }
+
+    /**
+     * Send an email to the customer containing the return label as a pdf attachment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function sendReturnLabelEmail()
+    {
+        $helper = Mage::helper('postnl');
+        if (!$this->canSendReturnLabelEmail()) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('The sendReturnLabelEmail action is currently unavailable.'),
+                'POSTNL-0207'
+            );
+        }
+
+        try {
+            $this->_sendReturnLabelEmail();
+        } catch (Exception $e) {
+            Mage::printException($e);exit;
+            $helper->logException($e);
+            throw new TIG_PostNL_Exception(
+                $helper->__(
+                    'Unable to send return email for shipment #%s.',
+                    $this->getShipmentId()
+                ),
+                'POSTNL-0208'
+            );
+        }
+
+        /**
+         * Set the 'return labels printed' flag to true for this shipment.
+         */
+        if (!$this->getReturnLabelsPrinted()) {
+            $this->setReturnLabelsPrinted(true)
+                 ->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Send an email to the customer with the return label as a pdf attachment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     *
+     * @todo attach return label pdf
+     */
+    protected function _sendReturnLabelEmail()
+    {
+        $helper = Mage::helper('postnl');
+
+        $storeId = $this->getStoreId();
+
+        $template = Mage::getStoreConfig(self::XPATH_RETURN_LABEL_EMAIL_TEMPLATE, $storeId);
+
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
+        $shippingAddress = $this->getShippingAddress();
+        $shipment        = $this->getShipment();
+        $order           = $this->getOrder();
+        $returnLabels    = $this->getReturnLabels();
+        if (!$order || !$shipment || !$shippingAddress || empty($returnLabels)) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('Unable to send return label email due to missing shipment parameters.'),
+                'POSTNL-0209'
+            );
+        }
+
+        $payment          = $order->getPayment();
+        $paymentBlockHtml = '';
+        if ($payment) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock = Mage::helper('payment')
+                                ->getInfoBlock($payment)
+                                ->setIsSecureMode(true);
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock->getMethod()
+                         ->setStore($storeId);
+
+            /**
+             * @var Mage_Payment_Block_Info $paymentBlock
+             */
+            $paymentBlockHtml = $paymentBlock->toHtml();
+        }
+
+        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $templateVariables = array(
+            'postnlshipment'     => $this,
+            'barcode'            => $this->getMainBarcode(),
+            'barcode_url'        => $this->getBarcodeUrl(false),
+            'return_barcode'     => $this->getReturnBarcode(),
+            'return_barcode_url' => $this->getReturnBarcodeUrl(false),
+            'shipment'           => $shipment,
+            'order'              => $order,
+            'payment_html'       => $paymentBlockHtml,
+            'customer'           => $customer,
+            'customer_name'      => $order->getCustomerName(),
+            'quote'              => $quote,
+            'shipment_comment'   => '', /** @todo add last shipment comment */
+            'billing'            => $order->getBillingAddress(),
+            'shipping'           => $order->getShippingAddress(),
+            'pakje_gemak'        => $this->getPakjeGemakAddress(),
+        );
+
+        $templateVariables = new Varien_Object($templateVariables);
+
+        $returnLabelPdf = Mage::getModel('postnl_core/label')
+                              ->setLabelSize('A4')
+                              ->setOutputMode('S')
+                              ->createPdf($returnLabels);
+        $returnLabelObject = new varien_Object(array('label_pdf' => $returnLabelPdf));
+
+        Mage::dispatchEvent(
+            'postnl_shipment_add_return_label_email_vars',
+            array(
+                'vars'            => $templateVariables,
+                'return_label'    => $returnLabelObject,
+                'postnl_shipment' => $this,
+            )
+        );
+
+        $emailInfo = Mage::getModel('core/email_info');
+        $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
+
+        $transactionalEmail = Mage::getModel('core/email_template');
+        $transactionalEmail->setDesignConfig(array('area' => 'frontend', 'store' => $storeId));
+
+        /** @var Zend_Mail $mail */
+        $mail = $transactionalEmail->getMail();
+        $mail->createAttachment(
+            $returnLabelObject->getData('label_pdf'),
+            Zend_Mime::TYPE_OCTETSTREAM,
+            Zend_Mime::DISPOSITION_ATTACHMENT,
+            Zend_Mime::ENCODING_BASE64,
+            $helper->__('postnl_return_label.pdf')
+        );
+
+        $transactionalEmail->sendTransactional(
+            $template,
+            Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId),
+            $emailInfo->getToEmails(),
+            $emailInfo->getToNames(),
+            $templateVariables->getData(),
+            $this->getStoreId()
+        );
+
+        /**
+         * Add a comment to the order and shipment that the return label email has been sent.
+         */
+        $order->addStatusHistoryComment(
+                  $helper->__(
+                      'PostNL return label email has been sent for shipment #%s.',
+                      $shipment->getIncrementId()
+                  )
+              )
+              ->setIsCustomerNotified(1)
+              ->save();
+
+        $shipment->addComment(
+                     $helper->__('PostNL return label email has been sent.'),
+                     true
+                 )
+                 ->save();
+
+        return $this;
     }
 
     /*******************************************************************************************************************

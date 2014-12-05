@@ -135,19 +135,19 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
                    ->addFieldToFilter('code', array('eq' => $status->Code));
 
-        if ($status->LocationCode) {
+        if (!empty($status->LocationCode)) {
             $collection->addFieldToFilter('location_code', array('eq' => $status->LocationCode));
         }
 
-        if ($status->DestinationLocationCode) {
+        if (!empty($status->DestinationLocationCode)) {
             $collection->addFieldToFilter('destination_location_code', array('eq' => $status->DestinationLocationCode));
         }
 
-        if ($status->RouteCode) {
+        if (!empty($status->RouteCode)) {
             $collection->addFieldToFilter('route_code', array('eq' => $status->RouteCode));
         }
 
-        if ($status->RouteName) {
+        if (!empty($status->RouteName)) {
             $collection->addFieldToFilter('route_name', array('eq' => $status->RouteName));
         }
 

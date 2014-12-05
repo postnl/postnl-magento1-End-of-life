@@ -47,6 +47,7 @@ $installer = $this;
  */
 $returnLabelsAclResource = array(
     'admin/postnl/shipment/actions/print_label/print_return_labels',
+    'admin/postnl/shipment/actions/print_label/print_return_labels/send_return_label_email',
 );
 
 $returnLabelsRequiredResources = array(
