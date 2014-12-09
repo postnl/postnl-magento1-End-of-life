@@ -863,12 +863,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
 
+        $oneDayAgo = new DateTime();
+        $oneDayAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                  ->sub(new DateInterval('P1DT20M'));
+
+        $oneDayAgo = $oneDayAgo->format('Y-m-d H:i:s');
+
         $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before " .
             "{$twentyMinutesAgo}.");
 
         /**
          * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet
-         * been sent
+         * been sent.
          *
          * Resulting SQL:
          * SELECT `main_table` . *
@@ -881,6 +887,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * )
          * AND (
          *     confirmed_at <= '{$twentyMinutesAgo}'
+         *     AND confirmed_at >= '{$$oneDayAgo}'
          * )
          * AND (
          *     (
@@ -907,7 +914,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                  )
                                  ->addFieldToFilter(
                                      'confirmed_at',
-                                     array('lteq' => $twentyMinutesAgo)
+                                     array(
+                                         'from' => $oneDayAgo,
+                                         'to'   => $twentyMinutesAgo,
+                                     )
                                  )
                                  ->addFieldToFilter(
                                     'track_and_trace_email_sent',
@@ -924,7 +934,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                  );
 
         /**
-         * Check to see if there are any results
+         * Check to see if there are any results.
          */
         if (!$postnlShipmentCollection->getSize()) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
@@ -934,7 +944,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog("Track & trace emails will be sent for {$postnlShipmentCollection->getSize()} shipments.");
 
         /**
-         * Send the track and trace email for all shipments
+         * Send the track and trace email for all shipments.
          */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             if (!$postnlShipment->getShipment(false)) {
@@ -942,7 +952,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             }
 
             /**
-             * Check if sending the email is allowed for this shipment
+             * Check if sending the email is allowed for this shipment.
              */
             $storeId = $postnlShipment->getStoreId();
             if (!in_array($storeId, $allowedStoreIds) || !$postnlShipment->canSendTrackAndTraceEmail()) {
@@ -953,7 +963,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             }
 
             /**
-             * Attempt to send the email
+             * Attempt to send the email.
              */
             try{
                 $helper->cronLog("Sending track and trace email for shipment #{$postnlShipment->getId()}");

@@ -1217,3 +1217,7 @@ TIG_PostNL::PostNL - Send Return Label Email,PostNL - Verstuur Retourlabel E-mai
 TIG_PostNL::The return label email was sent.,De retourlabel e-mail is verzonden.
 TIG_PostNL::Return label email template,Retourlabel e-mailtemplate
 PostNL Return Label Email,PostNL Retourlabel E-mail
+"TIG_PostNL::The installed version of PHP is too low. The installed PHP version is %s, the minimum required PHP version is %s.",De geïnstalleerde PHP versie is te laag. De geïnstalleerde PHP versie is %s. De minimale versie is %s.
+TIG_PostNL::Invalid settings provided.,Onjuiste instellingen aangeleverd.
+TIG_PostNL::Invalid config value provided.,Onjuiste configuratiewaarde aangeleverd.
+TIG_PostNL::Invalid updateConfigSettings response: %s,Invalid updateConfigSettings response: %s

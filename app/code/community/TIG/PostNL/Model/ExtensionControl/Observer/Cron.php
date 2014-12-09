@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_ExtensionControl_Observer_Cron
 {
     /**
-     * updates the shop's statistics with the extension control system.
+     * Updates the shop's statistics with the extension control system.
      *
      * @return TIG_PostNL_Model_ExtensionControl_Observer_Cron
      */
@@ -48,14 +48,14 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $helper = Mage::helper('postnl');
 
         /**
-         * Check if the PostNL module is active
+         * Check if the PostNL module is active.
          */
         if (!$helper->isEnabled()) {
             return $this;
         }
 
         /**
-         * Check if the extension may send statistics to the extension control system
+         * Check if the extension may send statistics to the extension control system.
          */
         if (!Mage::helper('postnl/webservices')->canSendStatistics()) {
             return $this;
@@ -64,7 +64,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $helper->cronLog('UpdateStatistics cron starting...');
 
         /**
-         * Attempt to update the shop's statistics
+         * Attempt to update the shop's statistics.
          */
         try {
             $helper->cronLog('Updating shop statistics.');
@@ -146,6 +146,46 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         }
 
         $helper->cronLog('CheckFeedUpdate cron has finished.');
+        return $this;
+    }
+
+    /**
+     * Update the shop's config settings with settings retrieved from the extension control system. Currently this is
+     * used for the Google Maps API key, and the Cendris username and password.
+     *
+     * N.B. this will not be used to overwrite settings that were configured by the end-user.
+     *
+     * @return $this
+     */
+    public function updateSettings()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Check if the PostNL module is active.
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+
+        $helper->cronLog('UpdateSettings cron starting...');
+
+        /**
+         * Attempt to update the shop's statistics
+         */
+        try {
+            $helper->cronLog('Updating shop config settings.');
+
+            $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
+            $settings = $webservices->updateConfigSettings();
+
+            Mage::getModel('postnl_extensioncontrol/config')->saveConfigSettings($settings);
+        } catch (Exception $e) {
+            $helper->cronLog('An error occurred: ' . $e->getMessage());
+            $helper->logException($e);
+        }
+
+        $helper->cronLog('UpdateSettings has finished.');
         return $this;
     }
 }
