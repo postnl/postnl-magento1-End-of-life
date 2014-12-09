@@ -997,7 +997,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Loop through all associated shipment items and add each item's row total to the shipment's total
+         * Loop through all associated shipment items and add each item's row total to the shipment's total.
          */
         $baseGrandTotal = 0;
         $shipmentItems = $shipment->getAllItems();
@@ -1009,12 +1009,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $qty = $shipmentItem->getQty();
 
             /**
-             * The base price of a shipment item is only available through it's associated order item
+             * The base price of a shipment item is only available through it's associated order item.
              */
-            $basePrice = $shipmentItem->getOrderItem()->getBasePrice();
+            $orderItem = $shipmentItem->getOrderItem();
+            $basePrice = $orderItem->getBasePriceInclTax() + $orderItem->getBaseDiscountAmount();
 
             /**
-             * Calculate and add the shipment item's row total
+             * Calculate and add the shipment item's row total.
              */
             $totalBasePrice = $basePrice * $qty;
             $baseGrandTotal += $totalBasePrice;

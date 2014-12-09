@@ -83,15 +83,15 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     /**
      * Calls a webservice method
      *
-     * @param string $method     The method that will be called
-     * @param array  $soapParams An array of parameters to be sent
+     * @param string     $method     The method that will be called
+     * @param null|array $soapParams An array of parameters to be sent
      *
      * @throws Exception
      * @throws SoapFault
      *
-     * @return object
+     * @return mixed
      */
-    public function call($method, $soapParams)
+    public function call($method, $soapParams = null)
     {
         try {
             $wsdl = Mage::getStoreConfig(self::WEBSERVICE_WSDL_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
@@ -128,7 +128,11 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             /**
              * Call the SOAP method.
              */
-            $response = $client->$method($soapParams);
+            if (null !== $soapParams) {
+                $response = $client->$method($soapParams);
+            } else {
+                $response = $client->$method();
+            }
 
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;

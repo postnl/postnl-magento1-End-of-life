@@ -4063,7 +4063,7 @@
                             <depends>
                                 <use_alternative_default>1</use_alternative_default>
                             </depends>
-                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
+                            <validate>validate-not-negative-number</validate>
                         </alternative_default_max_amount>
                         <alternative_default_option translate="label tooltip" module="postnl">
                             <label>Alternative default shipping option</label>

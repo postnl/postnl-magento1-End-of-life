@@ -1306,15 +1306,28 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected function _isEnabled($storeId, $forceTestMode, $ignoreCache)
     {
-        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+        Mage::unregister('postnl_core_is_enabled_errors');
+
+        if (version_compare(PHP_VERSION, self::MIN_PHP_VERSION, '<')) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0210',
+                    'message' => $this->__(
+                        'The installed version of PHP is too low. The installed PHP version is %s, the minimum ' .
+                        'required PHP version is %s.',
+                        PHP_VERSION,
+                        self::MIN_PHP_VERSION
+                    ),
+                )
+            );
+
+            Mage::register('postnl_core_is_enabled_errors', $errors);
             return false;
         }
 
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
-
-        Mage::unregister('postnl_core_is_enabled_errors');
 
         /**
          * Check if the module has been enabled

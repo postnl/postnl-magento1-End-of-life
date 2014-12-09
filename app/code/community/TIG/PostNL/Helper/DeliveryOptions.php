@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_RESPONSIVE = 'postnl/delivery_options/responsive';
 
     /**
+     * Xpath to the Google Maps API key.
+     */
+    const XPATH_GOOGLE_MAPS_API_KEY = 'postnl/google_maps/api_key';
+
+    /**
      * The time we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
