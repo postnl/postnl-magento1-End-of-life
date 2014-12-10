@@ -961,7 +961,8 @@
                         </shipping_duration>
                         <cutoff_time translate="label tooltip" module="postnl">
                             <label>Order cut-off time</label>
-                            <tooltip>When an order is placed after this time, another day will be added to the shipping duration.</tooltip>
+                            <tooltip><![CDATA[When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.]]></tooltip>
+                            <tooltip_block>postnl_adminhtml/system_config_form_field_tooltip_hourMinute</tooltip_block>
                             <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
                             <source_model>postnl_core/system_config_source_hourMinute</source_model>
                             <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>

@@ -152,6 +152,7 @@
  * @method boolean                        hasPakjeGemakAddress()
  * @method boolean                        hasStoreId()
  * @method boolean                        hasOrderId()
+ * @method boolean                        hasShipmentId()
  * @method boolean                        hasExtraCoverAmount()
  * @method boolean                        hasLabelCollection()
  * @method boolean                        hasIsPakketautomaat()
@@ -4266,7 +4267,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         try {
             $this->_sendReturnLabelEmail();
         } catch (Exception $e) {
-            Mage::printException($e);exit;
             $helper->logException($e);
             throw new TIG_PostNL_Exception(
                 $helper->__(

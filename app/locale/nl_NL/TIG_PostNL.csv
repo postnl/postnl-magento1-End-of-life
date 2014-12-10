@@ -623,7 +623,7 @@ TIG_PostNL::Shipment days and timing,Aanleverdagen en tijden
 TIG_PostNL::Shipping duration,Overkomstduur
 TIG_PostNL::The number of days shipping will take after a customer finishes their order.,Het aantal dagen dat de bestelling nodig heeft om bezorgd te worden nadat de bestelling geplaatst is.
 TIG_PostNL::Order cut-off time,Bestelling cut-off tijd
-"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration.","Indien een bestelling na dit tijdstip besteld wordt, zal er een dag bij de overkomstduur opgeteld worden."
+"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.","Indien een bestelling na dit tijdstip besteld wordt, zal er een dag bij de overkomstduur opgeteld worden. Vul deze tijd s.v.p. in in de %s tijdzone."
 TIG_PostNL::Allow weekend sorting,gebruik weekend sortering
 "TIG_PostNL::Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.","Weekend sortering is een speciale dienst van PostNL waarbij PostNL zendingen sorteert gedurende het weekend zodat deze op maandagen bezorgd kunnen worden. Indien u deze instelling activeert, maar weekend sortering niet beschikbaar is voor uw webshop zullen zendingen NIET op maandagen bezorgd worden."
 TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Vraag aan uw PostNL account manager of weekend sortering voor uw webshop beschikbaar is.
@@ -898,7 +898,7 @@ TIG_PostNL::Comment text,Opmerking tekst
 TIG_PostNL::Show shipping label,Toon verzendlabel
 "TIG_PostNL::If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.","Indien geactiveerd, zal het verzendlabel direct op de pakbon geprint worden, indien mogelijk. Anders zal deze op een losse pagina toegevoegd worden."
 TIG_PostNL::Pre-configured message,Voorgeconfigureerd bericht
-TIG_PostNL::Last shipment comment,Laatste zending opmerking
+TIG_PostNL::Last shipment comment (as shown on the shipment detail page),Laatste zending opmerking (zoals getoond op de zendingdetail pagina)
 TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,"Geen van de bestellingen die u heeft geselecteerd, bevat een zending. Kies s.v.p. tenminste één bestelling die een zending bevat."
 TIG_PostNL::Print packing slips,Print pakbonnen
 Download PostNL log files,Download PostNL log bestanden
@@ -1221,3 +1221,4 @@ PostNL Return Label Email,PostNL Retourlabel E-mail
 TIG_PostNL::Invalid settings provided.,Onjuiste instellingen aangeleverd.
 TIG_PostNL::Invalid config value provided.,Onjuiste configuratiewaarde aangeleverd.
 TIG_PostNL::Invalid updateConfigSettings response: %s,Invalid updateConfigSettings response: %s
+TIG_PostNL::There appear to be problems with the integrity of the PostNL order and/or shipment data.,Er zijn mogelijk problemen met de integriteit van de PostNL bestellingen en/of zendingen data.

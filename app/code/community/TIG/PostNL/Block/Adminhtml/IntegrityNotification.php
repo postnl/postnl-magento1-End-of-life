@@ -36,34 +36,65 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_order = Mage::registry('current_order'); ?>
-<?php $_deliveryOptionsInfo = $_helper->getDeliveryOptionsInfo($_order); ?>
+class TIG_PostNL_Block_Adminhtml_IntegrityNotification extends TIG_PostNL_Block_Adminhtml_Template
+{
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_integritynotification';
 
-<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType()): ?>
-    <?php return ''; ?>
-<?php endif; ?>
+    /**
+     * @var TIG_PostNL_Model_Core_Resource_Integrity_Collection
+     */
+    protected $_collection;
 
-<div id="delivery_options_info">
-    <?php if ($_helper->canUseDeliveryDays(false) && $_deliveryOptionsInfo->getDeliveryDate()): ?>
-        <?php $_deliveryDateComment = '';?>
-        <?php if ($_deliveryOptionsInfo->getType() == 'Avond'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(evening)'); ?>
-        <?php elseif ($_deliveryOptionsInfo->getType() == 'PGE'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(from 8:30 A.M.)'); ?>
-        <?php endif; ?>
-        <p><?php echo $_helper->__('Delivery date:') . ' ' . $this->formatDate($_deliveryOptionsInfo->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) . $_deliveryDateComment; ?></p>
-    <?php endif; ?>
-</div>
-<script type="text/javascript">
-    //<![CDATA[
-    document.observe('dom:loaded', function() {
-        var deliveryOptionsInfo = $('delivery_options_info');
-        var orderPage = $$('div.col2-set div.col-2 div.box-content')[0];
-        orderPage.insert({
-            bottom : deliveryOptionsInfo
-        });
-    });
-    //]]>
-</script>
+    /**
+     * @return TIG_PostNL_Model_Core_Resource_Integrity_Collection
+     */
+    public function getCollection()
+    {
+        $collection = $this->_collection;
+        if (!$collection) {
+            $collection = Mage::getResourceModel('postnl_core/integrity_collection');
+            $this->setCollection($collection);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Resource_Integrity_Collection $collection
+     *
+     * @return $this
+     */
+    public function setCollection(TIG_PostNL_Model_Core_Resource_Integrity_Collection $collection)
+    {
+        $this->_collection = $collection;
+
+        return $this;
+    }
+
+    /**
+     * Check if there are any integrity errors.
+     *
+     * @return bool
+     */
+    public function hasIntegrityErrors()
+    {
+        if ($this->getIntegrityErrorsSize() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * get the size of the integrity errors collection.
+     *
+     * @return int
+     */
+    public function getIntegrityErrorsSize()
+    {
+        return $this->getCollection()->getSize();
+    }
+}

@@ -529,4 +529,25 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         }
         return $this->getChild('element_dependense');
     }
+
+    /**
+     * Prepare additional comment for field like tooltip
+     *
+     * @param Mage_Core_Model_Config_Element $element
+     * @param string $helper
+     * @return string
+     */
+    protected function _prepareFieldTooltip($element, $helper)
+    {
+        if ($element->tooltip_block) {
+            return $this->getLayout()
+                        ->createBlock((string)$element->tooltip_block)
+                        ->setElement($element)
+                        ->toHtml();
+        } elseif ($element->tooltip) {
+            return Mage::helper($helper)->__((string)$element->tooltip);
+        }
+
+        return '';
+    }
 }

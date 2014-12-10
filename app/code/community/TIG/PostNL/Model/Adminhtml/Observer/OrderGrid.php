@@ -518,7 +518,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $origValue = $row->getData($column->getIndex());
         $date = new DateTime($origValue);
         $date->setTimezone(
-            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
+            Mage::helper('postnl')->getStoreTimeZone($row->getStoreId(), true)
         );
 
         $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
@@ -531,7 +531,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * Gets class name for the confirmDate column of the current row.
      *
      * @param string|null                             $value
-     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Sales_Model_Order                  $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
      * @return string
@@ -547,9 +547,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $now       = new DateTime($dateModel->gmtDate());
 
         if (!$origValue) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
+            $helper = Mage::helper('postnl/deliveryOptions');
+            $shippingDuration = $helper->getOrderShippingDuration($row);
+            $deliveryDate = $helper->getDeliveryDate(
                 $row->getCreatedAt(),
-                $row->getStoreId()
+                $row->getStoreId(),
+                false,
+                true,
+                true,
+                $shippingDuration
             );
             $origDate = new DateTime($deliveryDate);
             $origDate = $origDate->sub(new DateInterval('P1D'));

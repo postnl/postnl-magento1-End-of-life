@@ -661,7 +661,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function isPastCutOffTime($orderDate = null, $storeId = null)
     {
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
         }
 
         if ($storeId === null) {
@@ -676,12 +676,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the cut-off time. This is formatted as H:i:s.
          */
         $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
-        $orderTime  = $orderDate->format('His');
+        $cutOffTime = DateTime::createFromFormat(
+            'H:i:s',
+            $cutOffTime,
+            $this->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
+        );
+        $cutOffTime->setTimezone(new DateTimeZone('UTC'));
 
         /**
          * Check if the current time (as His) is greater than the cut-off time.
          */
-        if ($orderTime > str_replace(':', '', $cutOffTime)) {
+        if ($orderDate->format('His') > $cutOffTime->format('His')) {
             return true;
         }
 
@@ -696,14 +701,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDays
      * @param boolean     $asDateTime
      * @param boolean     $withTime
+     * @param int|boolean $shippingDuration
      *
      * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
-        $withTime = true
+        $withTime = true, $shippingDuration = false
     ) {
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getSingleton('core/date')->date('Y-m-d H:i:s'));
+            $orderDate = new DateTime(
+                Mage::getSingleton('core/date')->date('Y-m-d H:i:s'),
+                $this->getStoreTimeZone($storeId, true)
+            );
         }
 
         if ($storeId === null) {
@@ -711,13 +720,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate);
+            $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
         }
 
-        /**
-         * Get the base shipping duration for this order.
-         */
-        $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        if (false === $shippingDuration) {
+            /**
+             * Get the base shipping duration for this order.
+             */
+            $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        }
+
         $deliveryTime = clone $orderDate;
         $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
 
@@ -1033,15 +1045,28 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Alias for getQuoteShippingDuration() provided for backwards compatibility reasons.
+     *
+     * @param null|Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|int
+     *
+     * @deprecated
+     */
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
+    {
+        return $this->getQuoteShippingDuration($quote);
+    }
+
+    /**
      * Gets the shipping duration for the specified quote.
      *
-     * @param bool|Mage_Sales_Model_Quote $quote
+     * @param null|Mage_Sales_Model_Quote $quote
      *
-     * @return int|bool
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
+    public function getQuoteShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
         /**
          * If no quote was specified, try to load the quote.
@@ -1076,10 +1101,55 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
         $productIds = $items->getColumnValues('product_id');
 
-        if (!$productIds) {
+        return $this->_getShippingDuration($configDuration, $productIds, $storeId);
+    }
+
+    /**
+     * Gets the shipping duration for the specified order.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return int|false
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getOrderShippingDuration(Mage_Sales_Model_Order $order)
+    {
+        $storeId = $order->getStoreId();
+
+        /**
+         * Get the default config duration.
+         */
+        $configDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+
+        /**
+         * Get all items in the order, so we can check the corresponding products.
+         *
+         * @var Mage_Sales_Model_Resource_Order_Item_Collection $items
+         * @var Mage_Sales_Model_Order_Item $item
+         */
+        $items = $order->getItemsCollection(array(), true);
+        $productIds = $items->getColumnValues('product_id');
+
+        return $this->_getShippingDuration($configDuration, $productIds, $storeId);
+    }
+
+    /**
+     * Calculate the shipping duration for the specified products and default duration.
+     *
+     * @param int   $defaultDuration
+     * @param array $productIds
+     * @param null  $storeId
+     *
+     * @return int|false
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShippingDuration($defaultDuration, $productIds = array(), $storeId = null)
+    {
+        if (empty($productIds)) {
             $duration = new Varien_Object(
                 array(
-                    'duration'   => $configDuration,
+                    'duration'   => $defaultDuration,
                     'productIds' => $productIds
                 )
             );
@@ -1093,31 +1163,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $duration->getData('duration');
         }
 
-        /**
-         * Get all products.
-         */
-        $products = Mage::getResourceModel('catalog/product_collection')
-                        ->setStoreId($quote->getStoreId())
-                        ->addFieldToFilter('entity_id', array('in' => $productIds))
-                        ->addAttributeToSelect('postnl_shipping_duration');
-
-        /**
-         * Get the shipping duration of all products.
-         */
-        $durationArray  = array();
-        foreach ($products as $product) {
-            if ($product->hasData('postnl_shipping_duration')
-                && $product->getData('postnl_shipping_duration') !== ''
-                && (int) $product->getData('postnl_shipping_duration') > 0
-            ) {
-                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
-            } else {
-                $durationArray[] = $configDuration;
-            }
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
         }
 
+        $durationArray = $this->_getProductsShippingDuration($productIds, $defaultDuration, $storeId);
+
         if (empty($durationArray)) {
-            $durationArray = array($configDuration);
+            $durationArray = array($defaultDuration);
         }
 
         /**
@@ -1154,6 +1207,44 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $shippingDuration;
+    }
+
+    /**
+     * Get the shipping duration for an array of product IDs.
+     *
+     * @param array $productIds
+     * @param int   $configDuration
+     * @param null  $storeId
+     *
+     * @return array
+     * @throws Mage_Core_Exception
+     */
+    protected function _getProductsShippingDuration(array $productIds, $configDuration = 1, $storeId = null)
+    {
+        /**
+         * Get all products.
+         */
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($storeId)
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
+                        ->addAttributeToSelect('postnl_shipping_duration');
+
+        /**
+         * Get the shipping duration of all products.
+         */
+        $durationArray  = array();
+        foreach ($products as $product) {
+            if ($product->hasData('postnl_shipping_duration')
+                && $product->getData('postnl_shipping_duration') !== ''
+                && (int) $product->getData('postnl_shipping_duration') > 0
+            ) {
+                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
+            } else {
+                $durationArray[] = $configDuration;
+            }
+        }
+
+        return $durationArray;
     }
 
     /**

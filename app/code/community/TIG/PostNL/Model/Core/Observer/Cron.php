@@ -1404,4 +1404,40 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         return $ids;
     }
+
+    /**
+     * Check the integrity of the PostNL order and shipment data.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function integrityCheck()
+    {
+        $helper = Mage::helper('postnl');
+
+        $helper->cronLog($helper->__('IntegrityCheck cron starting...'));
+
+        $integrityCheckModel = Mage::getModel('postnl_core/service_integrityCheck');
+        try {
+            $errors = $integrityCheckModel->integrityCheck();
+
+            if (!empty($errors)) {
+                $helper->cronLog($helper->__('The following errors were found: %s', var_export($errors, true)));
+            } else {
+                $helper->cronLog($helper->__('No errors found.'));
+            }
+
+            Mage::getResourceSingleton('postnl_core/integrity')->saveIntegrityCheckResults($errors);
+
+            $helper->cronLog($helper->__('Results have been saved.'));
+        } catch (Exception $e) {
+            $helper->cronLog($helper->__("An error occurred while checking the PostNL extension's data integrity."));
+            $helper->logException($e);
+        }
+
+        $helper->cronLog($helper->__('IntegrityCheck cron has finished.'));
+
+        return $this;
+    }
 }
