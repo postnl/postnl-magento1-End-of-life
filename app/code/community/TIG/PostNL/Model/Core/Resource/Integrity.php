@@ -36,34 +36,49 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_order = Mage::registry('current_order'); ?>
-<?php $_deliveryOptionsInfo = $_helper->getDeliveryOptionsInfo($_order); ?>
+class TIG_PostNL_Model_Core_Resource_Integrity extends TIG_PostNL_Model_Resource_Db_Abstract
+{
+    /**
+     * Initialize PostNL integrity model.
+     */
+    public function _construct()
+    {
+        $this->_init('postnl_core/integrity', 'integrity_id');
+    }
 
-<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType()): ?>
-    <?php return ''; ?>
-<?php endif; ?>
+    /**
+     * Save the results of an integrity check.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function saveIntegrityCheckResults(array $data)
+    {
+        $adapter = $this->_getWriteAdapter();
+        $adapter->truncateTable($this->getMainTable());
 
-<div id="delivery_options_info">
-    <?php if ($_helper->canUseDeliveryDays(false) && $_deliveryOptionsInfo->getDeliveryDate()): ?>
-        <?php $_deliveryDateComment = '';?>
-        <?php if ($_deliveryOptionsInfo->getType() == 'Avond'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(evening)'); ?>
-        <?php elseif ($_deliveryOptionsInfo->getType() == 'PGE'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(from 8:30 A.M.)'); ?>
-        <?php endif; ?>
-        <p><?php echo $_helper->__('Delivery date:') . ' ' . $this->formatDate($_deliveryOptionsInfo->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) . $_deliveryDateComment; ?></p>
-    <?php endif; ?>
-</div>
-<script type="text/javascript">
-    //<![CDATA[
-    document.observe('dom:loaded', function() {
-        var deliveryOptionsInfo = $('delivery_options_info');
-        var orderPage = $$('div.col2-set div.col-2 div.box-content')[0];
-        orderPage.insert({
-            bottom : deliveryOptionsInfo
-        });
-    });
-    //]]>
-</script>
+        $insertData = array();
+        foreach ($data as $entityType => $entityData) {
+            if (!is_array($entityData)) {
+                continue;
+            }
+
+            foreach ($entityData as $error) {
+                if (!isset($error['id']) || !isset($error['error_code'])) {
+                    continue;
+                }
+
+                $insertData[] = array(
+                    'entity_type' => $entityType,
+                    'entity_id'   => $error['id'],
+                    'error_code'  => $error['error_code'],
+                );
+            }
+        }
+
+        $adapter->insertMultiple($this->getMainTable(), $insertData);
+
+        return $this;
+    }
+}

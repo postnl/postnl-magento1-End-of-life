@@ -50,6 +50,7 @@
             <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
             <block type="postnl/adminhtml_logNotification" name="postnl_log_notification" template="TIG/PostNL/log_notification.phtml"/>
             <block type="postnl/adminhtml_upgradeNotification" name="postnl_upgrade_notification" template="TIG/PostNL/upgrade_notification.phtml"/>
+            <block type="postnl/adminhtml_integrityNotification" name="postnl_integrity_notification" template="TIG/PostNL/integrity_notification.phtml"/>
         </reference>
     </default>
 

@@ -198,4 +198,43 @@ if (!$conn->tableColumnExists($tableName, 'return_labels_printed')) {
     );
 }
 
+/***********************************************************************************************************************
+ * POSTNL INTEGRITY
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_core/integrity');
+
+if (!$conn->isTableExists($tableName)) {
+    $table = $installer->getConnection()
+                       ->newTable($tableName);
+
+    $table->addColumn(
+              'integrity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+                  'identity' => true,
+                  'unsigned' => true,
+                  'nullable' => false,
+                  'primary'  => true,
+              ), 'Primary key'
+          )
+          ->addColumn(
+              'entity_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+                  'nullable' => false,
+              ), 'Entity Type'
+          )
+          ->addColumn(
+              'entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+                  'nullable' => false,
+              ), 'Entity Id'
+          )
+          ->addColumn(
+              'error_code', Varien_Db_Ddl_Table::TYPE_TEXT, 11, array(
+                  'nullable' => false,
+                  'default'  => '0',
+              ), 'Error Code'
+          )
+          ->setComment('PostNL Integrity');
+
+    $installer->getConnection()->createTable($table);
+}
+
 $installer->endSetup();

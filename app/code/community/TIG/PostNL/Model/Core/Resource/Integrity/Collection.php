@@ -36,34 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_order = Mage::registry('current_order'); ?>
-<?php $_deliveryOptionsInfo = $_helper->getDeliveryOptionsInfo($_order); ?>
+class TIG_PostNL_Model_Core_Resource_Integrity_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
+{
+    /**
+     * Event prefix
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_integrity_collection';
 
-<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType()): ?>
-    <?php return ''; ?>
-<?php endif; ?>
+    /**
+     * Event object
+     *
+     * @var string
+     */
+    protected $_eventObject = 'postnl_integrity_collection';
 
-<div id="delivery_options_info">
-    <?php if ($_helper->canUseDeliveryDays(false) && $_deliveryOptionsInfo->getDeliveryDate()): ?>
-        <?php $_deliveryDateComment = '';?>
-        <?php if ($_deliveryOptionsInfo->getType() == 'Avond'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(evening)'); ?>
-        <?php elseif ($_deliveryOptionsInfo->getType() == 'PGE'): ?>
-            <?php $_deliveryDateComment = ' ' . $_helper->__('(from 8:30 A.M.)'); ?>
-        <?php endif; ?>
-        <p><?php echo $_helper->__('Delivery date:') . ' ' . $this->formatDate($_deliveryOptionsInfo->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) . $_deliveryDateComment; ?></p>
-    <?php endif; ?>
-</div>
-<script type="text/javascript">
-    //<![CDATA[
-    document.observe('dom:loaded', function() {
-        var deliveryOptionsInfo = $('delivery_options_info');
-        var orderPage = $$('div.col2-set div.col-2 div.box-content')[0];
-        orderPage.insert({
-            bottom : deliveryOptionsInfo
-        });
-    });
-    //]]>
-</script>
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('postnl_core/integrity');
+    }
+}
