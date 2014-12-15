@@ -45,7 +45,7 @@
     <?php $_helper = $this->helper('postnl'); ?>
     <?php $_errorUrl = $_helper->getErrorUrl('POSTNL-0219'); ?>
     <div class="notification-global">
-        <strong>[POSTNL-0219] <?php echo $this->__('There appear to be problems with the integrity of the PostNL order and/or shipment data.'); ?></strong>
+        <strong>[POSTNL-0219] <?php echo $this->__("The PostNL extension has detected some issues with the PostNL extension's data integrity."); ?></strong>
         <?php if ($_errorUrl): ?>
             <a href="<?php echo $_errorUrl; ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
         <?php endif; ?>

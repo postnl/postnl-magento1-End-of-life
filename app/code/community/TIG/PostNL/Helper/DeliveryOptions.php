@@ -759,7 +759,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
          * monday is not possible.
          */
-        if ($deliveryDay == 1 && Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+        if ($deliveryDay == 1 && $this->canUseSundaySorting()) {
             $orderTime = $orderDate->format('His');
             $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
 
@@ -1055,6 +1055,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return $this->getQuoteShippingDuration($quote);
     }
 
@@ -1063,6 +1064,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @param null|Mage_Sales_Model_Quote $quote
      *
+     * @return int|false
      *
      * @throws TIG_PostNL_Exception
      */
@@ -2732,20 +2734,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         );
 
         return $isOnlyStatedAddressOptionChecked;
-    }
-
-    /**
-     * Check if the module is set to test mode
-     *
-     * @param bool $storeId
-     *
-     * @return boolean
-     *
-     * @deprecated v1.5.0
-     */
-    public function isTestMode($storeId = false)
-    {
-        return parent::isTestMode($storeId);
     }
 
     /**

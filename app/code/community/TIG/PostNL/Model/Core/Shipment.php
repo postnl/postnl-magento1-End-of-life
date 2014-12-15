@@ -2612,10 +2612,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        if (!$this->hasLabels() || !$this->hasReturnLabels()) {
-            return false;
-        }
-
         if (!$this->getMainBarcode() || !$this->hasReturnBarcode()) {
             return false;
         }
@@ -4975,9 +4971,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all labels associated with this shipment
      *
+     * @param boolean $resetLabelsPrinted
+     *
      * @return $this
      */
-    public function deleteLabels()
+    public function deleteLabels($resetLabelsPrinted = true)
     {
         $labelCollection = $this->getLabelCollection();
 
@@ -4992,6 +4990,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setLabels(false)
              ->setReturnLabels(false);
+
+        if ($resetLabelsPrinted) {
+            $this->setLabelsPrinted(false)
+                 ->setReturnLabelsPrinted(false);
+        }
 
         return $this;
     }

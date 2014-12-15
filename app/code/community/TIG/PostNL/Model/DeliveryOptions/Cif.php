@@ -92,7 +92,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDuration($quote);
+        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getQuoteShippingDuration($quote);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -160,10 +160,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $soapParams = array(
             'Timeframe' => array(
-                'PostalCode'  => $data['postcode'],
-                'HouseNumber' => $data['housenumber'],
-                'StartDate'   => $startDate,
-                'EndDate'     => $endDate->format('d-m-Y'),
+                'PostalCode'    => $data['postcode'],
+                'HouseNumber'   => $data['housenumber'],
+                'StartDate'     => $startDate,
+                'EndDate'       => $endDate->format('d-m-Y'),
+                'SundaySorting' => $this->_getSundaySortingAllowed(),
             ),
             'Message' => $this->_getMessage('')
         );
