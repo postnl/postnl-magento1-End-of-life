@@ -1031,7 +1031,15 @@ class TIG_PostNL_Model_Core_Observer_Cron
         );
 
         /**
-         * Filter the collection by the lack of a parent_id OR shipping_phase being 'delivered'
+         * Get the date on which we can no longer requests return status updates for shipments.
+         */
+        $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $returnExpireDate  = new DateTime();
+        $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
+
+        /**
+         * Filter the collection by the lack of a parent_id OR shipping_phase being 'delivered'. Also filter based on
+         * the confirm date. This is to allow return shipments enough time to be returned.
          *
          * Resulting query:
          * SELECT `main_table`.`label_id` , `postnl_shipment`.`shipping_phase`
@@ -1043,17 +1051,41 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *         parent_id IS NULL
          *     )
          *     OR (
-         *         shipping_phase =4
+         *         shipping_phase = 4
+         *     )
+         * )
+         * AND
+         * (
+         *     (
+         *         confirmed_at >= {$returnExpireDate}
+         *     )
+         *     OR (
+         *         return_phase = 4
          *     )
          * )
          */
         $labelsCollection->addFieldToFilter(
-            array('parent_id', 'shipping_phase'),
-            array(
-                array('null' => true),
-                array('eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED),
-            )
-        );
+                             array('parent_id', 'shipping_phase'),
+                             array(
+                                 array(
+                                     'null' => true
+                                 ),
+                                 array(
+                                     'eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED
+                                 ),
+                             )
+                         )
+                         ->addFieldToFilter(
+                             array('confirmed_at', 'return_phase'),
+                             array(
+                                 array(
+                                    'gteq' => $returnExpireDate->format('Y-m-d')
+                                 ),
+                                 array(
+                                     'eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED
+                                 )
+                             )
+                         );
 
         $labelCollectionSize = $labelsCollection->getSize();
         if ($labelCollectionSize < 1) {

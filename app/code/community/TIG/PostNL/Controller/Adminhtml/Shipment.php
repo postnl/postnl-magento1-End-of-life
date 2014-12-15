@@ -816,7 +816,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                     'The shipping status of shipment #%s cannot be updated.',
                     $postnlShipment->getShipmentIncrementId()
                 ),
-                'POSTNL-0207'
+                'POSTNL-0220'
             );
         }
 
