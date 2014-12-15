@@ -48,7 +48,7 @@
         <strong>[POSTNL-0198] <?php echo $this->__('The PostNL extension is currently being upgraded.'); ?></strong>
         <?php echo $this->__('Depending on the number of products in your store, this could take several hours.'); ?>
         <?php if ($_errorUrl): ?>
-            <a href="<?php echo $_helper->getErrorUrl('POSTNL-0198'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+            <a href="<?php echo $_errorUrl; ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
         <?php endif; ?>
     </div>
 <?php endif;?>

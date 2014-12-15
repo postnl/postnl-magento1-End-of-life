@@ -47,6 +47,9 @@ class TIG_PostNL_Controller_Adminhtml_Config extends Mage_Adminhtml_Controller_A
      */
     protected function _saveCurrentWizardStep($step)
     {
+        /**
+         * @var Mage_Admin_Model_User $adminUser
+         */
         $adminUser = Mage::getSingleton('admin/session')->getUser();
         $extra = $adminUser->getExtra();
 

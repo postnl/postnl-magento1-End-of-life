@@ -36,18 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
+ * Class TIG_PostNL_Model_Core_Shipment_Barcode
  *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
+ * @method int    getBarcodeId()
+ * @method int    getParentId()
+ * @method string getBarcodeType()
+ * @method int    getBarcodeNumber()
+ * @method string getBarcode()
+ *
  * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
  * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeType(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
 {
+    const BARCODE_TYPE_SHIPMENT = 'shipment';
+    const BARCODE_TYPE_RETURN   = 'return';
+
     /**
      * Prefix of model events names
      *
@@ -63,19 +70,25 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
     /**
      * Load a barcode object based on a postnl shipment Id and a barcode number
      *
-     * @param $parentId
-     * @param $barcodeNumber
+     * @param int            $parentId
+     * @param int            $barcodeNumber
+     * @param string|boolean $type
      *
      * @return $this
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber, $type = false)
     {
+        if (!$type) {
+            $type = self::BARCODE_TYPE_SHIPMENT;
+        }
+
         /**
          * @var TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection $collection
          */
         $collection = $this->getCollection();
         $collection->addFieldToSelect('*')
                    ->addFieldToFilter('parent_id', array('eq' => $parentId))
+                   ->addFieldToFilter('barcode_type', array('eq' => $type))
                    ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
 
         if ($collection->getSize()) {

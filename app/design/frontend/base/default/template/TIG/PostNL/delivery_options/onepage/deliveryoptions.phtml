@@ -269,6 +269,7 @@
     document.stopObserving('postnl:selectOptionSaved');
     document.observe('postnl:selectOptionSaved', function() {
         checkout.reloadProgressBlock('shipping_method');
+        checkout.reloadProgressBlock('postnl_deliveryoptions');
     });
 
     /**

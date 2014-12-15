@@ -210,6 +210,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
 
     /**
+     * @var array
+     */
+    protected $_returnLabelTypes = array(
+        'Return Label'
+    );
+
+    /**
      * @var null|array
      */
     protected $_supportedProductOptions = null;
@@ -455,6 +462,14 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getCombiLabelProductCodes()
     {
         return $this->_combiLabelProductCodes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReturnLabelTypes()
+    {
+        return $this->_returnLabelTypes;
     }
 
     /**
@@ -706,6 +721,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptions()
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
@@ -766,6 +782,39 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         return $parcelCount;
+    }
+
+    /**
+     * Check if return labels may be printed.
+     *
+     * @param bool|int $storeId
+     *
+     * @return bool
+     */
+    public function isReturnsEnabled($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isEnabled($storeId)) {
+            return false;
+        }
+
+        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
+
+        if (!$canPrintLabels) {
+            return false;
+        }
+
+        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
+        $freePostNumber = trim($freePostNumber);
+
+        if (empty($freePostNumber)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -931,6 +980,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @param Mage_Sales_Model_Order_Address $address
      *
      * @return array
+     *
+     * @todo make house number only required for countries that actually need it
      */
     protected function _getMultiLineStreetData($storeId, $address)
     {

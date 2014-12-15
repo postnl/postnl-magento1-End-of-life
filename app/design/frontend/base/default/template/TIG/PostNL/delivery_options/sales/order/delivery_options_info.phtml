@@ -46,7 +46,7 @@
 <?php endif; ?>
 
 <div id="delivery_options_info">
-    <?php if ($_deliveryOptionsInfo->getDeliveryDate()): ?>
+    <?php if ($_helper->canUseDeliveryDays(false) && $_deliveryOptionsInfo->getDeliveryDate()): ?>
         <?php $_deliveryDateComment = '';?>
         <?php if ($_deliveryOptionsInfo->getType() == 'Avond'): ?>
             <?php $_deliveryDateComment = ' ' . $_helper->__('(evening)'); ?>

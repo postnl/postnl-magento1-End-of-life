@@ -53,6 +53,8 @@
  * @method string                      getMobilePhoneNumber()
  * @method int                         getIsPakketautomaat()
  * @method array|boolean               getUnserializedOptions()
+ * @method string                      getExpectedDeliveryTimeStart()
+ * @method string                      getExpectedDeliveryTimeEnd()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -71,6 +73,9 @@
  * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setPakjeGemakAddress(mixed $value)
  * @method TIG_PostNL_Model_Core_Order setUnserializedOptions(array $value)
+ * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeStart(string $value)
+ * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeEnd(string $value)
+ * @method TIG_PostNL_Model_Core_Order setStoreId(int $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
@@ -79,6 +84,9 @@
  * @method boolean                     hasDeliveryDate()
  * @method boolean                     hasUnserializedOptions()
  * @method boolean                     hasOptions()
+ * @method boolean                     hasExpectedDeliveryTimeStart()
+ * @method boolean                     hasExpectedDeliveryTimeEnd()
+ * @method boolean                     hasStoreId()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -119,6 +127,29 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     public function getPakjeGemakTypes()
     {
         return $this->_pakjeGemakTypes;
+    }
+
+    /**
+     * Get this PostNL order's store ID.
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if ($this->hasStoreId()) {
+            return $this->_getData('store_id');
+        }
+
+        if ($this->hasOrderId()) {
+            $storeId = $this->getOrder()->getStoreId();
+        } elseif ($this->hasQuoteId()) {
+            $storeId = $this->getQuote()->getStoreId();
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $this->setStoreId($storeId);
+        return $storeId;
     }
 
     /**

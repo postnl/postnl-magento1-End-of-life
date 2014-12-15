@@ -223,6 +223,8 @@
                         nextStepRel = currentStepRel;
                     }
 
+                    window.location.hash = nextStepHash;
+
                     /**
                      * Go to the next step.
                      */
@@ -231,9 +233,14 @@
                     /**
                      * Add a success message.
                      */
+                    var successMessageText = Translator.translate('The previous step has been saved successfully!');
+                    if (nextStepRel == currentStepRel) {
+                        successMessageText = Translator.translate('This step has been saved successfully!');
+                    }
+
                     var successMessage = new Element('div', {
                         'class' : 'wizard-success'
-                    }).update(Translator.translate('The previous has been saved successfully!'));
+                    }).update(successMessageText);
 
                     $(nextStepRel).insert({
                         top:successMessage

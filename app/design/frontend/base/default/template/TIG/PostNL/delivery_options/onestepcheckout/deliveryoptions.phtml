@@ -257,7 +257,11 @@
 
     function initDeliveryOptions() {
         var billingOrShipping;
-        if ($('billing:use_for_shipping_yes').checked) {
+        var billingOrShippingCheckbox = $('billing:use_for_shipping_yes');
+        if (!billingOrShippingCheckbox
+            || billingOrShippingCheckbox.type == 'hidden'
+            || billingOrShippingCheckbox.checked
+        ) {
             billingOrShipping = 'billing';
         } else {
             billingOrShipping = 'shipping';
@@ -437,8 +441,8 @@
          */
         if (!postcode
             || (
-            (!addressSelectField || addressSelectField.getValue() == '')
-            && postcode != $(billingOrShipping + ':postcode').getValue()
+                (!addressSelectField || addressSelectField.getValue() == '')
+                && postcode != $(billingOrShipping + ':postcode').getValue()
             )
         ) {
             var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
