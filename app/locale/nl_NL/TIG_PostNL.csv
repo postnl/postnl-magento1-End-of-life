@@ -1221,4 +1221,11 @@ PostNL Return Label Email,PostNL Retourlabel E-mail
 TIG_PostNL::Invalid settings provided.,Onjuiste instellingen aangeleverd.
 TIG_PostNL::Invalid config value provided.,Onjuiste configuratiewaarde aangeleverd.
 TIG_PostNL::Invalid updateConfigSettings response: %s,Invalid updateConfigSettings response: %s
-TIG_PostNL::There appear to be problems with the integrity of the PostNL order and/or shipment data.,Er zijn mogelijk problemen met de integriteit van de PostNL bestellingen en/of zendingen data.
+TIG_PostNL::The PostNL extension has detected some issues with the PostNL extension's data integrity.,De PostNL extensie heeft mogelijke problemen gedetecteerd in de data-integriteit van de PostNL extensie.
+TIG_PostNL::Order IDs do not match.,Order IDs do not match.
+TIG_PostNL::Quote IDs do not match.,Quote IDs do not match.
+TIG_PostNL::Missing Magento shipment.,Missing Magento shipment.
+TIG_PostNL::Missing Magento quote.,Missing Magento quote.
+TIG_PostNL::Missing Magento order.,Missing Magento order.
+TIG_PostNL::Sunday,Zondag
+TIG_PostNL::Sunday cut-off time,Zondag cut-off tijd

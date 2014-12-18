@@ -673,9 +673,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * Get the cut-off time. This is formatted as H:i:s.
+         * Get the cut off time.
          */
-        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        $cutOffTime = $this->getCutOffTime($storeId, true, $orderDate);
+
+        /**
+         * Convert the cut-off time to UTC.
+         */
         $cutOffTime = DateTime::createFromFormat(
             'H:i:s',
             $cutOffTime,
@@ -691,6 +695,50 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return false;
+    }
+
+    /**
+     * Get the cut off time for the specified store ID.
+     *
+     * If $checkForSunday is true, the sunday cut-off time will be checked if the order date is on a sunday. This is
+     * only done if sunday sorting is enabled.
+     *
+     * @param null|int             $storeId
+     * @param bool                 $checkForSunday
+     * @param string|DateTime|null $orderDate
+     *
+     * @return mixed
+     */
+    public function getCutOffTime($storeId = null, $checkForSunday = true, $orderDate = null)
+    {
+        if ($checkForSunday && !$orderDate) {
+            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+        }
+
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (is_string($orderDate)) {
+            $orderDate = new DateTime($orderDate);
+        }
+
+        /**
+         * Get the cut-off time. This is formatted as H:i:s.
+         */
+        if ($checkForSunday
+            && $orderDate->format('N') == 7
+            && $this->canUseSundaySorting()
+        ) {
+            $cutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+            if (empty($cutOffTime)) {
+                $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+            }
+        } else {
+            $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        }
+
+        return $cutOffTime;
     }
 
     /**
@@ -759,15 +807,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
          * monday is not possible.
          */
-        if ($deliveryDay == 1 && $this->canUseSundaySorting()) {
-            $orderTime = $orderDate->format('His');
-            $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
-
-            if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
-                $deliveryTime->add(new DateInterval('P1D'));
-                $shippingDuration++;
-            }
-        } elseif ($deliveryDay == 1) {
+        if ($deliveryDay == 1 && !$this->canUseSundaySorting()) {
             $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }

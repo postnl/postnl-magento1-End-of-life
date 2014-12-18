@@ -172,6 +172,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
         $shippingDays = explode(',', $shippingDays);
 
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        /**
+         * Calculate the earliest possible shipping date for comparison.
+         */
+        $earliestShippingDate = new DateTime('now', new DateTimeZone('Europe/Berlin'));
+        $earliestShippingDate->add(new DateInterval("P{$helper->getQuoteShippingDuration()}D"));
+
         foreach ($timeframes as $key => $timeframe) {
             /**
              * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
@@ -179,22 +187,34 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
              */
             $timeframeDate = new DateTime($timeframe->Date);
             $deliveryDay   = (int) $timeframeDate->format('N');
-            $shippingDay   = (int) $timeframeDate->sub(new DateInterval('P1D'))->format('N');
 
-            if ($shippingDay < 1 || $shippingDay > 6) {
-                $shippingDay = 6;
+            $shippingDate = clone $timeframeDate;
+            $shippingDay  = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
+
+            if (in_array($shippingDay, $shippingDays)) {
+                continue;
             }
 
             /**
-             * If the shipping day is not allowed, remove the time frame from the array.
+             * If the delivery day is tuesday and sunday sorting is not available, shipping the order on saturday will
+             * also result in a tuesday delivery so we need to validate saturday as a valid shipping date.
              *
-             * For tuesday delivery either saturday or monday needs to be available.
+             * If the delivery day is monday and sunday sorting is available, shipping the order on saturday will also
+             * result in a monday delivery so we need to validate saturday as a valid shipping date.
              */
-            if ($deliveryDay === 2 && !in_array($shippingDay, $shippingDays)) {
-                $shippingDay = 6;
+            $valid = false;
+            if (
+                ($deliveryDay === 2
+                    && !$helper->canUseSundaySorting()
+                )
+                || ($deliveryDay === 1
+                    && $helper->canUseSundaySorting()
+                )
+            ) {
+                $valid = $this->_validateSaturdayShipping($shippingDays, $shippingDate, $earliestShippingDate);
             }
 
-            if (!in_array($shippingDay, $shippingDays)) {
+            if (false === $valid) {
                 unset($timeframes[$key]);
             }
         }
@@ -203,6 +223,37 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
          * Only return the values, as otherwise the array will be JSON encoded as an object.
          */
         return array_values($timeframes);
+    }
+
+    /**
+     * Validate if saturday shipping is allowed for the specified shipping date when taking the earliest possible
+     * shipping date into consideration.
+     *
+     * @param array    $shippingDays
+     * @param DateTime $shippingDate
+     * @param DateTime $earliestShippingDate
+     *
+     * @return bool
+     */
+    protected function _validateSaturdayShipping($shippingDays, DateTime $shippingDate, DateTime $earliestShippingDate)
+    {
+        $shippingDate->modify('last saturday');
+        $shippingDay = 6;
+
+        if (!in_array($shippingDay, $shippingDays)) {
+            return false;
+        }
+
+        $cutOffTime = Mage::helper('postnl/deliveryOptions')->getCutOffTime(null, true, $shippingDate);
+        $cutOffTime = explode(':', $cutOffTime);
+
+        $shippingDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2]);
+
+        if ($shippingDate < $earliestShippingDate) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
