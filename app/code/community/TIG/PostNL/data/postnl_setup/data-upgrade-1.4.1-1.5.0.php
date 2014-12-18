@@ -94,6 +94,7 @@ $updatedWebservices = array(
     'cif_version_deliverydate',
     'cif_version_confirming',
     'cif_version_barcode',
+    'cif_version_timeframe',
 );
 
 $settingsToMove = array(

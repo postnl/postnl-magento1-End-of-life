@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingDays
      */
     public function toOptionArray()
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/deliveryOptions');
         $labelSizes = array(
             array(
                 'value' => '1',
@@ -72,6 +72,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingDays
                 'label' => $helper->__('Saturday')
             ),
         );
+
+        if ($helper->canUseSundaySorting()) {
+            $labelSizes[] = array(
+                'value' => '7',
+                'label' => $helper->__('Sunday'),
+            );
+        }
 
         return $labelSizes;
     }
