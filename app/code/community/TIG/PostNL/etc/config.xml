@@ -781,7 +781,7 @@
                 <unique_key/>
         		<private_key/>
         		<is_activated>0</is_activated> <!-- Not activated -->
-                <webservice_wsdl_url>http://api.tigpostnltest.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
+                <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
         	    <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
                 <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
                 <knowledgebase_url>http://kb.tig.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
@@ -1080,7 +1080,7 @@
 
             <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
             <google_maps>
-                <api_key>AIzaSyCHq62q_WNkFPdfgQkQzX46H4n2AGD0ubs</api_key>
+                <api_key>AIzaSyB09S8SLpSPRF6YRZJDTuRpQIW71c51wm8</api_key>
             </google_maps>
 
             <!-- These settings are used by the PostNl extension for upgrade scripts. -->

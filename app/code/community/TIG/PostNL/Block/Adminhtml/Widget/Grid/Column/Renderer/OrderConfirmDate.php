@@ -144,7 +144,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * Finally, simply render the date
          */
         $format = $this->_getFormat();
-        $value = $value->format('Y-m-d H:i:s');
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $value = $value->setTimezone($timeZone)->format('Y-m-d H:i:s');
         try {
             if($this->getColumn()->getGmtoffset()) {
                 $data = Mage::app()->getLocale()

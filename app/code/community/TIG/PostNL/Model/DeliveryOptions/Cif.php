@@ -94,10 +94,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $shippingDuration = Mage::helper('postnl/deliveryOptions')->getQuoteShippingDuration($quote);
 
+        $date = new DateTime(Mage::getSingleton('core/date')->gmtDate('d-m-Y H:i:s'));
+        $date->setTimezone(new DateTimeZone('Europe/Berlin'));
+
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'Postalcode'                 => $postcode,
-                'ShippingDate'               => Mage::getSingleton('core/date')->date('d-m-Y H:i:s'),
+                'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
                 'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
