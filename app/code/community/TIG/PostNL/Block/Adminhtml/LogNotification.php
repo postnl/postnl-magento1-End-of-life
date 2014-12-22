@@ -87,6 +87,10 @@ class TIG_PostNL_Block_Adminhtml_LogNotification extends TIG_PostNL_Block_Adminh
          */
         $logs = glob($logFolder . DS . '*.log');
 
+        if (!is_array($logs) || empty($logs)) {
+            return 0;
+        }
+
         /**
          * Calculate the sum of the file sizes of all logs in the PostNL log folder.
          */

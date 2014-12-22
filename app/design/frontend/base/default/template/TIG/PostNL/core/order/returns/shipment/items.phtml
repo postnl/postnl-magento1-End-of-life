@@ -1,0 +1,107 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Core_Order_Returns_Shipment_Items $this
+ * @var TIG_postNL_Model_Core_Shipment                     $_postnlShipment
+ */
+?>
+<?php $_postnlShipmentCollection = $this->getPostnlShipmentCollection(); ?>
+<?php foreach ($_postnlShipmentCollection as $_postnlShipment): ?>
+    <?php $_shipment = $_postnlShipment->getShipment(); ?>
+    <h2 class="sub-title" id="print_return_label_title"><?php echo $this->__('Shipment #') ?><?php echo $_shipment->getIncrementId(); ?></h2>
+    <?php if ($_postnlShipment->isConfirmed() && $_postnlShipment->canPrintReturnLabels()): ?>
+        <button type="button" title="<?php echo $this->__('Print return label'); ?>" class="button print-return-label-button" onclick="setLocation('<?php echo $this->getPrintLabelUrl($_shipment->getIncrementId()); ?>')">
+            <span>
+                <span><?php echo $this->__('Print return label'); ?></span>
+            </span>
+        </button>
+    <?php endif; ?>
+    <?php $tracks = $_shipment->getTracksCollection(); ?>
+    <?php  if ($tracks->count()): ?>
+        <table class="data-table tracking-table" id="my-tracking-table-<?php echo $_shipment->getId(); ?>">
+            <tbody>
+                <tr>
+                    <th class="label"><?php echo $this->__('Tracking Number(s):') ?></th>
+                    <td>&nbsp;
+                        <?php
+                        $i = 1;
+                        $_size = $tracks->count();
+                        foreach($tracks as $track): ?>
+                            <?php
+                            /**
+                             * @var Mage_Sales_Model_Order_Shipment_Track $track
+                             */
+                            ?>
+                            <?php if($track->isCustom()): ?>
+                                <?php echo $this->escapeHtml($track->getNumber()) ?>
+                            <?php else: ?>
+                                <a href="#" onclick="popWin('<?php echo $this->helper('shipping')->getTrackingPopupUrlBySalesModel($track) ?>','trackorder','width=800,height=600,left=0,top=0,resizable=yes,scrollbars=yes')" ><?php echo $this->escapeHtml($track->getNumber()) ?></a>
+                            <?php endif; ?>
+                            <?php if($i!=$_size): ?>, <?php endif; ?>
+                            <?php $i++;
+                        endforeach; ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <script type="text/javascript">decorateTable('my-tracking-table-<?php echo $_shipment->getId(); ?>')</script>
+    <?php  endif; ?>
+    <h3 class="table-caption print-return-label-caption"><?php echo $this->__('Items Shipped') ?></h3>
+    <table class="data-table" id="my-shipment-table-<?php echo $_shipment->getId(); ?>">
+        <col />
+        <col width="1" />
+        <col width="1" />
+        <thead>
+            <tr>
+                <th><?php echo $this->__('Product Name') ?></th>
+                <th><?php echo $this->__('SKU') ?></th>
+                <th class="a-center"><span class="nobr"><?php echo $this->__('Qty Shipped') ?></span></th>
+            </tr>
+        </thead>
+        <?php $_items = $_shipment->getAllItems(); ?>
+        <?php $_count = count($_items) ?>
+        <?php foreach ($_items as $_item): ?>
+            <?php if ($_item->getOrderItem()->getParentItem()) continue; ?>
+            <tbody>
+                <?php echo $this->getItemHtml($_item) ?>
+            </tbody>
+        <?php endforeach; ?>
+    </table>
+    <script type="text/javascript">decorateTable('my-shipment-table-<?php echo $_shipment->getId(); ?>', {'tbody' : ['odd', 'even'], 'tbody tr' : ['first', 'last']})</script>
+    <?php echo $this->getCommentsHtml($_shipment)?>
+<?php endforeach; ?>

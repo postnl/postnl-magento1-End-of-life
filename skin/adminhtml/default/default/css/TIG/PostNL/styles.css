@@ -12,7 +12,7 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 
 /* Waiting notification */
 .waiting-notification { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
-.waiting-notification .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; height:136px; width:436px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -218px; z-index:100; }
+.waiting-notification .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; min-height:136px; width:436px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -218px; z-index:100; }
 .waiting-notification .content img { margin:20px 0 15px; }
 
 /* General */
@@ -44,6 +44,7 @@ button.download span span { background:none !important; padding:0 !important; }
 
 /* Delivery options info */
 div#postnl_delivery_option_info { border: 1px solid #D6D6D6; margin:10px 0 10px 0; }
+div#postnl_delivery_option_info.hor-scroll { overflow:visible; }
 
 /* Shipping options */
 div#postnl_is_buspakje_container p { display: inline-block; }

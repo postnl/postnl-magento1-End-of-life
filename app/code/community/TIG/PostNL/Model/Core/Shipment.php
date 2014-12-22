@@ -44,6 +44,8 @@
  * Supported events:
  *  - postnl_shipment_generatebarcode_before
  *  - postnl_shipment_generatebarcode_after
+ *  - postnl_shipment_generatereturnbarcodes_before
+ *  - postnl_shipment_generatereturnbarcodes_after
  *  - postnl_shipment_generatelabel_before
  *  - postnl_shipment_generatelabel_after
  *  - postnl_shipment_register_confirmation_before
@@ -59,16 +61,24 @@
  *  - postnl_shipment_updateshippingphase_before
  *  - postnl_shipment_updateshippingphase_after
  *  - postnl_shipment_setshippingphase_*
+ *  - postnl_shipment_updatereturnstatus_before
+ *  - postnl_shipment_updatereturnstatus_after
+ *  - postnl_shipment_updatereturnphase_before
+ *  - postnl_shipment_updatereturnphase_after
+ *  - postnl_shipment_setreturnphase_*
  *  - postnl_shipment_savelabels_before
  *  - postnl_shipment_savelabels_after
  *  - postnl_shipment_saveadditionaloptions_after
  *  - postnl_shipment_add_track_and_trace_email_vars
  *  - postnl_shipment_send_track_and_trace_email_before
  *  - postnl_shipment_send_track_and_trace_email_after
+ *  - postnl_shipment_add_return_label_email_vars
+ *  - postnl_shipment_send_return_label_email_before
+ *  - postnl_shipment_send_return_label_email_after
  *
- * @method bool                           getIsDutchShipment()
- * @method bool                           getIsEuShipment()
- * @method bool                           getIsGlobalShipment()
+ * @method boolean                        getIsDutchShipment()
+ * @method boolean                        getIsEuShipment()
+ * @method boolean                        getIsGlobalShipment()
  * @method int                            getParcelCount()
  * @method string|null                    getConfirmedStatus
  * @method string                         getStatusHistoryUpdatedAt()
@@ -86,7 +96,11 @@
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
  * @method bool|int                       getIsPakketautomaat()
- * @method bool                           getIsBuspakjeShipment()
+ * @method boolean                        getIsBuspakjeShipment()
+ * @method int                            getReturnLabelsPrinted()
+ * @method string                         getExpectedDeliveryTimeStart()
+ * @method string                         getExpectedDeliveryTimeEnd()
+ * @method int                            getReturnPhase()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -119,32 +133,43 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setLabels(array $value)
+ * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnLabels(mixed $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnLabelsPrinted(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeStart(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeEnd(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
  *
- * @method bool                           hasBarcodeUrl()
- * @method bool                           hasPostnlOrder()
- * @method bool                           hasShipment()
- * @method bool                           hasShipmentBaseGrandTotal()
- * @method bool                           hasGlobalpackShipmentType()
- * @method bool                           hasProductCode()
- * @method bool                           hasShippingAddress()
- * @method bool                           hasPakjeGemakAddress()
- * @method bool                           hasStoreId()
- * @method bool                           hasOrderId()
- * @method bool                           hasExtraCoverAmount()
- * @method bool                           hasLabelCollection()
- * @method bool                           hasIsPakketautomaat()
- * @method bool                           hasDeliveryDate()
- * @method bool                           hasShipmentType()
- * @method bool                           hasOrder()
- * @method bool                           hasMainBarcode()
- * @method bool                           hasShipmentIncrementId()
- * @method bool                           hasIsBuspakjeShipment()
- * @method bool                           hasDefaultProductCode()
- * @method bool                           hasProductOption()
- * @method bool                           hasPayment()
+ * @method boolean                        hasBarcodeUrl()
+ * @method boolean                        hasPostnlOrder()
+ * @method boolean                        hasShipment()
+ * @method boolean                        hasShipmentBaseGrandTotal()
+ * @method boolean                        hasGlobalpackShipmentType()
+ * @method boolean                        hasProductCode()
+ * @method boolean                        hasShippingAddress()
+ * @method boolean                        hasPakjeGemakAddress()
+ * @method boolean                        hasStoreId()
+ * @method boolean                        hasOrderId()
+ * @method boolean                        hasShipmentId()
+ * @method boolean                        hasExtraCoverAmount()
+ * @method boolean                        hasLabelCollection()
+ * @method boolean                        hasIsPakketautomaat()
+ * @method boolean                        hasDeliveryDate()
+ * @method boolean                        hasShipmentType()
+ * @method boolean                        hasOrder()
+ * @method boolean                        hasMainBarcode()
+ * @method boolean                        hasShipmentIncrementId()
+ * @method boolean                        hasIsBuspakjeShipment()
+ * @method boolean                        hasDefaultProductCode()
+ * @method boolean                        hasProductOption()
+ * @method boolean                        hasPayment()
+ * @method boolean                        hasReturnLabelsPrinted()
+ * @method boolean                        hasExpectedDeliveryTimeStart()
+ * @method boolean                        hasExpectedDeliveryTimeEnd()
+ * @method boolean                        hasReturnPhase()
+ * @method boolean                        hasReturnBarcodeUrl()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -200,7 +225,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/delivery_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/grid/default_global_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_globalpack_settings/default_global_product_option';
     const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/grid/default_buspakje_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/grid/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/grid/alternative_default_max_amount';
@@ -234,6 +259,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpath to default GlobalPack shipment type.
      */
     const XPATH_DEFAULT_SHIPMENT_TYPE = 'postnl/cif_globalpack_settings/default_shipment_type';
+
+    /**
+     * Xpath to the email template used to email the customer a return label.
+     */
+    const XPATH_RETURN_LABEL_EMAIL_TEMPLATE = 'postnl/returns/email_template';
 
     /**
      * CIF warning code returned when an EPS combi label is not available.
@@ -297,6 +327,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @var bool
      */
     protected $_preventSaving = false;
+
+    /**
+     * @var TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection[]
+     */
+    protected $_barcodeCollections = array();
 
     /**
      * Initialize the shipment
@@ -786,20 +821,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets all shipping labels associated with this shipment
      *
-     * @return array Array of TIG_PostNL_Model_Core_Shipment_Label objects
+     * @param boolean $includeReturnLabels
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
      */
-    public function getLabels()
+    public function getLabels($includeReturnLabels = true)
     {
         if ($this->hasLabels(false)) {
-            return $this->_getData('labels');
+            $labels = $this->_getData('labels');
+
+            if (!$includeReturnLabels) {
+                return $this->_filterReturnLabels($labels);
+            }
+
+            return $labels;
         }
 
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
         /**
-         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong.
-         * Delete the labels so the extension will generate new ones.
+         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong. Delete the
+         * labels so the extension will generate new ones.
          */
         if (!$this->getLabelsPrinted() && $labelCollection->getSize() > 0) {
             $this->deleteLabels();
@@ -809,6 +852,70 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labels = $labelCollection->getItems();
 
         $this->setLabels($labels);
+
+        /**
+         * If all labels are allowed, return the labels.
+         */
+        if (!$includeReturnLabels) {
+            return $this->_filterReturnLabels($labels);
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Get all return labels for this shipment.
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
+     */
+    public function getReturnLabels()
+    {
+        /**
+         * If we already have all return labels stored, retrieve them from the entity's data.
+         */
+        if ($this->hasReturnLabels()) {
+            $labels = $this->_getData('return_labels');
+
+            if (!is_array($labels)) {
+                $labels = $labels->getItems();
+            }
+            return $labels;
+        }
+
+        /**
+         * If we already have all labels, get them and filter out all non-return labels.
+         */
+        if ($this->hasLabels(false)) {
+            $labels = $this->_getData('labels');
+            if (!is_array($labels)) {
+                $labels = $labels->getItems();
+            }
+
+            /**
+             * Filter out all regular shipping labels.
+             *
+             * @var TIG_PostNL_Model_Core_Shipment_Label[] $labels
+             */
+            foreach ($labels as $key => $label) {
+                if (!$label->isReturnLabel()) {
+                    unset($labels[$key]);
+                }
+            }
+
+            $this->setReturnLabels($labels);
+            return $labels;
+        }
+
+        /**
+         * Get the entire label collection and filter out all non-return labels.
+         */
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
+                        ->addFieldToFilter('label_type', array('in' => $this->getHelper('cif')->getReturnLabelTypes()));
+
+        $labels = $labelCollection->getItems();
+
+        $this->setReturnLabels($labels);
         return $labels;
     }
 
@@ -891,7 +998,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Loop through all associated shipment items and add each item's row total to the shipment's total
+         * Loop through all associated shipment items and add each item's row total to the shipment's total.
          */
         $baseGrandTotal = 0;
         $shipmentItems = $shipment->getAllItems();
@@ -903,12 +1010,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $qty = $shipmentItem->getQty();
 
             /**
-             * The base price of a shipment item is only available through it's associated order item
+             * The base price of a shipment item is only available through it's associated order item.
              */
-            $basePrice = $shipmentItem->getOrderItem()->getBasePrice();
+            $orderItem = $shipmentItem->getOrderItem();
+            $basePrice = $orderItem->getBasePriceInclTax() + $orderItem->getBaseDiscountAmount();
 
             /**
-             * Calculate and add the shipment item's row total
+             * Calculate and add the shipment item's row total.
              */
             $totalBasePrice = $basePrice * $qty;
             $baseGrandTotal += $totalBasePrice;
@@ -938,22 +1046,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        /**
-         * @var TIG_PostNL_Helper_Carrier $helper
-         */
-        $helper = $this->getHelper('carrier');
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
 
-        $locale = Mage::getStoreConfig('general/locale/code', $this->getStoreId());
-        $lang = substr($locale, 0, 2);
+        $this->setBarcodeUrl($barcodeUrl);
+        return $barcodeUrl;
+    }
 
-        $url = '';
-        $shippingAddress = $this->getShippingAddress();
-        if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
+    /**
+     * Gets the url for this shipment's return barcode.
+     *
+     * @param boolean $forceNl
+     *
+     * @return string
+     *
+     * @see TIG_PostNL_Helper_Carrier::getBarcodeUrl()
+     */
+    public function getReturnBarcodeUrl($forceNl = false)
+    {
+        if ($this->hasReturnBarcodeUrl()) {
+            return $this->_getData('return_barcode_url');
         }
 
-        $this->setBarcodeUrl($url);
-        return $url;
+        $barcode = $this->getReturnBarcode();
+        if (!$barcode) {
+            return false;
+        }
+
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
+
+        $this->setReturnBarcodeUrl($barcodeUrl);
+        return $barcodeUrl;
     }
 
     /**
@@ -1249,26 +1371,46 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Get all barcodes associated with this shipment
      *
      * @param boolean $asObject Optional value to get the barcodes as entities, rather than an array of values
+     * @param string  $type
      *
      * @return array
      */
-    public function getBarcodes($asObject = false)
+    public function getBarcodes($asObject = false, $type = 'shipment')
     {
-        $barcodeCollection = Mage::getResourceModel('postnl_core/shipment_barcode_collection');
-        $barcodeCollection->addFieldToSelect(array('barcode', 'barcode_number'))
-                          ->addFieldToFilter('parent_id', array('eq' => $this->getId()));
+        if (!$this->getId()) {
+            return array();
+        }
 
-        $barcodeCollection->getSelect()->order('barcode_number ASC');
+        $barcodeCollections = $this->_getBarcodeCollections();
+        if (!empty($type) && isset($barcodeCollections[$type])) {
+            $barcodeCollection = $barcodeCollections[$type];
+        } else {
+            $barcodeCollection = $this->_getBarcodeCollection($type);
+        }
 
         if ($asObject === false) {
-            $barcodeNumbers = $barcodeCollection->getColumnValues('barcode_number');
-            $barcodes       = $barcodeCollection->getColumnValues('barcode');
+            /**
+             * Combine the arrays so that the barcode numbers are the keys and the barcodes themselves are the values.
+             *
+             * @var TIG_postNL_Model_Core_Shipment_Barcode $barcode
+             */
+            $barcodeArray = array();
+            $numberlessBarcodes = array();
+            foreach ($barcodeCollection as $key => $barcode) {
+                if ($barcode->getBarcodeNumber()) {
+                    $barcodeArray[$barcode->getBarcodeNumber()] = $barcode->getBarcode();
+                } else {
+                    $numberlessBarcodes[] = $barcode->getBarcode();
+                }
+            }
+            $barcodeArray = array_merge($barcodeArray, $numberlessBarcodes);
 
             /**
-             * Combine the arrays so that the barcode numbers are the keys and the barcodes themselves are the values
+             * Add the main barcode if the requested type is 'shipment'.
              */
-            $barcodeArray = array_combine($barcodeNumbers, $barcodes);
-            $barcodeArray[0] = $this->getMainBarcode();
+            if ($type == TIG_PostNL_Model_Core_Shipment_Barcode::BARCODE_TYPE_SHIPMENT) {
+                $barcodeArray[0] = $this->getMainBarcode();
+            }
 
             return $barcodeArray;
         }
@@ -1278,6 +1420,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * N.B. Does not contain the main barcode as it is not part of the collection
          */
         return $barcodeCollection->getItems();
+    }
+
+    /**
+     * Get this shipment's return barcode if available.
+     *
+     * @param int|null $barcodeNumber
+     *
+     * @return string|null
+     */
+    public function getReturnBarcode($barcodeNumber = null)
+    {
+        if (!is_numeric($barcodeNumber) || $barcodeNumber < 1) {
+            $barcodeNumber = 0;
+        }
+
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcode
+         */
+        $barcode = Mage::getModel('postnl_core/shipment_barcode');
+        $barcode->loadByParentAndBarcodeNumber($this->getId(), $barcodeNumber, $barcode::BARCODE_TYPE_RETURN);
+
+        return $barcode->getBarcode();
+    }
+
+    /**
+     * Get the barcode collection for a specified type.
+     *
+     * @param string $type
+     *
+     * @return TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection
+     */
+    protected function _getBarcodeCollection($type)
+    {
+        $barcodeCollection = Mage::getResourceModel('postnl_core/shipment_barcode_collection');
+        $barcodeCollection->addFieldToSelect(array('barcode', 'barcode_number'))
+                          ->addFieldToFilter('parent_id', array('eq' => $this->getId()));
+
+        /**
+         * Add an optional filter by barcode type.
+         */
+        if (!empty($type)) {
+            $barcodeCollection->addFieldToFilter('barcode_type', array('eq' => $type));
+        }
+
+        $barcodeCollection->getSelect()->order('barcode_number ASC');
+
+        if (!empty($type)) {
+            $this->_setBarcodeCollections($barcodeCollection->load(), $type);
+        }
+
+        return $barcodeCollection;
     }
 
     /**
@@ -1447,7 +1640,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $isBuspakje = $this->_getData('is_buspakje');
 
         if (!is_null($isBuspakje)) {
-            return $isBuspakje;
+            return (bool) $isBuspakje;
         }
 
         $isBuspakje = $this->_getIsBuspakje();
@@ -1481,6 +1674,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function getPreventSaving()
     {
         return $this->_preventSaving;
+    }
+
+    /**
+     * @return TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection[]
+     */
+    protected function _getBarcodeCollections()
+    {
+        return $this->_barcodeCollections;
     }
 
     /*******************************************************************************************************************
@@ -1659,7 +1860,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Sets the current shipment's phase. Triggers an event if the phase is valid.
      *
-     * @param mixed $phase
+     * @param int $phase
      *
      * @return $this
      */
@@ -1670,9 +1871,32 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (is_numeric($phase) && $phase != $this->getShippingPhase()) {
             $phases = $this->getHelper('cif')->getShippingPhaseCodes();
 
-            if (array_key_exists($phase, $phases)) {
+            if (isset($phases[$phase])) {
                 $phaseName = $phases[$phase];
                 Mage::dispatchEvent('postnl_shipment_setshippingphase_' . $phaseName, array('shipment' => $this));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the current shipment's return phase. Triggers an event if the phase is valid.
+     *
+     * @param int $phase
+     *
+     * @return $this
+     */
+    public function setReturnPhase($phase)
+    {
+        $this->setData('return_phase', $phase);
+
+        if (is_numeric($phase) && $phase != $this->getReturnPhase()) {
+            $phases = $this->getHelper('cif')->getShippingPhaseCodes();
+
+            if (isset($phases[$phase])) {
+                $phaseName = $phases[$phase];
+                Mage::dispatchEvent('postnl_shipment_setreturnphase_' . $phaseName, array('shipment' => $this));
             }
         }
 
@@ -1693,12 +1917,29 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * @param TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection $collection
+     * @param string $type
+     *
+     * @return $this
+     */
+    protected function _setBarcodeCollections(TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection $collection,
+                                              $type
+    ) {
+        $barcodesCollections = $this->_getBarcodeCollections();
+        $barcodesCollections[$type] = $collection;
+
+        $this->_barcodeCollections = $barcodesCollections;
+
+        return $this;
+    }
+
     /*******************************************************************************************************************
      * HAS- METHODS
      ******************************************************************************************************************/
 
     /**
-     * Check if the shipment has any associated labels
+     * Check if the shipment has any associated labels.
      *
      * @param boolean $checkCollection
      *
@@ -1717,6 +1958,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
+        $this->setLabels($labelCollection->getItems());
+
         if ($labelCollection->getSize() > 0) {
             return true;
         }
@@ -1725,7 +1968,39 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Checks if this shipment has extra cover
+     * Check if the shipment has any associated return labels.
+     *
+     * @param boolean $checkCollection
+     *
+     * @return boolean
+     */
+    public function hasReturnLabels($checkCollection = true)
+    {
+        if ($this->_getData('return_labels')) {
+            return true;
+        }
+
+        if (!$checkCollection) {
+            return false;
+        }
+
+        $returnLabelTypes = Mage::helper('postnl/cif')->getReturnLabelTypes();
+
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
+                        ->addFieldToFilter('label_type', array('in' => $returnLabelTypes));
+
+        $this->setReturnLabels($labelCollection);
+
+        if ($labelCollection->getSize() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if this shipment has extra cover.
      *
      * @return boolean
      */
@@ -1781,7 +2056,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasCustomBarcode()
     {
-        $productCode = $this->getProductCode();
+        $productCode = (string) $this->getProductCode();
 
         $customBarcodes         = $this->getCustomBarcodes();
         $disallowedProductCodes = array_keys($customBarcodes);
@@ -1791,6 +2066,68 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Check if this shipment has any return barcodes.
+     *
+     * @return boolean
+     */
+    public function hasReturnBarcode()
+    {
+        /**
+         * @var $barcodeModel TIG_PostNL_Model_Core_Shipment_Barcode
+         */
+        $barcodeModel = Mage::getConfig()->getModelClassName('postnl_core/shipment_barcode');
+        $barcodes = $this->getBarcodes(false, $barcodeModel::BARCODE_TYPE_RETURN);
+
+        if (count($barcodes) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if this shipment has a return label.
+     *
+     * @return boolean
+     */
+    public function hasReturnLabel()
+    {
+        $labels = $this->getLabels(true);
+
+        foreach ($labels as $label) {
+            if ($label->isReturnLabel()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*******************************************************************************************************************
+     * UNS- METHODS
+     ******************************************************************************************************************/
+
+    /**
+     * @return $this
+     */
+    public function unsBarcodeCollections()
+    {
+        $this->_barcodeCollections = array();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function unsLabelsToSave()
+    {
+        $this->_labelsToSave = array();
+
+        return $this;
     }
 
     /*******************************************************************************************************************
@@ -2126,6 +2463,33 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Checks if a return barcode may be generated for this shipment.
+     *
+     * @return boolean
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function canGenerateReturnBarcode()
+    {
+        /**
+         * Return barcodes are only available for Dutch parcel shipments.
+         */
+        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+            return false;
+        }
+
+        if (!$this->getShipmentId() && !$this->getShipment(false)) {
+            return false;
+        }
+
+        if ($this->hasReturnBarcode()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks whether a barcode may be generated for a given product code.
      *
      * @param bool|string|int $productCode
@@ -2160,15 +2524,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        if ($this->getConfirmStatus() == self::CONFIRM_STATUS_CONFIRMED) {
+        if ($this->isConfirmed()) {
             return false;
         }
 
         if (!$this->getShipmentId() && !$this->getShipment(false)) {
-            return false;
-        }
-
-        if (!$this->getMainBarcode()) {
             return false;
         }
 
@@ -2223,6 +2583,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode    = $this->getProductCode();
 
         if (array_key_exists($productCode, $customBarcodes)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the current shipment's return status may be updated.
+     *
+     * @return boolean
+     */
+    public function canUpdateReturnStatus()
+    {
+        if ($this->isLocked()) {
+            return false;
+        }
+
+        if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
+            return false;
+        }
+
+        if (self::SHIPPING_PHASE_DELIVERED == $this->getReturnPhase()) {
+            return false;
+        }
+
+        if (!$this->getLabelsPrinted() || !$this->getReturnLabelsPrinted()) {
+            return false;
+        }
+
+        if (!$this->getMainBarcode() || !$this->hasReturnBarcode()) {
             return false;
         }
 
@@ -2330,21 +2720,41 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if the return label can be mailed to the customer.
+     *
+     * @return boolean
+     */
+    public function canSendReturnLabelEmail()
+    {
+        if ($this->isLocked()) {
+            return false;
+        }
+
+        if (!$this->hasReturnLabels()) {
+            return false;
+        }
+
+        if (!$this->canPrintReturnLabels()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if this shipment's confirmation status can be reset.
      *
      * @return boolean
      */
     public function canResetConfirmation()
     {
-        $confirmStatus = $this->getConfirmStatus();
-        if ($confirmStatus == self::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+        if ($this->hasCustomBarcode()) {
             return false;
         }
 
-        if ($confirmStatus == self::CONFIRM_STATUS_UNCONFIRMED) {
+        if (!$this->isConfirmed()) {
             return false;
         }
-
         $shippingPhase = $this->getShippingPhase();
         if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
@@ -2423,14 +2833,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
-            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
-            || $shippingPhase == self::SHIPPING_PHASE_SORTING
-        ) {
-            return false;
-        }
-
         if (!$checkAvailableProductOptions) {
             return true;
         }
@@ -2455,6 +2857,66 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Check if a return label may be printed for this shipment.
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabels()
+    {
+        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+            return false;
+        }
+
+        if ($this->hasReturnLabels()) {
+            return true;
+        }
+
+        /**
+         * If the shipment has labels, but no return labels it cannot print a return label. Instead the existing labels
+         * need to be deleted first.
+         */
+        if ($this->hasLabels()) {
+            return false;
+        }
+
+        /**
+         * If the shipment has a barcode, but no return barcode it cannot print a return label. The barcodes need to be
+         * deleted first so new ones may be requested.
+         */
+        if ($this->hasMainBarcode() && !$this->hasReturnBarcode()) {
+            return false;
+        }
+
+        if ($this->canGenerateReturnBarcode()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the current shipment's parcel count may be altered.
+     *
+     * @return boolean
+     */
+    public function canChangeParcelCount()
+    {
+        if ($this->isConfirmed()) {
+            return false;
+        }
+
+        if (!$this->isDutchShipment()) {
+            return false;
+        }
+
+        if ($this->isCod()) {
+            return false;
+        }
+
+        return true;
     }
 
     /*******************************************************************************************************************
@@ -2562,6 +3024,44 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Generates a return barcode for this shipment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function generateReturnBarcode()
+    {
+        if (!$this->canGenerateReturnBarcode()) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The generateReturnBarcode action is currently unavailable.'),
+                'POSTNL-0201'
+            );
+        }
+
+        $this->lock();
+
+        Mage::dispatchEvent('postnl_shipment_generatereturnbarcodes_before', array('shipment' => $this));
+
+        $parcelCount = $this->getParcelCount();
+        if (!$parcelCount) {
+            $parcelCount = $this->_calculateParcelCount();
+        }
+
+        /**
+         * Generate a return barcode for each parcel and save it.
+         */
+        for ($i = 0; $i < $parcelCount; $i++) {
+            $barcode = $this->_generateBarcode();
+            $this->_addReturnBarcode($barcode, $i);
+        }
+
+        Mage::dispatchEvent('postnl_shipment_generatereturnbarcodes_after', array('shipment' => $this));
+        $this->unlock();
+        return $this;
+    }
+
+    /**
      * Generates a single barcode for this postnl shipment.
      *
      * @return string
@@ -2662,6 +3162,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _generateLabel($confirm = false, $barcodeNumber = false)
     {
+        $storeId = $this->getStoreId();
         $mainBarcode = $this->getMainBarcode();
 
         /**
@@ -2671,22 +3172,54 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $barcode = $mainBarcode;
         } else {
             $barcode = $this->getBarcode($barcodeNumber);
-            $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
+        }
+
+        $returnBarcode    = false;
+        $printReturnLabel = $this->getHelper('cif')->isReturnsEnabled($storeId);
+
+        /**
+         * If we should print a return label, get the return barcode.
+         */
+        if ($printReturnLabel) {
+            $returnBarcode = $this->getReturnBarcode($barcodeNumber);
+
+            /**
+             * If no return barcode is available, we can only print the regular shipping labels.
+             */
+            if (empty($returnBarcode)) {
+                $printReturnLabel = false;
+            }
         }
 
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif');
-        $cif->setStoreId($this->getStoreId());
+        $cif->setStoreId($storeId);
+
+        $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
 
         /**
          * @var StdClass $result
          */
         if ($confirm === false) {
-            $result = $cif->generateLabelsWithoutConfirm($this, $barcode, $mainBarcode, $barcodeNumber);
+            $result = $cif->generateLabelsWithoutConfirm(
+                $this,
+                $barcode,
+                $mainBarcode,
+                $barcodeNumber,
+                $printReturnLabel,
+                $returnBarcode
+            );
         } else {
-            $result = $cif->generateLabels($this, $barcode, $mainBarcode, $barcodeNumber);
+            $result = $cif->generateLabels(
+                $this,
+                $barcode,
+                $mainBarcode,
+                $barcodeNumber,
+                $printReturnLabel,
+                $returnBarcode
+            );
         }
 
         if (!isset($result->Labels, $result->Labels->Label)) {
@@ -2929,11 +3462,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Requests a shipping status update for this shipment
      *
+     * @param boolean $parseColloNotFoundError
+     *
      * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
-    public function updateShippingStatus()
+    public function updateShippingStatus($parseColloNotFoundError = false)
     {
         if (!$this->canUpdateShippingStatus()) {
             throw new TIG_PostNL_Exception(
@@ -2946,14 +3481,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_updateshippingstatus_before', array('shipment' => $this));
 
-        /**
-         * @var TIG_PostNL_Model_Core_Cif $cif
-         */
-        $cif = Mage::getModel('postnl_core/cif');
-        $cif->setStoreId($this->getStoreId());
-        $result = $cif->getShipmentStatus($this);
+        try {
+            $currentPhase = $this->_getShipmentStatus($this->getMainBarcode());
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            if (!$parseColloNotFoundError) {
+                throw $e;
+            }
 
-        $currentPhase = $result->Status->CurrentPhaseCode;
+            $errorNumbers = $e->getErrorNumbers();
+            if (1 === count($errorNumbers)
+                && TIG_PostNL_Model_Core_Cif::SHIPMENT_NOT_FOUND_ERROR_NUMBER == $errorNumbers[0]
+            ) {
+                $currentPhase = self::SHIPPING_PHASE_NOT_APPLICABLE;
+            } else {
+                throw $e;
+            }
+        }
 
         if (!$currentPhase) {
             return $this;
@@ -2976,6 +3519,88 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Requests a return status update for this shipment
+     *
+     * @param boolean $parseColloNotFoundError
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateReturnStatus($parseColloNotFoundError = false)
+    {
+        if (!$this->canUpdateReturnStatus()) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The updateReturnStatus action is currently unavailable.'),
+                'POSTNL-0204'
+            );
+        }
+
+        $this->lock();
+
+        Mage::dispatchEvent('postnl_shipment_updatereturnstatus_before', array('shipment' => $this));
+
+        try {
+            $currentPhase = $this->_getShipmentStatus($this->getReturnBarcode());
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            if (!$parseColloNotFoundError) {
+                throw $e;
+            }
+
+            $errorNumbers = $e->getErrorNumbers();
+            if (1 === count($errorNumbers)
+                && TIG_PostNL_Model_Core_Cif::SHIPMENT_NOT_FOUND_ERROR_NUMBER == $errorNumbers[0]
+            ) {
+                $currentPhase = self::SHIPPING_PHASE_NOT_APPLICABLE;
+            } else {
+                throw $e;
+            }
+        }
+
+        if (!$currentPhase) {
+            return $this;
+        }
+
+        Mage::dispatchEvent(
+            'postnl_shipment_updatereturnphase_before',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
+        $this->setReturnPhase($currentPhase);
+        Mage::dispatchEvent(
+            'postnl_shipment_updatereturnphase_after',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
+
+        Mage::dispatchEvent('postnl_shipment_updatereturnstatus_after', array('shipment' => $this));
+
+        $this->unlock();
+        return $this;
+    }
+
+    /**
+     * Get a shipment status update for the specified barcode.
+     *
+     * @param string $barcode
+     *
+     * @return string|null
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShipmentStatus($barcode)
+    {
+        /**
+         * @var TIG_PostNL_Model_Core_Cif $cif
+         */
+        $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
+        $result = $cif->getShipmentStatus($barcode);
+
+        $currentPhase = $result->Status->CurrentPhaseCode;
+
+        return $currentPhase;
+    }
+
+    /**
      * Update this shipment's status history
      *
      * @throws TIG_PostNL_Exception
@@ -2995,13 +3620,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_before', array('shipment' => $this));
 
+        $this->_updateCompleteStatus($this->getMainBarcode());
+        if ($this->hasReturnBarcode()) {
+            $this->_updateCompleteStatus($this->getReturnBarcode());
+        }
+
+        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_after', array('shipment' => $this));
+
+        $this->unlock();
+
+        return $this;
+    }
+
+    /**
+     * Update the complete status history for the specified barcode.
+     *
+     * @param string $barcode
+     *
+     * @return $this
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _updateCompleteStatus($barcode)
+    {
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
          * @var StdClass $result
          */
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($this->getStoreId());
-        $result = $cif->getCompleteShipmentStatus($this);
+        $result = $cif->getCompleteShipmentStatus($barcode);
 
         /**
          * Update the shipment's shipping phase
@@ -3064,10 +3713,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setStatusHistoryUpdatedAt($dateModel->gmtTimestamp());
 
-        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_after', array('shipment' => $this));
-
-        $this->unlock();
-
         return $this;
     }
 
@@ -3076,13 +3721,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ******************************************************************************************************************/
 
     /**
-     * Adds Magento tracking information to the order containing the previously retrieved barcode
+     * Add Magento tracking information to the order for the return shipment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @todo call this method after return labels have been printed
+     * @todo find a way to hide this from customers or to mark it properly as a return shipment
+     */
+    public function addReturnTrackingCodeToShipment()
+    {
+        return $this->addTrackingCodeToShipment(true);
+    }
+
+    /**
+     * Add Magento tracking information to the order containing the previously retrieved barcode.
+     *
+     * @param boolean $isReturn
      *
      * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
-    public function addTrackingCodeToShipment()
+    public function addTrackingCodeToShipment($isReturn = false)
     {
         if (!$this->canAddTrackingCode()) {
             throw new TIG_PostNL_Exception(
@@ -3092,7 +3754,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shipment = $this->getShipment();
-        $barcode = $this->getMainBarcode();
+        if (true === $isReturn) {
+            $barcode = $this->getReturnBarcode();
+        } else {
+            $barcode = $this->getMainBarcode();
+        }
 
         if (!$shipment || !$barcode) {
             throw new TIG_PostNL_Exception(
@@ -3103,6 +3769,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $carrierCode = self::POSTNL_CARRIER_CODE;
         $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/name', $shipment->getStoreId());
+        if ($isReturn) {
+            $carrierTitle .= ' - ' . $this->getHelper()->__('return');
+        }
 
         $data = array(
             'carrier_code' => $carrierCode,
@@ -3150,142 +3819,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
-        $storeId = $this->getStoreId();
-
-        $template = Mage::getStoreConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
-
         try {
-            /**
-             * @var Mage_Sales_Model_Order $order
-             */
-            $shippingAddress = $this->getShippingAddress();
-            $shipment        = $this->getShipment();
-            $order           = $this->getOrder();
-            if (!$order || !$shipment || !$shippingAddress) {
-                throw new TIG_PostNL_Exception(
-                    $helper->__('Unable to send track & trace email due to missing shipment parameters.'),
-                    'POSTNL-0200'
-                );
-            }
-
-            $payment          = $order->getPayment();
-            $paymentBlockHtml = '';
-            if ($payment) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $paymentBlock = Mage::helper('payment')
-                                    ->getInfoBlock($payment)
-                                    ->setIsSecureMode(true);
-
-                /** @noinspection PhpUndefinedMethodInspection */
-                $paymentBlock->getMethod()
-                             ->setStore($storeId);
-
-                /**
-                 * @var Mage_Payment_Block_Info $paymentBlock
-                 */
-                $paymentBlockHtml = $paymentBlock->toHtml();
-            }
-
-            /** @noinspection PhpUndefinedMethodInspection */
-            $templateVariables = array(
-                'postnlshipment'   => $this,
-                'barcode'          => $this->getMainBarcode(),
-                'barcode_url'      => $this->getBarcodeUrl(false),
-                'shipment'         => $shipment,
-                'order'            => $order,
-                'payment_html'     => $paymentBlockHtml,
-                'customer'         => $order->getCustomer(),
-                'quote'            => $order->getQuote(),
-                'shipment_comment' => '', /** @todo add last shipment comment */
-                'billing'          => $order->getBillingAddress(),
-                'shipping'         => $order->getShippingAddress(),
-                'pakje_gemak'      => $this->getPakjeGemakAddress(),
-            );
-
-            $templateVariables = new Varien_Object($templateVariables);
-            Mage::dispatchEvent(
-                'postnl_shipment_add_track_and_trace_email_vars',
-                array(
-                    'vars'            => $templateVariables,
-                    'postnl_shipment' => $this,
-                )
-            );
-
-            // Get the destination email addresses to send copies to
-            $copy       = Mage::getStoreConfigFlag(self::XPATH_EMAIL_COPY, $storeId);
-            $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
-            $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
-
-            $mailer = Mage::getModel('core/email_template_mailer');
-            $emailInfo = Mage::getModel('core/email_info');
-            $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
-
-            if ($copy && !empty($copyTo) && $copyMethod == 'bcc') {
-                foreach ($copyTo as $email) {
-                    $emailInfo->addBcc($email);
-                }
-            }
-
-            $mailer->addEmailInfo($emailInfo);
-
-            if ($copy && !empty($copyTo) && $copyMethod == 'copy') {
-                foreach ($copyTo as $email) {
-                    $emailInfo = Mage::getModel('core/email_info');
-                    $emailInfo->addTo($email);
-                    $mailer->addEmailInfo($emailInfo);
-                }
-            }
-
-            /**
-             * Set all required parameters.
-             */
-            $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId))
-                   ->setStoreId($storeId)
-                   ->setTemplateId($template)
-                   ->setTemplateParams($templateVariables->getData());
-
-            Mage::dispatchEvent(
-                'postnl_shipment_send_track_and_trace_email_before',
-                array(
-                    'postnl_shipment' => $this,
-                    'mailer'          => $mailer,
-                )
-            );
-
-            /**
-             * Send the emails.
-             */
-            $mailer->send();
-
-            Mage::dispatchEvent(
-                'postnl_shipment_send_track_and_trace_email_after',
-                array(
-                    'postnl_shipment' => $this,
-                )
-            );
-
-            /**
-             * Add a comment to the order and shipment that the track & trace email has been sent.
-             */
-            $order->addStatusHistoryComment(
-                       $helper->__(
-                           'PostNL track & trace email has been sent for shipment #%s.',
-                           $shipment->getIncrementId()
-                       )
-                   )
-                   ->setIsCustomerNotified(1)
-                   ->save();
-
-            $shipment->addComment(
-                         $helper->__('PostNL track & trace email has been sent.'),
-                         true
-                     )
-                     ->save();
+            $this->_sendTrackAndTraceEmail();
         } catch (Exception $e) {
             $helper->logException($e);
             throw new TIG_PostNL_Exception(
                 $helper->__(
-                    'Unable to send track and trace email for shipment #',
+                    'Unable to send track and trace email for shipment #%s.',
                     $this->getShipmentId()
                 ),
                 'POSTNL-0077'
@@ -3295,11 +3835,158 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set the 'email sent' flag to true for this shipment.
          */
-        if (!$this->getShipment()->getEmailSent()) {
+        if ($this->getShipment() && !$this->getShipment()->getEmailSent()) {
             $this->getShipment()
                  ->setEmailSent(true)
                  ->save();
         }
+
+        return $this;
+    }
+
+    /**
+     * Send a track & trace email to the customer containing a link to the 'mijnpakket' environment where they
+     * can track their shipment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _sendTrackAndTraceEmail()
+    {
+        $helper = Mage::helper('postnl');
+
+        $storeId = $this->getStoreId();
+
+        $template = Mage::getStoreConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
+
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
+        $shippingAddress = $this->getShippingAddress();
+        $shipment        = $this->getShipment();
+        $order           = $this->getOrder();
+        if (!$order || !$shipment || !$shippingAddress) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('Unable to send track & trace email due to missing shipment parameters.'),
+                'POSTNL-0200'
+            );
+        }
+
+        $payment          = $order->getPayment();
+        $paymentBlockHtml = '';
+        if ($payment) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock = Mage::helper('payment')
+                                ->getInfoBlock($payment)
+                                ->setIsSecureMode(true);
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock->getMethod()
+                         ->setStore($storeId);
+
+            /**
+             * @var Mage_Payment_Block_Info $paymentBlock
+             */
+            $paymentBlockHtml = $paymentBlock->toHtml();
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $templateVariables = array(
+            'postnlshipment'   => $this,
+            'barcode'          => $this->getMainBarcode(),
+            'barcode_url'      => $this->getBarcodeUrl(false),
+            'shipment'         => $shipment,
+            'order'            => $order,
+            'payment_html'     => $paymentBlockHtml,
+            'customer'         => $order->getCustomer(),
+            'quote'            => $order->getQuote(),
+            'shipment_comment' => '', /** @todo add last shipment comment */
+            'billing'          => $order->getBillingAddress(),
+            'shipping'         => $order->getShippingAddress(),
+            'pakje_gemak'      => $this->getPakjeGemakAddress(),
+        );
+
+        $templateVariables = new Varien_Object($templateVariables);
+        Mage::dispatchEvent(
+            'postnl_shipment_add_track_and_trace_email_vars',
+            array(
+                'vars'            => $templateVariables,
+                'postnl_shipment' => $this,
+            )
+        );
+
+        // Get the destination email addresses to send copies to
+        $copy       = Mage::getStoreConfigFlag(self::XPATH_EMAIL_COPY, $storeId);
+        $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
+        $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
+
+        $mailer = Mage::getModel('core/email_template_mailer');
+        $emailInfo = Mage::getModel('core/email_info');
+        $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
+
+        if ($copy && !empty($copyTo) && $copyMethod == 'bcc') {
+            foreach ($copyTo as $email) {
+                $emailInfo->addBcc($email);
+            }
+        }
+
+        $mailer->addEmailInfo($emailInfo);
+
+        if ($copy && !empty($copyTo) && $copyMethod == 'copy') {
+            foreach ($copyTo as $email) {
+                $emailInfo = Mage::getModel('core/email_info');
+                $emailInfo->addTo($email);
+                $mailer->addEmailInfo($emailInfo);
+            }
+        }
+
+        /**
+         * Set all required parameters.
+         */
+        $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId))
+               ->setStoreId($storeId)
+               ->setTemplateId($template)
+               ->setTemplateParams($templateVariables->getData());
+
+        Mage::dispatchEvent(
+            'postnl_shipment_send_track_and_trace_email_before',
+            array(
+                'postnl_shipment' => $this,
+                'mailer'          => $mailer,
+            )
+        );
+
+        /**
+         * Send the emails.
+         */
+        $mailer->send();
+
+        Mage::dispatchEvent(
+            'postnl_shipment_send_track_and_trace_email_after',
+            array(
+                'postnl_shipment' => $this,
+            )
+        );
+
+        /**
+         * Add a comment to the order and shipment that the track & trace email has been sent.
+         */
+        $order->addStatusHistoryComment(
+                  $helper->__(
+                      'PostNL track & trace email has been sent for shipment #%s.',
+                      $shipment->getIncrementId()
+                  )
+              )
+              ->setIsCustomerNotified(1)
+              ->save();
+
+        $shipment->addComment(
+                     $helper->__('PostNL track & trace email has been sent.'),
+                     true
+                 )
+                 ->save();
 
         return $this;
     }
@@ -3325,9 +4012,61 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $barcodeModel->setParentId($this->getId())
                      ->setBarcode($barcode)
                      ->setBarcodeNumber($barcodeNumber)
+                     ->setBarcodeType($barcodeModel::BARCODE_TYPE_SHIPMENT)
                      ->save();
 
+        $this->unsBarcodeCollections();
+
         return $this;
+    }
+
+    /**
+     * Add a return barcode to this shipment's barcode collection
+     *
+     * @param string $barcode The barcode to add
+     * @param int $barcodeNumber The number of this barcode
+     *
+     * @return $this
+     */
+    protected function _addReturnBarcode($barcode, $barcodeNumber)
+    {
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcodeModel
+         */
+        $barcodeModel = Mage::getModel('postnl_core/shipment_barcode');
+        $barcodeModel->setParentId($this->getId())
+                     ->setBarcode($barcode)
+                     ->setBarcodeNumber($barcodeNumber)
+                     ->setBarcodeType($barcodeModel::BARCODE_TYPE_RETURN)
+                     ->save();
+
+        $this->unsBarcodeCollections();
+
+        return $this;
+    }
+
+    /**
+     * Get the barcode URL for the specified barcode.
+     *
+     * @param string  $barcode
+     * @param boolean $forceNl
+     *
+     * @return string
+     */
+    protected function _getBarcodeUrl($barcode, $forceNl = false)
+    {
+        /**
+         * @var TIG_PostNL_Helper_Carrier $helper
+         */
+        $helper = $this->getHelper('carrier');
+
+        $url = '';
+        $shippingAddress = $this->getShippingAddress();
+        if ($shippingAddress) {
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
+        }
+
+        return $url;
     }
 
     /*******************************************************************************************************************
@@ -3442,6 +4181,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $transactionSave->save();
 
+        $this->unsLabelsToSave();
+
         Mage::dispatchEvent(
             'postnl_shipment_savelabels_after',
             array('shipment' => $this, 'labels' => $labelsToSave)
@@ -3482,6 +4223,198 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return true;
+    }
+
+    /**
+     * Filter out return labels.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment_Label[] $labels
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
+     */
+    protected function _filterReturnLabels($labels)
+    {
+        foreach ($labels as $key => $label) {
+            if ($label->isReturnLabel()) {
+                unset($labels[$key]);
+            }
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Send an email to the customer containing the return label as a pdf attachment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function sendReturnLabelEmail()
+    {
+        $helper = Mage::helper('postnl');
+        if (!$this->canSendReturnLabelEmail()) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('The sendReturnLabelEmail action is currently unavailable.'),
+                'POSTNL-0207'
+            );
+        }
+
+        try {
+            $this->_sendReturnLabelEmail();
+        } catch (Exception $e) {
+            $helper->logException($e);
+            throw new TIG_PostNL_Exception(
+                $helper->__(
+                    'Unable to send return email for shipment #%s.',
+                    $this->getShipmentId()
+                ),
+                'POSTNL-0208'
+            );
+        }
+
+        /**
+         * Set the 'return labels printed' flag to true for this shipment.
+         */
+        if (!$this->getReturnLabelsPrinted()) {
+            $this->setReturnLabelsPrinted(true)
+                 ->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Send an email to the customer with the return label as a pdf attachment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _sendReturnLabelEmail()
+    {
+        $helper = Mage::helper('postnl');
+
+        $storeId = $this->getStoreId();
+
+        $template = Mage::getStoreConfig(self::XPATH_RETURN_LABEL_EMAIL_TEMPLATE, $storeId);
+
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
+        $shippingAddress = $this->getShippingAddress();
+        $shipment        = $this->getShipment();
+        $order           = $this->getOrder();
+        $returnLabels    = $this->getReturnLabels();
+        if (!$order || !$shipment || !$shippingAddress || empty($returnLabels)) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('Unable to send return label email due to missing shipment parameters.'),
+                'POSTNL-0209'
+            );
+        }
+
+        $payment          = $order->getPayment();
+        $paymentBlockHtml = '';
+        if ($payment) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock = Mage::helper('payment')
+                                ->getInfoBlock($payment)
+                                ->setIsSecureMode(true);
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            $paymentBlock->getMethod()
+                         ->setStore($storeId);
+
+            /**
+             * @var Mage_Payment_Block_Info $paymentBlock
+             */
+            $paymentBlockHtml = $paymentBlock->toHtml();
+        }
+
+        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $templateVariables = array(
+            'postnlshipment'     => $this,
+            'barcode'            => $this->getMainBarcode(),
+            'barcode_url'        => $this->getBarcodeUrl(false),
+            'return_barcode'     => $this->getReturnBarcode(),
+            'return_barcode_url' => $this->getReturnBarcodeUrl(false),
+            'shipment'           => $shipment,
+            'order'              => $order,
+            'payment_html'       => $paymentBlockHtml,
+            'customer'           => $customer,
+            'customer_name'      => $order->getCustomerName(),
+            'quote'              => $quote,
+            'shipment_comment'   => '', /** @todo add last shipment comment */
+            'billing'            => $order->getBillingAddress(),
+            'shipping'           => $order->getShippingAddress(),
+            'pakje_gemak'        => $this->getPakjeGemakAddress(),
+        );
+
+        $templateVariables = new Varien_Object($templateVariables);
+
+        $returnLabelPdf = Mage::getModel('postnl_core/label')
+                              ->setLabelSize('A4')
+                              ->setOutputMode('S')
+                              ->createPdf($returnLabels);
+        $returnLabelObject = new varien_Object(array('label_pdf' => $returnLabelPdf));
+
+        Mage::dispatchEvent(
+            'postnl_shipment_add_return_label_email_vars',
+            array(
+                'vars'            => $templateVariables,
+                'return_label'    => $returnLabelObject,
+                'postnl_shipment' => $this,
+            )
+        );
+
+        $emailInfo = Mage::getModel('core/email_info');
+        $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
+
+        $transactionalEmail = Mage::getModel('core/email_template');
+        $transactionalEmail->setDesignConfig(array('area' => 'frontend', 'store' => $storeId));
+
+        /** @var Zend_Mail $mail */
+        $mail = $transactionalEmail->getMail();
+        $mail->createAttachment(
+            $returnLabelObject->getData('label_pdf'),
+            Zend_Mime::TYPE_OCTETSTREAM,
+            Zend_Mime::DISPOSITION_ATTACHMENT,
+            Zend_Mime::ENCODING_BASE64,
+            $helper->__('postnl_return_label.pdf')
+        );
+
+        $transactionalEmail->sendTransactional(
+            $template,
+            Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId),
+            $emailInfo->getToEmails(),
+            $emailInfo->getToNames(),
+            $templateVariables->getData(),
+            $this->getStoreId()
+        );
+
+        /**
+         * Add a comment to the order and shipment that the return label email has been sent.
+         */
+        $order->addStatusHistoryComment(
+                  $helper->__(
+                      'PostNL return label email has been sent for shipment #%s.',
+                      $shipment->getIncrementId()
+                  )
+              )
+              ->setIsCustomerNotified(1)
+              ->save();
+
+        $shipment->addComment(
+                     $helper->__('PostNL return label email has been sent.'),
+                     true
+                 )
+                 ->save();
+
+        return $this;
     }
 
     /*******************************************************************************************************************
@@ -3621,12 +4554,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * is a buspakje shipment.
          */
         if ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
-            && array_key_exists('is_buspakje', $codes)
+            && isset($codes['is_buspakje'])
             && $codes['is_buspakje'] == '1'
         ) {
             $isBuspakje = true;
         } elseif ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
-            && (!array_key_exists('is_buspakje', $codes)
+            && (!isset($codes['is_buspakje'])
                 || $codes['is_buspakje'] == '-1'
             )
         ) {
@@ -3803,26 +4736,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the number of parcels in this shipment
+     * Get the number of parcels in this shipment.
      *
      * @return int
      */
     protected function _calculateParcelCount()
     {
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments
+         * Only Dutch shipments that are not COD support multi-colli shipments.
          */
         if (!$this->isDutchShipment() || $this->isCod()) {
             return 1;
         }
 
         /**
-         * get this shipment's total weight
+         * Get this shipment's total weight.
          */
         $weight = $this->getTotalWeight(true);
 
         /**
-         * get the weight per parcel.
+         * Get the weight per parcel.
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
@@ -3831,9 +4764,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
 
         /**
-         * calculate the number of parcels needed to ship the total weight of this shipment
+         * Calculate the number of parcels needed to ship the total weight of this shipment.
          */
         $parcelCount = ceil($weight / $weightPerParcel);
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
 
         return $parcelCount;
     }
@@ -3931,6 +4871,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Changes the current shipment's product code.
+     *
+     * @param int $parcelCount
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function changeParcelCount($parcelCount)
+    {
+        if (!$this->canChangeParcelCount()) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('The changeParcelCount action is currently unavailable.'),
+                'POSTNL-0203'
+            );
+        }
+
+        $parcelCount = (int) $parcelCount;
+
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
+        $this->deleteBarcodes()
+             ->setParcelCount($parcelCount);
+
+        return $this;
+    }
+
     /*******************************************************************************************************************
      * RESET AND DELETE METHODS
      ******************************************************************************************************************/
@@ -3999,9 +4969,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all labels associated with this shipment
      *
+     * @param boolean $resetLabelsPrinted
+     *
      * @return $this
      */
-    public function deleteLabels()
+    public function deleteLabels($resetLabelsPrinted = true)
     {
         $labelCollection = $this->getLabelCollection();
 
@@ -4014,6 +4986,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $label->delete();
         }
 
+        $this->setLabels(false)
+             ->setReturnLabels(false);
+
+        if ($resetLabelsPrinted) {
+            $this->setLabelsPrinted(false)
+                 ->setReturnLabelsPrinted(false);
+        }
+
         return $this;
     }
 
@@ -4024,7 +5004,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function deleteBarcodes()
     {
-        $barcodes = $this->getBarcodes(true);
+        $barcodes = $this->getBarcodes(true, false);
 
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcode
@@ -4033,7 +5013,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $barcode->delete();
         }
 
-        $this->setMainBarcode(false);
+        $this->setMainBarcode(false)
+             ->unsBarcodeCollections();
 
         return $this;
     }
@@ -4126,8 +5107,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set whether labels have printed or not.
          */
-        if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
-            $this->setLabelsPrinted(1);
+        if ($this->getLabelsPrinted() == 0 && $this->hasLabels()) {
+            $this->setLabelsPrinted(true);
+        }
+
+        /**
+         * Set whether return labels have printed or not.
+         */
+        if ($this->getReturnLabelsPrinted() == 0 && $this->hasReturnLabels()) {
+            $this->setReturnLabelsPrinted(true);
         }
 
         /**
@@ -4148,7 +5136,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set the parcel count.
          */
-        if (!$this->getParcelCount()) {
+        if (!$this->getParcelCount() || $this->getParcelCount() < 1) {
             $parcelCount = $this->_calculateParcelCount();
             $this->setParcelCount($parcelCount);
         }
@@ -4158,6 +5146,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (!$this->getConfirmDate()) {
             $this->setConfirmDate();
+        }
+
+        /**
+         * Check if this shipment is a letter box order.
+         */
+        if ($this->isObjectNew() && self::SHIPMENT_TYPE_BUSPAKJE == $this->getShipmentType()) {
+            $this->setIsBuspakje(true);
         }
 
         /**

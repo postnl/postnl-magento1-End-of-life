@@ -59,6 +59,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
     const XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA = 'postnl/general/product_attribute_update_data';
 
     /**
+     * Xpath to the return_expire_days setting.
+     */
+    const XPATH_RETURN_EXPIRE_DAYS = 'postnl/advanced/return_expire_days';
+
+    /**
      * Cron expression definition for updating product attributes.
      */
     const UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH = 'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr';
@@ -67,6 +72,50 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * Maximum number of products to update per cron run.
      */
     const MAX_PRODUCTS_TO_UPDATE = 250;
+
+    /**
+     * @var array
+     */
+    protected $_timeZones = array();
+
+    /**
+     * @return array
+     */
+    public function getTimeZones()
+    {
+        return $this->_timeZones;
+    }
+
+    /**
+     * @param array $timeZones
+     *
+     * @return $this
+     */
+    public function setTimeZones($timeZones)
+    {
+        $this->_timeZones = $timeZones;
+
+        return $this;
+    }
+
+    /**
+     * @param int|string $storeId
+     *
+     * @return string
+     */
+    public function getTimeZone($storeId)
+    {
+        $timeZones = $this->getTimeZones();
+        if (isset($timeZones[$storeId])) {
+            return $timeZones[$storeId];
+        }
+
+        $timeZone = Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE, $storeId);
+        $timeZones[$storeId] = $timeZone;
+
+        $this->setTimeZones($timeZones);
+        return $timeZone;
+    }
 
     /**
      * Method to destroy temporary label files that have been stored for too long.
@@ -281,7 +330,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function getBarcodes()
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Check if the PostNL module is active
@@ -329,12 +378,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             try {
                 $helper->cronLog("Getting barcodes for shipment #{$postnlShipment->getId()}.");
-                $postnlShipment->generateBarcodes()
-                               ->save();
+                $postnlShipment->generateBarcodes();
+
+                $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
+                if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                    $postnlShipment->generateReturnBarcode();
+                }
+
+                $postnlShipment->save();
 
                 $counter--;
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                $helper->logException($e);
             }
         }
 
@@ -441,6 +496,144 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
+     * Update return shipment status for all shipments whose return labels have been printed.
+     *
+     * @return $this
+     */
+    public function updateReturnStatus()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+
+        $helper->cronLog('UpdateReturnStatus cron starting...');
+
+        /**
+         * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
+         */
+        $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
+        $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
+
+        /**
+         * Get the date on which we can no longer requests return status updates for shipments.
+         */
+        $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $returnExpireDate  = new DateTime();
+        $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
+
+        /**
+         * Get all postnl shipments with a barcode, that are confirmed and are not yet delivered.
+         *
+         * Resulting SQL:
+         * SELECT  `main_table` . *
+         * FROM  `tig_postnl_shipment` AS  `main_table`
+         * WHERE (
+         *     return_labels_printed =1
+         * )
+         * AND (
+         *     confirm_status =  'confirmed'
+         * )
+         * AND (
+         *     (
+         *         (
+         *             return_phase !=  '4'
+         *         )
+         *         OR (
+         *             return_phase IS NULL
+         *         )
+         *     )
+         * )
+         * AND (
+         *     shipment_id IS NOT NULL
+         * )
+         * AND (
+         *     confirmed_at >=  '{$returnExpireDate->format('Y-m-d')}'
+         * )
+         */
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipmentCollection->addFieldToFilter(
+                                     'return_labels_printed',
+                                     array('eq' => 1)
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirm_status',
+                                     array('eq' => $confirmedStatus)
+                                 )
+                                 ->addFieldToFilter(
+                                     'return_phase',
+                                     array(
+                                         array('neq' => $deliveredStatus),
+                                         array('null' => true)
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirmed_at',
+                                     array(
+                                         'gteq' => $returnExpireDate->format('Y-m-d')
+                                     )
+                                 );
+
+        if ($postnlShipmentCollection->getSize() < 1) {
+            $helper->cronLog('No valid shipments found. Exiting cron.');
+            return $this;
+        }
+
+        $helper->cronLog("Return status will be updated for {$postnlShipmentCollection->getSize()} shipments.");
+
+        /**
+         * Request a return status update
+         */
+        foreach ($postnlShipmentCollection as $postnlShipment) {
+            /**
+             * Attempt to update the return status. Continue with the next one if it fails.
+             */
+            try{
+                if (!$postnlShipment->getShipment(false)) {
+                    continue;
+                }
+
+                $helper->cronLog("Updating return status for shipment #{$postnlShipment->getShipment()->getId()}");
+
+                if (!$postnlShipment->canUpdateReturnStatus()) {
+                    $postnlShipment->unlock();
+                    $helper->cronLog(
+                        "Updating return status for shipment #{$postnlShipment->getShipment()->getId()} is not " .
+                        "allowed. Continuing with next shipment."
+                    );
+                    continue;
+                }
+
+                $postnlShipment->updateReturnStatus()
+                               ->save();
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                $postnlShipment->unlock();
+
+                $this->_parseErrorCodes($e, $postnlShipment);
+            } catch (Exception $e) {
+                $postnlShipment->unlock();
+
+                Mage::helper('postnl')->logException($e);
+            }
+        }
+
+        $helper->cronLog('UpdateShippingStatus cron has finished.');
+
+        return $this;
+    }
+
+    /**
      * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process specific error codes
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
@@ -516,7 +709,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function expireConfirmation()
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Check if the PostNL module is active
@@ -608,6 +801,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 if ($postnlShipment->canGenerateBarcode()) {
                     $postnlShipment->generateBarcodes();
                 }
+
+
+                $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
+                if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                    $postnlShipment->generateReturnBarcode();
+                }
+
                 $postnlShipment->save();
             } catch (Exception $e) {
                 $helper->logException($e);
@@ -663,12 +863,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
 
+        $oneDayAgo = new DateTime();
+        $oneDayAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                  ->sub(new DateInterval('P1DT20M'));
+
+        $oneDayAgo = $oneDayAgo->format('Y-m-d H:i:s');
+
         $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before " .
             "{$twentyMinutesAgo}.");
 
         /**
          * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet
-         * been sent
+         * been sent.
          *
          * Resulting SQL:
          * SELECT `main_table` . *
@@ -681,6 +887,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * )
          * AND (
          *     confirmed_at <= '{$twentyMinutesAgo}'
+         *     AND confirmed_at >= '{$$oneDayAgo}'
          * )
          * AND (
          *     (
@@ -707,7 +914,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                  )
                                  ->addFieldToFilter(
                                      'confirmed_at',
-                                     array('lteq' => $twentyMinutesAgo)
+                                     array(
+                                         'from' => $oneDayAgo,
+                                         'to'   => $twentyMinutesAgo,
+                                     )
                                  )
                                  ->addFieldToFilter(
                                     'track_and_trace_email_sent',
@@ -724,7 +934,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                  );
 
         /**
-         * Check to see if there are any results
+         * Check to see if there are any results.
          */
         if (!$postnlShipmentCollection->getSize()) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
@@ -734,7 +944,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog("Track & trace emails will be sent for {$postnlShipmentCollection->getSize()} shipments.");
 
         /**
-         * Send the track and trace email for all shipments
+         * Send the track and trace email for all shipments.
          */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             if (!$postnlShipment->getShipment(false)) {
@@ -742,7 +952,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             }
 
             /**
-             * Check if sending the email is allowed for this shipment
+             * Check if sending the email is allowed for this shipment.
              */
             $storeId = $postnlShipment->getStoreId();
             if (!in_array($storeId, $allowedStoreIds) || !$postnlShipment->canSendTrackAndTraceEmail()) {
@@ -753,7 +963,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             }
 
             /**
-             * Attempt to send the email
+             * Attempt to send the email.
              */
             try{
                 $helper->cronLog("Sending track and trace email for shipment #{$postnlShipment->getId()}");
@@ -821,7 +1031,15 @@ class TIG_PostNL_Model_Core_Observer_Cron
         );
 
         /**
-         * Filter the collection by the lack of a parent_id OR shipping_phase being 'delivered'
+         * Get the date on which we can no longer requests return status updates for shipments.
+         */
+        $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $returnExpireDate  = new DateTime();
+        $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
+
+        /**
+         * Filter the collection by the lack of a parent_id OR shipping_phase being 'delivered'. Also filter based on
+         * the confirm date. This is to allow return shipments enough time to be returned.
          *
          * Resulting query:
          * SELECT `main_table`.`label_id` , `postnl_shipment`.`shipping_phase`
@@ -833,17 +1051,41 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *         parent_id IS NULL
          *     )
          *     OR (
-         *         shipping_phase =4
+         *         shipping_phase = 4
+         *     )
+         * )
+         * AND
+         * (
+         *     (
+         *         confirmed_at >= {$returnExpireDate}
+         *     )
+         *     OR (
+         *         return_phase = 4
          *     )
          * )
          */
         $labelsCollection->addFieldToFilter(
-            array('parent_id', 'shipping_phase'),
-            array(
-                array('null' => true),
-                array('eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED),
-            )
-        );
+                             array('parent_id', 'shipping_phase'),
+                             array(
+                                 array(
+                                     'null' => true
+                                 ),
+                                 array(
+                                     'eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED
+                                 ),
+                             )
+                         )
+                         ->addFieldToFilter(
+                             array('confirmed_at', 'return_phase'),
+                             array(
+                                 array(
+                                    'gteq' => $returnExpireDate->format('Y-m-d')
+                                 ),
+                                 array(
+                                     'eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED
+                                 )
+                             )
+                         );
 
         $labelCollectionSize = $labelsCollection->getSize();
         if ($labelCollectionSize < 1) {
@@ -982,6 +1224,251 @@ class TIG_PostNL_Model_Core_Observer_Cron
         }
 
         $helper->cronLog($helper->__('UpdateProductAttribute cron has finished.'));
+
+        return $this;
+    }
+
+    /**
+     * Modify the confirm- and delivery dates for all PostNL orders and shipments. These dates are currently entered in
+     * the storeview's timezone. These should be entered in the UTC timezone.
+     *
+     * @return $this
+     */
+    public function updateDateTimeZone()
+    {
+        $helper = Mage::helper('postnl');
+
+        $helper->cronLog($helper->__('UpdateDateTimeZone cron starting...'));
+
+        $data = Mage::getStoreConfig(
+            TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        if (!$data) {
+            $helper->cronLog($helper->__('No IDs found. Exiting cron.'));
+            return $this;
+        }
+
+        $data = unserialize($data);
+
+        /**
+         * Process the shipments.
+         */
+        if (!empty($data['shipment'])) {
+            $data['shipment'] = $this->_updatePostnlShipmentDateTimeZone($data['shipment']);
+        }
+
+        /**
+         * Process the orders.
+         */
+        if (!empty($data['order'])) {
+            $data['order'] = $this->_updatePostnlOrderDateTimeZone($data['order']);
+        }
+
+        if (empty($data['shipment']) && empty($data['order'])) {
+            /**
+             * All orders and shipments have been processed so we can remove the cron.
+             */
+            $helper->cronLog($helper->__('All orders and shipments have been processed. Removing cron.'));
+
+            Mage::getConfig()->saveConfig(
+                TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+                null,
+                'default',
+                Mage_Core_Model_App::ADMIN_STORE_ID
+            );
+
+            Mage::getModel('core/config_data')
+                ->load(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path')
+                ->setValue(null)
+                ->setPath(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH)
+                ->save();
+        }
+
+        Mage::getConfig()->saveConfig(
+            TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
+            serialize($data),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $helper->cronLog($helper->__('UpdateDateTimeZone cron has finished.'));
+
+        return $this;
+    }
+
+    /**
+     * Update the time zone of the confirm- and delivery date value for PostNL shipments.
+     *
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function _updatePostnlShipmentDateTimeZone($ids)
+    {
+        /**
+         * Get all PostNL shipments.
+         */
+        $postnlShipments = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipments->addFieldToFilter('entity_id', array('in' => $ids));
+        $postnlShipments->getSelect()->limit(100);
+
+        $helper = Mage::helper('postnl');
+
+        foreach ($postnlShipments as $postnlShipment) {
+            $helper->cronLog($helper->__('Updating shipment ID: %s', $postnlShipment->getId()));
+
+            /**
+             * Remove this shipment's ID from the IDs array. Even if it fails for this shipment, we don't want to try
+             * again.
+             */
+            $key = array_search($postnlShipment->getId(), $ids);
+            if($key !== false) {
+                unset($ids[$key]);
+            }
+
+            /**
+             * Get the shipment's timezone.
+             */
+            $timeZone = $this->getTimeZone($postnlShipment->getStoreId());
+
+            /**
+             * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
+             */
+            $confirmDate  = $postnlShipment->getConfirmDate();
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+
+            /**
+             * Modify the dates to the UTC timezone.
+             */
+            $confirmDateTime = new DateTime($confirmDate, new DateTimeZone($timeZone));
+            $confirmDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            $deliveryDateTime = new DateTime($deliveryDate, new DateTimeZone($timeZone));
+            $deliveryDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            /**
+             * Update the dates.
+             */
+            $postnlShipment->setConfirmDate($confirmDateTime->getTimestamp())
+                           ->setDeliveryDate($deliveryDateTime->getTimestamp());
+
+            /**
+             * Save the shipment.
+             */
+            try {
+                $postnlShipment->save();
+            } catch (Exception $e) {
+                $helper->cronLog($helper->__('Updating shipment ID %s failed.', $postnlShipment->getId()));
+                $helper->logException($e);
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Update the time zone of the confirm- and delivery date value for PostNL orders.
+     *
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function _updatePostnlOrderDateTimeZone($ids)
+    {
+        /**
+         * Get all PostNL shipments.
+         */
+        $postnlOrders = Mage::getResourceModel('postnl_core/order_collection');
+        $postnlOrders->addFieldToFilter('entity_id', array('in' => $ids));
+        $postnlOrders->getSelect()->limit(100);
+
+        $helper = Mage::helper('postnl');
+
+        foreach ($postnlOrders as $postnlOrder) {
+            $helper->cronLog($helper->__('Updating order ID: %s', $postnlOrder->getId()));
+
+            /**
+             * Remove this order's ID from the IDs array. Even if it fails for this shipment, we don't want to try
+             * again.
+             */
+            $key = array_search($postnlOrder->getId(), $ids);
+            if($key !== false) {
+                unset($ids[$key]);
+            }
+
+            /**
+             * Get the order's timezone.
+             */
+            $timeZone = $this->getTimeZone($postnlOrder->getStoreId());
+
+            /**
+             * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
+             */
+            $confirmDate  = $postnlOrder->getConfirmDate();
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+
+            /**
+             * Modify the dates to the UTC timezone.
+             */
+            $confirmDateTime = new DateTime($confirmDate, new DateTimeZone($timeZone));
+            $confirmDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            $deliveryDateTime = new DateTime($deliveryDate, new DateTimeZone($timeZone));
+            $deliveryDateTime->setTimezone(new DateTimeZone('UTC'));
+
+            /**
+             * Update the dates.
+             */
+            $postnlOrder->setConfirmDate($confirmDateTime->getTimestamp())
+                           ->setDeliveryDate($deliveryDateTime->getTimestamp());
+
+            /**
+             * Save the order.
+             */
+            try {
+                $postnlOrder->save();
+            } catch (Exception $e) {
+                $helper->cronLog($helper->__('Updating order ID %s failed.', $postnlOrder->getId()));
+                $helper->logException($e);
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Check the integrity of the PostNL order and shipment data.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function integrityCheck()
+    {
+        $helper = Mage::helper('postnl');
+
+        $helper->cronLog($helper->__('IntegrityCheck cron starting...'));
+
+        $integrityCheckModel = Mage::getModel('postnl_core/service_integrityCheck');
+        try {
+            $errors = $integrityCheckModel->integrityCheck();
+
+            if (!empty($errors)) {
+                $helper->cronLog($helper->__('The following errors were found: %s', var_export($errors, true)));
+            } else {
+                $helper->cronLog($helper->__('No errors found.'));
+            }
+
+            Mage::getResourceSingleton('postnl_core/integrity')->saveIntegrityCheckResults($errors);
+
+            $helper->cronLog($helper->__('Results have been saved.'));
+        } catch (Exception $e) {
+            $helper->cronLog($helper->__("An error occurred while checking the PostNL extension's data integrity."));
+            $helper->logException($e);
+        }
+
+        $helper->cronLog($helper->__('IntegrityCheck cron has finished.'));
 
         return $this;
     }

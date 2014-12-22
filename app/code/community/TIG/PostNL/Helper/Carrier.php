@@ -54,9 +54,6 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      * Localised track and trace base URL's.
      */
     const POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_nl_base_url';
-    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_gb_base_url';
-    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_de_base_url';
-    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_fr_base_url';
     const POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH = 'postnl/cif/track_and_trace_int_base_url';
 
     /**
@@ -68,6 +65,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      * Xpath to the 'postnl_shipping_methods' setting.
      */
     const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
+
+    /**
+     * Default destination street. This is defined here, rather tha n in the address model for backwards compatibility.
+     */
+    const DEFAULT_DEST_STREET = '-1';
 
     /**
      * Array of possible PostNL shipping methods.
@@ -190,6 +192,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getPostnlShippingMethod()
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return $this->getCurrentPostnlShippingMethod();
     }
 
@@ -265,10 +268,9 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setDestRegionCode($shippingAddress->getRegionCode());
 
         /**
-         * need to call getStreet with -1
-         * to get data in string instead of array
+         * Need to call getStreet with -1 to get data in string instead of array.
          */
-        $request->setDestStreet($shippingAddress->getStreet($shippingAddress::DEFAULT_DEST_STREET));
+        $request->setDestStreet($shippingAddress->getStreet(self::DEFAULT_DEST_STREET));
         $request->setDestCity($shippingAddress->getCity());
         $request->setDestPostcode($shippingAddress->getPostcode());
         $request->setPackageValue($shippingAddress->getBaseSubtotal());
@@ -278,7 +280,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setPackageQty($shippingAddress->getItemQty());
 
         /**
-         * Need for shipping methods that use insurance based on price of physical products
+         * Need for shipping methods that use insurance based on price of physical products.
          */
         $packagePhysicalValue = $shippingAddress->getBaseVirtualAmount();
         $request->setPackagePhysicalValue($packagePhysicalValue);
@@ -289,7 +291,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setWebsiteId($store->getWebsiteId());
         $request->setFreeShipping($shippingAddress->getFreeShipping());
         /**
-         * Currencies need to convert in free shipping
+         * Currencies need to convert in free shipping.
          */
         $request->setBaseCurrency($store->getBaseCurrency());
         $request->setPackageCurrency($store->getCurrentCurrency());
@@ -376,25 +378,25 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      *
      * @param string              $barcode
      * @param array|Varien_Object $destination An array or object containing the shipment's destination data.
-     * @param boolean|string      $lang
+     * @param boolean|string      $lang        This parameter is no longer used as of v1.4.1.
      * @param boolean             $forceNl
      *
      * @return string
      */
-    public function getBarcodeUrl($barcode, $destination, $lang = false, $forceNl = false)
+    public function getBarcodeUrl($barcode, $destination, $lang = null, $forceNl = false)
     {
         $countryCode = null;
         $postcode    = null;
         if (is_array($destination)) {
-            if (!isset($destination['countryCode']) || !isset($destination['postcode'])) {
-                throw new InvalidArgumentException("Destination must contain the 'countryCode' and 'postcode' keys.");
+            if (!isset($destination['countryCode'])) {
+                throw new InvalidArgumentException("Destination must contain a country code.");
             }
 
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         } elseif (is_object($destination) && $destination instanceof Varien_Object) {
-            if (!$destination->getCountry() || !$destination->getPostcode()) {
-                throw new InvalidArgumentException('Destination must have a country and a postcode.');
+            if (!$destination->getCountry()) {
+                throw new InvalidArgumentException('Destination must contain a country code.');
             }
 
             $countryCode = $destination->getCountry();
@@ -404,7 +406,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         /**
-         * Get the dutch track & trace URL for dutch shipments or for the admin
+         * Get the dutch track & trace URL for dutch shipments or for the admin.
          */
         if ($forceNl
             || (!empty($countryCode)
@@ -414,7 +416,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH)
                         . '&b=' . $barcode;
             /**
-             * For dutch shipments add the postcode. For international shipments add an 'international' flag
+             * For dutch shipments add the postcode. For international shipments add an 'international' flag.
              */
             if (!empty($postcode)
                 && !empty($countryCode)
@@ -429,52 +431,14 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         /**
-         * Get localized track & trace URLs for UK, DE and FR shipments
-         */
-        if (isset($countryCode)
-            && ($countryCode == 'UK'
-                || $countryCode == 'GB'
-            )
-        ) {
-            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH)
-                        . '&B=' . $barcode
-                        . '&D=GB'
-                        . '&lang=en';
-
-            return $barcodeUrl;
-        }
-
-        if (isset($countryCode) && $countryCode == 'DE') {
-            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH)
-                        . '&B=' . $barcode
-                        . '&D=DE'
-                        . '&lang=de';
-
-            return $barcodeUrl;
-        }
-
-        if (isset($countryCode) && $countryCode == 'FR') {
-            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH)
-                        . '&B=' . $barcode
-                        . '&D=FR'
-                        . '&lang=fr';
-
-            return $barcodeUrl;
-        }
-
-        /**
-         * Get a general track & trace URL for all other destinations
+         * Get a general track & trace URL for all other destinations.
          */
         $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH)
-                    . '&B=' . $barcode
-                    . '&I=true';
+                    . '/' . $barcode
+                    . '/' . $countryCode;
 
-        if ($lang) {
-            $barcodeUrl .= '&lang=' . strtolower($lang);
-        }
-
-        if ($countryCode) {
-            $barcodeUrl .= '&D=' . $countryCode;
+        if (!empty($postcode)) {
+            $barcodeUrl .= '/' . $postcode;
         }
 
         return $barcodeUrl;

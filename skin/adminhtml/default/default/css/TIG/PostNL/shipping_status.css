@@ -1,4 +1,4 @@
-.progress-wrapper { color:#555; height:34px; width:100%; background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 0 repeat-x; margin:20px 0; position:relative; }
+.progress-wrapper { color:#555; height:34px; width:100%; background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 0 repeat-x; margin:5px 0 20px; position:relative; }
 .progress-wrapper .progress { width:25%; float:left; text-align:center; height:34px; }
 .progress-wrapper .progress strong { display:inline-block; padding-top:8px; }
 .progress-wrapper .progress span { display:block; position:absolute; top:0; }
@@ -47,4 +47,30 @@
 
 .status-delivered .progress-delivered .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -238px no-repeat; }
 
+
+#postnl_return_bar .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite_reverse.png) 0 -136px no-repeat; }
+#postnl_return_bar .begin { background:url(../../../images/TIG/PostNL/bkg_progress_sprite_reverse.png) 0 -170px no-repeat; }
+#postnl_return_bar .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite_reverse.png) 0 -238px no-repeat; }
+
+#postnl_return_bar.status-delivered .begin { background-position:0 -204px; }
+#postnl_return_bar.status-delivered .seperator { background-position:0 -68px; }
+#postnl_return_bar.status-collection .end,
+#postnl_return_bar.status-distribution .end,
+#postnl_return_bar.status-transit .end,
+#postnl_return_bar.status-delivered .end { background-position:0 -272px; }
+
+#postnl_return_bar.status-transit .begin { background-position:0 -170px; }
+
+#postnl_return_bar.status-collection .progress-distribution .seperator,
+#postnl_return_bar.status-distribution .progress-transit .seperator,
+#postnl_return_bar.status-transit .progress-delivered .seperator { background-position:0 -102px; }
+
+#postnl_return_bar.status-distribution .progress-distribution .seperator,
+#postnl_return_bar.status-transit .progress-transit .seperator,
+#postnl_return_bar.status-transit .progress-distribution .seperator,
+#postnl_return_bar.status-transit .progress progress-collection .seperator { background-position:0 -68px; }
+
 .hidden { display:none !important; }
+
+
+

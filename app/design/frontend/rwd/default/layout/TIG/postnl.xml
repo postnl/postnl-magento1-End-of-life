@@ -82,6 +82,35 @@
         </reference>
     </sales_order_creditmemo>
 
+    <sales_guest_view>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="delivery_options_info" template="TIG/PostNL/delivery_options/sales/order/delivery_options_info.phtml"/>
+        </reference>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_view>
+
+    <sales_guest_invoice>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_invoice>
+
+    <sales_guest_creditmemo>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_guest_creditmemo>
+
+
     <!-- SHIPPING STATUS, PAKJE GEMAK ADDRESS -->
 
     <sales_order_shipment>
@@ -92,6 +121,129 @@
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_shipment>
+
+    <sales_guest_shipment>
+        <reference name="my.account.wrapper">
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/core/sales/order/shipment/shipping_status.phtml" after="-"/>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+    </sales_guest_shipment>
+
+    <!-- RETURNS -->
+
+    <postnl_order_returns translate="label">
+        <label>Customer My Account Order PostNL Returns View</label>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/returns.css</file>
+            </action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="postnl_core/order_returns_info" as="info" name="sales.order.info">
+                <block type="sales/order_info_buttons" as="buttons" name="sales.order.info.buttons" />
+                <action method="addLink" translate="label" module="sales">
+                    <name>view</name>
+                    <path>sales/order/view</path>
+                    <label>Order Information</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>invoice</name>
+                    <path>sales/order/invoice</path>
+                    <label>Invoices</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>shipment</name>
+                    <path>sales/order/shipment</path>
+                    <label>Shipments</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>creditmemo</name>
+                    <path>sales/order/creditmemo</path>
+                    <label>Refunds</label>
+                </action>
+                <action method="addLink" translate="label" module="postnl">
+                    <name>postnl_returns</name>
+                    <path/>
+                    <label>Returns</label>
+                </action>
+            </block>
+            <block type="sales/order_shipment" name="sales.order.shipment">
+                <block type="postnl_core/order_returns_shipment_items" name="shipment_items" template="TIG/PostNL/core/order/returns/shipment/items.phtml">
+                    <action method="addItemRender">
+                        <type>default</type>
+                        <block>sales/order_item_renderer_default</block>
+                        <template>sales/order/shipment/items/renderer/default.phtml</template>
+                    </action>
+                    <block type="sales/order_comments" name="shipment_comments" template="sales/order/comments.phtml"/>
+                </block>
+            </block>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <block type="core/text_list" name="additional.product.info" />
+    </postnl_order_returns>
+
+    <postnl_guest_returns translate="label">
+        <label>Customer My Account Order PostNL Returns View</label>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/returns.css</file>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="postnl_core/order_returns_info" as="info" name="sales.order.info">
+                <block type="sales/order_info_buttons" as="buttons" name="sales.order.info.buttons" />
+                <action method="addLink" translate="label" module="sales">
+                    <name>view</name>
+                    <path>sales/guest/view</path>
+                    <label>Order Information</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>invoice</name>
+                    <path>sales/guest/invoice</path>
+                    <label>Invoices</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>shipment</name>
+                    <path>sales/guest/shipment</path>
+                    <label>Shipments</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>creditmemo</name>
+                    <path>sales/guest/creditmemo</path>
+                    <label>Refunds</label>
+                </action>
+                <action method="addLink" translate="label" module="postnl">
+                    <name>postnl_returns</name>
+                    <path/>
+                    <label>Returns</label>
+                </action>
+            </block>
+            <block type="sales/order_shipment" name="sales.order.shipment">
+                <block type="postnl_core/order_returns_shipment_items" name="shipment_items" template="TIG/PostNL/core/order/returns/shipment/items.phtml">
+                    <action method="addItemRender">
+                        <type>default</type>
+                        <block>sales/order_item_renderer_default</block>
+                        <template>sales/order/shipment/items/renderer/default.phtml</template>
+                    </action>
+                    <block type="sales/order_comments" name="shipment_comments" template="sales/order/comments.phtml"/>
+                </block>
+            </block>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <block type="core/text_list" name="additional.product.info" />
+    </postnl_guest_returns>
 
     <!--  POSTNL CHECKOUT  -->
 
@@ -226,6 +378,9 @@
         <reference name="checkout.onepage.shipping">
             <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
         </reference>
+        <reference name="right">
+            <block type="postnl_deliveryoptions/checkout_progress" name="postnl_deliveryoptions.progress" template="TIG/PostNL/delivery_options/progress.phtml"/>
+        </reference>
         <reference name="before_body_end">
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
@@ -252,6 +407,19 @@
             </action>
         </reference>
     </checkout_onepage_progress_shipping_method>
+
+    <checkout_onepage_progress>
+        <reference name="root">
+            <block type="postnl_deliveryoptions/checkout_progress" name="postnl_deliveryoptions.progress" template="TIG/PostNL/delivery_options/progress.phtml"/>
+        </reference>
+    </checkout_onepage_progress>
+
+    <checkout_onepage_progress_postnl_deliveryoptions>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <block type="postnl_deliveryoptions/checkout_progress" name="root" template="TIG/PostNL/delivery_options/onepage/progress/pakje_gemak.phtml" output="toHtml"/>
+    </checkout_onepage_progress_postnl_deliveryoptions>
 
     <!-- MIJNPAKKET ACCOUNTNOTIFICATION -->
 
@@ -360,5 +528,15 @@
             <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
         </reference>
     </sales_email_order_creditmemo_items>
+
+    <!-- EMAIL TEMPLATES -->
+
+    <postnl_email_order_pakjegemak_address>
+        <block type="core/template" template="TIG/PostNL/core/sales/order/email/pakjegemak_address.phtml"/>
+    </postnl_email_order_pakjegemak_address>
+
+    <postnl_email_order_delivery_options>
+        <block type="core/template" template="TIG/PostNL/core/sales/order/email/delivery_options.phtml"/>
+    </postnl_email_order_delivery_options>
 
 </layout>

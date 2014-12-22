@@ -124,22 +124,29 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Calculate the confirm date for a specified delivery date.
      *
-     * @param string $deliveryDate
+     * @param string|DateTime $deliveryDate
+     * @param string|boolean  $timeZone
      *
      * @return DateTime
      */
-    public function getConfirmDate($deliveryDate)
+    public function getConfirmDate($deliveryDate, $timeZone = false)
     {
         if ($this->hasConfirmDate()) {
             return $this->_getData('confirm_date');
         }
 
-        $deliveryDate = new DateTime($deliveryDate);
+        if (!is_string($timeZone)) {
+            $timeZone = 'UTC';
+        }
+        $timeZone = new DateTimeZone($timeZone);
+
+        if (is_string($deliveryDate)) {
+            $deliveryDate = new DateTime($deliveryDate, $timeZone);
+        }
 
         $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
-        $confirmDate = $confirmDate->format('Y-m-d');
 
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate);
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
@@ -165,6 +172,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
         $shippingDays = explode(',', $shippingDays);
 
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        /**
+         * Calculate the earliest possible shipping date for comparison.
+         */
+        $earliestShippingDate = new DateTime('now', new DateTimeZone('Europe/Berlin'));
+        $earliestShippingDate->add(new DateInterval("P{$helper->getQuoteShippingDuration()}D"));
+
         foreach ($timeframes as $key => $timeframe) {
             /**
              * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
@@ -172,22 +187,34 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
              */
             $timeframeDate = new DateTime($timeframe->Date);
             $deliveryDay   = (int) $timeframeDate->format('N');
-            $shippingDay   = (int) $timeframeDate->sub(new DateInterval('P1D'))->format('N');
 
-            if ($shippingDay < 1 || $shippingDay > 6) {
-                $shippingDay = 6;
+            $shippingDate = clone $timeframeDate;
+            $shippingDay  = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
+
+            if (in_array($shippingDay, $shippingDays)) {
+                continue;
             }
 
             /**
-             * If the shipping day is not allowed, remove the time frame from the array.
+             * If the delivery day is tuesday and sunday sorting is not available, shipping the order on saturday will
+             * also result in a tuesday delivery so we need to validate saturday as a valid shipping date.
              *
-             * For tuesday delivery either saturday or monday needs to be available.
+             * If the delivery day is monday and sunday sorting is available, shipping the order on saturday will also
+             * result in a monday delivery so we need to validate saturday as a valid shipping date.
              */
-            if ($deliveryDay === 2 && !in_array($shippingDay, $shippingDays)) {
-                $shippingDay = 6;
+            $valid = false;
+            if (
+                ($deliveryDay === 2
+                    && !$helper->canUseSundaySorting()
+                )
+                || ($deliveryDay === 1
+                    && $helper->canUseSundaySorting()
+                )
+            ) {
+                $valid = $this->_validateSaturdayShipping($shippingDays, $shippingDate, $earliestShippingDate);
             }
 
-            if (!in_array($shippingDay, $shippingDays)) {
+            if (false === $valid) {
                 unset($timeframes[$key]);
             }
         }
@@ -196,6 +223,37 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
          * Only return the values, as otherwise the array will be JSON encoded as an object.
          */
         return array_values($timeframes);
+    }
+
+    /**
+     * Validate if saturday shipping is allowed for the specified shipping date when taking the earliest possible
+     * shipping date into consideration.
+     *
+     * @param array    $shippingDays
+     * @param DateTime $shippingDate
+     * @param DateTime $earliestShippingDate
+     *
+     * @return bool
+     */
+    protected function _validateSaturdayShipping($shippingDays, DateTime $shippingDate, DateTime $earliestShippingDate)
+    {
+        $shippingDate->modify('last saturday');
+        $shippingDay = 6;
+
+        if (!in_array($shippingDay, $shippingDays)) {
+            return false;
+        }
+
+        $cutOffTime = Mage::helper('postnl/deliveryOptions')->getCutOffTime(null, true, $shippingDate);
+        $cutOffTime = explode(':', $cutOffTime);
+
+        $shippingDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2]);
+
+        if ($shippingDate < $earliestShippingDate) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -241,7 +299,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
-     * @param $data
+     * Save the specified delivery option.
+     *
+     * @param array $data
      *
      * @return $this
      */
@@ -249,7 +309,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
-        $confirmDate = $this->getConfirmDate($data['date'])->getTimestamp();
+        $timeZone = Mage::app()->getLocale()->getTimezone();
+
+        $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
+        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -263,8 +326,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
-                    ->setDeliveryDate($data['date'])
-                    ->setConfirmDate($confirmDate);
+                    ->setDeliveryDate($deliveryDate)
+                    ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
+                    ->setExpectedDeliveryTimeStart(false)
+                    ->setExpectedDeliveryTimeEnd(false);
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)
@@ -275,6 +340,18 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         /**
+         * Set the expected delivery timeframe if available.
+         */
+        if (isset($data['from'])) {
+            $from = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['from']);
+            $postnlOrder->setExpectedDeliveryTimeStart($from);
+        }
+        if (isset($data['to'])) {
+            $to = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['to']);
+            $postnlOrder->setExpectedDeliveryTimeEnd($to);
+        }
+
+        /**
          * Remove any existing PakjeGemak addresses.
          *
          * @var Mage_Sales_Model_Quote_Address $quoteAddress
@@ -282,13 +359,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         foreach ($quote->getAllAddresses() as $quoteAddress) {
             if ($quoteAddress->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
                 $quoteAddress->isDeleted(true);
+                $quote->removeAddress($quoteAddress->getId());
             }
         }
 
         /**
          * Add an optional PakjeGemak address.
          */
-        if (array_key_exists('address', $data)) {
+        if (isset($data['address'])) {
             $address = $data['address'];
 
             $street = array(
@@ -316,10 +394,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setTelephone($phoneNumber)
                               ->setStreet($street);
 
-            $quote->addAddress($pakjeGemakAddress)
-                  ->save();
+            $quote->addAddress($pakjeGemakAddress);
         }
 
+        $quote->save();
         $postnlOrder->save();
 
         return $this;

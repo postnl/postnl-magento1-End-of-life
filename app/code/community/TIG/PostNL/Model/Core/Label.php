@@ -90,7 +90,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Output mode. Currently 2 modes are supported: I and S.
      *
-     * @see lib/TIG/PostNL/Fpdf/fpdf.php::Output()
+     * @see FPDF::Output()
      *
      * @var string
      */
@@ -103,6 +103,28 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     protected $_labelPositions = array(
         'Label' => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+        ),
+        'Return Label' => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -465,7 +487,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
 
-        if (!is_array($labels)) {
+        if (!is_array($labels)
+            && !(is_object($labels) && $labels instanceof TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection)
+        ) {
             $labels = array($labels);
         }
         /**
@@ -622,6 +646,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             || $labelType == 'Label-combi'
             || $labelType == 'BusPakje'
             || $labelType == 'BusPakjeExtra'
+            || $labelType == 'Return Label'
         ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
@@ -674,6 +699,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case 'Label':
             case 'BusPakje':
             case 'BusPakjeExtra':
+            case 'Return Label':
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
@@ -853,6 +879,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 || $label->getLabelType() == 'Label-combi'
                 || $label->getLabelType() == 'BusPakje'
                 || $label->getLabelType() == 'BusPakjeExtra'
+                || $label->getLabelType() == 'Return Label'
             ) {
                 $generalLabels[] = $label;
                 continue;
