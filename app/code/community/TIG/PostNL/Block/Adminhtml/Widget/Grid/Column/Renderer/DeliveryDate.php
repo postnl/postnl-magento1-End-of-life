@@ -69,10 +69,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
             $confirmDate = new DateTime($confirmDate);
             $confirmDate->add(new DateInterval('P1D'));
 
-            $deliveryDate = $confirmDate->format('Y-m-d H:i:s');
-
-            $row->setData($this->getColumn()->getIndex(), $deliveryDate);
+            $deliveryDate = $confirmDate;
+        } else {
+            $deliveryDate = new DateTime($value);
         }
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $deliveryDate = $deliveryDate->setTimezone($timeZone)->format('Y-m-d H:i:s');
+
+        $row->setData($this->getColumn()->getIndex(), $deliveryDate);
 
         /**
          * Finally, simply render the date
