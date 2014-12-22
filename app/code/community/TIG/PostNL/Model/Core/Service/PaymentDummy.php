@@ -36,48 +36,66 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_Model_Handler_Controllers
+class TIG_PostNL_Model_Core_Service_PaymentDummy extends Mage_Sales_Model_Order_Payment
 {
     /**
-     * PostNL mass action postDispatch handler.
-     *
-     * @param Varien_Simplexml_Element       $config
-     * @param Enterprise_Logging_Model_Event $eventModel
-     *
-     * @return boolean
+     * @var string
      */
-    public function postDispatchSaveMassAction($config, $eventModel)
+    protected $_eventPrefix = 'postnl_dummy_payment';
+
+    /**
+     * @return bool
+     */
+    public function canCapture()
     {
-        $request = Mage::app()->getRequest();
-        if ($request->getParam('shipment_ids')) {
-            $eventModel->setInfo(
-                Mage::helper('enterprise_logging')->implodeValues($request->getParam('shipment_ids'))
-            );
-
-            return true;
-        }
-
-        if ($request->getParam('order_ids')) {
-            $eventModel->setInfo(
-                Mage::helper('enterprise_logging')->implodeValues($request->getParam('order_ids'))
-            );
-
-            return true;
-        }
-
-        return true;
+        return false;
     }
 
     /**
-     * PostNL mass action postDispatch handler.
-     *
-     * @param Varien_Simplexml_Element       $config
-     * @param Enterprise_Logging_Model_Event $eventModel
-     *
-     * @return boolean
+     * @return bool
      */
-    public function postDispatchAction($config, $eventModel)
+    public function canVoid(Varien_Object $document)
     {
-        return true;
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canRefund()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canRefundPartialPerInvoice()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canCapturePartial()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canReviewPayment()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canFetchTransactionInfo()
+    {
+        return false;
     }
 }

@@ -232,12 +232,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      * Create shipments for an array of order IDs
      *
      * @param array   $orderIds
-     * @param boolean $loadExisting Flag to determine if existing shipments should be loaded. If set to false, an error
-     *                              will be thrown for shipments that have already been shipped.
+     * @param boolean $loadExisting     Flag to determine if existing shipments should be loaded. If set to false, an error
+     *                                  will be thrown for shipments that have already been shipped.
+     * @param boolean $registerExisting
      *
      * @return array
      */
-    protected function _createShipments(array $orderIds, $loadExisting = false)
+    protected function _createShipments(array $orderIds, $loadExisting = false, $registerExisting = true)
     {
         $helper = Mage::helper('postnl');
 
@@ -272,6 +273,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
          * @var Mage_Sales_Model_Order $order
          */
         $shipmentIds = array();
+        $existingShipmentsLoaded = array();
         foreach ($orders as $order) {
             try {
                 $shipmentIds[] = $this->_createShipment($order);
@@ -296,8 +298,14 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                 $shipmentCollection->addFieldToSelect('entity_id')
                                    ->addFieldToFilter('order_id', $order->getId());
 
+                $orderShipmentIds = $shipmentCollection->getColumnValues('entity_id');
+
                 if ($shipmentCollection->getSize() > 0) {
-                    $shipmentIds = array_merge($shipmentCollection->getColumnValues('entity_id'), $shipmentIds);
+                    $shipmentIds = array_merge($orderShipmentIds, $shipmentIds);
+
+                    if ($registerExisting) {
+                        $existingShipmentsLoaded = array_merge($orderShipmentIds, $existingShipmentsLoaded);
+                    }
                 } else {
                     /**
                      * If no shipments exist, add a warning message indicating the process failed for this order.
@@ -323,6 +331,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                 );
                 $this->_errors++;
             }
+        }
+
+        if ($registerExisting) {
+            Mage::unregister('postnl_existing_shipments_loaded');
+            Mage::register('postnl_existing_shipments_loaded', $existingShipmentsLoaded);
         }
 
         return $shipmentIds;

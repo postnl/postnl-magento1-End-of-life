@@ -36,48 +36,85 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_Model_Handler_Controllers
+class TIG_PostNL_Model_Core_Service_PaymentMethodDummy extends Mage_Payment_Model_Method_Abstract
 {
     /**
-     * PostNL mass action postDispatch handler.
-     *
-     * @param Varien_Simplexml_Element       $config
-     * @param Enterprise_Logging_Model_Event $eventModel
-     *
-     * @return boolean
+     * @var string
      */
-    public function postDispatchSaveMassAction($config, $eventModel)
-    {
-        $request = Mage::app()->getRequest();
-        if ($request->getParam('shipment_ids')) {
-            $eventModel->setInfo(
-                Mage::helper('enterprise_logging')->implodeValues($request->getParam('shipment_ids'))
-            );
-
-            return true;
-        }
-
-        if ($request->getParam('order_ids')) {
-            $eventModel->setInfo(
-                Mage::helper('enterprise_logging')->implodeValues($request->getParam('order_ids'))
-            );
-
-            return true;
-        }
-
-        return true;
-    }
+    protected $_eventPrefix = 'postnl_dummy_payment_method';
 
     /**
-     * PostNL mass action postDispatch handler.
-     *
-     * @param Varien_Simplexml_Element       $config
-     * @param Enterprise_Logging_Model_Event $eventModel
-     *
-     * @return boolean
+     * @var string
      */
-    public function postDispatchAction($config, $eventModel)
-    {
-        return true;
-    }
+    protected $_code = 'postnl_dummy';
+
+    /**
+     * Payment Method features
+     * @var bool
+     */
+    protected $_isGateway                   = false;
+    /**
+     * @var bool
+     */
+    protected $_canOrder                    = false;
+    /**
+     * @var bool
+     */
+    protected $_canAuthorize                = false;
+    /**
+     * @var bool
+     */
+    protected $_canCapture                  = false;
+    /**
+     * @var bool
+     */
+    protected $_canCapturePartial           = false;
+    /**
+     * @var bool
+     */
+    protected $_canCaptureOnce              = false;
+    /**
+     * @var bool
+     */
+    protected $_canRefund                   = false;
+    /**
+     * @var bool
+     */
+    protected $_canRefundInvoicePartial     = false;
+    /**
+     * @var bool
+     */
+    protected $_canVoid                     = false;
+    /**
+     * @var bool
+     */
+    protected $_canUseInternal              = false;
+    /**
+     * @var bool
+     */
+    protected $_canUseCheckout              = false;
+    /**
+     * @var bool
+     */
+    protected $_canUseForMultishipping      = false;
+    /**
+     * @var bool
+     */
+    protected $_isInitializeNeeded          = false;
+    /**
+     * @var bool
+     */
+    protected $_canFetchTransactionInfo     = false;
+    /**
+     * @var bool
+     */
+    protected $_canReviewPayment            = false;
+    /**
+     * @var bool
+     */
+    protected $_canCreateBillingAgreement   = false;
+    /**
+     * @var bool
+     */
+    protected $_canManageRecurringProfiles  = false;
 }
