@@ -1404,10 +1404,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
          * Add either a success or failure message and redirect the user accordingly.
          */
         if ($this->_errors < count($orderIds)) {
-            $helper->addSessionMessage(
-                'adminhtml/session', null, 'success',
-                $this->__('The shipments were successfully created.')
-            );
+            $existingShipmentsLoaded = Mage::registry('postnl_existing_shipments_loaded');
+            if (!is_array($existingShipmentsLoaded) || count($existingShipmentsLoaded) != count($shipmentIds)) {
+                $helper->addSessionMessage(
+                    'adminhtml/session', null, 'success',
+                    $this->__('The shipments were successfully created.')
+                );
+            }
         } else {
             $helper->addSessionMessage(
                 'adminhtml/session',
