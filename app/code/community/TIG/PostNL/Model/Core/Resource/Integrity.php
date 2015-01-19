@@ -58,6 +58,10 @@ class TIG_PostNL_Model_Core_Resource_Integrity extends TIG_PostNL_Model_Resource
         $adapter = $this->_getWriteAdapter();
         $adapter->truncateTable($this->getMainTable());
 
+        if (empty($data)) {
+            return $this;
+        }
+
         $insertData = array();
         foreach ($data as $entityType => $entityData) {
             if (!is_array($entityData)) {
