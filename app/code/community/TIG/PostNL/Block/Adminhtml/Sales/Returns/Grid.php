@@ -101,19 +101,6 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
             )
         );
 
-        /**
-         * Join tig_postnl_shipment_barcode table.
-         */
-        $select->joinLeft(
-            array('postnl_shipment_barcode' => $resource->getTableName('postnl_core/shipment_barcode')),
-            '`postnl_shipment`.`entity_id`=`postnl_shipment_barcode`.`parent_id` ' .
-            'AND `postnl_shipment_barcode`.`barcode_type` = "return" ' .
-            'AND `postnl_shipment_barcode`.`barcode_number` = 0',
-            array(
-                'return_barcode' => 'postnl_shipment_barcode.barcode',
-            )
-        );
-
         /** @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus     = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
@@ -234,8 +221,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
             array(
                 'header'       => $postnlHelper->__('Track & Trace'),
                 'align'        => 'left',
-                'index'        => 'return_barcode',
-                'filter_index' => 'postnl_shipment_barcode.barcode',
+                'index'        => 'main_barcode',
                 'renderer'     => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
             )
         );
