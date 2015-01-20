@@ -172,11 +172,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND_COD:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
@@ -188,11 +188,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE_COD:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PA:
