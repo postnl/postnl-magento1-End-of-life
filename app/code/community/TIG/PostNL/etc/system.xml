@@ -2421,7 +2421,7 @@
                             <show_in_store>1</show_in_store>
                         </returns_header>
                         <return_labels_active translate="label" module="postnl">
-                            <label>Use return labels</label>
+                            <label>Activate returns</label>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -2432,7 +2432,7 @@
                         </return_labels_active>
                         <print_return_and_shipping_label translate="label tooltip" module="postnl">
                             <label>Print the return label along with regular shipping labels</label>
-                            <tooltip>If enabled a return label will be printed directly when priting the regular shipping labels. This is usefull if you want to include the shipping label with the shipment.</tooltip>
+                            <tooltip>Activate this option to ship the order and returnlabel together.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -2445,7 +2445,7 @@
                             </depends>
                         </print_return_and_shipping_label>
                         <customer_print_label translate="label tooltip" module="postnl">
-                            <label>Allow customers to print the return labels from their account</label>
+                            <label>Allow customers to print the return label from the webshop</label>
                             <tooltip>This will add a button to the customer's account to print the return label for this shipment.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
@@ -2536,9 +2536,10 @@
                             </depends>
                             <validate>postnl-validate-empty</validate>
                         </return_department>
-                        <return_freepost_number translate="label tooltip" module="postnl">
+                        <return_freepost_number translate="label comment tooltip" module="postnl">
                             <label>Freepost number</label>
-                            <tooltip>A freepost number is required to use return labels. If you do not have a freepost number, please contact your PostNL account manager.</tooltip>
+                            <comment><![CDATA[You can apply for a freepost number on <a href="http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1" target="_blank" title="Request a freepost number.">this</a> page.]]></comment>
+                            <tooltip>A freepost number is a requisite for using return labels.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>

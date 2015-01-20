@@ -620,7 +620,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 $postnlShipment->unlock();
 
-                $this->_parseErrorCodes($e, $postnlShipment);
+                $this->_parseErrorCodes($e, $postnlShipment, true);
             } catch (Exception $e) {
                 $postnlShipment->unlock();
 
@@ -637,11 +637,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process specific error codes
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
-     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param TIG_PostNL_Model_Core_Shipment      $postnlShipment
+     * @param boolean                             $isReturnStatus
      *
      * @return $this
      */
-    protected function _parseErrorCodes($e, $postnlShipment)
+    protected function _parseErrorCodes($e, $postnlShipment, $isReturnStatus = false)
     {
         $helper = Mage::helper('postnl');
 
@@ -692,8 +693,14 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $helper->cronLog(
                 "Shipment #{$postnlShipment->getId()} could not be found by CIF and was confirmed more than 1 day ago!"
             );
-            $postnlShipment->setShippingPhase($postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE)
-                           ->save();
+            
+            if (true === $isReturnStatus) {
+                $postnlShipment->setReturnPhase($postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE)
+                               ->save();
+            } else {
+                $postnlShipment->setShippingPhase($postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE)
+                               ->save();
+            }
 
             return $this;
         }
@@ -703,7 +710,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state
+     * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state.
      *
      * @return $this
      */

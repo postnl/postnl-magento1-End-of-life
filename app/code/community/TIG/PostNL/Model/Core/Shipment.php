@@ -1055,27 +1055,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the url for this shipment's return barcode.
      *
+     * Currently the same url as the main barcode url should be used. This may change in the future.
+     *
      * @param boolean $forceNl
      *
      * @return string
      *
+     * @see TIG_PostNL_Model_Core_Shipment::getBarcodeUrl()
      * @see TIG_PostNL_Helper_Carrier::getBarcodeUrl()
      */
     public function getReturnBarcodeUrl($forceNl = false)
     {
-        if ($this->hasReturnBarcodeUrl()) {
-            return $this->_getData('return_barcode_url');
-        }
-
-        $barcode = $this->getReturnBarcode();
-        if (!$barcode) {
-            return false;
-        }
-
-        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
-
-        $this->setReturnBarcodeUrl($barcodeUrl);
-        return $barcodeUrl;
+        return $this->getBarcodeUrl($forceNl);
     }
 
     /**
@@ -1976,7 +1967,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasReturnLabels($checkCollection = true)
     {
-        if ($this->_getData('return_labels')) {
+        $labels = $this->_getData('return_labels');
+        if ($labels && $labels->getSize() > 0) {
             return true;
         }
 
