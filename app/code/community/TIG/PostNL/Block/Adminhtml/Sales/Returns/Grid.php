@@ -126,12 +126,6 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
                        array(
                            'notnull' => true
                        )
-                   )
-                   ->addFieldToFilter(
-                       'postnl_shipment_barcode.barcode',
-                       array(
-                           'notnull' => true
-                       )
                    );
 
         $this->setCollection($collection);
