@@ -617,7 +617,7 @@
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
                 <schedule>
-                    <cron_expr>30 11,15 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                    <cron_expr>30 3,11,15 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
                 </schedule>
                 <run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
@@ -1072,13 +1072,13 @@
                 <cif_version_location>1_1</cif_version_location> <!-- v1.1 -->
         	</advanced>
 
-        	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
+        	<!-- Login data for the postcode check functionality. -->
         	<cendris>
         	    <username>tpgpost030</username>
         	    <password>Post2014!</password>
         	</cendris>
 
-            <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
+            <!-- Google maps API key. -->
             <google_maps>
                 <api_key>AIzaSyB09S8SLpSPRF6YRZJDTuRpQIW71c51wm8</api_key>
             </google_maps>
@@ -1103,7 +1103,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

@@ -241,7 +241,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          * Add the send return label button.
          */
         if ($sendReturnLabelAllowed
-            && $postnlShipment->canPrintReturnLabels()
+            && $postnlShipment->canSendReturnLabelEmail()
             && Mage::helper('postnl')->isReturnsEnabled($postnlShipment->getStoreId())
         ) {
             $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
