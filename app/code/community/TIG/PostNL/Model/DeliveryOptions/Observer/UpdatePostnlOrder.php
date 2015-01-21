@@ -126,7 +126,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->setShipmentCosts($fee)
                     ->setOrderId($order->getId())
                     ->setIsActive(false)
-                    ->setToken(false)
                     ->save();
 
         /**
