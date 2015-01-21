@@ -51,10 +51,12 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
+        $helper = Mage::helper('postnl/cif');
+
         /**
          * Check if the PostNL module is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -98,11 +100,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
         if ($postnlOrder->getId()) {
             if ($postnlOrder->hasConfirmDate()) {
-                $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+                $confirmDate = new DateTime($postnlOrder->getConfirmDate());
+                $postnlShipment->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->hasDeliveryDate()) {
-                $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
+                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate());
+                $postnlShipment->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->getIsPakjeGemak()) {
@@ -111,6 +115,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
             if ($postnlOrder->getIsPakketautomaat()) {
                 $postnlShipment->setIsPakketautomaat($postnlOrder->getIsPakketautomaat());
+            }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+                $postnlShipment->setExpectedDeliveryTimeStart($postnlOrder->getExpectedDeliveryTimeStart());
+            }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+                $postnlShipment->setExpectedDeliveryTimeEnd($postnlOrder->getExpectedDeliveryTimeEnd());
             }
         }
 
@@ -130,8 +142,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlShipment->canGenerateBarcode()) {
                 $postnlShipment->generateBarcodes();
             }
+
+            $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
+            if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                $postnlShipment->generateReturnBarcode();
+            }
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            $helper->logException($e);
         }
 
         $postnlShipment->save();

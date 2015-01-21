@@ -43,6 +43,9 @@
 
 <?php $_postnlShipment = $this->getPostnlShipment(); ?>
 
+<?php $_deliveryTimeInfo = $this->getDeliveryTimeInfo(); ?>
+
+<?php $_canChangeParcelCount = $this->canChangeParcelCount(); ?>
 <?php $_canChangeProductCode = $this->canChangeProductCode(); ?>
 <?php if($_canChangeProductCode): ?>
     <?php $_cifHelper             = $this->helper('postnl/cif'); ?>
@@ -75,12 +78,43 @@
                 <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
                 <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
             </tr>
+            <?php if ($_deliveryTimeInfo): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Expected delivery time'); ?></label></td>
+                    <?php if (!empty($_deliveryTimeInfo['delivery_time_end'])): ?>
+                        <td class="value">
+                            <strong><?php echo $_deliveryTimeInfo['delivery_time_start']; ?> - <?php echo $_deliveryTimeInfo['delivery_time_end']; ?></strong><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php  echo $_deliveryTimeInfo['store_delivery_time_start']; ?> - <?php  echo $_deliveryTimeInfo['store_delivery_time_end']; ?>)<?php endif;?>
+                            <div class="field-tooltip">
+                                <div><?php echo $this->__('The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.'); ?></div>
+                            </div>
+                        </td>
+                    <?php else: ?>
+                        <td class="value">
+                            <strong><?php echo $this->__('from'); ?> <?php echo $_deliveryTimeInfo['delivery_time_start']; ?><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php echo $_deliveryTimeInfo['store_delivery_time_start'] ?>)<?php endif;?></strong>
+                            <div class="field-tooltip">
+                                <div><?php echo $this->__('The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.'); ?></div>
+                            </div>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+            <?php endif; ?>
             <tr>
                 <td class="label"><label><?php echo $this->__('Product option'); ?></label></td>
                 <td class="value">
                     <strong><?php echo $_postnlShipment->getProductOption(); ?> (<?php echo $_postnlShipment->getProductCode() ?>)</strong>
-                    <?php if ($_canChangeProductCode): ?><?php echo $this->getChangeProductCodeButtonHtml(); ?><?php endif; ?>
                 </td>
+                <?php if ($_canChangeProductCode): ?>
+                    <td class="value"><?php echo $this->getChangeProductCodeButtonHtml(); ?></td>
+                <?php endif; ?>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo $this->__('Number of parcels'); ?></label></td>
+                <td class="value" id="postnl_parcel_count" data-parcel-count="<?php echo $_postnlShipment->getParcelCount(); ?>">
+                    <strong><?php echo $_postnlShipment->getParcelCount(); ?></strong>
+                </td>
+                <?php if ($_canChangeParcelCount): ?>
+                    <td class="value"><?php echo $this->getChangeParcelCountButtonHtml(); ?></td>
+                <?php endif; ?>
             </tr>
             <?php if ($this->hasExtraOptions()): ?>
                 <tr>
@@ -196,6 +230,45 @@
 
             var changeProductCode = function(url) {
                 changeProductCodeDialog.open(url);
+            };
+        <?php endif; ?>
+        <?php if($_canChangeParcelCount): ?>
+            var parcelCountForm;
+            var parcelCountTd = $('postnl_parcel_count');
+            var buttonTd = parcelCountTd.next();
+            var changeParcelCount = function(url) {
+                parcelCountTd.update(
+                    "<form id='postnl_parcel_count_form' action='"
+                    + url
+                    + "' method='post'><input id='parcel_count_field' name='parcel_count' type='text' class='required-entry validate-digits' value='" +
+                    + parcelCountTd.getAttribute('data-parcel-count')
+                    + "'/><input type='hidden' name='form_key' value='<?php echo Mage::getSingleton('core/session')->getFormKey(); ?>'/></form>"
+                );
+
+                buttonTd.select('button').invoke('hide');
+                buttonTd.insert({
+                    top : "<button title='<?php echo $this->__('Submit'); ?>' class='temp-btn scalable save' type='button' onclick='parcelCountForm.submit();'>" +
+                    "<span>" +
+                    "<span>" +
+                    "<?php echo $this->__('Submit'); ?>" +
+                    "</span>" +
+                    "</span>" +
+                    "</button>" +
+                    "<button title='<?php echo $this->__('Cancel'); ?>' onclick='cancelChangeParcelCount()' class='temp-btn scalable delete' type='button'>" +
+                    "<span>" +
+                    "<span>" +
+                    "<?php echo $this->__('Cancel'); ?>" +
+                    "</span>" +
+                    "</span>" +
+                    "</button>"
+                });
+
+                parcelCountForm = new VarienForm('postnl_parcel_count_form');
+            };
+            var cancelChangeParcelCount =  function() {
+                parcelCountTd.update(parcelCountTd.getAttribute('data-parcel-count'));
+                buttonTd.select('.temp-btn').invoke('remove');
+                buttonTd.select('button').invoke('show');
             };
         <?php endif; ?>
         //]]>

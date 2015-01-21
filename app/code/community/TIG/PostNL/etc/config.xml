@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.4.1</version>
+			<version>1.5.0</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -139,6 +139,9 @@
                     <shipment_status_history>
                         <table>tig_postnl_shipment_status_history</table>
                     </shipment_status_history>
+                    <integrity>
+                        <table>tig_postnl_integrity</table>
+                    </integrity>
                 </entities>
             </postnl_core_resource>
             <postnl_carrier_resource>
@@ -228,11 +231,16 @@
         </events>
         <template>
             <email>
-                <postnl_cif_labels_and_confirming_track_and_trace_email_template translate="label" module="postnl">
+                <postnl_track_and_trace_track_and_trace_email_template translate="label" module="postnl">
                     <label>PostNL Track &amp; Trace Email</label>
                     <file>TIG/PostNL/track_and_trace.html</file>
                     <type>html</type>
-                </postnl_cif_labels_and_confirming_track_and_trace_email_template>
+                </postnl_track_and_trace_track_and_trace_email_template>
+                <postnl_returns_email_template translate="label" module="postnl">
+                    <label>PostNL Return Label Email</label>
+                    <file>TIG/PostNL/return_label.html</file>
+                    <type>html</type>
+                </postnl_returns_email_template>
             </email>
         </template>
         <payment>
@@ -546,6 +554,12 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
+                    <!-- Adds a link to the returns page on the sales/order/view page -->
+                    <returns_view_link>
+                        <type>singleton</type>
+                        <class>postnl_core/observer_returns</class>
+                        <method>addReturnLinkToAccount</method>
+                    </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>
             <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
@@ -576,7 +590,7 @@
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
             <postnl_clean_temp_labels>
                 <schedule>
-                	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
+                	<cron_expr>30 * * * *</cron_expr> <!-- every hour at 30 minutes minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
@@ -602,11 +616,22 @@
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
-                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
-            	<run>
+                <schedule>
+                    <cron_expr>30 3,11,15 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
+                <run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
             </postnl_update_shipping_status>
+            <!-- Update the return status for all undelivered PostNL shipments -->
+            <postnl_update_return_status>
+                <schedule>
+                    <cron_expr>30 2,10,18 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
+                <run>
+            		<model>postnl_core/observer_cron::updateReturnStatus</model>
+            	</run>
+            </postnl_update_return_status>
             <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
             <postnl_expire_confirmation>
                 <schedule>
@@ -627,7 +652,9 @@
             </postnl_send_track_and_trace_email>
             <!-- Update the shop's statistics with the extension control system -->
             <postnl_update_statistics>
-                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <schedule>
+                    <cron_expr>30 6,18 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
                 <run>
                     <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
                 </run>
@@ -635,7 +662,7 @@
             <!-- Update the shop's statistics with the extension control system -->
             <postnl_update_notification_feed>
                 <schedule>
-                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                    <cron_expr>15 * * * *</cron_expr> <!-- every hour at 15 minutes on the hour -->
                 </schedule>
                 <run>
                     <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
@@ -657,6 +684,31 @@
                     <model>postnl_core/observer_cron::updateProductAttribute</model>
                 </run>
             </postnl_update_product_attribute>
+            <!-- Update PostNl shipment and order dates to the correct (UTC) time zone. This needs to be performed for certain update scripts, however it can be very taxing on the server when there are a lot of products. Therefore we'll process it using a cronjob. -->
+            <postnl_update_date_time_zone>
+                <!-- No cron expression. The cron expression is generated when the extension is updated and will be removed once the update has finished. -->
+                <run>
+                    <model>postnl_core/observer_cron::updateDateTimeZone</model>
+                </run>
+            </postnl_update_date_time_zone>
+            <!-- Update PostNl config settings. Currently this is used for the Google Maps API key, and the Cendris username and password. -->
+            <postnl_update_config_settings>
+                <schedule>
+                    <cron_expr>0 0 * * 0</cron_expr> <!-- every sunday at midnight. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::updateDateTimeZone</model>
+                </run>
+            </postnl_update_config_settings>
+            <!-- Verify PostNL's data integrity. -->
+            <!--<postnl_data_integrity_check>-->
+                <!--<schedule>-->
+                    <!--<cron_expr>0 5 * * *</cron_expr> &lt;!&ndash; every night at 5 AM. &ndash;&gt;-->
+                <!--</schedule>-->
+                <!--<run>-->
+                    <!--<model>postnl_core/observer_cron::integrityCheck</model>-->
+                <!--</run>-->
+            <!--</postnl_data_integrity_check>-->
         </jobs>
     </crontab>
 
@@ -750,16 +802,16 @@
                 <region/>
                 <country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
                 <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
-                <return_firstname/>
-                <return_lastname/>
-                <return_company/>
-                <return_streetname/>
-                <return_housenumber/>
-                <return_housenumber_extension/>
-                <return_postcode/>
-                <return_city/>
-                <return_region/>
-                <return_country>NL</return_country> <!-- All return addresses must be located in the Netherlands -->
+                <alternative_sender_firstname/>
+                <alternative_sender_lastname/>
+                <alternative_sender_company/>
+                <alternative_sender_streetname/>
+                <alternative_sender_housenumber/>
+                <alternative_sender_housenumber_extension/>
+                <alternative_sender_postcode/>
+                <alternative_sender_city/>
+                <alternative_sender_region/>
+                <alternative_sender_country>NL</alternative_sender_country> <!-- All alternative sender addresses must be located in the Netherlands -->
             </cif_address>
             <cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -821,8 +873,8 @@
                 <mijnpakket_test_base_url>https://tppwscheckout-sandbox.e-id.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
                 <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
                 <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
-                <mijnpakket_login_btn_live_base_url>https://checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
-                <mijnpakket_login_btn_test_base_url>https://tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
+                <mijnpakket_login_btn_live_base_url>checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
+                <mijnpakket_login_btn_test_base_url>tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
             </delivery_options>
@@ -868,11 +920,26 @@
             </packing_slip>
             <track_and_trace>
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
-                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
+                <track_and_trace_email_template>postnl_track_and_trace_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
                 <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
                 <copy_to/>
                 <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
             </track_and_trace>
+            <returns>
+                <return_labels_active>0</return_labels_active> <!-- Do not use return labels -->
+                <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
+                <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
+                <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
+                <email_template>postnl_returns_email_template</email_template> <!-- Default template from locale -->
+                <return_label_instructions_block/>
+                <return_company/>
+                <return_department/>
+                <return_freepost_number/>
+                <return_postcode/>
+                <return_city/>
+                <return_region/>
+                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
+            </returns>
             <cod>
                 <account_name/>
                 <iban/>
@@ -972,8 +1039,8 @@
                 <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
                 <alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
                 <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
-                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
-                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_pakjegemak_product_option>3544</default_pakjegemak_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
@@ -988,32 +1055,38 @@
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+                <return_expire_days>30</return_expire_days> <!-- 17 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
         		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
         		<postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
-                <cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
-        		<cif_version_confirming>1_4</cif_version_confirming> <!-- v1.4 -->
-        		<cif_version_labelling>1_5</cif_version_labelling> <!-- v1.5 -->
-        		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
+                <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
+        		<cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
+        		<cif_version_labelling>1_6</cif_version_labelling> <!-- v1.6 -->
+        		<cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
-                <cif_version_deliverydate>1_1</cif_version_deliverydate> <!-- v1.1 -->
-                <cif_version_timeframe>1_0</cif_version_timeframe> <!-- v1.0 -->
-                <cif_version_location>1_0</cif_version_location> <!-- v1.0 -->
+                <cif_version_deliverydate>1_2</cif_version_deliverydate> <!-- v1.2 -->
+                <cif_version_timeframe>1_2</cif_version_timeframe> <!-- v1.2 -->
+                <cif_version_location>1_1</cif_version_location> <!-- v1.1 -->
         	</advanced>
 
-        	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
+        	<!-- Login data for the postcode check functionality. -->
         	<cendris>
         	    <username>tpgpost030</username>
         	    <password>Post2014!</password>
         	</cendris>
 
-            <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
+            <!-- Google maps API key. -->
             <google_maps>
-                <api_key>AIzaSyCHq62q_WNkFPdfgQkQzX46H4n2AGD0ubs</api_key>
+                <api_key>AIzaSyB09S8SLpSPRF6YRZJDTuRpQIW71c51wm8</api_key>
             </google_maps>
+
+            <!-- These settings are used by the PostNl extension for upgrade scripts. -->
+            <update>
+                <product_attribute_update_data/>
+            </update>
         </postnl>
     </default>
 
@@ -2081,6 +2154,106 @@
                 <url>http://kb.tig.nl/topic/102373326</url>
                 <type>error</type>
             </POSTNL-0200>
+            <POSTNL-0201>
+                <message>The generateReturnBarcode action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84684878</url>
+                <type>error</type>
+            </POSTNL-0201>
+            <POSTNL-0202>
+                <message>Unable to retrieve return labels for this shipment.</message>
+                <url>http://kb.tig.nl/topic/84685238</url>
+                <type>error</type>
+            </POSTNL-0202>
+            <POSTNL-0203>
+                <message>The changeParcelCount action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84693347</url>
+                <type>error</type>
+            </POSTNL-0203>
+            <POSTNL-0204>
+                <message>The updateReturnStatus action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84693727</url>
+                <type>error</type>
+            </POSTNL-0204>
+            <POSTNL-0205>
+                <message>Unable to save return_status cron expression: %s</message>
+                <url>http://kb.tig.nl/topic/84685838</url>
+                <type>error</type>
+            </POSTNL-0205>
+            <POSTNL-0206>
+                <message>Unable to save update_date_time_zone cron expression: %s</message>
+                <url>http://kb.tig.nl/topic/84685968</url>
+                <type>error</type>
+            </POSTNL-0206>
+            <POSTNL-0207>
+                <message>The sendReturnLabelEmail action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84694197</url>
+                <type>error</type>
+            </POSTNL-0207>
+            <POSTNL-0208>
+                <message>Unable to send return email for shipment #%s</message>
+                <url>http://kb.tig.nl/topic/84694457</url>
+                <type>error</type>
+            </POSTNL-0208>
+            <POSTNL-0209>
+                <message>Unable to send return label email due to missing shipment parameters.</message>
+                <url>http://kb.tig.nl/topic/84686268</url>
+                <type>error</type>
+            </POSTNL-0209>
+            <POSTNL-0210>
+                <message>The installed version of PHP is too low. The installed PHP version is %s, the minimum required PHP version is %s.</message>
+                <url>http://kb.tig.nl/topic/84694597</url>
+                <type>error</type>
+            </POSTNL-0210>
+            <POSTNL-0211>
+                <message>Invalid settings provided.</message>
+                <url>http://kb.tig.nl/topic/84694787</url>
+                <type>error</type>
+            </POSTNL-0211>
+            <POSTNL-0212>
+                <message>Invalid config value provided.</message>
+                <url>http://kb.tig.nl/topic/84694817</url>
+                <type>error</type>
+            </POSTNL-0212>
+            <POSTNL-0213>
+                <message>Invalid updateConfigSettings response: %s</message>
+                <url>http://kb.tig.nl/topic/84694847</url>
+                <type>error</type>
+            </POSTNL-0213>
+            <POSTNL-0214>
+                <message>Missing Magento order.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0214>
+            <POSTNL-0215>
+                <message>Missing Magento quote.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0215>
+            <POSTNL-0216>
+                <message>Missing Magento shipment.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0216>
+            <POSTNL-0217>
+                <message>Quote IDs do not match.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0217>
+            <POSTNL-0218>
+                <message>Order IDs do not match.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0218>
+            <POSTNL-0219>
+                <message>There appear to be problems with the integrity of the PostNL order and/or shipment data.</message>
+                <url>http://kb.tig.nl/topic/84695007</url>
+                <type>error</type>
+            </POSTNL-0219>
+            <POSTNL-0220>
+                <message>The shipping status of shipment #%s cannot be updated.</message>
+                <url>http://kb.tig.nl/topic/84686768</url>
+                <type>error</type>
+            </POSTNL-0220>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

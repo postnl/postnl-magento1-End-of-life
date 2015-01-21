@@ -240,6 +240,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
 
         $content = $gridBlock->getCsvFile();
 
+        $this->postDispatch();
         $this->_prepareDownloadResponse($fileName, $content);
 
         return $this;
@@ -264,6 +265,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
 
         $content = $gridBlock->getCsvFile();
 
+        $this->postDispatch();
         $this->_prepareDownloadResponse($fileName, $content);
 
         return $this;
@@ -319,6 +321,8 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
             'value' => $zip,
             'rm'    => true,
         );
+
+        $this->postDispatch();
         $this->_prepareDownloadResponse($zipName, $content);
 
         return $this;

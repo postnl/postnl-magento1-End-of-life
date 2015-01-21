@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_RESPONSIVE = 'postnl/delivery_options/responsive';
 
     /**
+     * Xpath to the Google Maps API key.
+     */
+    const XPATH_GOOGLE_MAPS_API_KEY = 'postnl/google_maps/api_key';
+
+    /**
      * The time we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
@@ -384,7 +389,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param Mage_Core_Model_Abstract $entity
      * @param boolean                  $asVarienObject
      *
-     * @return array|false
+     * @return array|Varien_Object|false
      */
     public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {
@@ -438,18 +443,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * This is the basic, empty array of delivery options info.
          */
         $deliveryOptionsInfo = array(
-            'type'                     => false,
-            'shipment_type'            => false,
-            'formatted_type'           => false,
-            'product_code'             => false,
-            'product_option'           => false,
-            'shipment_costs'           => false,
-            'confirm_date'             => false,
-            'delivery_date'            => false,
-            'pakje_gemak_address'      => false,
-            'confirm_status'           => false,
-            'shipping_phase'           => false,
-            'formatted_shipping_phase' => false,
+            'type'                      => false,
+            'shipment_type'             => false,
+            'formatted_type'            => false,
+            'product_code'              => false,
+            'product_option'            => false,
+            'shipment_costs'            => false,
+            'confirm_date'              => false,
+            'delivery_date'             => false,
+            'store_confirm_date'        => false,
+            'store_delivery_date'       => false,
+            'pakje_gemak_address'       => false,
+            'confirm_status'            => false,
+            'shipping_phase'            => false,
+            'formatted_shipping_phase'  => false,
+            'delivery_time_start'       => false,
+            'delivery_time_end'         => false,
+            'store_delivery_time_start' => false,
+            'store_delivery_time_end'   => false,
         );
 
         /**
@@ -466,6 +477,38 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shipmentCosts = $postnlOrder->getShipmentCosts();
         if ($shipmentCosts) {
             $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
+        }
+
+        /**
+         * Get the time zone used by the store in which the order was placed.
+         */
+        $storeTimezone = $this->getStoreTimeZone($postnlOrder->getStoreId(), true);
+
+        /**
+         * If the customer chose a specific delivery time, add that to the array.
+         */
+        if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+            $startTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+
+            $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+            $storeStartTime->setTimezone($storeTimezone);
+
+            $deliveryOptionsInfo['delivery_time_start'] = $startTime->format('H:i');
+            $deliveryOptionsInfo['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+
+            /**
+             * In the case of PakjeGemak shipments there is only a start time and no end time.
+             */
+            if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+                $endTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+
+                $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+                $storeEndTime->setTimezone($storeTimezone);
+
+                $deliveryOptionsInfo['delivery_time_end'] = $endTime->format('H:i');
+                $deliveryOptionsInfo['store_delivery_time_end'] = $storeEndTime->format('H:i');
+            }
         }
 
         /**
@@ -517,14 +560,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Add the delivery date.
          */
         if ($deliveryDate) {
-            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
+            $deliveryDate = new DateTime($deliveryDate);
+
+            $deliveryOptionsInfo['delivery_date'] = $deliveryDate->format('Y-m-d H:i:s');
+            $deliveryOptionsInfo['store_delivery_date'] = $deliveryDate->setTimezone($storeTimezone)
+                                                                       ->format('Y-m-d H:i:s');
         }
 
         /**
          * Add the confirm date.
          */
         if ($confirmDate) {
-            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
+            $confirmDate = new DateTime($confirmDate);
+
+            $deliveryOptionsInfo['confirm_date'] = $confirmDate->format('Y-m-d H:i:s');
+            $deliveryOptionsInfo['store_confirm_date'] = $confirmDate->setTimezone($storeTimezone)
+                                                                     ->format('Y-m-d H:i:s');
         }
 
         /**
@@ -610,7 +661,62 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function isPastCutOffTime($orderDate = null, $storeId = null)
     {
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+        }
+
+        if (is_string($orderDate)) {
+            $orderDate = new DateTime($orderDate);
+        }
+
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        /**
+         * Get the cut off time.
+         */
+        $cutOffTime = explode(':', $this->getCutOffTime($storeId, true, $orderDate));
+
+        /**
+         * Create a DateTime object for the order date with the cut off time for comparison.
+         */
+        $utcTimeZone = new DateTimeZone('UTC');
+
+        $cutOffDate = clone $orderDate;
+        $cutOffDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2])
+                   ->setTimezone($utcTimeZone);
+
+        /**
+         * Convert the order date to UTC.
+         */
+        $orderDate->setTimezone($utcTimeZone);
+
+        /**
+         * Check if the current time (as His) is greater than the cut-off time.
+         */
+        if ($orderDate > $cutOffDate) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the cut off time for the specified store ID.
+     *
+     * If $checkForSunday is true, the sunday cut-off time will be checked if the order date is on a sunday. This is
+     * only done if sunday sorting is enabled.
+     *
+     * @param null|int             $storeId
+     * @param bool                 $checkForSunday
+     * @param string|DateTime|null $orderDate
+     *
+     * @return mixed
+     */
+    public function getCutOffTime($storeId = null, $checkForSunday = true, $orderDate = null)
+    {
+        if ($checkForSunday && !$orderDate) {
+            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
         }
 
         if ($storeId === null) {
@@ -624,17 +730,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Get the cut-off time. This is formatted as H:i:s.
          */
-        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
-        $orderTime  = $orderDate->format('His');
-
-        /**
-         * Check if the current time (as His) is greater than the cut-off time.
-         */
-        if ($orderTime > str_replace(':', '', $cutOffTime)) {
-            return true;
+        if ($checkForSunday
+            && $orderDate->format('N') == 7
+            && $this->canUseSundaySorting()
+        ) {
+            $cutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+            if (empty($cutOffTime)) {
+                $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+            }
+        } else {
+            $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
         }
 
-        return false;
+        return $cutOffTime;
     }
 
     /**
@@ -645,14 +753,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDays
      * @param boolean     $asDateTime
      * @param boolean     $withTime
+     * @param int|boolean $shippingDuration
      *
      * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
-        $withTime = true
+        $withTime = true, $shippingDuration = false
     ) {
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getSingleton('core/date')->date('Y-m-d H:i:s'));
+            $orderDate = new DateTime(
+                Mage::getSingleton('core/date')->date('Y-m-d H:i:s'),
+                $this->getStoreTimeZone($storeId, true)
+            );
         }
 
         if ($storeId === null) {
@@ -660,23 +772,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate);
+            $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
         }
 
-        /**
-         * Get the base shipping duration for this order.
-         */
-        $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        if (false === $shippingDuration) {
+            /**
+             * Get the base shipping duration for this order.
+             */
+            $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        }
+
         $deliveryTime = clone $orderDate;
         $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
-
-        /**
-         * Check if the current time is greater than the cut-off time.
-         */
-        if ($this->isPastCutOffTime($orderDate, $storeId)) {
-            $deliveryTime->add(new DateInterval('P1D'));
-            $shippingDuration++;
-        }
 
         /**
          * Get the delivery day (1-7).
@@ -696,15 +803,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
          * monday is not possible.
          */
-        if ($deliveryDay == 1 && Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
-            $orderTime = $orderDate->format('His');
-            $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+        if ($deliveryDay == 1 && !$this->canUseSundaySorting()) {
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
+        }
 
-            if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
-                $deliveryTime->add(new DateInterval('P1D'));
-                $shippingDuration++;
-            }
-        } elseif ($deliveryDay == 1) {
+        /**
+         * Check if the order time is greater than the cut-off time. We need to take yesterday as the requested date as
+         * the cut-off time is based on the confirm date and not the delivery date.
+         */
+        $confirmDate = clone $deliveryTime;
+        $confirmDate->sub(new DateInterval('P1D'));
+        if ($this->isPastCutOffTime($confirmDate, $storeId)) {
             $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }
@@ -730,8 +840,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param string|DateTime $deliveryDate
      *
      * @return DateTime
-     *
-     * @todo implement sunday sorting
      */
     public function getValidDeliveryDate($deliveryDate)
     {
@@ -750,15 +858,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
         $shippingDays = explode(',', $shippingDays);
-        $shippingDate = clone $deliveryDate;
 
+        $shippingDate = clone $deliveryDate;
         $shippingDay = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
-        /**
-         * Shipping is only available on monday through saturday.
-         */
-        if ($shippingDay < 1 || $shippingDay > 6) {
-            $shippingDay = 6;
-        }
 
         /**
          * If the shipping day is allowed, return the date.
@@ -768,8 +870,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * If sunday sorting is available, shipping on saturday will result in a monday delivery. it will arrive on
+         * tuesday otherwise.
+         */
+        if ($this->canUseSundaySorting()) {
+            $saturdayShippingDeliveryDay = 1;
+        } else {
+            $saturdayShippingDeliveryDay = 2;
+        }
+
+        /**
          * If the delivery day is a tuesday, saturday is a valid shipping day and the first possible delivery day is the
-         * date specified or before then, the specified date is allowed.
+         * date specified or before then, the specified date is allowed. If sunday sorting is available, this applies to
+         * monday delivery, rather than tuesday.
          *
          * If we have configured that we do not ship on mondays, the following will take place:
          * - If the order on friday or before, we can ship on saturday and it will be delivered on tuesday.
@@ -778,7 +891,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * - If we order on sunday or monday, we can only ship it the next saturday and it will be delivered on tuesday
          *   the week after.
          */
-        if ($deliveryDay == 2
+        if ($deliveryDay == $saturdayShippingDeliveryDay
             && in_array(6, $shippingDays)
             && $this->getDeliveryDate(null, null, false, true, false) <= $deliveryDate
         ) {
@@ -792,7 +905,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             4 => 'thursday',
             5 => 'friday',
             6 => 'saturday',
-            7 => 'sunday'
+            7 => 'sunday',
         );
 
         /**
@@ -814,9 +927,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $availableDeliveryDay = $availableShippingDay + 1;
 
             /**
-             * Monday and sunday are not available as delivery days.
+             * Sunday is not available as a delivery day. If sunday sorting is not allowed, neither is monday.
              */
-            if ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
+            if ($this->canUseSundaySorting()
+                && ($availableDeliveryDay < 1
+                    || $availableDeliveryDay > 7
+                )
+            ) {
+                $availableDeliveryDay = 1;
+            } elseif ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
                 $availableDeliveryDay = 2;
             }
 
@@ -835,9 +954,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $availableDeliveryDay = $shippingDays[0] + 1;
 
         /**
-         * Monday and sunday are not available as delivery days.
+         * Sunday is not available as a delivery day. If sunday sorting is not allowed, neither is monday.
          */
-        if ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
+        if ($this->canUseSundaySorting()
+            && ($availableDeliveryDay < 1
+                || $availableDeliveryDay > 7
+            )
+        ) {
+            $availableDeliveryDay = 1;
+        } elseif ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
             $availableDeliveryDay = 2;
         }
 
@@ -855,14 +980,25 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * saturday.
      *
      * @param string|DateTime $date
+     * @param string|boolean  $timeZone
      *
      * @return DateTime
      */
-    public function getValidConfirmDate($date)
+    public function getValidConfirmDate($date, $timeZone = false)
     {
-        if (is_string($date)) {
-            $date = new DateTime($date);
+        if (!is_string($timeZone)) {
+            $timeZone = 'UTC';
         }
+        $timeZone = new DateTimeZone($timeZone);
+
+        if (is_string($date)) {
+            $date = new DateTime($date, $timeZone);
+        }
+
+        /**
+         * Convert the date to PostNL's time zone.
+         */
+        $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
         if (!($date instanceof DateTime)) {
             throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
@@ -890,6 +1026,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         ) {
             $date->modify('last saturday');
         }
+
+        $date->setTimezone($timeZone);
 
         return $date;
     }
@@ -969,15 +1107,30 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Alias for getQuoteShippingDuration() provided for backwards compatibility reasons.
+     *
+     * @param null|Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|int
+     *
+     * @deprecated
+     */
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
+    {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return $this->getQuoteShippingDuration($quote);
+    }
+
+    /**
      * Gets the shipping duration for the specified quote.
      *
-     * @param bool|Mage_Sales_Model_Quote $quote
+     * @param null|Mage_Sales_Model_Quote $quote
      *
-     * @return int|bool
+     * @return int|false
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
+    public function getQuoteShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
         /**
          * If no quote was specified, try to load the quote.
@@ -998,7 +1151,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the default config duration.
          */
         $configDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
-        $durationArray  = array($configDuration);
 
         /**
          * Get all items in the quote, so we can check the corresponding products.
@@ -1013,10 +1165,55 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
         $productIds = $items->getColumnValues('product_id');
 
-        if (!$productIds) {
+        return $this->_getShippingDuration($configDuration, $productIds, $storeId);
+    }
+
+    /**
+     * Gets the shipping duration for the specified order.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return int|false
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getOrderShippingDuration(Mage_Sales_Model_Order $order)
+    {
+        $storeId = $order->getStoreId();
+
+        /**
+         * Get the default config duration.
+         */
+        $configDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+
+        /**
+         * Get all items in the order, so we can check the corresponding products.
+         *
+         * @var Mage_Sales_Model_Resource_Order_Item_Collection $items
+         * @var Mage_Sales_Model_Order_Item $item
+         */
+        $items = $order->getItemsCollection(array(), true);
+        $productIds = $items->getColumnValues('product_id');
+
+        return $this->_getShippingDuration($configDuration, $productIds, $storeId);
+    }
+
+    /**
+     * Calculate the shipping duration for the specified products and default duration.
+     *
+     * @param int   $defaultDuration
+     * @param array $productIds
+     * @param null  $storeId
+     *
+     * @return int|false
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShippingDuration($defaultDuration, $productIds = array(), $storeId = null)
+    {
+        if (empty($productIds)) {
             $duration = new Varien_Object(
                 array(
-                    'duration'   => end($durationArray),
+                    'duration'   => $defaultDuration,
                     'productIds' => $productIds
                 )
             );
@@ -1030,23 +1227,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $duration->getData('duration');
         }
 
-        /**
-         * Get all products.
-         */
-        $products = Mage::getResourceModel('catalog/product_collection')
-                        ->setStoreId($quote->getStoreId())
-                        ->addFieldToFilter('entity_id', array('in' => $productIds))
-                        ->addAttributeToSelect('postnl_shipping_duration');
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
 
-        /**
-         * Get the shipping duration of all products.
-         */
-        foreach ($products as $product) {
-            if ($product->hasData('postnl_shipping_duration')
-                && $product->getData('postnl_shipping_duration') !== ''
-            ) {
-                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
-            }
+        $durationArray = $this->_getProductsShippingDuration($productIds, $defaultDuration, $storeId);
+
+        if (empty($durationArray)) {
+            $durationArray = array($defaultDuration);
         }
 
         /**
@@ -1083,6 +1271,44 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $shippingDuration;
+    }
+
+    /**
+     * Get the shipping duration for an array of product IDs.
+     *
+     * @param array $productIds
+     * @param int   $configDuration
+     * @param null  $storeId
+     *
+     * @return array
+     * @throws Mage_Core_Exception
+     */
+    protected function _getProductsShippingDuration(array $productIds, $configDuration = 1, $storeId = null)
+    {
+        /**
+         * Get all products.
+         */
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($storeId)
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
+                        ->addAttributeToSelect('postnl_shipping_duration');
+
+        /**
+         * Get the shipping duration of all products.
+         */
+        $durationArray  = array();
+        foreach ($products as $product) {
+            if ($product->hasData('postnl_shipping_duration')
+                && $product->getData('postnl_shipping_duration') !== ''
+                && (int) $product->getData('postnl_shipping_duration') > 0
+            ) {
+                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
+            } else {
+                $durationArray[] = $configDuration;
+            }
+        }
+
+        return $durationArray;
     }
 
     /**
@@ -2570,20 +2796,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         );
 
         return $isOnlyStatedAddressOptionChecked;
-    }
-
-    /**
-     * Check if the module is set to test mode
-     *
-     * @param bool $storeId
-     *
-     * @return boolean
-     *
-     * @deprecated v1.5.0
-     */
-    public function isTestMode($storeId = false)
-    {
-        return parent::isTestMode($storeId);
     }
 
     /**

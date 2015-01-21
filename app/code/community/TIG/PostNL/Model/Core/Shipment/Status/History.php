@@ -74,7 +74,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Set the 'phase' attribute. The phase must be formatted as a 2 digit number (i.e. 01, 04, 12, 99 etc.)
      *
-     * @param string | int $phase
+     * @param string|int $phase
      *
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
      */
@@ -91,7 +91,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Load a history item based on a postnl shipment id and a status code.
      *
-     * @param int $shipmentId
+     * @param int    $shipmentId
      * @param string $code
      *
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
@@ -120,8 +120,8 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Check if a status history item exists for the given postnl shipment and status
      *
-     * @param int $shipmentId
-     * @param     $status
+     * @param int      $shipmentId
+     * @param StdClass $status
      *
      * @return boolean
      */
@@ -135,19 +135,19 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
                    ->addFieldToFilter('code', array('eq' => $status->Code));
 
-        if ($status->LocationCode !== '') {
+        if (!empty($status->LocationCode)) {
             $collection->addFieldToFilter('location_code', array('eq' => $status->LocationCode));
         }
 
-        if ($status->DestinationLocationCode !== '') {
+        if (!empty($status->DestinationLocationCode)) {
             $collection->addFieldToFilter('destination_location_code', array('eq' => $status->DestinationLocationCode));
         }
 
-        if ($status->RouteCode !== '') {
+        if (!empty($status->RouteCode)) {
             $collection->addFieldToFilter('route_code', array('eq' => $status->RouteCode));
         }
 
-        if ($status->RouteName !== '') {
+        if (!empty($status->RouteName)) {
             $collection->addFieldToFilter('route_name', array('eq' => $status->RouteName));
         }
 

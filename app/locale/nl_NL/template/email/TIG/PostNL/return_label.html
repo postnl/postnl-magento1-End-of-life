@@ -1,0 +1,43 @@
+<!--@subject PostNL - retourlabel voor uw zending {{var shipment.increment_id}} @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"var logo_url":"Email Logo Image Url",
+"var logo_alt":"Email Logo Image Alt",
+"var barcode":"Barcode",
+"var barcode_url":"Barcode URL",
+"var return_barcode":"Return Barcode",
+"var return_barcode_url":"Return Barcode URL",
+"store url=\"customer/account/\"":"Customer Account Url",
+"var shipment.increment_id":"Shipment Id"}
+@-->
+
+<body style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<div style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+    <tr>
+        <td align="center" valign="top" style="padding:20px 0 20px 0">
+            <!-- [ header starts here] -->
+            <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
+                <tr>
+                    <td valign="top">
+                        <a href='{{store url=""}}' style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
+                        <img src='{{skin url="images/TIG/PostNL/postnl_email_logo.png" _area="frontend"}}' alt="PostNL" border="0" style="float:right"/>
+                    </td>
+                </tr>
+                <!-- [ middle starts here] -->
+                <tr>
+                    <td valign="top">
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Beste heer/mevrouw {{htmlescape var=$customer_name}},</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Bijgevoegd vindt u een PostNL retourlabel waarmee u uw bestelling kunt retourneren aan {{var store.getFrontendName()}}.</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Verpak de producten in een stevige verpakking en plak het retourlabel bovenop het pakket. Zorg er s.v.p. voor dat de barcode goed en duidelijk leesbaar is.<p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">U kunt de status van uw retourzending <a href="{{var return_barcode_url}}" target="_blank">hier</a> volgen.<p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Met vriendelijke groet,</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</div>
+</body>

@@ -118,4 +118,56 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ShippingDuration
         $this->_options = $options;
         return $options;
     }
+
+    /**
+     * Retrieve flat column definition
+     *
+     * @return array
+     */
+    public function getFlatColums()
+    {
+        $attributeCode = $this->getAttribute()->getAttributeCode();
+        $column = array(
+            'default'   => null,
+            'extra'     => null,
+            'type'      => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+            'is_null'   => true,
+            'comment'   => $attributeCode . ' column',
+        );
+
+        $columnDefinition = array($attributeCode => $column);
+        return $columnDefinition;
+    }
+
+    /**
+     * Retrieve Indexes(s) for Flat
+     *
+     * @return array
+     */
+    public function getFlatIndexes()
+    {
+        $indexes = array();
+
+        $index = 'IDX_' . strtoupper($this->getAttribute()->getAttributeCode());
+        $indexes[$index] = array(
+            'type'      => 'index',
+            'fields'    => array($this->getAttribute()->getAttributeCode())
+        );
+
+        return $indexes;
+    }
+
+    /**
+     * Retrieve Select For Flat Attribute update
+     *
+     * @param int $store
+     * @return Varien_Db_Select|null
+     */
+    public function getFlatUpdateSelect($store)
+    {
+        $select = Mage::getResourceModel('eav/entity_attribute')
+                      ->getFlatUpdateSelect($this->getAttribute(), $store);
+
+        return $select;
+    }
 }

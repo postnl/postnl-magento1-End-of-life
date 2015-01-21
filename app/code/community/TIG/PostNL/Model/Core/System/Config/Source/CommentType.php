@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_CommentType
             ),
             array(
                 'value' => 'shipment_comment',
-                'label' => $helper->__('Last shipment comment'),
+                'label' => $helper->__('Last shipment comment (as shown on the shipment detail page)'),
             ),
         );
 

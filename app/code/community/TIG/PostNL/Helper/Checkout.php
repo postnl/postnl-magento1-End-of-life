@@ -331,6 +331,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      */
     public function quoteIsLetter($quoteItems, $storeId = null)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         if ($quoteItems instanceof Mage_Sales_Model_Quote) {
             $quoteItems = $quoteItems->getAllItems();
         }

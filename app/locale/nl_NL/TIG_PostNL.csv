@@ -30,7 +30,7 @@ TIG_PostNL::Customer Number,Klantnummer
 TIG_PostNL::Customer Code,Klantcode
 "TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
 TIG_PostNL::BLS (location) Code,BLS (locatie) code
-"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","De interne code van het dichtsbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
+"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","De interne code van het dichtstbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
 TIG_PostNL::These fields are only required if you intend to send products to countries outside the EU.,Deze velden zijn alleen verplicht als u van plan bent om producten buiten de EU te gaan versturen.
 TIG_PostNL::Global Barcode Type,Globaal barcode type
 TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 2 letters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
@@ -59,7 +59,6 @@ TIG_PostNL::From this menu you can add columns containing PostNL specific inform
 TIG_PostNL::Show product options in order grid,Toon productopties in het bestellingen overzicht
 TIG_PostNL::Activate to show a drop down menu in the order grid containing the product options alongside the bulk action drop down menu. Deactivate to use the default values.,Activeer om in het bestellingenoverzicht naast het bulk actie dropdown menu de mogelijkheid tot het selecteren van andere productopties te tonen. Deactiveer om altijd de standaardwaardes te gebruiken.
 TIG_PostNL::Optional shipment grid columns,Optionele kolommen voor verzendoverzicht
-,
 TIG_PostNL::Select a default option for the shipment grid mass action.,Selecteer een standaardwaarde voor de massa-actie voor het zendingenoverzicht.
 TIG_PostNL::You can choose to send a Track & Trace email automatically after an order is confirmed. From this menu you can also define how you would like to send Track & Trace emails.,Track & Trace e-mails kunnen automatisch verstuurd worden nadat u een zending heeft voorgemeld. Configureer hier hoe u Track & Trace e-mails verstuurd wil hebben.
 TIG_PostNL::Automatically send track & trace email to customer,Stuur de Track & Trace e-mail automatisch naar de klant
@@ -89,11 +88,9 @@ TIG_PostNL::House Nr. Extension,Huisnummer toevoeging
 TIG_PostNL::Postcode,Postcode
 TIG_PostNL::City,Plaats
 TIG_PostNL::Region,Provincie
-,
-TIG_PostNL::Use the sender address as the return adress,Gebruik afzenderadres als retouradres
+TIG_PostNL::Use only the primary sender address,Gebruik enkel het primaire afzenderadres
 TIG_PostNL::Product Options,Productopties
 TIG_PostNL::Select selectable option,Selecteer de beschikbare opties
-,
 TIG_PostNL::Default shipping option,Standaard verzendoptie
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse zendingen.
 TIG_PostNL::Use an alternative default option,Gebruik een alternatieve standaard optie
@@ -111,15 +108,10 @@ TIG_PostNL::Customs certificate number,Douane certificaat nummer
 "TIG_PostNL::If you do not own a customs certificate, leave this field empty.","Als u geen douane certificaat heeft, laat dit veld dan leeg"
 TIG_PostNL::Product attributes,Productattributen
 TIG_PostNL::Use HS Tariff,Gebruik het HS tarief
-,
 TIG_PostNL::HS Tariff attribute,HS tarief
-,
 TIG_PostNL::Customs value attribute,Douane waarde
-,
 TIG_PostNL::Country of origin attribute,Land van herkomst
-,
 TIG_PostNL::Product description attribute,Productbeschrijving
-,
 TIG_PostNL::Product sorting,Productsortering
 TIG_PostNL::Product sorting attribute,Product sortering attribuut
 TIG_PostNL::Global shipping labels contain a maximum of 5 products. The sorting method will determine which 5 products are shown. Please note: the remaining products will not be shown on the label.,Global shipping labels bevatten maximaal 5 producten. Bepaal met de sortering welke 5 producten getoond worden. Let op: overige producten zullen dus niet zichtbaar zijn op het label.
@@ -127,28 +119,22 @@ TIG_PostNL::Product sorting direction,Product sortering richting
 TIG_PostNL::PostNL Checkout Settings,PostNL Checkout Instellingen
 TIG_PostNL::Enable PostNL Checkout,Activeer PostNL Checkout
 TIG_PostNL::Mode,Modus
-,
 TIG_PostNL::Enable PostNL Checkout for orders under 2 kg,Activeer PostNL Checkout voor orders onder de 2 kg
 TIG_PostNL::Enable PostNL Checkout for orders containing out of stock products,Activeer PostNL Checkout voor orders die producten bevatten die niet op voorraad zijn.
 TIG_PostNL::PostNL Checkout settings,PostNL Checkout instellingen
 TIG_PostNL::Show order summary page,Toon de bestelling overzichtspagina.
 TIG_PostNL::Whether or not to show the customer a final order summary page before finalizing the order.,De klant wel of geen bestelling overzichtspagina tonen voor de order definitief afgerond wordt.
 TIG_PostNL::Newsletter subscription,Aanmelden nieuwsbrief
-,
 TIG_PostNL::Remark,Opmerking
 TIG_PostNL::Whether or not the customer can leave a remark.,Of de klant wel of geen opmerkingen mag plaatsen
 TIG_PostNL::Use mobile phonenumber,Gebruik mobiel nummer
-,
 TIG_PostNL::Use date of birth,Gebruik geboortedatum
 TIG_PostNL::Whether or not the customer's date of birth will be returned by PostNL if available.,Dit veld bepaalt of de geboortedatum van de klant wordt uitgevraagd in PostNL Checkout.
 TIG_PostNL::Allow post office locations,Sta postkantoor locaties toe
 TIG_PostNL::Whether or not the customer may choose a retail location as their delivery address.,Mag de klant wel of niet een winkellokatie kiezen als verzendadres
 TIG_PostNL::Allow foreign addresses,Sta buitenlande adressen toe
-,
 TIG_PostNL::Allow price overview,Sta prijsoverzicht toe
-,
 TIG_PostNL::Terms and conditions,Algemene voorwaarden
-,
 TIG_PostNL::Contact settings,Contact instellingen
 TIG_PostNL::Contact URL,Contact URL
 TIG_PostNL::URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.,Pagina van een website waar klanten contactinformatie van uw webshop kunnen vinden. Laat leeg om niet te gebruiken
@@ -156,13 +142,13 @@ TIG_PostNL::Service URL,Service URL
 TIG_PostNL::URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden. Laat leeg om niet te gebruiken.
 TIG_PostNL::PostNL Checkout Payment Settings,PostNL Checkout Betalingsinstellingen
 TIG_PostNL::PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL Checkout om deze instellingen te configureren.
-TIG_PostNL::Use iDEAL,Gebruik iDEAL
-TIG_PostNL::iDEAL payment method,iDEAL betaalmethode
-TIG_PostNL::iDeal Bank Field,iDEAL bank
+TIG_PostNL::Use iDEAL,Gebruik iDeal
+TIG_PostNL::iDEAL payment method,iDeal betaalmethode
+TIG_PostNL::iDeal Bank Field,iDeal bank
 TIG_PostNL::Enter the field name used by the selected payment method for the 'bank' field.,Vul de veldnaam in die de gekozen betaalmethode gebruikt om de bankkeuze te verwerken.
-TIG_PostNL::Use creditcard,Gebruik credit card
-TIG_PostNL::Creditcard payment method,Credit card betaalmethode
-TIG_PostNL::Creditcard card type field,Credit card type
+TIG_PostNL::Use creditcard,Gebruik creditcard
+TIG_PostNL::Creditcard payment method,Creditcard betaalmethode
+TIG_PostNL::Creditcard card type field,Creditcard type
 TIG_PostNL::Enter the field name used by the selected payment method for the 'creditcard type' field.,Vul de veldnaam in die de gekozen betaalmethode gebruikt om dekaartkeuze te verwerken.
 TIG_PostNL::Use CheckPay,Gebruik CheckPay
 TIG_PostNL::CheckPay payment method,CheckPay betaalmethode
@@ -371,7 +357,7 @@ TIG_PostNL::Subtotal,Subtotaal
 TIG_PostNL::Return to the shopping cart.,Terug naar winkelmandje.
 TIG_PostNL::Confirm Order,Bevestig bestelling
 TIG_PostNL::Cancel,Annuleer
-TIG_PostNL::Your credit card will be charged for,Uw credit zard wordt belast met
+TIG_PostNL::Your credit card will be charged for,Uw creditcard wordt belast met
 TIG_PostNL::Loading...,Laden…
 TIG_PostNL::How does it work?,Hoe werkt het?
 TIG_PostNL::An error occurred. Please use our regular checkout instead.,Er is een fout opgetreden. Gebruikt u alstublieft de normale afreken pagina.
@@ -411,13 +397,10 @@ TIG_PostNL::Invalid ReadOrder response: %s,Ongeldig OrderOrder antwoord: %s
 TIG_PostNL::Invalid ConfirmOrder response: %s,Ongeldig ConfirmOrder antwoord: %s
 TIG_PostNL::Invalid reference type requested: %s,Ongeldige referentie type opgevraagd: %s
 TIG_PostNL::Invalid object specified: %s,Ongeldig object gespecificeerd: %s
-,
 TIG_PostNL::Number of Parcels,Aantal pakketten
 "TIG_PostNL::You can use this field to for example, add a prefix to the shipment increment ID or to help identify the shipment as coming from your webshop. You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. The resulting text may not exceed 28 characters. ","U kunt dit veld bijvoorbeeld gebruiken om een voorvoegsel toe te voegen aan het zending increment ID. Ook kunt u ervoor zorgen dat het voor de klant duidelijk is dat het pakketje van uw webshop komt. U kunt de volgende variabelen gebruiken: {{var shipment_increment_id}}, {{var order_increment_id}} en {{var store_frontend_name}}. De uiteindelijke tekst mag niet meer zijn dan 28 karakters."
-,
 "TIG_PostNL::If you are unsure which options to select, ask your PostNL account manager.","Indien u niet zeker weet welke opties voor uw webshop van toepassing zijn, dan kunt u dit vragen aan uw PostNL account manager."
 "TIG_PostNL::We recommend you make the chosen attribute mandatory. However, should the attribute you selected be empty for a certain product, the label will note '000000' instead.","Wij raden aan het gekozen attribuut verplicht te maken. Mocht het zo zijn dat het attribuut leeg is voor een bepaald product, dan zal op het label '000000' getoond worden."
-,
 TIG_PostNL::The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.,De 2kg limiet wordt gebaseerd op het gewicht van de producten en de gewichtseenheid die u heeft geselecteerd in de 'voormelden en labels printen' groep.
 TIG_PostNL::Returns your customer's mobile phone number if activated. This number will be saved as the customer's regular phone number.,Vraag het mobiele nummer uit bij uw klanten. Dit nummer wordt opgeslagen als het normale telefoonnummer van de klant.
 TIG_PostNL::All addresses outside of the Netherlands are considered foreign. Addresses outside of the EU are not allowed.,"Alle adressen buiten Nederland worden gezien als buitenlandse adressen. Adressen buiten de EU worden, ongeacht deze instelling, niet toegestaan."
@@ -444,8 +427,7 @@ TIG_PostNL::Invalid confirmShipment response: %s,Ongeldige voormeldbevestigings 
 "TIG_PostNL::Please fill in the fields below to finish the extension registration procedure. Click <a href=""#"" onclick=""%s"">here</a> to reset the registration procedure.","Vul s.v.p. de onderstaande velden in om de registratieprocedure af te ronden. Klik <a href=""#"" onclick=""%s"">hier</a> om de registratieprocedure te resetten."
 TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL Checkout.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te kunnen maken van PostNL Checkout.
 TIG_PostNL::One or more items in the cart are out of stock.,Eén of meer producten in de winkelwagen zijn niet op voorraad.
-,
-TIG_PostNL::Shipping event history,Zending status geschiedenis
+TIG_PostNL::Shipping event history,Zending statusgeschiedenis
 TIG_PostNL::PostNL version %s,PostNL versie %s
 TIG_PostNL::Status Code,Status Code
 TIG_PostNL::Description,Beschrijving
@@ -535,7 +517,6 @@ TIG_PostNL::Use PostNL Checkout and Mijnpakket login,Gebruik PostNL Checkout en 
 "TIG_PostNL::If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'.",Indien u gebruik wilt maken van PostNL Checkout of Mijnpakket login moet u deze instelling op 'ja' zetten.
 TIG_PostNL::You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.,U heeft GlobalPack niet geactiveerd. Activeer GlobalPack onder 'Account Instellingen' om uw GlobalPack voorkeuren te configureren.
 TIG_PostNL::You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.,U heeft PostNL Checkout niet geactiveerd. Activeer PostNL Checkout onder 'Account Instellingen' om uw PostNL Checkout voorkeuren te configureren.
-,
 TIG_PostNL::Account settings have been succesfully validated. Please save this page to keep these settings.,De account instellingen zijn succesvol gevalideerd. Sla deze pagina op om deze instellingen te bewaren.
 TIG_PostNL::One or more fields are missing. Please fill these fields and try again.,Eén of meerdere velden zijn niet ingevuld. Vul deze velden a.u.b. alsnog in en probeer het dan nog eens.
 "TIG_PostNL::Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.","De account instellingen zijn incorrect. Controleer alle velden a.u.b. zorgvuldig en probeer het dan nog eens. Als deze melding zich blijft voordoen, kunt u het beste contact opnemen met PostNL."
@@ -556,20 +537,15 @@ TIG_PostNL::Enable Parcelware export,Activeer Parcelware export
 TIG_PostNL::Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer Parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat Parcelware export enkel vanuit op globaal niveau kunt activeren.
 TIG_PostNL::Automatically confirm exported shipments,Geëxporteerde zendingen automatisch voormelden
 "TIG_PostNL::This setting will not actually confirm your shipments, it will only give shipments the confirmed status in Magento. This prevents you from accidentally confirming a shipment multiple times in Magento and ParcelWare.","Deze instelling meldt de producten niet daadwerkelijk voor, maar zorgt enkel dat ze deze status in Magento krijgen. Dit voorkomt dat u de orders dubbel voormeldt in Magento en Parcelware."
-,
 TIG_PostNL::Contract reference number,Contract referentie nummer
 TIG_PostNL::Contract name,Contract naam
 TIG_PostNL::Sender address reference number,Afzender adres referentie nummer
 TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension registration procedure.,"Uw webshop is geregisteerd. Binnen enkele minuten ontvangt u een e-mail op het adres dat u heeft opgegeven. Lees deze e-mail s.v.p. zorgvuldig, aangezien deze verdere instructies bevat om de registratieprocedure af te ronden."
 TIG_PostNL::Product option,Productoptie
 TIG_PostNL::Use postcode check,Gebruik postode check
-,
 TIG_PostNL::Automatically complete Dutch addresses after your customer fills in his postcode and house number.,Nederlandse adressen worden automatisch aangevuld en gecontroleerd als uw klant zijn postcode en huisnummer invult.
 TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de afreken pagina
-,
-,
 TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check in het adresboek van de klant
-,
 TIG_PostNL::Shipping Product,Verzendproduct
 TIG_PostNL::Delivery Date,Bezorgdatum
 TIG_PostNL::Customize this grid.,Pas dit overzicht aan.
@@ -577,7 +553,6 @@ TIG_PostNL::Selecting too many columns may cause the shipment grid to no longer 
 TIG_PostNL::Your PostNL account credentials could not be validated. Please enter valid PostNL account credentials before activating the postcode check functionality.,Uw PostNL account gegevens konden niet gevalideerd worden. Vul s.v.p. valide PostNL account gegevens in voordat u de postcode check functionaliteit activeert.
 TIG_PostNL::Maximum number of attempts,Maximum aantal pogingen
 "TIG_PostNL::After this number of attempts your customer will be prompted to fill in his address manually. Leave this field empty to allow an infinite number of attempts. Please note however that in rare cases a correct address might not be validated, leaving your customer unable to complete the order process. We therefore recommend always filling in a maximum number of attempts.",Na dit aantal pogingen kan uw klant het adres handmatig invullen. Laat dit veld leeg om een oneindig aantal pogingen toe te staan. Let op: In zeldzame situaties kan het voorkomen dat een correct adres niet gevalideerd kan worden. We raden u daarom aan om altijd een maximaal aantal pogingen in te voeren.
-,
 TIG_PostNL::Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.,Uw postcode/huisnummer combinatie is niet gevonden. Vul s.v.p. handmatig uw straatnaam en woonplaats in.
 TIG_PostNL::Please enter a postcode and housenumber.,Vul s.v.p. een postcode en huisnummer in.
 TIG_PostNL::Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.,Uw postcode/huisnummer combinatie is niet gevonden. Controleer s.v.p. of u uw huisnummer en postcode correct ingevuld heeft.
@@ -615,7 +590,6 @@ TIG_PostNL::Sa,Za
 TIG_PostNL::in,te
 TIG_PostNL::Business Hours,Openingstijden
 TIG_PostNL::Closed,Gesloten
-,
 TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
 TIG_PostNL::More Info,Meer informatie
@@ -635,9 +609,7 @@ TIG_PostNL::Evening pickup available,'s Avonds ophalen mogelijk
 TIG_PostNL::Or pick your own delivery moment,Of kies zelf uw bezorgmoment
 TIG_PostNL::Connection timeout duration,Connectie time-out duur
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,Na dit aantal seconden kan uw klant het adres handmatig invullen. Laat dit veld leeg om de functionaliteit uit te schakelen. Let op: als een klant te lang moet wachten verlaat hij wellicht het bestelproces.
-,
 TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Toon PostNL Checkout exclusief aan Mijnpakket gebruikers
-,
 TIG_PostNL::Activate the PostNL Checkout only for customers with a MijnPakket account. Please note: The Delivery Options must be activated.,Activeer om de PostNL Checkout enkel te tonen aan uw klanten die beschikken over een MijnPakket account. Let op: de bezorgopties moeten geactiveerd zijn.
 TIG_PostNL::Delivery Options,Bezorgopties
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Met de PostNL bezorgopties kunnen uw klanten kiezen waar, wanneer en hoe zij hun bestelling willen ontvangen. Zo kunnen uw klanten de dag van ontvangst kiezen en wordt er direct aangegeven op welk moment ze het pakket kunnen verwachten. Op dinsdag en donderdag bezorgt PostNL zelfs ‘s avonds. Halen uw klanten het pakket liever af op één van de 2000 PostNL pakketpunten? Dit kan vanaf 16:00 uur en op sommige locaties zelfs vanaf 8:30 uur."
@@ -651,7 +623,7 @@ TIG_PostNL::Shipment days and timing,Aanleverdagen en tijden
 TIG_PostNL::Shipping duration,Overkomstduur
 TIG_PostNL::The number of days shipping will take after a customer finishes their order.,Het aantal dagen dat de bestelling nodig heeft om bezorgd te worden nadat de bestelling geplaatst is.
 TIG_PostNL::Order cut-off time,Bestelling cut-off tijd
-"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration.","Indien een bestelling na dit tijdstip besteld wordt, zal er een dag bij de overkomstduur opgeteld worden."
+"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.","Indien een bestelling na dit tijdstip besteld wordt, zal er een dag bij de overkomstduur opgeteld worden. Vul deze tijd s.v.p. in in de %s tijdzone."
 TIG_PostNL::Allow weekend sorting,gebruik weekend sortering
 "TIG_PostNL::Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.","Weekend sortering is een speciale dienst van PostNL waarbij PostNL zendingen sorteert gedurende het weekend zodat deze op maandagen bezorgd kunnen worden. Indien u deze instelling activeert, maar weekend sortering niet beschikbaar is voor uw webshop zullen zendingen NIET op maandagen bezorgd worden."
 TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Vraag aan uw PostNL account manager of weekend sortering voor uw webshop beschikbaar is.
@@ -661,21 +633,16 @@ TIG_PostNL::Delivery options on the checkout page,Bezorgopties in eigen checkout
 TIG_PostNL::Enable timeframes,Activeer tijdvensters
 TIG_PostNL::Enable timeframes to show the expected delivery times for each delivery day.,Activeer tijdsvensters om per dag het verwachte bezorgmoment te tonen.
 TIG_PostNL::Enable evening delivery,Activeer avondbezorging
-,
 TIG_PostNL::Activate evening delivery for your customers. Evening delivery is not enabled for every area. The extension will automatically show evening delivery as a delivery option for addresses in enabled areas.,Activeer avondbezorging voor uw klanten. Avondbezorging is niet in elk gebied mogelijk. De extensie toont deze optie automatisch voor afleveradressen waar avondlevering mogelijk is.
 TIG_PostNL::Evening timeframe fee,Avondbezorging toeslag
 TIG_PostNL::Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.,"Additionele kosten voor het gebruik van avondbezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Deze kosten moeten tussen de 0,00 en 2,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van avondbezorging."
-,
 TIG_PostNL::Enable post office locations,Activeer postkantoor locaties
 TIG_PostNL::Whether or not customers may choose to have their order delivered to a nearby post office.,Deze instelling bepaalt of klanten ervoor kunnen kiezen om hun bestelling te laten bezorgen op een postkantoor locatie.
 TIG_PostNL::Enable early delivery locations,Activeer extra vroeg postkantoor locaties
-,
 TIG_PostNL::Some locations allow package pick-ups early in the morning. The extension will automatically check if this option is available for locations in the area submitted by your customer. You cannot use Premium Sorting or Sunday Sorting for these shipments. ,Op sommige pakketpunten kunnen uw klanten een pakket na 8:30 ophalen in plaats van na 16:00. De extensie bepaalt automatisch of deze optie beschikbaar is in de regio van uw klant. Deze pakketten kunnen niet meegeleverd worden in de Premium Sortering en zondagsortering.
 TIG_PostNL::Early delivery fee,Extra vroege bezorging toeslag
 TIG_PostNL::Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.,"Additionele kosten voor het gebruik van extra vroege bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Deze kosten moeten tussen de 0,00 en 2,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van extra vroege bezorging."
-,
 TIG_PostNL::Enable package dispenser locations,Activeer pakketautomaat locaties
-,
 TIG_PostNL::Activate to allow your customers to pick up a parcel at a package dispenser location. The extension will automatically check if this option is available in the area submitted by your customer. Parcels delivered to a package dispenser machine must comply with a certain size. ,Activeer zodat uw klanten bestellingen af kunnen halen bij een pakketautomaat. De extensie bepaalt automatisch of deze optie beschikbaar is in de regio van uw klant. Pakketten die naar een pakketautomaat gestuurd worden moeten voldoen aan bepaalde afmetingen.
 TIG_PostNL::Allow Google Streetview,Sta Google Streetview toe
 "TIG_PostNL::If enabled, users may use Google Streetview when choosing a post office location.","Indien geactiveerd, kunnen klanten Google Streetview gebruiken wanneer zij een postkantoor zoeken."
@@ -813,7 +780,6 @@ TIG_PostNL::Enable MijnPakket login,Activeer MijnPakket login
 "TIG_PostNL::You can use this button to validate your account settings without saving the configuration. This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. <br />Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked.","U kunt deze knop gebruiken om uw account gegevens te valideren zonder de configuratie op te slaan. Dit zal een 'test' verzoek sturen naar PostNL. Indien bovenstaande velden niet correct ingevuld zijn, zal dit resulteren in een foutmelding. De PostNL extensie moet hiervoor actief staan. <br />N.B.: uw webshop ID en publiek webshop ID zullen niet gevalideerd worden. Enkel uw CIF account gegevens worden gecontroleerd."
 TIG_PostNL::Maximum number of delivery days,Maximum aantal bezorgdagen
 TIG_PostNL::Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.,Geef hier aan hoeveel dagen in te toekomst na het eerste bezorgmoment de klant de bestelling mag ontvangen.
-,
 TIG_PostNL::Post Office Address,Postkantoor Adres
 TIG_PostNL::Choose printing start position,Kies printer startpositie
 TIG_PostNL::When printing multiple labels simultaneously you may choose where the printer will start printing. All fields marked orange will be used. The printer will start at position 1 on all pages after the first.,"Wanneer u meerdere labels tegelijk afdrukt, kunt u aangeven waar de printer moet beginnen op de pagina. De printer zal voor alle pagina's na de eerste op positie 1 beginnen."
@@ -932,7 +898,7 @@ TIG_PostNL::Comment text,Opmerking tekst
 TIG_PostNL::Show shipping label,Toon verzendlabel
 "TIG_PostNL::If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.","Indien geactiveerd, zal het verzendlabel direct op de pakbon geprint worden, indien mogelijk. Anders zal deze op een losse pagina toegevoegd worden."
 TIG_PostNL::Pre-configured message,Voorgeconfigureerd bericht
-TIG_PostNL::Last shipment comment,Laatste zending opmerking
+TIG_PostNL::Last shipment comment (as shown on the shipment detail page),Laatste zending opmerking (zoals getoond op de zendingdetail pagina)
 TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,"Geen van de bestellingen die u heeft geselecteerd, bevat een zending. Kies s.v.p. tenminste één bestelling die een zending bevat."
 TIG_PostNL::Print packing slips,Print pakbonnen
 Download PostNL log files,Download PostNL log bestanden
@@ -959,7 +925,6 @@ TIG_PostNL::Fee label,Toeslag label
 "TIG_PostNL::<p>If you have configured a fee in the field below, you may use '%s' in the title. This will be replaced with the fee amount in the customer's chosen currency.</p><p>I.e. If the fee is 17.45 EUR and the title you have entered is ""PostNL COD (+%s)"" then the title will show ""PostNL COD (+€17,45)"". If the customer has chosen to pay in USD, the title will show ""PostNL COD (+$23.73)"" instead.</p>","<p>Als u een toeslag bedrag heeft ingevuld in het veld hieronder, kunt u gebruik maken van de tekst ""%s"" in de titel. Dit zal vervangen worden door het toeslagbedrag in de valuta waarin de klant afrekent.</p><p>Bijvoorbeeld: de toeslag is 17,45 EUR en de titel die u heeft ingevuld is ""PostNL rembours (+%s)"". De titel van de betaalmethode zal dan getoond worden als ""PostNL rembours (+€17,45)"". Indien de klant heeft gekozen om te betalen in USD zal de getoonde titel ""PostNL rembours (+$23.73)"" zijn.</p>"
 TIG_PostNL::Send date,Verzenddatum
 TIG_PostNL::Optional order grid columns,Optionele kolommen voor besteloverzicht
-,
 TIG_PostNL::Selecting too many columns may cause the order grid to no longer fit on your monitor.,"Indien u teveel kolommen selecteert, kan dit er toe leiden dat het overzicht niet langer op uw beeldscherm past."
 TIG_PostNL::Delivery option,Gekozen bezorgoptie
 TIG_PostNL::Requested delivery date,Gekozen bezorgdag
@@ -983,10 +948,8 @@ TIG_PostNL::This will add the option to mark shipments as being letter box parce
 TIG_PostNL::Calculation mode,Berekeningsmodus
 TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt. U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
 Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Brievenbuspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een brievenbuspakje is wanneer u handmatig een zending aanmaakt."
-,
 TIG_PostNL::Use letter box parcels,Gebruik brievenbuspakjes
 TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen.<br/>Het is zeer belangrijk dat u alle producten correct geconfigureerd heeft als u gebruik wilt maken van brievenbuspakjes. Bestellingen die meer wegen dan <strong>2kg</strong> of groter zijn dan <strong>38 x 26,5 x 3,2 cm</strong> kunnen niet verstuurd worden als brievenbuspakjes."
-,
 TIG_PostNL::Manual,Handmatig
 TIG_PostNL::Automatic,Automatisch
 TIG_PostNL::This shipment will probably fit as a letter box parcel.,Deze zending past waarschijnlijk door de brievenbus.
@@ -1088,7 +1051,7 @@ To Letter Box Parcel,Naar Pakket
 To Package,Naar Brievenbuspakje
 Change Product Option,Wijzig Productoptie
 TIG_PostNL::Fits through the mailslot,Past door de brievenbus
-TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtsbijzijnde PostNL ophaalpunten
+TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtstbijzijnde PostNL ophaalpunten
 TIG_PostNL::Filter,Filter
 TIG_PostNL::Select location,Selecteer locatie
 TIG_PostNL::Show map,Toon kaart
@@ -1176,7 +1139,7 @@ TIG_PostNL::PostNL delivery options are only available for Magento's One Page Ch
 TIG_PostNL::Specify checkout extension,Specificeer checkout extensie
 TIG_PostNL::Checkout Settings,Checkout instellingen
 TIG_PostNL::As soon as possible,Eerst volgende mogelijkheid
-TIG_PostNL::The previous has been saved successfully!,De vorige stap is succesvol opgeslagen!
+TIG_PostNL::The previous step has been saved successfully!,De vorige stap is succesvol opgeslagen!
 TIG_PostNL::These settings are only available on the 'global' and 'website' scopes.,Deze instellingen zijn enkel beschikbaar op de 'globaal' en 'website' niveaus.
 TIG_PostNL::Extension registration is only available on the 'global' scope.,Extensie registratie is enkel beschikbaar op het 'globaal' niveau.
 TIG_PostNL::Frequently asked questions.,Veelgestelde vragen.
@@ -1196,6 +1159,74 @@ TIG_PostNL::Return address,Retouradres
 TIG_PostNL::PostNL account credentials,PostNL accountgegevens
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">hier</a> meer lezen over de wijze waarop de extensie bepaalt of een bestelling een brievenbuspakje is."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">hier</a> meer lezen over het instellen van gesplitste adresregels in Magento."
+TIG_PostNL::PostNL - Print Return Label,PostNL - Print retourlabel
+TIG_PostNL::Unable to retrieve return labels for this shipment.,Het is niet mogelijk om retourlabels op te halen voor deze zending.
+TIG_PostNL::The generateReturnBarcode action is currently unavailable.,De generateReturnBarcode actie is momenteel niet beschikbaar.
+TIG_PostNL::Print Return Label,Print Retourlabel
+TIG_PostNL::Activate returns,Activeer retouren
+TIG_PostNL::Print the return label along with regular shipping labels,Print het retourlabel tezamen met de verzendlabels
+TIG_PostNL::Activate this option to ship the order and returnlabel together.,Op deze manier kunt u het retourlabel met de zending meesturen.
+TIG_PostNL::Allow customers to print the return label from the webshop,Sta klanten toe om het retourlabel vanuit de webshop te printen
+TIG_PostNL::This will add a button to the customer's account to print the return label for this shipment.,Hiermee wordt een knop toegevoegd aan de accountpagina van de klant om het retourlabel te printen.
+TIG_PostNL::Allow guests to print the return labels,Sta gasten toe om het retourlabel te printen
+TIG_PostNL::This will add a button to the sales/guest/shipment page so that guests can print a return label for this shipment.,Hiermee wordt een knop toegevoegd aan de sales/guest/shipment pagina om een retourlabel te printen.
+TIG_PostNL::Freepost number,Antwoordnummer
+TIG_PostNL::These settings are only available on the 'global' scope.,Deze instellingen zijn enkel beschikbaar op het 'globaal' niveau.
+TIG_PostNL::Return Settings,Retouren Instellingen
+TIG_PostNL::Returns,Retouren
+TIG_PostNL::Return labels instructions block,Retourlabels instructieblok
+TIG_PostNL::Please select a static block that contains instructions for customers on how to use the return labels.,Selecteer s.v.p. een static block dat instructies bevat voor de klant om een zending retour te sturen.
+TIG_PostNL::Alternative sender address,Alternatief afzenderadres
+TIG_PostNL::Print return label,Print Retourlabel
+TIG_PostNL::An error occurred while retrieving the return labels. Please try again.,Er is een fout opgetreden tijdens het ophalen van het retourlabel. Probeer het s.v.p. opnieuw.
+TIG_PostNL::A freepost number is a requisite for using return labels.,Een antwoordnummer is verplicht voor het gebruik van retourlabels.
 TIG_PostNL::Direct Debit,Automatische Incasso
-TIG_PostNL::Credit Card,Credit Card
+TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
+TIG_PostNL::The shipment's parcel count has been changed succesfully.,Het aantal pakketten van deze zending is succesvol gewijzigd.
+TIG_PostNL::The changeParcelCount action is currently unavailable.,De changeParcelCount actie is momenteel niet beschikbaar.
+TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
+TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
+TIG_PostNL::Post office address:,Postkantoor adres:
+TIG_PostNL::Return Phase,Retourfase
+TIG_PostNL::Return Labels Printed,Retourlabels geprint
+TIG_PostNL::PostNL Returns,PostNL Retouren
+TIG_PostNL::Return shipment,Retourzending
+TIG_PostNL::Update shipping status,Verzendstatus updaten
+TIG_PostNL::PostNL - Update shipping status,PostNL - Verzendstatus updaten
+TIG_PostNL::The shipping status has been updated successfully.,De verzendstatus is succesvol geüpdatet.
+"TIG_PostNL::The shipping status of shipment #%s cannot be updated, because it has not yet been confirmed.","De verzendstatus van zending #%s kan niet geüpdatet worden, omdat de zending nog niet voorgemeld is."
+TIG_PostNL::The shipping status of shipment #%s cannot be updated.,De verzendstatus van zending #%s kan niet geüpdatet worden.
+TIG_PostNL::Print packing slips & confirm shipment,Print pakbon en zending voormelden
+TIG_PostNL::PostNL - Print packing slips & confirm shipment,PostNL - Print pakbonnen en zending voormelden
+TIG_PostNL::This step has been saved successfully!,Deze stap is succesvol opgeslagen!
+TIG_PostNL::The actual delivery time may have changed. Please check MijnPakket for the most up to date delivery time estimate.,De daadwerkelijke bezorgtijd kan veranderd zijn. Kijk op MijnPakket om de meest accurate bezorgtijd te zien.
+TIG_PostNL::Shipping status,Verzendstatus
+TIG_PostNL::Unable to save return_status cron expression: %s,Unable to save return_status cron expression: %s
+TIG_PostNL::Unable to save update_date_time_zone cron expression: %s,Unable to save update_date_time_zone cron expression: %s
+TIG_PostNL::Unable to send track and trace email for shipment #%s.,De track & trace e-mail voor zending #%s kan niet verzonden worden.
+TIG_PostNL::The sendReturnLabelEmail action is currently unavailable.,De sendReturnLabelEmail actie is momenteel niet beschikbaar.
+TIG_PostNL::Unable to send return email for shipment #%s.,Niet in staat om retourlabel te versturen voor zending #%s.
+TIG_PostNL::PostNL return label email has been sent.,PostNL retourlabel e-mail is verstuurd.
+TIG_PostNL::PostNL return label email has been sent for shipment #%s.,PostNL retourlabel e-mailis verstuurd voor zending #%s.
+TIG_PostNL::Unable to send return label email due to missing shipment parameters.,Niet in staat om de retourlabel e-mail te versturen wegens missende zendingparameters.
+TIG_PostNL::You can send the customer an email with the return label attached as a pdf. Please select which transactional email template you would like to use for this email.,Het is mogelijk om de klant een e-mail te sturen met het retourlabel bijgevoegd als pdf. Selecteer s.v.p. welk e-mail template gebruikt moet worden voor deze e-mail.
+Send Return Label Email,Stuur retourlabel e-mail
+Print Return Label,Print retourlabel
+TIG_PostNL::PostNL - Send Return Label Email,PostNL - Verstuur Retourlabel E-mail
+TIG_PostNL::The return label email was sent.,De retourlabel e-mail is verzonden.
+TIG_PostNL::Return label email template,Retourlabel e-mailtemplate
+PostNL Return Label Email,PostNL Retourlabel E-mail
+"TIG_PostNL::The installed version of PHP is too low. The installed PHP version is %s, the minimum required PHP version is %s.",De geïnstalleerde PHP versie is te laag. De geïnstalleerde PHP versie is %s. De minimale versie is %s.
+TIG_PostNL::Invalid settings provided.,Onjuiste instellingen aangeleverd.
+TIG_PostNL::Invalid config value provided.,Onjuiste configuratiewaarde aangeleverd.
+TIG_PostNL::Invalid updateConfigSettings response: %s,Invalid updateConfigSettings response: %s
+TIG_PostNL::The PostNL extension has detected some issues with the PostNL extension's data integrity.,De PostNL extensie heeft mogelijke problemen gedetecteerd in de data-integriteit van de PostNL extensie.
+TIG_PostNL::Order IDs do not match.,Order IDs do not match.
+TIG_PostNL::Quote IDs do not match.,Quote IDs do not match.
+TIG_PostNL::Missing Magento shipment.,Missing Magento shipment.
+TIG_PostNL::Missing Magento quote.,Missing Magento quote.
+TIG_PostNL::Missing Magento order.,Missing Magento order.
+TIG_PostNL::Sunday,Zondag
+TIG_PostNL::Sunday cut-off time,Zondag cut-off tijd
+"TIG_PostNL::You can apply for a freepost number on <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Request a freepost number."">this</a> page.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Vraag een antwoordnummer aan."">hier</a> een antwoordnummer aanvragen."
