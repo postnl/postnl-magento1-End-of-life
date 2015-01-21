@@ -263,6 +263,16 @@ PostnlMassActionFilter.prototype = {
     },
 
     hideOptions : function() {
+        var selectedOption = this.massactionObject.form.select('select')[0];
+        if (!selectedOption) {
+            return;
+        }
+
+        var selectedOptionValue = selectedOption.getValue();
+        if (!(/^postnl_(.?)*$/.test(selectedOptionValue))) {
+            return;
+        }
+
         this.massactionObject.formAdditional.select('select').each(function(element) {
             element.up().hide();
         });

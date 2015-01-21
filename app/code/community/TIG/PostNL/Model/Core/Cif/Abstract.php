@@ -91,8 +91,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
     /**
      * CIF error namespace.
+     *
+     * N.B. Changed in v1.5.0.
      */
-    const CIF_ERROR_NAMESPACE = 'http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception';
+    const CIF_ERROR_NAMESPACE = 'http://postnl.nl/cif/services/common/';
 
     /**
      * XML paths for config options

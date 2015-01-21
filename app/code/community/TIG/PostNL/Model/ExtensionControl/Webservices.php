@@ -103,12 +103,12 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const SUCCESS_MESSAGE = 'success';
 
     /**
-     * Activates the webshop. This will trigger a private key and a unique key to be sent to the specified e-mail, which must be
-     * entered into system config by the merchant in order to finish the activation process.
+     * Activates the webshop. This will trigger a private key and a unique key to be sent to the specified e-mail, which
+     * must be entered into system config by the merchant in order to finish the activation process.
      *
      * @param boolean|string $email
      *
-     * @return TIG_PostNL_Model_ExtensionControl_Webservices
+     * @return array
      *
      * @throws TIG_PostNL_Exception
      */
@@ -135,7 +135,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             );
         }
 
-        return $this;
+        return $result;
     }
 
     /**
@@ -254,6 +254,29 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$isActivated || $isActivated == '1') {
             Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the most recent statistics from the extension control system.
+     *
+     * @return array
+     *
+     * @throws Exception
+     * @throws SoapFault
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateConfigSettings()
+    {
+        $result = $this->call('getSettings');
+
+        if (!is_array($result)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid updateConfigSettings response: %s', var_export($result, true)),
+                'POSTNL-0213'
+            );
         }
 
         return $result;

@@ -39,8 +39,10 @@ input.postnl-validate-empty-failed.input-text { border-color:#f00 !important; }
 /* PostNL specific fields */
 .columns .postnl-support .form-list td.value input[type="checkbox"][id*="use_"] { margin: inherit; vertical-align: middle; }
 button.postnl-button { width:280px; margin-right:5px; }
-#row_postnl_cif_labels_and_confirming_cutoff_time td.value label { margin: 0 10px; }
-#row_postnl_cif_labels_and_confirming_cutoff_time td.value select { width:50px !important; }
+#row_postnl_cif_labels_and_confirming_cutoff_time td.value label,
+#row_postnl_cif_labels_and_confirming_sunday_cutoff_time td.value label{ margin: 0 10px; }
+#row_postnl_cif_labels_and_confirming_cutoff_time td.value select,
+#row_postnl_cif_labels_and_confirming_sunday_cutoff_time td.value select{ width:50px !important; }
 #postnl_config_loader { width:100%; height:60px; text-align:center; background:url(../../../images/TIG/PostNL/loader_default.gif) center top no-repeat; padding-top:42px; }
 #row_postnl_packing_slip_item_columns .value.with-tooltip {width:680px; }
 #row_postnl_packing_slip_item_columns .grid { width:650px; float:left; }

@@ -67,4 +67,17 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
 
         return true;
     }
+
+    /**
+     * PostNL mass action postDispatch handler.
+     *
+     * @param Varien_Simplexml_Element       $config
+     * @param Enterprise_Logging_Model_Event $eventModel
+     *
+     * @return boolean
+     */
+    public function postDispatchAction($config, $eventModel)
+    {
+        return true;
+    }
 }

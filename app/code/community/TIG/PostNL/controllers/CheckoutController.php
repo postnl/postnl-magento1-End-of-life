@@ -39,19 +39,19 @@
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 {
     /**
-     * XML path of show_summary_page setting
+     * XML path of show_summary_page setting.
      */
     const XPATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
 
     /**
-     * Order class variable
+     * Order class variable.
      *
      * @var Mage_Sales_Model_Order | void
      */
     protected $_order;
 
     /**
-     * Gets the stored order object
+     * Gets the stored order object.
      *
      * @return Mage_Sales_Model_Order
      */
@@ -62,7 +62,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Sets an order object
+     * Sets an order object.
      *
      * @param Mage_Sales_Model_Order $order
      *
@@ -75,7 +75,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Checks if the PostNL webservice is available for the current account
+     * Checks if the PostNL webservice is available for the current account.
      *
      * @return $this
      */
@@ -125,7 +125,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Prepares a new PostNL Checkout Order
+     * Prepares a new PostNL Checkout Order.
      *
      * @return $this
      */

@@ -53,6 +53,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
      */
     public function render(Varien_Object $row)
     {
+        /** @var Mage_Sales_Model_Order $row */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return '';
@@ -66,9 +67,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * order could be shipped.
          */
         if (!$value) {
+            $shippingDuration = $helper->getOrderShippingDuration($row);
             $deliveryDate = $helper->getDeliveryDate(
                 $row->getCreatedAt(),
-                $row->getStoreId()
+                $row->getStoreId(),
+                false,
+                true,
+                true,
+                $shippingDuration
             );
 
             $value = $helper->getValidDeliveryDate($deliveryDate)
@@ -138,7 +144,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * Finally, simply render the date
          */
         $format = $this->_getFormat();
-        $value = $value->format('Y-m-d H:i:s');
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $value = $value->setTimezone($timeZone)->format('Y-m-d H:i:s');
         try {
             if($this->getColumn()->getGmtoffset()) {
                 $data = Mage::app()->getLocale()

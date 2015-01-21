@@ -55,13 +55,22 @@ class TIG_PostNL_Block_Adminhtml_UpgradeNotification extends TIG_PostNL_Block_Ad
      */
     public function isUpgradeActive()
     {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+
         /**
          * Check if the cron job has an expression. This will indicate if it is still working or if it has already
          * finished.
          */
-        $cronjob = Mage::getStoreConfig(self::XPATH_POSTNL_UPDADE_PRODUCT_ATTRIBUTE_CRON_EXPR);
+        $attributeCronjob = Mage::getStoreConfig(
+            TIG_PostNL_Model_Resource_Setup::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH,
+            $storeId
+        );
+        $dateTimeZoneCronjob = Mage::getStoreConfig(
+            TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH,
+            $storeId
+        );
 
-        if (empty($cronjob)) {
+        if (empty($cronjob) && empty($dateTimeZoneCronjob)) {
             return false;
         }
 

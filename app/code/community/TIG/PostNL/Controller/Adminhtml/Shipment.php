@@ -39,6 +39,11 @@
 class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller_Action
 {
     /**
+     * Xpath to the 'print_return_and_shipping_label' setting.
+     */
+    const XPATH_PRINT_RETURN_AND_SHIPPING_LABEL = 'postnl/returns/print_return_and_shipping_label';
+
+    /**
      * Used module name in current adminhtml controller.
      */
     protected $_usedModuleName = 'TIG_PostNL';
@@ -227,12 +232,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      * Create shipments for an array of order IDs
      *
      * @param array   $orderIds
-     * @param boolean $loadExisting Flag to determine if existing shipments should be loaded. If set to false, an error
-     *                              will be thrown for shipments that have already been shipped.
+     * @param boolean $loadExisting     Flag to determine if existing shipments should be loaded. If set to false, an error
+     *                                  will be thrown for shipments that have already been shipped.
+     * @param boolean $registerExisting
      *
      * @return array
      */
-    protected function _createShipments(array $orderIds, $loadExisting = false)
+    protected function _createShipments(array $orderIds, $loadExisting = false, $registerExisting = true)
     {
         $helper = Mage::helper('postnl');
 
@@ -267,6 +273,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
          * @var Mage_Sales_Model_Order $order
          */
         $shipmentIds = array();
+        $existingShipmentsLoaded = array();
         foreach ($orders as $order) {
             try {
                 $shipmentIds[] = $this->_createShipment($order);
@@ -291,8 +298,14 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                 $shipmentCollection->addFieldToSelect('entity_id')
                                    ->addFieldToFilter('order_id', $order->getId());
 
+                $orderShipmentIds = $shipmentCollection->getColumnValues('entity_id');
+
                 if ($shipmentCollection->getSize() > 0) {
-                    $shipmentIds = array_merge($shipmentCollection->getColumnValues('entity_id'), $shipmentIds);
+                    $shipmentIds = array_merge($orderShipmentIds, $shipmentIds);
+
+                    if ($registerExisting) {
+                        $existingShipmentsLoaded = array_merge($orderShipmentIds, $existingShipmentsLoaded);
+                    }
                 } else {
                     /**
                      * If no shipments exist, add a warning message indicating the process failed for this order.
@@ -318,6 +331,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                 );
                 $this->_errors++;
             }
+        }
+
+        if ($registerExisting) {
+            Mage::unregister('postnl_existing_shipments_loaded');
+            Mage::register('postnl_existing_shipments_loaded', $existingShipmentsLoaded);
         }
 
         return $shipmentIds;
@@ -360,7 +378,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         $labels = array();
         foreach ($shipments as $shipment) {
             try {
-                $shipmentLabels = $this->_getLabels($shipment, true);
+                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $shipment->getStoreId()
+                );
+
+                $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                 $labels = array_merge($labels, $shipmentLabels);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
@@ -455,7 +477,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                     );
                 }
 
-                $shipmentLabels = $this->_getLabels($shipment, true);
+                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $shipment->getStoreId()
+                );
+
+                $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
@@ -502,19 +528,87 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
+     * Get all return labels for a shipment.
+     *
+     * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]|false
+     */
+    protected function _getReturnLabels($shipment)
+    {
+        /**
+         * Load the PostNL shipment.
+         */
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $postnlShipment = $this->_getPostnlShipment($shipment->getId());
+        } else {
+            $postnlShipment = $shipment;
+        }
+
+        if (!$postnlShipment->hasReturnBarcode() && !$postnlShipment->canGenerateReturnBarcode()) {
+            return false;
+        }
+
+        if ($postnlShipment->hasReturnLabels()) {
+            return $postnlShipment->getReturnLabels();
+        }
+
+        $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+
+        $labels = $postnlShipment->getReturnLabels();
+
+        if (!$postnlShipment->getLabelsPrinted()) {
+            $postnlShipment->setLabelsPrinted(true);
+        }
+
+        if (!$postnlShipment->getReturnLabelsPrinted()) {
+            $postnlShipment->setReturnLabelsPrinted(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
+
+        return $labels;
+    }
+
+    /**
      * Retrieves the shipping label for a given shipment ID.
      *
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
-     * @param boolean $confirm Optional parameter to also confirm the shipment
+     * @param boolean                                                        $confirm Optional parameter to also
+     *                                                                                confirm the shipment
+     * @param boolean|null                                                   $includeReturnLabels
      *
-     * @return array
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _getLabels($shipment, $confirm = false)
+    protected function _getLabels($shipment, $confirm = false, $includeReturnLabels = null)
     {
+        if (is_null($includeReturnLabels)) {
+            $includeReturnLabels = Mage::getStoreConfigFlag(
+                self::XPATH_PRINT_RETURN_AND_SHIPPING_LABEL,
+                $shipment->getStoreId()
+            );
+
+            /**
+             * Return labels may only be included if the current admin user is allowed to print them.
+             */
+            if (!$this->_checkIsAllowed(array('print_return_labels'))) {
+                $includeReturnLabels = false;
+            }
+        }
+
+        /**
+         * Check if printing return labels is allowed.
+         */
+        if (!Mage::helper('postnl')->isReturnsEnabled($shipment->getStoreId())) {
+            $includeReturnLabels = false;
+        }
+
         /**
          * Load the PostNL shipment.
          */
@@ -532,10 +626,42 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             if ($confirm === true && !$postnlShipment->isConfirmed() && $postnlShipment->canConfirm()) {
                 $this->_confirmShipment($postnlShipment);
             }
-
-            return $postnlShipment->getlabels();
+        } else {
+            /**
+             * Generate the required labels.
+             */
+            $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, $confirm);
         }
 
+        $labels = $postnlShipment->getlabels($includeReturnLabels);
+
+        if (!$postnlShipment->getLabelsPrinted()) {
+            $postnlShipment->setLabelsPrinted(true);
+        }
+
+        if ($includeReturnLabels && !$postnlShipment->getReturnLabelsPrinted()) {
+            $postnlShipment->setReturnLabelsPrinted(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Generate shipping labels for this given shipment. This method includes the functionality required to prepare the
+     * shipment for generating labels if required.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment  $postnlShipment
+     * @param boolean                         $confirm
+     *
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    protected function _generateLabels($shipment, $postnlShipment, $confirm = false)
+    {
         /**
          * If the PostNL shipment is new, set the magento shipment ID.
          */
@@ -550,7 +676,12 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateBarcodes();
         }
 
-        if ($confirm === true
+        $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($postnlShipment->getStoreId());
+        if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+            $postnlShipment->generateReturnBarcode();
+        }
+
+        if (true === $confirm
             && !$postnlShipment->hasLabels()
             && !$postnlShipment->isConfirmed()
             && $postnlShipment->canConfirm(true)
@@ -573,8 +704,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                            ->save();
         }
 
-        $labels = $postnlShipment->getLabels();
-        return $labels;
+        return $postnlShipment;
     }
 
     /**
@@ -625,6 +755,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateBarcodes();
         }
 
+        $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($shipment->getStoreId());
+        if ($printReturnLabel && !$postnlShipment->hasReturnBarcode() && $postnlShipment->canGenerateReturnBarcode()) {
+            $postnlShipment->generateReturnBarcode();
+        }
+
         if ($postnlShipment->getConfirmStatus() === $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
             /**
              * The shipment is already confirmed.
@@ -658,6 +793,57 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         }
 
         $postnlShipment->save();
+
+        return $this;
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     *
+     * @return $this
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     * @throws TIG_PostNL_Model_Core_Cif_Exception
+     */
+    protected function _updateShippingStatus(TIG_PostNL_Model_Core_Shipment $postnlShipment)
+    {
+        /**
+         * Only confirmed shipments cna be updated.
+         */
+        if (!$postnlShipment->isConfirmed()) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'The shipping status of shipment #%s cannot be updated, because it has not yet been confirmed.',
+                    $postnlShipment->getShipmentIncrementId()
+                ),
+                'POSTNL-0206'
+            );
+        }
+
+        /**
+         * Check if the shipment's shipping status or return status may be updated.
+         */
+        if (!$postnlShipment->canUpdateShippingStatus() && !$postnlShipment->canUpdateReturnStatus()) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'The shipping status of shipment #%s cannot be updated.',
+                    $postnlShipment->getShipmentIncrementId()
+                ),
+                'POSTNL-0220'
+            );
+        }
+
+        if ($postnlShipment->canUpdateShippingStatus()) {
+            $postnlShipment->updateShippingStatus(true);
+        }
+
+        if ($postnlShipment->canUpdateReturnStatus()) {
+            $postnlShipment->updateReturnStatus(true);
+        }
+
+        if ($postnlShipment->hasDataChanges()) {
+            $postnlShipment->save();
+        }
 
         return $this;
     }
@@ -949,7 +1135,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             /**
              * Warnings must have a description.
              */
-            if (!array_key_exists('description', $warning)) {
+            if (empty($warning['description'])) {
                 continue;
             }
 
@@ -957,17 +1143,38 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
              * Codes are optional for warnings, but must be present in the array. If no code is found in the warning we
              * add an empty one.
              */
-            if (!array_key_exists('code', $warning)) {
-                $warning['code'] = null;
+            if (!isset($warning['code'])) {
+                continue;
+            }
+
+            /**
+             * Translate the individual parts of the message.
+             */
+            $descriptionMessages = explode(PHP_EOL, $warning['description']);
+            $description = array();
+            foreach ($descriptionMessages as $descriptionMessage) {
+                if (empty($descriptionMessage)) {
+                    continue;
+                }
+
+                $description[] = $this->__($descriptionMessage);
+            }
+
+            /**
+             * If the code is empty, replace it with a null value.
+             */
+            $code = $warning['code'];
+            if (empty($code)) {
+                $code = null;
             }
 
             /**
              * Get the formatted warning message.
              */
             $warningText = $helper->getSessionMessage(
-                $warning['code'],
+                $code,
                 'warning',
-                $this->__($warning['description'])
+                implode(' ', $description)
             );
 
             /**

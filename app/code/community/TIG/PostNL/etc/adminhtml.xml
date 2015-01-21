@@ -39,6 +39,20 @@
  */
 -->
 <config>
+    <menu>
+        <sales>
+            <children>
+                <postnl_returns translate="title" module="postnl">
+                    <title>PostNL Returns</title>
+                    <action>postnl_admin/adminhtml_returns</action>
+                    <sort_order>35</sort_order>
+                    <depends>
+                        <config>postnl/returns/return_labels_active</config>
+                    </depends>
+                </postnl_returns>
+            </children>
+        </sales>
+    </menu>
     <acl>
     	<resources>
             <admin>
@@ -87,6 +101,16 @@
                                                         <title>Print Packing Slip</title>
                                                         <sort_order>10</sort_order>
                                                     </print_packing_slips>
+                                                    <print_return_labels translate="title" module="postnl">
+                                                        <title>Print Return Label</title>
+                                                        <sort_order>20</sort_order>
+                                                        <children>
+                                                            <send_return_label_email translate="title" module="postnl">
+                                                                <title>Send Return Label Email</title>
+                                                                <sort_order>10</sort_order>
+                                                            </send_return_label_email>
+                                                        </children>
+                                                    </print_return_labels>
                                                 </children>
                                             </print_label>
                                             <create_parcelware_export translate="title" module="postnl">
@@ -121,6 +145,10 @@
                                                         <title>Change Product Option</title>
                                                         <sort_order>30</sort_order>
                                                     </change_product_code>
+                                                    <change_parcel_count translate="title" module="postnl">
+                                                        <title>Change Colli Count</title>
+                                                        <sort_order>40</sort_order>
+                                                    </change_parcel_count>
                                                 </children>
                                             </convert>
                                         </children>
@@ -129,6 +157,14 @@
                             </shipment>
                         </children>
                     </postnl>
+                    <sales>
+                        <children>
+                            <postnl_returns  translate="title" module="postnl">
+                                <title>PostNL Returns</title>
+                                <sort_order>35</sort_order>
+                            </postnl_returns>
+                        </children>
+                    </sales>
 				</children>
 			</admin>
         </resources>

@@ -613,7 +613,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     }
 
     /**
-     * Get tracking information
+     * Get tracking information.
      *
      * @param string $tracking
      *
@@ -622,29 +622,22 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     public function getTrackingInfo($tracking)
     {
         $statusModel = Mage::getModel('shipping/tracking_result_status');
-        $track = $this->_getTrackByNumber($tracking);
-        $shipment = $track->getShipment();
+        $track       = $this->_getTrackByNumber($tracking);
+        $shipment    = $track->getShipment();
 
         $shippingAddress = $shipment->getShippingAddress();
-
-        /**
-         * @var Mage_Sales_Model_Order_Address $address
-         */
-        $addresses = $shipment->getOrder()->getAddressesCollection();
-        foreach ($addresses as $address) {
-            if ($address->getAddressType() == 'pakje_gemak') {
-                $shippingAddress = $address;
-                break;
-            }
-        }
+        $barcodeUrl      = $this->getHelper()->getBarcodeUrl(
+            $track->getTrackNumber(),
+            $shippingAddress,
+            false,
+            false
+        );
 
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl(
-                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, false, false)
-                    );
+                    ->setUrl($barcodeUrl);
 
         return $statusModel;
     }

@@ -92,12 +92,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDuration($quote);
+        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getQuoteShippingDuration($quote);
+
+        $date = new DateTime(Mage::getSingleton('core/date')->gmtDate('d-m-Y H:i:s'));
+        $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'Postalcode'                 => $postcode,
-                'ShippingDate'               => Mage::getSingleton('core/date')->date('d-m-Y H:i:s'),
+                'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
                 'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
@@ -160,10 +163,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $soapParams = array(
             'Timeframe' => array(
-                'PostalCode'  => $data['postcode'],
-                'HouseNumber' => $data['housenumber'],
-                'StartDate'   => $startDate,
-                'EndDate'     => $endDate->format('d-m-Y'),
+                'PostalCode'    => $data['postcode'],
+                'HouseNumber'   => $data['housenumber'],
+                'StartDate'     => $startDate,
+                'EndDate'       => $endDate->format('d-m-Y'),
+                'SundaySorting' => $this->_getSundaySortingAllowed(),
             ),
             'Message' => $this->_getMessage('')
         );
@@ -212,8 +216,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
+
         );
 
         /**
@@ -238,7 +244,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * gets post office locations within a specific area, marked by a set of coordinates.
+     * Gets post office locations within a specific area, marked by a set of coordinates.
      *
      * @param $data
      *
@@ -259,8 +265,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
         );
 
         /**

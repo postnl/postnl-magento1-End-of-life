@@ -42,4 +42,22 @@ class TIG_PostNL_Model_Core_Resource_Shipment extends TIG_PostNL_Model_Resource_
     {
         $this->_init('postnl_core/shipment', 'entity_id');
     }
+
+    /**
+     * Gets the order ID for the specified shipment ID.
+     *
+     * @param int $shipmentId
+     *
+     * @return string
+     */
+    public function getShipmentOrderId($shipmentId)
+    {
+        $adapter = $this->getReadConnection();
+        $bind    = array(':shipment_id' => $shipmentId);
+        $select  = $adapter->select()
+                           ->from($this->getTable('sales/shipment'), array('order_id'))
+                           ->where('entity_id = :shipment_id');
+
+        return $adapter->fetchOne($select, $bind);
+    }
 }

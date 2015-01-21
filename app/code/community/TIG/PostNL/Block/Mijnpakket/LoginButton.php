@@ -100,10 +100,12 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
         }
 
         $isTestMode = $this->getIsTestMode();
+
+        $baseUrl = Mage::app()->getRequest()->getScheme() . '://';
         if ($isTestMode) {
-            $baseUrl = Mage::getStoreConfig(self::TEST_BASE_URL_XPATH);
+            $baseUrl .= Mage::getStoreConfig(self::TEST_BASE_URL_XPATH);
         } else {
-            $baseUrl = Mage::getStoreConfig(self::LIVE_BASE_URL_XPATH);
+            $baseUrl .= Mage::getStoreConfig(self::LIVE_BASE_URL_XPATH);
         }
 
         $this->setBaseUrl($baseUrl);

@@ -45,4 +45,22 @@ class TIG_PostNL_Model_Core_Resource_Order extends TIG_PostNL_Model_Resource_Db_
     {
         $this->_init('postnl_core/order', 'entity_id');
     }
+
+    /**
+     * Gets the quote ID for the specified order ID.
+     *
+     * @param int $orderId
+     *
+     * @return string
+     */
+    public function getOrderQuoteId($orderId)
+    {
+        $adapter = $this->getReadConnection();
+        $bind    = array(':order_id' => $orderId);
+        $select  = $adapter->select()
+                           ->from($this->getTable('sales/order'), array('quote_id'))
+                           ->where('entity_id = :order_id');
+
+        return $adapter->fetchOne($select, $bind);
+    }
 }

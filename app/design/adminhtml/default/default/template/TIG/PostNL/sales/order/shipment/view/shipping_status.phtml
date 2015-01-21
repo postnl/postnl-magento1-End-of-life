@@ -35,40 +35,71 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus $this
  */
 ?>
 <?php $_helper = $this->helper('postnl'); ?>
 <?php $_shipment = Mage::registry('current_shipment'); ?>
 <?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
-<div id="postnl_status_bar" class="progress-wrapper <?php echo $_progressStatus; ?>">
-    <div class="progress progress-collection">
-        <span class="begin"></span>
-        <strong><?php echo $_helper->__('Reported at PostNL') ?></strong>
-        <span class="seperator"></span>
-    </div>
+<div id="postnl_status_bar_wrapper">
+    <span><strong><?php echo $this->__('Shipping status') ?></strong></span>
+    <div id="postnl_status_bar" class="progress-wrapper <?php echo $_progressStatus; ?>">
+        <div class="progress progress-collection">
+            <span class="begin"></span>
+            <strong><?php echo $this->__('Reported at PostNL') ?></strong>
+            <span class="seperator"></span>
+        </div>
 
-    <div class="progress progress-distribution">
-        <strong><?php echo $_helper->__('Sorted') ?></strong>
-        <span class="seperator"></span>
-    </div>
+        <div class="progress progress-distribution">
+            <strong><?php echo $this->__('Sorted') ?></strong>
+            <span class="seperator"></span>
+        </div>
 
-    <div class="progress progress-transit">
-        <strong><?php echo $_helper->__('In Distribution') ?></strong>
-        <span class="seperator"></span>
-    </div>
+        <div class="progress progress-transit">
+            <strong><?php echo $this->__('In Distribution') ?></strong>
+            <span class="seperator"></span>
+        </div>
 
-    <div class="progress progress-delivered">
-        <strong><?php echo $_helper->__('Delivered') ?></strong>
-        <span class="end"></span>
+        <div class="progress progress-delivered">
+            <strong><?php echo $this->__('Delivered') ?></strong>
+            <span class="end"></span>
+        </div>
     </div>
+    <?php $_returnStatus = $this->getReturnStatus($_shipment) ?>
+    <?php if ($_returnStatus): ?>
+        <div id="postnl_return_bar" class="progress-wrapper return <?php echo $_returnStatus; ?>">
+            <div class="progress progress-delivered">
+                <span class="end"></span>
+                <strong><?php echo $this->__('Delivered') ?></strong>
+                <span class="seperator"></span>
+            </div>
+
+            <div class="progress progress-transit">
+                <strong><?php echo $this->__('In Distribution') ?></strong>
+                <span class="seperator"></span>
+            </div>
+
+            <div class="progress progress-distribution">
+                <strong><?php echo $this->__('Sorted') ?></strong>
+                <span class="seperator"></span>
+            </div>
+
+            <div class="progress progress-collection">
+                <strong><?php echo $this->__('Reported at PostNL') ?></strong>
+                <span class="begin"></span>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script type="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
-        statusBar = $('postnl_status_bar');
-        //insert the status bar at the top of the information tab
-        $('sales_shipment_view_tabs_shipment_info_content').insert({
+        var contentTop = $('sales_shipment_view_tabs_shipment_info_content');
+
+        var statusBar = $('postnl_status_bar_wrapper');
+        contentTop.insert({
             top: statusBar
         });
     });
