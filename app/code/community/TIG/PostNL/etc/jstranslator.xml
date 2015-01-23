@@ -135,4 +135,7 @@
     <wizard_current_step_saved translate="message" module="postnl">
         <message>This step has been saved successfully!</message>
     </wizard_current_step_saved>
+    <parcel_dispenser translate="message" module="postnl">
+        <message>parcel dispenser</message>
+    </parcel_dispenser>
 </jstranslator>
