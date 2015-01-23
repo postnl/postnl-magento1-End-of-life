@@ -65,7 +65,7 @@
     .responsive-tooltip .location-address { font-size:13px; }
     .responsive-tooltip .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
     .responsive-tooltip .business-hours tbody th { width:40px; }
-    
+
     body.noscroll { overflow:auto; }
     #postnl_add_phonenumber .popup-overlay { background:none; position:static; }
     #postnl_add_phonenumber .popup-window { position:static; width:auto; height:auto; margin:0; box-shadow:none; -webkit-box-shadow:none; -moz-box-shadow:none;  }
@@ -76,11 +76,11 @@
     #postnl_add_phonenumber .text p { padding:0; }
     #postnl_add_phonenumber .button-set { background:none; height:auto; padding:0; margin-top:20px; }
     #postnl_add_phonenumber .button-set button { float:none; }
-    #postnl_add_phonenumber .number-verify, 
+    #postnl_add_phonenumber .number-verify,
     #postnl_add_phonenumber .number-failed { font-size:12px; }
-    
+
     #add_phone_close { display:none; }
-    
+
     #postnl_add_location { display:none; }
     .responsive-hidden { display:none; }
 }
@@ -93,6 +93,19 @@
 
     #postnl_add_location { display:none; }
     .responsive-hidden { display:none; }
+}
+
+/* Filter alignment */
+@media only screen and (max-width: 399px) {
+    .responsive-location-results .location-filters .filter { margin-left:0 !important; }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 413px) {
+    .responsive-location-results .location-filters .filter:nth-child(n+3) { margin-left:69px !important; }
+}
+
+@media only screen and (min-width: 644px) and (max-width: 1023px) {
+    .responsive-location-results .location-filters .filter:nth-child(4) { margin-left:0 !important; }
 }
 
 /* Both Mobile and Tablet */
@@ -127,6 +140,7 @@
     .responsive-location-results .location-filters li { display:block; float:left; height:26px; line-height:25px; }
     .responsive-location-results .location-filters .label { margin-right:40px; }
     .responsive-location-results .location-filters .filter { margin-right:20px; }
+    .responsive-location-results .location-filters .filter:nth-child(4) { margin-left:69px; }
     .responsive-location-results .location-filters .filter .input-box { display:block; line-height:20px; padding-left:26px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_checkbox.png) 0 0 no-repeat; }
     .responsive-location-results .location-filters .filter .input-box.selected { background-position:0 -26px; }
 
@@ -167,7 +181,7 @@
 
 /* Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx) {
-    
+
     .option-list.extras .option .bkg,
     .option-list.extras .location .bkg,
     .option-list .option .bkg,

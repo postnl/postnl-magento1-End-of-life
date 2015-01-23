@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
+class TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection
+    extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
 {
     /**
      * Event prefix

@@ -542,7 +542,7 @@ TIG_PostNL::Contract name,Contract naam
 TIG_PostNL::Sender address reference number,Afzender adres referentie nummer
 TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension registration procedure.,"Uw webshop is geregisteerd. Binnen enkele minuten ontvangt u een e-mail op het adres dat u heeft opgegeven. Lees deze e-mail s.v.p. zorgvuldig, aangezien deze verdere instructies bevat om de registratieprocedure af te ronden."
 TIG_PostNL::Product option,Productoptie
-TIG_PostNL::Use postcode check,Gebruik postode check
+TIG_PostNL::Use postcode check,Gebruik postcode check
 TIG_PostNL::Automatically complete Dutch addresses after your customer fills in his postcode and house number.,Nederlandse adressen worden automatisch aangevuld en gecontroleerd als uw klant zijn postcode en huisnummer invult.
 TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de afreken pagina
 TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check in het adresboek van de klant
@@ -576,7 +576,7 @@ TIG_PostNL::early delivery,extra vroeg
 TIG_PostNL::available,beschikbaar
 TIG_PostNL::evening,avond
 TIG_PostNL::Post Office,Postkantoor
-TIG_PostNL::Package Dispenser,Pakket Automaat
+TIG_PostNL::Package Dispenser,Pakketautomaat
 TIG_PostNL::Delivery Options,Bezorgopties
 TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
@@ -1230,3 +1230,4 @@ TIG_PostNL::Missing Magento order.,Missing Magento order.
 TIG_PostNL::Sunday,Zondag
 TIG_PostNL::Sunday cut-off time,Zondag cut-off tijd
 "TIG_PostNL::You can apply for a freepost number on <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Request a freepost number."">this</a> page.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Vraag een antwoordnummer aan."">hier</a> een antwoordnummer aanvragen."
+TIG_PostNL::parcel dispenser,pakketautomaat

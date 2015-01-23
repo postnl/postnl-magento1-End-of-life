@@ -1703,6 +1703,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     filterEarly                   : false,
     filterEvening                 : false,
+    filterPA                      : false,
 
     /**
      * Constructor method.
@@ -1896,6 +1897,16 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     setFilterEvening : function(filter) {
         this.filterEvening = filter;
+
+        return this;
+    },
+
+    getFilterPa : function() {
+        return this.filterPa;
+    },
+
+    setFilterPa : function(filter) {
+        this.filterPa = filter;
 
         return this;
     },
@@ -2195,6 +2206,30 @@ PostnlDeliveryOptions.Map = new Class.create({
             } else {
                 this.setFilterEvening(true);
                 eveningPickupFilterResp.addClassName('selected');
+            }
+            this.filter();
+        }.bind(this));
+
+        var paPickupFilter = $('pa-filter');
+        paPickupFilter.observe('click', function() {
+            if (paPickupFilter.hasClassName('selected')) {
+                this.setFilterPa(false);
+                paPickupFilter.removeClassName('selected');
+            } else {
+                this.setFilterPa(true);
+                paPickupFilter.addClassName('selected');
+            }
+            this.filter();
+        }.bind(this));
+
+        var paPickupFilterResp = $('pa-filter-responsive');
+        paPickupFilterResp.observe('click', function() {
+            if (paPickupFilterResp.hasClassName('selected')) {
+                this.setFilterPa(false);
+                paPickupFilterResp.removeClassName('selected');
+            } else {
+                this.setFilterPa(true);
+                paPickupFilterResp.addClassName('selected');
             }
             this.filter();
         }.bind(this));
@@ -3588,12 +3623,13 @@ PostnlDeliveryOptions.Map = new Class.create({
     filter : function() {
         var filterEarly       = this.getFilterEarly();
         var filterEvening     = this.getFilterEvening();
+        var filterPa          = this.getFilterPa();
         var locations         = this.getLocations();
         var hasVisibleMarkers = false;
 
         locations.each(function(location) {
+            var type = location.getType();
             if (filterEarly) {
-                var type = location.getType();
                 if (type.indexOf('PGE') < 0 && type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getResponsiveMapElement().hide();
@@ -3605,6 +3641,16 @@ PostnlDeliveryOptions.Map = new Class.create({
 
             if (filterEvening) {
                 if (!location.getIsEveningLocation()) {
+                    location.getMapElement().hide();
+                    location.getResponsiveMapElement().hide();
+                    location.getMarker().setVisible(false);
+
+                    return false;
+                }
+            }
+
+            if (filterPa) {
+                if (type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getResponsiveMapElement().hide();
                     location.getMarker().setVisible(false);
@@ -4212,8 +4258,6 @@ PostnlDeliveryOptions.Location = new Class.create({
             }
 
             commentHtml = Translator.translate('early delivery') + extraCostHtml;
-        } else if (type == 'PA') {
-            commentHtml = '24/7 ' + Translator.translate('available');
         }
 
         return commentHtml;
