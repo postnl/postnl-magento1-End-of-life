@@ -4571,7 +4571,7 @@ PostnlDeliveryOptions.Location = new Class.create({
 
         var businessHoursText = '';
         if (this.getType().indexOf('PA') > -1) {
-            businessHoursText = Translator.translate('open 24/7');
+            businessHoursText = Translator.translate('parcel dispenser');
         } else {
             businessHoursText = Translator.translate('business hours');
         }
