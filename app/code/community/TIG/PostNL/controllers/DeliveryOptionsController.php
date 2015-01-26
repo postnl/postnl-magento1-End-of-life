@@ -891,12 +891,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             || !isset($address['HouseNr'])
             || !isset($address['Zipcode'])
             || !isset($address['Name'])
-            || !isset($address['PhoneNumber'])
         ) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                      'Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country '
-                     . 'code, street, house number, phonenumber and zipcode.'
+                     . 'code, street, house number and zipcode.'
                 ),
                 'POSTNL-0141'
             );

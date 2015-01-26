@@ -50,7 +50,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
               . $this->_getHtmlName()
               . '[select]" id="'
               . $this->_getHtmlId()
-              . '" class="no-changes" style="width:150px;">';
+              . '" class="no-changes" style="width:122px;">';
 
         $value = $this->getValue();
 
