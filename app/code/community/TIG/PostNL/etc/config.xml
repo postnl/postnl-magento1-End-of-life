@@ -701,14 +701,14 @@
                 </run>
             </postnl_update_config_settings>
             <!-- Verify PostNL's data integrity. -->
-            <!--<postnl_data_integrity_check>-->
-                <!--<schedule>-->
-                    <!--<cron_expr>0 5 * * *</cron_expr> &lt;!&ndash; every night at 5 AM. &ndash;&gt;-->
-                <!--</schedule>-->
-                <!--<run>-->
-                    <!--<model>postnl_core/observer_cron::integrityCheck</model>-->
-                <!--</run>-->
-            <!--</postnl_data_integrity_check>-->
+            <postnl_data_integrity_check>
+                <schedule>
+                    <cron_expr>0 5 * * *</cron_expr> <!-- every night at 5 AM. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::integrityCheck</model>
+                </run>
+            </postnl_data_integrity_check>
         </jobs>
     </crontab>
 
