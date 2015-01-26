@@ -63,6 +63,49 @@ document.observe('dom:loaded', function() {
 
         checkEmptyGroup(element);
     });
+
+    var streetFields = $$('.postnl-street-field');
+    validateStreetFields = function() {
+        var postnlStreetFieldsUsed = [];
+
+        streetFields.each(function(streetField) {
+            var streetFieldOptions = streetField.select('option');
+            var fieldValue = streetField.getValue();
+            var valueMustChange = false;
+
+            streetFieldOptions.each(function(option) {
+                var optionValue = option.value;
+                if (postnlStreetFieldsUsed.indexOf(optionValue) > -1) {
+                    option.hide();
+
+                    if (optionValue == fieldValue) {
+                        valueMustChange = true;
+                    }
+                } else {
+                    option.show();
+                }
+            });
+
+            if (valueMustChange) {
+                streetFieldOptions.each(function(option) {
+                    if (!valueMustChange) {
+                        return;
+                    }
+
+                    if (option.getStyle('display') != 'none') {
+                        option.selected = true;
+                        valueMustChange = false;
+                        fieldValue = option.value;
+                    }
+                });
+            }
+
+            postnlStreetFieldsUsed.push(fieldValue);
+        });
+    };
+
+    streetFields.invoke('observe', 'change', validateStreetFields);
+    validateStreetFields();
 });
 
 function checkEmpty(eventElement) {
@@ -116,4 +159,27 @@ function checkEmptyGroup(eventElement) {
             }
         );
     }
+}
+
+if (typeof indexOf == 'undefined') {
+    var indexOf = function(needle) {
+        if(typeof Array.prototype.indexOf === 'function') {
+            indexOf = Array.prototype.indexOf;
+        } else {
+            indexOf = function(needle) {
+                var i = -1, index = -1;
+
+                for(i = 0; i < this.length; i++) {
+                    if(this[i] === needle) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                return index;
+            };
+        }
+
+        return indexOf.call(this, needle);
+    };
 }
