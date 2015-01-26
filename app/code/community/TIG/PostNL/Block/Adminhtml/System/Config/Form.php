@@ -386,6 +386,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         if (isset($dependent->separator)) {
                             $dependentValue = explode((string) $dependent->separator, $dependentValue);
                         }
+                        if (isset($dependent->eval)) {
+                            $dependentValue = array('eval' => (string) $dependent->eval);
+                        }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
                         $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
                         /*

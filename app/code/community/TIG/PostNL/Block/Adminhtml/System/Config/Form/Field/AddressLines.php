@@ -33,20 +33,37 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_InfoBox $this
  */
-?>
-<?php $_htmlId = $this->getHtmlId(); ?>
-<?php $_comment = $this->getElement()->getComment(); ?>
-<tr id='row_<?php echo $_htmlId; ?>'>
-    <td colspan='4'>
-        <div class="box" id='<?php echo $_htmlId ?>'>
-            <p>
-                <?php echo $_comment; ?>
-            </p>
-        </div>
-    </td>
-</tr>
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_AddressLines
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+{
+    /**
+     * Decorate field row html
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @param string $html
+     * @return string
+     */
+    protected function _decorateRowHtml($element, $html)
+    {
+        return '<tr id="row_' . $element->getHtmlId() . '" style="display:none;">' . $html . '</tr>';
+    }
+
+    /**
+     * Get the element's HTML.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $value = Mage::helper('postnl/addressValidation')->getAddressLineCount();
+
+        $html = '<input id="'.$element->getHtmlId().'" name="'.$element->getName()
+            .'" value="' . $value . '" '.$this->serialize($element->getHtmlAttributes()).'/>'."\n";
+        $html.= $element->getAfterElementHtml();
+        return $html;
+    }
+}

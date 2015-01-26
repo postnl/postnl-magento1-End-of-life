@@ -528,6 +528,12 @@ FormElementDependenceController.prototype = {
                 if (!from || valuesFrom[idFrom].indexOf(from.value) == -1) {
                     shouldShowUp = false;
                 }
+            } else if ((typeof valuesFrom[idFrom]) == 'object' && valuesFrom[idFrom].eval) {
+                var fromValue = from.value;
+
+                if (!eval(valuesFrom[idFrom].eval.replace('{{value}}', fromValue))) {
+                    shouldShowUp = false;
+                }
             } else {
                 if (from && from.type == 'checkbox') {
                     var shouldBeChecked = (valuesFrom[idFrom] === '1');
@@ -561,4 +567,4 @@ FormElementDependenceController.prototype = {
             $(idTo).up(this._config.levels_up).hide();
         }
     }
-}
+};
