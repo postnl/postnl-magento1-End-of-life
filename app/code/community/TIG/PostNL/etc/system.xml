@@ -2900,7 +2900,7 @@
                             </depends>
                         </country_of_origin_attribute>
                         <description_attribute translate="label" module="postnl">
-                            <label>Product description attribyte</label>
+                            <label>Product description attribute</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
                             <sort_order>130</sort_order>

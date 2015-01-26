@@ -1231,3 +1231,5 @@ TIG_PostNL::Sunday,Zondag
 TIG_PostNL::Sunday cut-off time,Zondag cut-off tijd
 "TIG_PostNL::You can apply for a freepost number on <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Request a freepost number."">this</a> page.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Vraag een antwoordnummer aan."">hier</a> een antwoordnummer aanvragen."
 TIG_PostNL::parcel dispenser,pakketautomaat
+TIG_PostNL::Select this checkbox to only show parcel dispensers.,Activeer deze filter om enkel pakketautomaten te tonen.
+TIG_PostNL::Choose date,Datum kiezen
