@@ -138,4 +138,7 @@
     <parcel_dispenser translate="message" module="postnl">
         <message>parcel dispenser</message>
     </parcel_dispenser>
+    <post_office_address translate="message" module="postnl">
+        <message>Post Office Address</message>
+    </post_office_address>
 </jstranslator>

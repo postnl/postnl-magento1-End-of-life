@@ -135,13 +135,13 @@
     <?php endif; ?>
 <?php endfor; ?>
 
-<?php /* Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. */ ?>
+<?php /* Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. The 'display:block' is a hack for OSC's JS which checks get Style('display') value for these elements. */ ?>
 <div style="display:none;">
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street1"/>
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street2"/>
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street3"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street1" style="display:block;"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street2" style="display:block;"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street3" style="display:block;"/>
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
-        <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street<?php echo $_i ?>"/>
+        <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street<?php echo $_i ?>" style="display:block;"/>
     <?php endfor; ?>
 </div>
 <script type="text/javascript">
