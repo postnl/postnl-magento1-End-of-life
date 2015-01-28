@@ -103,6 +103,20 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     protected $_lineCount = array();
 
     /**
+     * @var array
+     *
+     * @todo cache this value
+     */
+    protected $_useSplitStreet = array();
+
+    /**
+     * @var array
+     *
+     * @todo cache this value
+     */
+    protected $_useSplitHouseNumber = array();
+
+    /**
      * Gets the current street field sort order for OSC.
      *
      * @return int|string
@@ -133,21 +147,40 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (isset($this->_useSplitStreet[$storeId])) {
+            return $this->_useSplitStreet[$storeId];
+        }
+
         if ($this->isPostcodeCheckEnabled($storeId)) {
+            $this->_useSplitStreet[$storeId] = true;
             return true;
         }
 
         $addressLines = Mage::helper('postnl/addressValidation')->getAddressLineCount($storeId);
         if ($addressLines < 2) {
+            $this->_useSplitStreet[$storeId] = false;
             return false;
         }
 
         $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $storeId);
-        return $useSplitStreet;
+        if (!$useSplitStreet) {
+            $this->_useSplitStreet[$storeId] = false;
+            return false;
+        }
+
+        $streetField = $this->getStreetnameField();
+        $houseNumberField = $this->getHousenumberField();
+        if ($streetField == $houseNumberField) {
+            $this->_useSplitStreet[$storeId] = false;
+            return false;
+        }
+
+        $this->_useSplitStreet[$storeId] = true;
+        return true;
     }
 
     /**
-     * Checks whether the given store uses split housenumber values.
+     * Checks whether the given store uses split house number values.
      *
      * @param int|null $storeId
      *
@@ -159,12 +192,30 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (isset($this->_useSplitHouseNumber[$storeId])) {
+            return $this->_useSplitHouseNumber[$storeId];
+        }
+
         if ($this->isPostcodeCheckEnabled($storeId)) {
+            $this->_useSplitHouseNumber[$storeId] = true;
             return true;
         }
 
-        $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_HOUSENUMBER, $storeId);
-        return $useSplitStreet;
+        $useSplitHousenumber = Mage::getStoreConfigFlag(self::XPATH_SPLIT_HOUSENUMBER, $storeId);
+        if (!$useSplitHousenumber) {
+            $this->_useSplitHouseNumber[$storeId] = false;
+            return false;
+        }
+
+        $houseNumberField = $this->getHousenumberField();
+        $houseNumberExtensionField = $this->getHousenumberExtensionField();
+        if ($houseNumberField == $houseNumberExtensionField) {
+            $this->_useSplitHouseNumber[$storeId] = false;
+            return false;
+        }
+
+        $this->_useSplitHouseNumber[$storeId] = true;
+        return true;
     }
 
     /**
