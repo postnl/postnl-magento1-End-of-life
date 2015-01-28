@@ -88,9 +88,33 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const POSTCODE_CHECK_HOUSE_NUMBER_EXTENSION_FIELD = 3;
 
     /**
+     * XML path to community edition address lines configuration option
+     */
+    const XPATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
+
+    /**
      * @var null|string|int
      */
     protected $_oscStreetFieldSortOrder = null;
+
+    /**
+     * @var array
+     */
+    protected $_lineCount = array();
+
+    /**
+     * @var array
+     *
+     * @todo cache this value
+     */
+    protected $_useSplitStreet = array();
+
+    /**
+     * @var array
+     *
+     * @todo cache this value
+     */
+    protected $_useSplitHouseNumber = array();
 
     /**
      * Gets the current street field sort order for OSC.
@@ -123,16 +147,40 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (isset($this->_useSplitStreet[$storeId])) {
+            return $this->_useSplitStreet[$storeId];
+        }
+
         if ($this->isPostcodeCheckEnabled($storeId)) {
+            $this->_useSplitStreet[$storeId] = true;
             return true;
         }
 
+        $addressLines = Mage::helper('postnl/addressValidation')->getAddressLineCount($storeId);
+        if ($addressLines < 2) {
+            $this->_useSplitStreet[$storeId] = false;
+            return false;
+        }
+
         $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $storeId);
-        return $useSplitStreet;
+        if (!$useSplitStreet) {
+            $this->_useSplitStreet[$storeId] = false;
+            return false;
+        }
+
+        $streetField = $this->getStreetnameField();
+        $houseNumberField = $this->getHousenumberField();
+        if ($streetField == $houseNumberField) {
+            $this->_useSplitStreet[$storeId] = false;
+            return false;
+        }
+
+        $this->_useSplitStreet[$storeId] = true;
+        return true;
     }
 
     /**
-     * Checks whether the given store uses split housenumber values.
+     * Checks whether the given store uses split house number values.
      *
      * @param int|null $storeId
      *
@@ -144,12 +192,30 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (isset($this->_useSplitHouseNumber[$storeId])) {
+            return $this->_useSplitHouseNumber[$storeId];
+        }
+
         if ($this->isPostcodeCheckEnabled($storeId)) {
+            $this->_useSplitHouseNumber[$storeId] = true;
             return true;
         }
 
-        $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_HOUSENUMBER, $storeId);
-        return $useSplitStreet;
+        $useSplitHousenumber = Mage::getStoreConfigFlag(self::XPATH_SPLIT_HOUSENUMBER, $storeId);
+        if (!$useSplitHousenumber) {
+            $this->_useSplitHouseNumber[$storeId] = false;
+            return false;
+        }
+
+        $houseNumberField = $this->getHousenumberField();
+        $houseNumberExtensionField = $this->getHousenumberExtensionField();
+        if ($houseNumberField == $houseNumberExtensionField) {
+            $this->_useSplitHouseNumber[$storeId] = false;
+            return false;
+        }
+
+        $this->_useSplitHouseNumber[$storeId] = true;
+        return true;
     }
 
     /**
@@ -337,6 +403,93 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         return $environmentAllowed;
+    }
+    /**
+     * Get the configured line count for the current, or specified, config scope.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    public function getAddressLineCount($storeId = null)
+    {
+        if ($storeId) {
+            $addressLineCount = $this->_lineCount;
+            if (isset($addressLineCount[$storeId])) {
+                return $addressLineCount[$storeId];
+            }
+        }
+
+        if ($this->isEnterprise()) {
+            $lineCount = $this->_getEnterpriseAddressLineCount($storeId);
+        } else {
+            $lineCount = $this->_getCommunityAddressLineCount($storeId);
+        }
+
+        if ($storeId) {
+            $this->_lineCount[$storeId] = $lineCount;
+        }
+
+        return $lineCount;
+    }
+
+    /**
+     * Get the address line count for Magento Community.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    protected function _getCommunityAddressLineCount($storeId = null)
+    {
+        /**
+         * Get the allowed number of address lines based on the current scope
+         */
+        if (is_null($storeId)) {
+            $request = Mage::app()->getRequest();
+
+            if ($request->getParam('store')) {
+                $lineCount = Mage::getStoreConfig(self::XPATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
+            } elseif ($request->getParam('website')) {
+                $website   = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
+                $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES, $website->getId());
+            } else {
+                $lineCount = Mage::getStoreConfig(
+                    self::XPATH_COMMUNITY_STREET_LINES,
+                    Mage_Core_Model_App::ADMIN_STORE_ID
+                );
+            }
+            return $lineCount;
+        }
+
+        $lineCount = Mage::getStoreConfig(self::XPATH_COMMUNITY_STREET_LINES, $storeId);
+        return $lineCount;
+    }
+
+    /**
+     * Get the address line count for Magento Enterprise.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    protected function _getEnterpriseAddressLineCount($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $request = Mage::app()->getRequest();
+
+            if ($request->getParam('store')) {
+                $storeId = $request->getParam('store');
+            } elseif ($request->getParam('website')) {
+                $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
+                $storeId = $website->getDefaultStore()->getId();
+            } else {
+                $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+            }
+        }
+
+        $lineCount = Mage::helper('customer/address')->getStreetLines($storeId);
+        return $lineCount;
     }
 
     /**

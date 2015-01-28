@@ -35,13 +35,15 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_InfoBox $this
  */
 ?>
 <?php $_htmlId = $this->getHtmlId(); ?>
 <?php $_comment = $this->getElement()->getComment(); ?>
 <tr id='row_<?php echo $_htmlId; ?>'>
     <td colspan='4'>
-        <div class="box">
+        <div class="box" id='<?php echo $_htmlId ?>'>
             <p>
                 <?php echo $_comment; ?>
             </p>

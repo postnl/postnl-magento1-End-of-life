@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.5.0</version>
+			<version>1.5.1</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -701,14 +701,14 @@
                 </run>
             </postnl_update_config_settings>
             <!-- Verify PostNL's data integrity. -->
-            <!--<postnl_data_integrity_check>-->
-                <!--<schedule>-->
-                    <!--<cron_expr>0 5 * * *</cron_expr> &lt;!&ndash; every night at 5 AM. &ndash;&gt;-->
-                <!--</schedule>-->
-                <!--<run>-->
-                    <!--<model>postnl_core/observer_cron::integrityCheck</model>-->
-                <!--</run>-->
-            <!--</postnl_data_integrity_check>-->
+            <postnl_data_integrity_check>
+                <schedule>
+                    <cron_expr>0 5 * * *</cron_expr> <!-- every night at 5 AM. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::integrityCheck</model>
+                </run>
+            </postnl_data_integrity_check>
         </jobs>
     </crontab>
 
@@ -1029,7 +1029,7 @@
         	<grid>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
-                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
+                <order_grid_columns>shipment_type,confirm_date,confirm_status,shipping_phase</order_grid_columns> <!-- Show the shipment type, confirm date, confirm status and shipping phase columns -->
                 <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
@@ -1855,7 +1855,7 @@
                 <type>error</type>
             </POSTNL-0140>
             <POSTNL-0141>
-                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.</message>
+                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.</message>
                 <url>http://kb.tig.nl/topic/53037577</url>
                 <type>error</type>
             </POSTNL-0141>

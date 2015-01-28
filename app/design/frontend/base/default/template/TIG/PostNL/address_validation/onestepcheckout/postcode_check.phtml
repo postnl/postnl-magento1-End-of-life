@@ -103,7 +103,7 @@
 </li>
 <li class="clearfix">
     <div class="input-box input-address">
-        <label for="<?php echo $_addressType; ?>:street1" class="required">
+        <label for="<?php echo $_addressType; ?>:street1">
             <?php echo $_postnlHelper->__('Street name') ?>
             <span class="required">*</span>
         </label>
@@ -128,20 +128,20 @@
         <li class="clearfix">
             <div class="input-box input-address">
     <?php endif; ?>
-    <input type="text" title="<?php echo $_postnlHelper->__('Street Address %s', $_i) ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street<?php echo $_i ?>" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
+                <input type="text" title="<?php echo $_postnlHelper->__('Street Address %s', $_i) ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street<?php echo $_i ?>" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
     <?php if ($_i <= $_n): ?>
             </div>
         </li>
     <?php endif; ?>
 <?php endfor; ?>
 
-<?php /* Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. */ ?>
+<?php /* Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. The 'display:block' is a hack for OSC's JS which checks get Style('display') value for these elements. */ ?>
 <div style="display:none;">
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street1"/>
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street2"/>
-    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street3"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street1" style="display:block;"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street2" style="display:block;"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street3" style="display:block;"/>
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
-        <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street<?php echo $_i ?>"/>
+        <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street<?php echo $_i ?>" style="display:block;"/>
     <?php endfor; ?>
 </div>
 <script type="text/javascript">

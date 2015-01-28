@@ -942,10 +942,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 return false;
             }
 
+            $product = $item->getProduct();
+            /**
+             * @todo optimize this code.
+             */
+            if (!$product) {
+                $product = Mage::getModel('catalog/product')->load($item->getProductId());
+            }
+
             /**
              * The max qty attribute is only available on simple products.
              */
-            if ($item->getProduct()->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+            if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
                 continue;
             }
 

@@ -62,6 +62,12 @@
                                     <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.'); ?></div>
                                 </div>
                             </li>
+                            <li>
+                                <a id="pa-filter" class="location-option-checkbox"><?php echo $_helper->__('parcel dispenser');?></a>
+                                <div id="pa_filter_tooltip" class="postnl-tooltip">
+                                    <div><?php echo $_helper->__('Select this checkbox to only show parcel dispensers.'); ?></div>
+                                </div>
+                            </li>
                         </ul>
                         <em id="search_error_message" class="no-results" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
                     </div>
@@ -120,6 +126,9 @@
                     </li>
                     <li class="filter">
                         <a class="input-box" id="evening-filter-responsive"><?php echo $_helper->__('open in the evening');?></a>
+                    </li>
+                    <li class="filter">
+                        <a class="input-box" id="pa-filter-responsive"><?php echo $_helper->__('parcel dispenser');?></a>
                     </li>
                 </ul>
             </div>

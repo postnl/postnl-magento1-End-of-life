@@ -352,9 +352,6 @@
             <action method="addCss">
                 <stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet>
             </action>
-            <action method="addCss">
-                <stylesheet>css/TIG/PostNL/rwd.css</stylesheet>
-            </action>
             <action method="addItem">
                 <type>skin_css</type>
                 <name>css/TIG/PostNL/deliveryoptions/ie8.css</name>
