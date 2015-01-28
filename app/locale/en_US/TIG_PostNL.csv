@@ -675,7 +675,7 @@ TIG_PostNL::Confirmation Expired,Confirmation Expired
 "TIG_PostNL::Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.","Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required."
 TIG_PostNL::Invalid type supplied: %s,Invalid type supplied: %s
 TIG_PostNL::Invalid extra costs supplied: %s Extra costs must be supplied as a float.,Invalid extra costs supplied: %s Extra costs must be supplied as a float.
-"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.","Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode."
+"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.","Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode."
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter is required.,Invalid arguments supplied. The 'costs' parameter is required.
 TIG_PostNL::Please enter a valid Dutch mobile phone number using only digits.,Please enter a valid Dutch mobile phone number using only digits.
 TIG_PostNL::Phone number for Package Dispenser service,Phone number for Package Dispenser service
@@ -1227,3 +1227,8 @@ TIG_PostNL::Missing Magento order.,Missing Magento order.
 TIG_PostNL::Sunday,Sunday
 TIG_PostNL::Sunday cut-off time,Sunday cut-off time
 "TIG_PostNL::You can apply for a freepost number on <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Request a freepost number."">this</a> page.","You can apply for a freepost number on <a href=""http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1"" target=""_blank"" title=""Request a freepost number."">this</a> page."
+TIG_PostNL::parcel dispenser,parcel dispenser
+TIG_PostNL::Select this checkbox to only show parcel dispensers.,Select this checkbox to only show parcel dispensers.
+TIG_PostNL::Choose date,Choose date
+"TIG_PostNL::You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>."
+TIG_PostNL::Hide this warning.,Hide this warning.
