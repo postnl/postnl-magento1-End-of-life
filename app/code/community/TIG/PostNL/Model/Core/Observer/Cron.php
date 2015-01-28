@@ -693,7 +693,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $helper->cronLog(
                 "Shipment #{$postnlShipment->getId()} could not be found by CIF and was confirmed more than 1 day ago!"
             );
-            
+
             if (true === $isReturnStatus) {
                 $postnlShipment->setReturnPhase($postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE)
                                ->save();
@@ -1454,6 +1454,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
     public function integrityCheck()
     {
         $helper = Mage::helper('postnl');
+
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
 
         $helper->cronLog($helper->__('IntegrityCheck cron starting...'));
 

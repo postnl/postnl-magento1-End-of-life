@@ -1303,7 +1303,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             switch ($option) {
                 case 'only_stated_address':
                     return self::XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION;
-                    break;
                 //no default
             }
         }

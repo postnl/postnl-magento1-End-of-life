@@ -440,6 +440,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'                      => 'date',
                     'header'                    => $helper->__('Send date'),
                     'index'                     => 'confirm_date',
+                    'filter'                    => 'postnl_adminhtml/widget_grid_column_filter_confirmDate',
                     'filter_condition_callback' => array($this, '_filterConfirmDate'),
                     'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
                     'width'                     => '150px',

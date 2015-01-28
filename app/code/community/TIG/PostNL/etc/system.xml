@@ -1111,6 +1111,28 @@
                             </depends>
                             <validate>validate-int validate-greater-than-zero</validate>
                         </postcode_check_timeout>
+                        <address_lines>
+                            <frontend_type>hidden</frontend_type>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_addressLines</frontend_model>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </address_lines>
+                        <split_street_unavailable_info translate="comment" module="postnl">
+                            <comment><![CDATA[You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href="http://kb.tig.nl/topic/55961916" target="_blank">here</a>.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} < 2]]></eval>
+                                </address_lines>
+                                <use_postcode_check>0</use_postcode_check>
+                            </depends>
+                        </split_street_unavailable_info>
                         <split_street translate="label comment tooltip" module="postnl">
                             <label>Split street parts</label>
                             <comment><![CDATA[You can read more on how to configure split address lines <a href="http://kb.tig.nl/topic/55961916" target="_blank">here</a>.]]></comment>
@@ -1118,11 +1140,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} > 1]]></eval>
+                                </address_lines>
                                 <use_postcode_check>0</use_postcode_check>
                             </depends>
                         </split_street>
@@ -1130,40 +1155,49 @@
                             <label>Streetname field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} > 1]]></eval>
+                                </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>0</use_postcode_check>
                             </depends>
-                            <validate>validate-select</validate>
+                            <validate>validate-select postnl-street-field</validate>
                         </streetname_field>
                         <housenr_field translate="label" module="postnl">
                             <label>Housenr. field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} > 1]]></eval>
+                                </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>0</use_postcode_check>
                             </depends>
-                            <validate>validate-select</validate>
+                            <validate>validate-select postnl-street-field</validate>
                         </housenr_field>
                         <split_housenr translate="label" module="postnl">
                             <label>Split house number parts</label>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} > 2]]></eval>
+                                </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>0</use_postcode_check>
                             </depends>
@@ -1172,21 +1206,24 @@
                             <label>Housenr. extension field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <address_lines>
+                                    <eval><![CDATA[{{value}} > 2]]></eval>
+                                </address_lines>
                                 <split_street>1</split_street>
                                 <split_housenr>1</split_housenr>
                                 <use_postcode_check>0</use_postcode_check>
                             </depends>
-                            <validate>validate-select</validate>
+                            <validate>validate-select postnl-street-field</validate>
                         </housenr_extension_field>
                         <optional_street_fields_header translate="label" module="postnl">
                             <label>Optional address fields</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1195,7 +1232,7 @@
                             <label>Area field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1204,7 +1241,7 @@
                             <label>Building name field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1213,7 +1250,7 @@
                             <label>Department field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1223,7 +1260,7 @@
                             <tooltip>Doorcodes are often used in foreign addresses such as those used in France and Singapore.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1232,7 +1269,7 @@
                             <label>Floor field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1241,7 +1278,7 @@
                             <label>Remark field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1249,7 +1286,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2900,7 +2937,7 @@
                             </depends>
                         </country_of_origin_attribute>
                         <description_attribute translate="label" module="postnl">
-                            <label>Product description attribyte</label>
+                            <label>Product description attribute</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
                             <sort_order>130</sort_order>
