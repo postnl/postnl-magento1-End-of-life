@@ -167,6 +167,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
     }
 
     /**
+     * Get the hide notification URL.
+     *
+     * @return string
+     */
+    public function getHideNotificationUrl()
+    {
+        $url = $this->getUrl('postnl_admin/adminhtml_config/hideNotification');
+
+        return $url;
+    }
+
+    /**
      * Render this block only for the PostNL section.
      *
      * @return string

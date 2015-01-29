@@ -39,11 +39,12 @@
  * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck $this
  */
 ?>
-<?php $_enabled          = true; ?>
-<?php $_isTestMode       = $this->isTestModeActive(); ?>
-<?php $_globalConfigured = $this->isGlobalConfigured(); ?>
-<?php $_checkoutEnabled  = $this->isCheckoutEnabled(); ?>
-<?php $_helper           = Mage::helper('postnl'); ?>
+<?php $_enabled             = true; ?>
+<?php $_isTestMode          = $this->isTestModeActive(); ?>
+<?php $_globalConfigured    = $this->isGlobalConfigured(); ?>
+<?php $_checkoutEnabled     = $this->isCheckoutEnabled(); ?>
+<?php $_helper              = Mage::helper('postnl/adminhtml'); ?>
+<?php $_hiddenNotifications = $_helper->getHiddenNotifications(); ?>
 
 <?php if ((!$_isTestMode && !$this->isLiveEnabled()) || ($_isTestMode && !$this->isTestEnabled())): ?>
     <?php $_enabled = false; ?>
@@ -90,7 +91,7 @@
     </div>
 <?php endif; ?>
 
-<?php if (!$_checkoutEnabled && $_enabled): ?>
+<?php if (empty($_hiddenNotifications['postnl_checkout_configured_warning']) && !$_checkoutEnabled && $_enabled): ?>
     <?php $_checkoutConfigErrors = $this->getCheckoutConfigErrors(); ?>
     <div class="module-message warning">
         <h4>[POSTNL-0004] <?php echo $this->__('You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0004'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
@@ -109,13 +110,15 @@
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+        <p><a class="postnl-hide-notification-link" data-notification_code="postnl_checkout_configured_warning" href="#" title="<?php echo $this->__('Hide this warning.'); ?>"><?php echo $this->__('Hide this warning.'); ?></a></p>
     </div>
 <?php endif; ?>
 
-<?php if ($_enabled && $_isTestMode): ?>
+<?php if (empty($_hiddenNotifications['test_mode_warning']) && $_enabled && $_isTestMode): ?>
     <div class="module-message warning">
         <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <p><?php echo $this->__('You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.'); ?></p>
         <p><?php echo $this->__("You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."); ?></p>
+        <p><a class="postnl-hide-notification-link" data-notification_code="test_mode_warning" href="#" title="<?php echo $this->__('Hide this warning.'); ?>"><?php echo $this->__('Hide this warning.'); ?></a></p>
     </div>
 <?php endif; ?>

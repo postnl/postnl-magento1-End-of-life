@@ -415,6 +415,50 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
     }
 
     /**
+     * Saves the hidden state for a specified admin notification.
+     *
+     * @return $this
+     */
+    public function hideNotificationAction()
+    {
+        $notificationCode = $this->getRequest()->getParam('notification_code');
+        if (!$notificationCode) {
+            $this->getResponse()
+                 ->setBody('missing_code');
+
+            return $this;
+        }
+
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (!$adminUser) {
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        try {
+            $extra = $adminUser->getExtra();
+
+            $extra['postnl']['hidden_notification'][$notificationCode] = true;
+
+            $adminUser->saveExtra($extra);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        $this->getResponse()
+             ->setBody('success');
+
+        return $this;
+    }
+
+    /**
      *  Custom save logic for section
      */
     protected function _saveSection ()

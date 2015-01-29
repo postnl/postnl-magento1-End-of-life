@@ -33,16 +33,33 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck $this
  */
-?>
-<?php if(!$this->getIsAddressSplit()): ?>
-    <div class="module-message warning">
-        <h4>[POSTNL-0005] <?php echo $this->helper('postnl')->__('You currently do not use split street lines.'); ?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0005'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
-        <p><?php echo $this->__('Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.')?></p>
-        <p><a class="postnl-hide-notification-link" data-notification_code="split_address_warning" href="#" title="<?php echo $this->__('Hide this warning.'); ?>"><?php echo $this->__('Hide this warning.'); ?></a></p>
-    </div>
-<?php endif; ?>
+class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
+{
+    /**
+     * Gets the hidden notifications for the current admin user.
+     *
+     * @return array
+     */
+    public function getHiddenNotifications()
+    {
+        if (!$this->isAdmin()) {
+            return array();
+        }
+
+        /** @var Mage_Admin_Model_User $adminUser */
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (!$adminUser) {
+            return array();
+        }
+
+        $extra = $adminUser->getExtra();
+        if (empty($extra['postnl']['hidden_notification'])) {
+            return array();
+        }
+
+        return $extra['postnl']['hidden_notification'];
+    }
+}

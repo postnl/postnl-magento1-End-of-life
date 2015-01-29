@@ -45,6 +45,7 @@
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
 <?php $_currentWizardStep = $this->getCurrentWizardStep(); ?>
 <?php $_saveWizardStepUrl = $this->getSaveWizardStepUrl(); ?>
+<?php $_hideNotificationUrl = $this->getHideNotificationUrl(); ?>
 <script type="text/javascript">
     //<![CDATA[
     var postnlConfigWizard = new PostnlConfigWizard({});
@@ -349,5 +350,24 @@
             Fieldset.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
         }
     };
+
+    hideNotification = function(event) {
+        event.stop();
+
+        var element = Event.element(event);
+        var notificationCode = element.getAttribute('data-notification_code');
+
+        new Ajax.Request('<?php echo $_hideNotificationUrl; ?>', {
+            method : 'post',
+            parameters : {
+                notification_code : notificationCode
+            },
+            onSuccess : function() {
+                element.up('.module-message').fade();
+            }
+        });
+    };
+
+    $$('.postnl-hide-notification-link').invoke('observe', 'click', hideNotification.bindAsEventListener());
     //]]>
 </script>
