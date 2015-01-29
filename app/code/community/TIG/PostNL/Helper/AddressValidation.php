@@ -93,6 +93,16 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
 
     /**
+     * Extension code of the PostcodeNL extension.
+     */
+    const POSTCODE_NL_EXTENSION_CODE = 'PostcodeNl_Api';
+
+    /**
+     * Xpath to the PostcodeNL extension's enabled field.
+     */
+    const XPATH_POSTCODE_NL_EXTENSION_ACTIVE = 'postcodenl_api/config/enabled';
+
+    /**
      * @var null|string|int
      */
     protected $_oscStreetFieldSortOrder = null;
@@ -375,6 +385,11 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        $postcodeNlExtensionActive = $this->checkPostcodeNlExtensionActive($storeId);
+        if (true === $postcodeNlExtensionActive) {
+            return false;
+        }
+
         $isPostnlEnabled = $this->isEnabled($storeId);
         if (!$isPostnlEnabled) {
             return false;
@@ -404,6 +419,32 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         return $environmentAllowed;
     }
+
+    /**
+     * Check if the Postcode.NL extension is installed and active.
+     *
+     * @param int|null $storeId
+     *
+     * @return boolean
+     */
+    public function checkPostcodeNlExtensionActive($storeId = null)
+    {
+        if (!Mage::helper('core')->isModuleEnabled(self::POSTCODE_NL_EXTENSION_CODE)) {
+            return false;
+        }
+
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $extensionEnabled = Mage::getStoreConfigFlag(self::XPATH_POSTCODE_NL_EXTENSION_ACTIVE, $storeId);
+        if (true === $extensionEnabled) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Get the configured line count for the current, or specified, config scope.
      *
