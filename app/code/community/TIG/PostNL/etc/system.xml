@@ -1173,7 +1173,7 @@
                                     <eval><![CDATA[{{value}} > 1]]></eval>
                                 </address_lines>
                                 <use_postcode_check>
-                                    <eval><![CDATA[{{value}} == 0 || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
+                                    <eval><![CDATA[!{{value}} || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
                                 </use_postcode_check>
                             </depends>
                         </split_street>
@@ -1191,7 +1191,7 @@
                                 </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>
-                                    <eval><![CDATA[{{value}} == 0 || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
+                                    <eval><![CDATA[!{{value}} || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
                                 </use_postcode_check>
                             </depends>
                             <validate>validate-select postnl-street-field</validate>
@@ -1210,7 +1210,7 @@
                                 </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>
-                                    <eval><![CDATA[{{value}} == 0 || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
+                                    <eval><![CDATA[!{{value}} || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
                                 </use_postcode_check>
                             </depends>
                             <validate>validate-select postnl-street-field</validate>
@@ -1230,7 +1230,7 @@
                                 </address_lines>
                                 <split_street>1</split_street>
                                 <use_postcode_check>
-                                    <eval><![CDATA[{{value}} == 0 || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
+                                    <eval><![CDATA[!{{value}} || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
                                 </use_postcode_check>
                             </depends>
                         </split_housenr>
@@ -1249,7 +1249,7 @@
                                 <split_street>1</split_street>
                                 <split_housenr>1</split_housenr>
                                 <use_postcode_check>
-                                    <eval><![CDATA[{{value}} == 0 || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
+                                    <eval><![CDATA[!{{value}} || $('postnl_cif_labels_and_confirming_postcode_nl_extension_active').getValue() == 1]]></eval>
                                 </use_postcode_check>
                             </depends>
                             <validate>validate-select postnl-street-field</validate>

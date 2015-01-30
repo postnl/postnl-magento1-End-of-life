@@ -531,6 +531,10 @@ FormElementDependenceController.prototype = {
             } else if ((typeof valuesFrom[idFrom]) == 'object' && valuesFrom[idFrom].eval) {
                 var fromValue = from.value;
 
+                if (from.type == 'checkbox') {
+                    fromValue = from.checked ? '1' : '0';
+                }
+
                 if (!eval(valuesFrom[idFrom].eval.replace('{{value}}', fromValue))) {
                     shouldShowUp = false;
                 }
