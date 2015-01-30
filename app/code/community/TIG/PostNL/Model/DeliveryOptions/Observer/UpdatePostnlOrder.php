@@ -65,19 +65,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
         /**
-         * Get all shipping methods that are considered to be PostNL.
+         * Validate the PostNL order.
          */
-        $shippingMethod = $order->getShippingMethod();
-
-        /**
-         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
-         * addresses that may have been saved and delete the PostNL order.
-         */
-        $shippingAddress = $order->getShippingAddress();
-        if (!$shippingAddress
-            || $shippingAddress->getCountryId() != 'NL'
-            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
-        ) {
+        if (!$this->_validatePostnlOrder($postnlOrder, $order)) {
             $this->_removePakjeGemakAddress($order);
 
             if ($postnlOrder && $postnlOrder->getId()) {
@@ -247,6 +237,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         if (!$shippingAddress
             || $shippingAddress->getCountryId() != 'NL'
             || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+
         ) {
             $postnlOrder->setOptions(false)
                         ->save();
@@ -273,6 +264,61 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
                     ->save();
 
         return $this;
+    }
+
+    /**
+     * Validates the PostNl order. This is to prevent problems when quotes have been deleted from the database with
+     * foreign key checks disabled.
+     *
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param Mage_Sales_Model_Order      $order
+     *
+     * @return bool
+     */
+    protected function _validatePostnlOrder(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
+    {
+        /**
+         * The PostNL order cannot already have a Magento order associated with it.
+         */
+        if ($postnlOrder->getOrderId()) {
+            return false;
+        }
+
+        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+
+        /**
+         * Get the quote and the PostNL order's created at times.
+         */
+        $postnlOrderCreated = new DateTime($postnlOrder->getCreatedAt());
+        $quoteCreated       = new DateTime($quote->getCreatedAt());
+
+        /**
+         * The PostNL order cannot have been created before the quote.
+         */
+        if ($postnlOrderCreated < $quoteCreated) {
+            return false;
+        }
+
+        /**
+         * Check if this order is being shipped to the Netherlands.
+         */
+        $shippingAddress = $order->getShippingAddress();
+
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+        ) {
+            return false;
+        }
+
+        /**
+         * Check if the shipping method is a PostNL shipping method.
+         */
+        $shippingMethod = $order->getShippingMethod();
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

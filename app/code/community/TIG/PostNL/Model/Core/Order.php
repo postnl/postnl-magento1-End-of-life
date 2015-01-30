@@ -55,6 +55,8 @@
  * @method array|boolean               getUnserializedOptions()
  * @method string                      getExpectedDeliveryTimeStart()
  * @method string                      getExpectedDeliveryTimeEnd()
+ * @method string                      getUpdatedAt()
+ * @method string                      getCreatedAt()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
