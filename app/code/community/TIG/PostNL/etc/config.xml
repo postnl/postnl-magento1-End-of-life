@@ -562,6 +562,16 @@
                     </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>
+            <core_block_abstract_to_html_after>
+                <observers>
+                    <!-- Fix conflict with Bpost's Shipping Manager extension -->
+                    <checkout_deliveryoptions>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
+                        <method>fixBpostConflict</method>
+                    </checkout_deliveryoptions>
+                </observers>
+            </core_block_abstract_to_html_after>
             <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
                 <observers>
                     <!-- Saves selected PostNL options for Onepage checkout. -->
@@ -1098,6 +1108,11 @@
                 <enterprise>1.11,1.12,1.13,1.14</enterprise>
                 <community>1.6,1.7,1.8,1.9</community>
                 <php>5.3,5.4</php>
+                <!-- Compatibility with other extensions -->
+                <extensions>
+                    <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
+                    <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
+                </extensions>
             </postnl>
         </compatibility>
 
