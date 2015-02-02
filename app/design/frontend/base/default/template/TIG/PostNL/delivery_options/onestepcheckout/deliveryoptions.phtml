@@ -547,6 +547,7 @@
                     return;
                 }
 
+                element.stopObserving('change');
                 element.observe('change', function() {
                     if (deliveryOptions && deliveryOptions.timeframeRequest) {
                         deliveryOptions.timeframeRequest.transport.abort();
