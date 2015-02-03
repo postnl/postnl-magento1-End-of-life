@@ -64,6 +64,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
+        if (!$postnlOrder->getId()) {
+            $this->_createPostnlOrder($postnlOrder, $order);
+            return $this;
+        }
+
         /**
          * Validate the PostNL order.
          */
@@ -109,6 +114,14 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
                            ->getEveningFee(false, $includingTax, false);
             }
         }
+
+        /**
+         * Make sure the PostNL order has at least a confirm and delivery date.
+         */
+        if (!$postnlOrder->getConfirmDate() || !$postnlOrder->getDeliveryDate()) {
+            $this->_setDates($postnlOrder, $order);
+        }
+
 
         /**
          * Update the PostNL order.
@@ -221,7 +234,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if (!$postnlOrder->getId()) {
-            $postnlOrder->setQuoteId($quote->getId());
+            return $this;
         }
 
         /**
@@ -319,6 +332,65 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         return true;
+    }
+
+    /**
+     * Creates a PostNL order for the given Magento order.
+     *
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param Mage_Sales_Model_Order      $order
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function _createPostnlOrder(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
+    {
+        $postnlOrder->setQuoteId($order->getQuoteId())
+                    ->setOrderId($order->getId())
+                    ->setType($postnlOrder::TYPE_OVERDAG)
+                    ->setIsActive(0)
+                    ->setIsCanceled(0)
+                    ->setShipmentCosts(0)
+                    ->setIsPakjeGemak(0)
+                    ->setIsPakketautomaat(0);
+
+        $postnlOrder = $this->_setDates($postnlOrder, $order);
+
+        $postnlOrder->save();
+
+        return $this;
+    }
+
+    /**
+     * Set the confirm and delivery dates for a given PostNl order.
+     *
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param Mage_Sales_Model_Order      $order
+     *
+     * @return TIG_PostNL_Model_Core_Order
+     */
+    protected function _setDates(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
+    {
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $shippingDuration = $helper->getOrderShippingDuration($order);
+        $deliveryDate = $helper->getDeliveryDate(
+            $order->getCreatedAt(),
+            $order->getStoreId(),
+            false,
+            true,
+            true,
+            $shippingDuration
+        );
+
+        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)
+                               ->sub(new DateInterval('P1D'));
+
+        $confirmDate = $helper->getValidConfirmDate($deliveryDate);
+
+        $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
+                    ->setConfirmDate($confirmDate->getTimestamp());
+
+        return $postnlOrder;
     }
 
     /**

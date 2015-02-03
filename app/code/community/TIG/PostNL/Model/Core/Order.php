@@ -101,6 +101,15 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const MOBILE_PHONE_NUMBER_CONTENT_REGEX      = '/[^0-9+]/';
 
     /**
+     * Available types.
+     */
+    const TYPE_OVERDAG = 'Overdag';
+    const TYPE_AVOND   = 'Avond';
+    const TYPE_PG      = 'PG';
+    const TYPE_PGE     = 'PGE';
+    const TYPE_PA      = 'PA';
+
+    /**
      * Prefix of model events names.
      *
      * @var string
