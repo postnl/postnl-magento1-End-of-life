@@ -97,13 +97,27 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         /**
-         * Check if the shipment should be confirmed somewhere in the future.
+         * Check if today is the same date as the confirm date. N.B. only the date is checked, not the time.
          */
-        $diff = $now->diff($value);
-        if (
-            (($diff->days > 0 || $diff->h > 0) && !$diff->invert)
-            || ($diff->days == 0 && $diff->h < 24) && $diff->invert
-        ) {
+        if ($now->format('Y-m-d') == $value->format('Y-m-d')) {
+            return $helper->__('Today');
+        }
+
+        /**
+         * Check if the confirm date is tomorrow.
+         */
+        $tomorrow = clone $now;
+        $tomorrow->add(new DateInterval('P1D'));
+        if ($tomorrow->format('Y-m-d') == $value->format('Y-m-d')) {
+            return $helper->__('Tomorrow');
+        }
+
+        /**
+         * Check if the confirm date is somewhere in the future.
+         */
+        if ($now < $value) {
+            $diff = $now->diff($value);
+
             /**
              * Get the number of days until the shipment should be confirmed.
              */
@@ -116,28 +130,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
                 $diffDays++;
             }
 
-            /**
-             * Check if the shipment should be confirmed today.
-             */
-            if ($diffDays == 0) {
-                return $helper->__('Today');
-            }
-
-            /**
-             * Check if it should be confirmed tomorrow.
-             */
-            if ($diffDays == 1) {
-                $renderedValue = $helper->__('Tomorrow');
-
-                return $renderedValue;
-            }
-
-            /**
-             * Render the number of days before the shipment should be confirmed.
-             */
-            $renderedValue = $helper->__('%s days from now', $diffDays);
-
-            return $renderedValue;
+            return $helper->__('%s days from now', $diffDays);
         }
 
         /**

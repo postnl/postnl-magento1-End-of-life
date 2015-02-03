@@ -61,7 +61,7 @@ class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_
         $html .= '<script type="text/javascript">' . PHP_EOL
                . '//<![CDATA[' . PHP_EOL
                . '$("'.$this->getHtmlId().'_checkbox").observe("click", '
-               . 'function(){$('.$this->getHtmlId().').setValue(this.getValue());});' . PHP_EOL
+               . 'function(){$("'.$this->getHtmlId().'").setValue(this.getValue());});' . PHP_EOL
                . '//]]>' . PHP_EOL
                . '</script>';
 
