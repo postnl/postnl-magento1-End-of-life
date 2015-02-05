@@ -287,7 +287,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0102',
-                        'message' => $this->__('One or more items in the cart are out of stock.'),
+                        'message' => $this->__('One or more items in the cart are backordered or out of stock.'),
                     )
                 );
                 Mage::register('postnl_checkout_is_enabled_errors', $errors);

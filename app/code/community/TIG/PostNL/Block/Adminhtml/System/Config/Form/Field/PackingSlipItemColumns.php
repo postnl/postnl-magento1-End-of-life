@@ -64,7 +64,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_PackingSlipItemColumns
             array(
                 'label' => $this->__('Title'),
                 'style' => 'width:120px',
-                'class' => 'required-entry validate-alpha',
+                'class' => 'required-entry validate-packing-slip-column-header',
             )
         );
         $this->addColumn(

@@ -162,6 +162,13 @@
         pattern : new RegExp("^([0-9]+_[0-9]+)$", "i")
     });
 
+    /**
+     * Add packing slip column header validation.
+     */
+    Validation.add('validate-packing-slip-column-header', '<?php echo $_helper->__('Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field.') ?>', {
+        pattern : new RegExp("^[0-9a-zA-Z,.#\(\)-_]*$")
+    });
+
     var postnlWizardSaveAndContinue = function(nextStepRel, currentStepRel) {
         var nextStepHash = '';
 
