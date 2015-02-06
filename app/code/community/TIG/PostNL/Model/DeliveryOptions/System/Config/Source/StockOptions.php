@@ -55,10 +55,14 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_StockOptions
                 'value' => 'backordered',
                 'label' => $helper->__('In stock and backordered products')
             ),
-            array(
-                'value' => 'out_of_stock',
-                'label' => $helper->__('In stock, backordered and out of stock products')
-            ),
+            /**
+             * This option is disabled by default, because core Magento does not allow purchasing out of stock products.
+             * However, using extensions this can be made possible.
+             */
+//            array(
+//                'value' => 'out_of_stock',
+//                'label' => $helper->__('In stock, backordered and out of stock products')
+//            ),
         );
 
         return $labelSizes;
