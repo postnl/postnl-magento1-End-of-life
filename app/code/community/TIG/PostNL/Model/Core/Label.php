@@ -466,7 +466,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @param array|TIG_PostNL_Model_Core_Shipment_Label $labels May be an array of labels or a single
      *                                                           TIG_PostNL_Model_Core_Shipment_Label label.
      *
-     * @return $this
+     * @return string
      *
      * @see TIG_PostNL_Fpdf
      * @see TIG_PostNL_Fpdi
