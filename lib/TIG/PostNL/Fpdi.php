@@ -78,10 +78,6 @@ class TIG_PostNL_Fpdi extends FPDI
         $this->AddPage($orientation, $format); // create landscape
 
         $this->increasePageCount();
-        if($orientation == 'L')
-        {
-            $this->rotatedPage[$this->getPageCount()] = -90; // set to portrait before output
-        }
 
         return $this;
     }
