@@ -44,6 +44,8 @@ $installer = $this;
 
 $installer->startSetup();
 
+$conn = $installer->getConnection();
+
 $tableName = $installer->getTable('postnl_core/shipment');
 if (!$conn->isTableExists($tableName)) {
     $postnlShipmentTable = $installer->getConnection()

@@ -524,7 +524,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get the date on which we can no longer requests return status updates for shipments.
          */
         $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
-        $returnExpireDate  = new DateTime();
+        $returnExpireDate  = new DateTime('now', new DateTimeZone('UTC'));
         $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
 
         /**
@@ -677,7 +677,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Check if the shipment was confirmed more than a day ago
              */
             $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
-            $yesterday = new DateTime();
+            $yesterday = new DateTime('now', new DateTimeZone('UTC'));
             $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                       ->sub(new DateInterval('P1D'));
 
@@ -739,7 +739,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
 
-        $expireTimestamp = new DateTime();
+        $expireTimestamp = new DateTime('now', new DateTimeZone('UTC'));
         $expireTimestamp->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                         ->sub(new DateInterval("P{$confirmationExpireDays}D"));
 
@@ -864,13 +864,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
-        $twentyMinutesAgo = new DateTime();
+        $twentyMinutesAgo = new DateTime('now', new DateTimeZone('UTC'));
         $twentyMinutesAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                          ->sub(new DateInterval('PT20M'));
 
         $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
 
-        $oneDayAgo = new DateTime();
+        $oneDayAgo = new DateTime('now', new DateTimeZone('UTC'));
         $oneDayAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                   ->sub(new DateInterval('P1DT20M'));
 
@@ -1041,7 +1041,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get the date on which we can no longer requests return status updates for shipments.
          */
         $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
-        $returnExpireDate  = new DateTime();
+        $returnExpireDate  = new DateTime('now', new DateTimeZone('UTC'));
         $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
 
         /**

@@ -4010,7 +4010,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
         if (this.getType().indexOf('PA') != -1) {
-            headerHtml += '<span class="location-type">' + Translator.translate('Package Dispenser') + '</span>';
+            headerHtml += '<span class="location-type">' + Translator.translate('Parcel Dispenser') + '</span>';
         } else {
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }

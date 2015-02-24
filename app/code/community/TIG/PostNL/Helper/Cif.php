@@ -547,7 +547,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isPakjeGemakShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isPakjeGemakShipment();
      */
     public function isPakjeGemakShipment($shipment)
     {
@@ -572,7 +572,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isPakketautomaatShipment();
      */
     public function isPakketautomaatShipment($shipment)
     {
@@ -591,13 +591,38 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Check if a given shipment is dutch
+     * Check if a given shipment is an evening delivery (avond) shipment.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return boolean
+     *
+     * @see TIG_PostNL_Model_Core_Shipment::isAvondShipment();
+     */
+    public function isAvondShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isAvondShipment();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isAvondShipment();
+    }
+
+    /**
+     * Check if a given shipment is dutch.
      *
      * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isDutchShipment();
      */
     public function isDutchShipment($shipment)
     {
@@ -622,7 +647,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isEuShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isEuShipment();
      */
     public function isEuShipment($shipment)
     {
@@ -647,7 +672,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isGlobalShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isGlobalShipment();
      */
     public function isGlobalShipment($shipment)
     {
@@ -672,7 +697,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isCod();
+     * @see TIG_PostNL_Model_Core_Shipment::isCod();
      */
     public function isCodShipment($shipment)
     {

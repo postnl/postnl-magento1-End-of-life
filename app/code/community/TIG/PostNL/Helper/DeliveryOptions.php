@@ -390,6 +390,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean                  $asVarienObject
      *
      * @return array|Varien_Object|false
+     *
+     * @todo refactor to reduce cyclomatic complexity
      */
     public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {

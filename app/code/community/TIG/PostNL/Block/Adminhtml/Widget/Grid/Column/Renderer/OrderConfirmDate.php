@@ -93,13 +93,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          */
         $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
-        $now = new DateTime();
-        $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
+        $adminTimeZone = $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true);
+        $now = new DateTime('now', $adminTimeZone);
+        $now->setTimestamp(Mage::getModel('core/date')->timestamp());
+
+        $valueCopy = clone $value;
+        $valueCopy->setTimezone($adminTimeZone);
 
         /**
          * Check if today is the same date as the confirm date. N.B. only the date is checked, not the time.
          */
-        if ($now->format('Y-m-d') == $value->format('Y-m-d')) {
+        if ($now->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
             return $helper->__('Today');
         }
 
@@ -108,7 +112,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          */
         $tomorrow = clone $now;
         $tomorrow->add(new DateInterval('P1D'));
-        if ($tomorrow->format('Y-m-d') == $value->format('Y-m-d')) {
+        if ($tomorrow->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
             return $helper->__('Tomorrow');
         }
 
@@ -116,7 +120,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * Check if the confirm date is somewhere in the future.
          */
         if ($now < $value) {
-            $diff = $now->diff($value);
+            $diff = $now->diff($valueCopy);
 
             /**
              * Get the number of days until the shipment should be confirmed.

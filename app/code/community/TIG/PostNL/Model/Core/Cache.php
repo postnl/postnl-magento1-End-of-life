@@ -61,6 +61,7 @@
  * @method boolean                     hasPostnlShippingMethods()
  * @method boolean                     hasMatchedPostnlShippingMethods()
  * @method boolean                     hasCanUseResponsiveDeliveryOptions()
+ * @method boolean                     hasStoreTimeZones()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -87,6 +88,7 @@
  * @method array                       getPostnlShippingMethods()
  * @method array                       getMatchedPostnlShippingMethods()
  * @method boolean                     getCanUseResponsiveDeliveryOptions()
+ * @method array                       getStoreTimeZones()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -113,6 +115,7 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlShippingMethods(array $value)
  * @method TIG_PostNL_Model_Core_Cache setMatchedPostnlShippingMethods(array $value)
  * @method TIG_PostNL_Model_Core_Cache setCanUseResponsiveDeliveryOptions(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setStoreTimeZones(array $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

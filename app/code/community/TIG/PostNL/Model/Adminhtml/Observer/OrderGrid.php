@@ -1306,7 +1306,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         $postnlShippingMethodsRegex .= '$';
-        $collection->addFieldToFilter('order.shipping_method', array('regexp' => $postnlShippingMethodsRegex));
+        $collection->addFieldToFilter(
+            'postnl_join_order.shipping_method',
+            array(
+                'regexp' => $postnlShippingMethodsRegex
+            )
+        );
 
         /**
          * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
