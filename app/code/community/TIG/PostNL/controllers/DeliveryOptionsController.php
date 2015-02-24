@@ -50,7 +50,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
     const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
-    const NAME_REGEX        = "#^[a-zA-Z0-9\s,'&-]*$#";
 
     /**
      * Regular expression to validate dutch phone number.
@@ -915,7 +914,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
         $housenumberValidator = new Zend_Validate_Digits();
         $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
-        $nameValidator        = new Zend_Validate_Regex(array('pattern' => self::NAME_REGEX));
 
         if (!$cityValidator->isValid($city)) {
             throw new TIG_PostNL_Exception(
@@ -967,15 +965,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        if (!$nameValidator->isValid($name)) {
-            throw new TIG_PostNL_Exception(
-                $this->__(
-                     'Invalid name supplied: %s.',
-                     $name
-                ),
-                'POSTNL-0154'
-            );
-        }
+        /**
+         * Names are essentially impossible to build a regex for. Eventually you will run into a name that the regex
+         * thinks is 'wrong' and you will have offended someone. Better to just strip any tags to prevent SQL injection.
+         */
+        $name = Mage::helper('core')->stripTags($name);
 
         $data = array(
             'city'        => $city,
@@ -1112,7 +1106,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $deliveryDate = new DateTime();
+            $timeZone = Mage::helper('postnl')->getStoreTimeZone(Mage::app()->getStore()->getId(), true);
+            $deliveryDate = new DateTime('now', $timeZone);
             $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
                          ->add(new DateInterval('P1D'));
             $deliveryDate = $deliveryDate->format('d-m-Y');
@@ -1171,7 +1166,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $deliveryDate = new DateTime();
+            $timeZone = Mage::helper('postnl')->getStoreTimeZone(Mage::app()->getStore()->getId(), true);
+            $deliveryDate = new DateTime('now', $timeZone);
             $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
                          ->add(new DateInterval('P1D'));
             $deliveryDate = $deliveryDate->format('d-m-Y');
@@ -1301,7 +1297,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $deliveryDate = new DateTime();
+            $timeZone = Mage::helper('postnl')->getStoreTimeZone(Mage::app()->getStore()->getId(), true);
+            $deliveryDate = new DateTime('now', $timeZone);
             $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
                          ->add(new DateInterval('P1D'));
             $deliveryDate = $deliveryDate->format('d-m-Y');

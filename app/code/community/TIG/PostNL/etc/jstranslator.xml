@@ -58,7 +58,7 @@
         <message>Post Office</message>
     </post_office>
     <package_dispenser translate="message" module="postnl">
-        <message>Package Dispenser</message>
+        <message>Parcel Dispenser</message>
     </package_dispenser>
     <monday_short translate="message" module="postnl">
         <message>Mo</message>

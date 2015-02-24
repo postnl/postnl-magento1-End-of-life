@@ -136,8 +136,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
         $value = $element->getEscapedValue();
         $value = explode(':', $value);
 
-        $hour   = $value[0];
-        $minute = $value[1];
+        $hour   = '17';
+        $minute = '00';
+
+        if (!empty($value[0])) {
+            $hour = $value[0];
+        }
+
+        if (!empty($value[1])) {
+            $minute = $value[1];
+        }
 
         $options = $element->getValues();
 

@@ -1524,6 +1524,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             }
 
             /**
+             * Printing many labels can take a while, therefore we need to disable the PHP execution time limit.
+             */
+            set_time_limit(0);
+
+            /**
              * Load the shipments and check if they are valid
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
@@ -1786,6 +1791,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     'POSTNL-0014'
                 );
             }
+
+            /**
+             * Printing many labels can take a while, therefore we need to disable the PHP execution time limit.
+             */
+            set_time_limit(0);
 
             /**
              * Load the shipments and check if they are valid.

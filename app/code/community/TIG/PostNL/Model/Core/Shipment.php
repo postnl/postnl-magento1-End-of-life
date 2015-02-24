@@ -1217,11 +1217,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = Mage::getStoreConfig($xpath, $storeId);
 
         /**
-         * If no default product code was found, try to use another product code that is available.
+         * Get a list of available product codes.
          */
-        if (!$productCode) {
-            $availableProductCodes = $this->getAllowedProductCodes();
+        $availableProductCodes = $this->getAllowedProductCodes();
 
+        /**
+         * If no default product code was found or the product code is not available, try to use another product code
+         * that is available.
+         */
+        if (!$productCode || !in_array($productCode, $availableProductCodes)) {
             /**
              * If no other product codes are available for this shipment type, throw an error.
              */
@@ -4384,7 +4388,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $emailInfo->getToEmails(),
             $emailInfo->getToNames(),
             $templateVariables->getData(),
-            $this->getStoreId()
+            $storeId
         );
 
         /**
