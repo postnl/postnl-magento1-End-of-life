@@ -4247,7 +4247,7 @@
                             <show_in_store>0</show_in_store>
                             <depends>
                                 <use_buspakje>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </use_buspakje>
                             </depends>
