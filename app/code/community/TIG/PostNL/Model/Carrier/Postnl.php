@@ -349,7 +349,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
@@ -500,7 +500,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
