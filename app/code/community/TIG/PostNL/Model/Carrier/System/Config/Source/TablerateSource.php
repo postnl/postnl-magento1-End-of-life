@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Carrier_System_Config_Source_TablerateSource
             ),
             array(
                 'value' => 'postnl_tablerate',
-                'label' => $helper->__('Use seperate table rates for PostNL'),
+                'label' => $helper->__('Use separate table rates for PostNL'),
             ),
         );
 
