@@ -1484,7 +1484,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $items = $shipment->getItemsCollection();
         foreach ($items as $key => $item) {
-            if ($item->isDeleted()) {
+            if ($item->isDeleted() || $item->getOrderItem()->getProductType() == 'bundle') {
                 $items->removeItemByKey($key);
             }
         }

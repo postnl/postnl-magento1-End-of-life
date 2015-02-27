@@ -378,8 +378,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        //Zend_Debug::dump($request->debug());exit;
-
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
             /**
@@ -580,7 +578,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         );
 
         if (!isset($codes[$type])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type)
+            );
         }
 
         if (''===$code) {
@@ -588,7 +589,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         if (!isset($codes[$type][$code])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code)
+            );
         }
 
         return $codes[$type][$code];

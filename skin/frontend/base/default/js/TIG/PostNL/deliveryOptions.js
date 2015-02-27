@@ -1430,8 +1430,8 @@ PostnlDeliveryOptions.prototype = {
         };
 
         var from = selectedOption.from;
-        if (selectedType == 'PG') {
-            from = '16:00:00';
+        if (selectedType == 'PG' || selectedType == 'PA') {
+            from = '15:00:00';
         } else if (selectedType == 'PGE') {
             from = '08:30:00'
         }
@@ -4195,7 +4195,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         if (type == 'PGE') {
             optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
         } else {
-            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
+            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 15:00</span>';
         }
 
         optionHtml += '<span class="option-comment">' + this.getCommentHtml(type) + '</span>';
@@ -4203,7 +4203,6 @@ PostnlDeliveryOptions.Location = new Class.create({
         optionHtml += '</div>';
         optionHtml += '</div>';
         optionHtml += '</li>';
-
         if (toHtml) {
             return optionHtml;
         }
