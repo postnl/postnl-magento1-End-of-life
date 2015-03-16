@@ -232,7 +232,7 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_pickup .location-name.overflow-protect { max-width:158px; float:left; }
 .location-list .overflow-protect { float:left; width:528px; }
 #palocation .location-name.overflow-protect,
-.pa-location .location-name.overflow-protect { max-width:212px !important; }
+.pa-location .location-name.overflow-protect { max-width:275px !important; }
 body.noscroll { overflow:hidden; }
 .no-display { display:none !important; }
 
