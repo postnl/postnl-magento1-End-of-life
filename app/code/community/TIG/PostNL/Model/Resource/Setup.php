@@ -33,11 +33,13 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 {
+    const TYPE_DATA_UNINSTALL = 'data-uninstall';
+
     /**
      * Cron expression and cron model definitions for shipping_status cron
      */
@@ -242,6 +244,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     }
 
     /**
+     * Apply data updates to the system after upgrading.
+     *
+     * @return Mage_Core_Model_Resource_Setup
+     */
+    public function applyDataUninstall()
+    {
+        $dataVer   = $this->_getResource()->getDataVersion($this->_resourceName);
+        $configVer = (string)$this->_moduleConfig->version;
+        if ($dataVer !== false) {
+            $this->_uninstallData($dataVer, $configVer);
+        }
+        return $this;
+    }
+
+    /**
      * Check if the PostNL module has been updated. If so, add an admin notification to the inbox.
      *
      * @return $this
@@ -287,6 +304,184 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
               ->save();
 
         return $this;
+    }
+
+    /**
+     * Run data uninstall scripts
+     *
+     * @param string $oldVersion
+     * @param string $newVersion
+     * @return Mage_Core_Model_Resource_Setup
+     */
+    protected function _uninstallData($oldVersion, $newVersion)
+    {
+        $this->_modifyResourceDb('data-uninstall', $oldVersion, $newVersion);
+        $this->_getResource()->setDataVersion($this->_resourceName, false);
+
+        return $this;
+    }
+
+    /**
+     * Save resource version
+     *
+     * @param string $actionType
+     * @param string $version
+     * @return Mage_Core_Model_Resource_Setup
+     */
+    protected function _setResourceVersion($actionType, $version)
+    {
+        switch ($actionType) {
+            case self::TYPE_DB_INSTALL:
+            case self::TYPE_DB_UPGRADE:
+                $this->_getResource()->setDbVersion($this->_resourceName, $version);
+                break;
+            case self::TYPE_DATA_INSTALL:
+            case self::TYPE_DATA_UPGRADE:
+                $this->_getResource()->setDataVersion($this->_resourceName, $version);
+                break;
+
+        }
+
+        return $this;
+    }
+
+    /**
+     * Run module modification files. Return version of last applied upgrade (false if no upgrades applied)
+     *
+     * @param string $actionType self::TYPE_*
+     * @param string $fromVersion
+     * @param string $toVersion
+     * @return string|false
+     * @throws Mage_Core_Exception
+     */
+
+    protected function _modifyResourceDb($actionType, $fromVersion, $toVersion)
+    {
+        switch ($actionType) {
+            case self::TYPE_DB_INSTALL:
+            case self::TYPE_DB_UPGRADE:
+                $files = $this->_getAvailableDbFiles($actionType, $fromVersion, $toVersion);
+                break;
+            case self::TYPE_DATA_INSTALL:
+            case self::TYPE_DATA_UPGRADE:
+            case self::TYPE_DATA_UNINSTALL:
+                $files = $this->_getAvailableDataFiles($actionType, $fromVersion, $toVersion);
+                break;
+            default:
+                $files = array();
+                break;
+        }
+        if (empty($files) || !$this->getConnection()) {
+            return false;
+        }
+
+        $version = false;
+
+        foreach ($files as $file) {
+            $fileName = $file['fileName'];
+            $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+            $this->getConnection()->disallowDdlCache();
+            try {
+                switch ($fileType) {
+                    case 'php':
+                        $conn   = $this->getConnection();
+                        $result = include $fileName;
+                        break;
+                    case 'sql':
+                        $sql = file_get_contents($fileName);
+                        if (!empty($sql)) {
+
+                            $result = $this->run($sql);
+                        } else {
+                            $result = true;
+                        }
+                        break;
+                    default:
+                        $result = false;
+                        break;
+                }
+
+                if ($result) {
+                    $this->_setResourceVersion($actionType, $file['toVersion']);
+                }
+            } catch (Exception $e) {
+                printf('<pre>%s</pre>', print_r($e, true));
+                throw Mage::exception('Mage_Core', Mage::helper('core')->__('Error in file: "%s" - %s', $fileName, $e->getMessage()));
+            }
+            $version = $file['toVersion'];
+            $this->getConnection()->allowDdlCache();
+        }
+        self::$_hadUpdates = true;
+        return $version;
+    }
+
+    /**
+     * Get data files for modifications
+     *
+     * @param string $actionType
+     * @param string $fromVersion
+     * @param string $toVersion
+     * @param array $arrFiles
+     * @return array
+     */
+    protected function _getModifySqlFiles($actionType, $fromVersion, $toVersion, $arrFiles)
+    {
+        $arrRes = array();
+        switch ($actionType) {
+            case self::TYPE_DB_INSTALL:
+            case self::TYPE_DATA_INSTALL:
+                uksort($arrFiles, 'version_compare');
+                foreach ($arrFiles as $version => $file) {
+                    if (version_compare($version, $toVersion) !== self::VERSION_COMPARE_GREATER) {
+                        $arrRes[0] = array(
+                            'toVersion' => $version,
+                            'fileName'  => $file
+                        );
+                    }
+                }
+                break;
+
+            case self::TYPE_DB_UPGRADE:
+            case self::TYPE_DATA_UPGRADE:
+                uksort($arrFiles, 'version_compare');
+                foreach ($arrFiles as $version => $file) {
+                    $versionInfo = explode('-', $version);
+
+                    // In array must be 2 elements: 0 => version from, 1 => version to
+                    if (count($versionInfo)!=2) {
+                        break;
+                    }
+                    $infoFrom = $versionInfo[0];
+                    $infoTo   = $versionInfo[1];
+                    if (version_compare($infoFrom, $fromVersion) !== self::VERSION_COMPARE_LOWER
+                        && version_compare($infoTo, $toVersion) !== self::VERSION_COMPARE_GREATER) {
+                        $arrRes[] = array(
+                            'toVersion' => $infoTo,
+                            'fileName'  => $file
+                        );
+                    }
+                }
+                break;
+
+            case self::TYPE_DATA_UNINSTALL:
+                uksort($arrFiles, 'version_compare');
+                foreach ($arrFiles as $version => $file) {
+                    if (version_compare($version, $toVersion) !== self::VERSION_COMPARE_GREATER) {
+                        $arrRes[0] = array(
+                            'toVersion' => $version,
+                            'fileName'  => $file
+                        );
+                    }
+                }
+                break;
+
+            case self::TYPE_DB_ROLLBACK:
+                break;
+
+            case self::TYPE_DB_UNINSTALL:
+                break;
+        }
+        return $arrRes;
     }
 
     /**
