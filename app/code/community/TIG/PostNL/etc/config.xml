@@ -1100,7 +1100,7 @@
         </postnl>
     </default>
 
-    <!-- Custom TiG config values -->
+    <!-- Custom TIG config values -->
     <tig>
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>

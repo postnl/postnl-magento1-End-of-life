@@ -2523,7 +2523,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $errorMessage .= ' <a href="'
                 . $link
                 . '" target="_blank" class="postnl-message">'
-                . $this->__('Click here for more information from the TiG knowledgebase.')
+                . $this->__('Click here for more information from the TIG knowledgebase.')
                 . '</a>';
         }
 

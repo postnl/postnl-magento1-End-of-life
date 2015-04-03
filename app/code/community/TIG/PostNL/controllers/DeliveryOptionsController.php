@@ -48,7 +48,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      * Regular expressions to validate various address fields.
      */
     const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
-    const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
+    const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-.]*$#";
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**

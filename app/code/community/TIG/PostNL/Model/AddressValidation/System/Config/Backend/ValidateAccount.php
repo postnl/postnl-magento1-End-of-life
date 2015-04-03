@@ -286,13 +286,13 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         );
 
         /**
-         * Append a link to the TiG knowledgebase if available.
+         * Append a link to the TIG knowledgebase if available.
          */
         if ($link) {
             $errorMessage .= ' <a href="'
                            . $link
                            . '" target="_blank" class="postnl-message">'
-                           . $helper->__('Click here for more information from the TiG knowledgebase.')
+                           . $helper->__('Click here for more information from the TIG knowledgebase.')
                            . '</a>';
         }
 

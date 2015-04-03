@@ -370,12 +370,12 @@ TIG_PostNL::The shop's base currency code must be set to EUR for PostNL to funct
 TIG_PostNL::The extension has not been activated.,The extension has not been activated.
 TIG_PostNL::Product code %s is not allowed for this shipment.,Product code %s is not allowed for this shipment.
 TIG_PostNL::PostNL Checkout is not available due to the following reasons:,PostNL Checkout is not available due to the following reasons:
-TIG_PostNL::Click here for more information from the TiG knowledgebase.,Click here for more information from the TiG knowledgebase.
+TIG_PostNL::Click here for more information from the TIG knowledgebase.,Click here for more information from the TIG knowledgebase.
 "TIG_PostNL::This action is not available for shipment #%s, because it was not shipped using PostNL.","This action is not available for shipment #%s, because it was not shipped using PostNL."
 TIG_PostNL::Shipment #%s cannot be confirmed at this time.,Shipment #%s cannot be confirmed at this time.
 "TIG_PostNL::Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.","Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed."
 TIG_PostNL::Show error details in the frontend,Show error details in the frontend
-"TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment."
+"TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TIG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TIG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment."
 TIG_PostNL::The PostNL extension is not compatible with your Magento version!,The PostNL extension is not compatible with your Magento version!
 TIG_PostNL::Invalid Magento edition detected: %s,Invalid Magento edition detected: %s
 TIG_PostNL::Invalid rate type requested: %s,Invalid rate type requested: %s
