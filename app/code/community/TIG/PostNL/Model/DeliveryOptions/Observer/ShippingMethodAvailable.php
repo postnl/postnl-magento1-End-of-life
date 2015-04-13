@@ -183,8 +183,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             if (!$block->getChild('postnl.osc.delivery.options')) {
                 $block = $this->_addDeliveryOptionBlocks($block);
             }
-        } elseif (Mage::helper('gomage_checkout')->getConfigData('general/enabled')) {
-            $template = 'TIG/PostNL/delivery_options/gomage_checkout/available.phtml';
         }
 
         /**
