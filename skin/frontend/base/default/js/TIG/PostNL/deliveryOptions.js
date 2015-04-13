@@ -1407,6 +1407,10 @@ PostnlDeliveryOptions.prototype = {
             return true;
         }
 
+        if (typeof(this.timeframes[0]) == "undefined") {
+            return true;
+        }
+
         if (!this.getSelectedOption()) {
             this.selectTimeframe(this.timeframes[0].getElement());
         }
