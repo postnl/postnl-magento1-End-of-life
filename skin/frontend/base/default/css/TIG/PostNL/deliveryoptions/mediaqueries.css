@@ -189,6 +189,7 @@
         background:none;
     }
     .option-list .location {
+        position: relative;
         background:#666;
         padding:0 8px;
         -webkit-border-radius:3px;
