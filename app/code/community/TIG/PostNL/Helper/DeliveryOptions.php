@@ -756,11 +756,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDateTime
      * @param boolean     $withTime
      * @param int|boolean $shippingDuration
+     * @param boolean     $orderDateInUtc
      *
      * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
-        $withTime = true, $shippingDuration = false
+        $withTime = true, $shippingDuration = false, $orderDateInUtc = false
     ) {
         if (!$orderDate) {
             $orderDate = new DateTime(
@@ -774,7 +775,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            if (false === $orderDateInUtc) {
+                $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            } else {
+                $utcTimezone = new DateTimeZone('UTC');
+                $orderDate = new DateTime($orderDate, $utcTimezone);
+            }
         }
 
         if (false === $shippingDuration) {

@@ -379,7 +379,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             false,
             true,
             true,
-            $shippingDuration
+            $shippingDuration,
+            true
         );
 
         $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)

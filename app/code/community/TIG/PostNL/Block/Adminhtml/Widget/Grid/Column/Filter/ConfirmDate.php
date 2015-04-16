@@ -166,18 +166,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
     public function getValue($index=null)
     {
         if ($index) {
-            $data = $this->getData('value', 'orig_' . $index);
-            if ($data) {
-                return $data;//date('d-m-Y', strtotime($data));
+            if ($data = $this->getData('value', 'orig_'.$index)) {
+                return $data;
             }
             return null;
         }
-
         $value = $this->getData('value');
         if (is_array($value)) {
-            $value['date'] = true;
+            $value['datetime'] = true;
         }
+        if (!empty($value['to']) && !$this->getColumn()->getFilterTime()) {
+            $datetimeTo = $value['to'];
 
+            //calculate end date considering timezone specification
+            $datetimeTo->setTimezone(
+                Mage::app()->getStore()->getConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE)
+            );
+            $datetimeTo->addDay(1)->subSecond(1);
+            $datetimeTo->setTimezone(Mage_Core_Model_Locale::DEFAULT_TIMEZONE);
+        }
         return $value;
     }
 
@@ -196,12 +203,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
         if (isset($value['select'])) {
             if ($value['select'] == 'today') {
                 $today = new DateTime('today');
+                $tomorrow = new DateTime('tomorrow');
                 $value['from'] = $today->format('d-m-Y');
-                $value['to'] = $today->format('d-m-Y');
+                $value['to'] = $tomorrow->format('d-m-Y');
             } elseif ($value['select'] == 'tomorrow') {
                 $tomorrow = new DateTime('tomorrow');
+                $dayAfterTomorrow = new DateTime('tomorrow + 1day');
                 $value['from'] = $tomorrow->format('d-m-Y');
-                $value['to'] = $tomorrow->format('d-m-Y');
+                $value['to'] = $dayAfterTomorrow->format('d-m-Y');
             }
         } else {
             $value['from'] = null;
