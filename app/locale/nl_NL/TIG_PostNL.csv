@@ -576,7 +576,7 @@ TIG_PostNL::early delivery,extra vroeg
 TIG_PostNL::available,beschikbaar
 TIG_PostNL::evening,avond
 TIG_PostNL::Post Office,Postkantoor
-TIG_PostNL::Package Dispenser,Pakketautomaat
+#REF!,#REF!
 TIG_PostNL::Delivery Options,Bezorgopties
 TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
@@ -748,7 +748,7 @@ TIG_PostNL::Create Parcelware export,Parcelware export aanmaken
 TIG_PostNL::You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.,U kunt gebruik maken van de tarieven die u heeft ingevuld voor Magento's Tabel Tarieven betaalmethode of u kunt aparte tarieven invullen specifiek voor de PostNL verzendmethode.
 TIG_PostNL::Rate Source,Tarieven bron
 TIG_PostNL::Use Magento's Table Rates,Gebruik Magento's Tabel Tarieven
-TIG_PostNL::Use seperate table rates for PostNL,Gebruik specifieke tarieven voor PostNL
+TIG_PostNL::Use separate table rates for PostNL,Gebruik specifieke tarieven voor PostNL
 TIG_PostNL::Export Rates,Exporteer Tarieven
 TIG_PostNL::Import Rates,Importeer Tarieven
 TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,U kunt tarieven importeren en exporteren op website niveau. U kunt het huidige niveau van de configuratie aanpassen met het selectieveld links bovenaan deze pagina.
@@ -840,9 +840,9 @@ TIG_PostNL::Allow for non-PostNL orders,Toestaan voor niet-PostNL bestellingen
 TIG_PostNL::Sort order,Sorteervolgorde
 TIG_PostNL::Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.,Zet deze optie op 'ja' om deze betaalmethode ook aan te bieden voor bestellingen die geen gebruik maken van de PostNL verzendmethode.
 TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de Track & Trace e-mail
-"TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de Track & Trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
+"TIG_PostNL::If enabled, you may enter separate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de Track & Trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
 TIG_PostNL::Send track & trace email copy to,Verstuur Track & Trace e-mail kopie naar
-TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
+TIG_PostNL::You can enter multiple email addresses separated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
 TIG_PostNL::Track & trace email copy method,Track & Trace e-mail kopie method
 PostNL configuration.,PostNL configuratie.
 TIG_PostNL::A required configuration value is missing: %s.,Een verplichte configuratie waarde mist: %s.
@@ -1239,7 +1239,10 @@ TIG_PostNL::You are currently using the Postcode.nl extension. This extension co
 "TIG_PostNL::Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field.","Gebruik s.v.p. enkel letters (a-z A-Z), getallen (0-9) of de volgende tekens: [() , . _ - #] in dit veld."
 TIG_PostNL::One or more items in the cart are backordered or out of stock.,Één of meer producten in de winkelwagen zijn niet op voorraad of zijn in nabestelling.
 TIG_PostNL::Stock options,Voorraad opties
-TIG_PostNL::Select for which products PostNL delivery options should be available.,Selecteer voor welke producten PosTNl bezorgopties beschikbaar moeten zijn.
+TIG_PostNL::Select for which products PostNL delivery options should be available.,Selecteer voor welke producten PostNL bezorgopties beschikbaar moeten zijn.
 TIG_PostNL::In stock products only,Enkel producten die op voorraad zijn
 TIG_PostNL::In stock and backordered products,Op voorraad en in nabestelling.
 "TIG_PostNL::In stock, backordered and out of stock products","Op voorraad, in nabestelling en niet op voorraad."
+TIG_PostNL::Product option '%s' (%s) is not allowed for this shipment.,Productoptie '%s' (%s) is niet toegestaan voor deze zending.
+TIG_PostNL::You have chosen to pick up your address at the following post office location:,U heeft gekozen om uw bestelling op de volgende postkantoor locatie op te halen:
+TIG_PostNL::You can select a post office pick up location in the shipping method step. The address you select here will be used to determine which pick up locations are nearby.,U kunt in de verzendmethode stap kiezen voor een afhaallocatie. Het adres dat u hier selecteert zal gebruikt worden om de dichtstbijzijnde afhaallocaties te berekenen.
