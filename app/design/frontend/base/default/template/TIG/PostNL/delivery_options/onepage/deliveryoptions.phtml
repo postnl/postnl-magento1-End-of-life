@@ -270,6 +270,16 @@
     document.observe('postnl:selectOptionSaved', function() {
         checkout.reloadProgressBlock('shipping_method');
         checkout.reloadProgressBlock('postnl_deliveryoptions');
+
+        var shippingProgressElements = $$('#shipping-progress-opcheckout dt,#shipping-progress-opcheckout dd');
+        if (deliveryOptions.selectedType == 'PG'
+            || deliveryOptions.selectedType == 'PGE'
+            || deliveryOptions.selectedType == 'PA'
+        ) {
+            shippingProgressElements.invoke('hide');
+        } else {
+            shippingProgressElements.invoke('show');
+        }
     });
 
     /**
