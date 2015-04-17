@@ -76,7 +76,7 @@
 
         <?php if (!empty($_currentWizardStep)): ?>
             if (window.location.hash.length < 1) {
-                var hash = '<?php echo $_currentWizardStep?>';
+                var hash = '<?php echo $this->escapeHtml($_currentWizardStep); ?>';
                 postnlConfigWizard.toHash(hash);
 
                 if(window.history.pushState) {
