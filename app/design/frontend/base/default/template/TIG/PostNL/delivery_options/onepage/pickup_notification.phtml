@@ -37,7 +37,8 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php if (Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak(false, true)): ?>
+<?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
+<?php if ($_helper->canUsePakjeGemak(false, true) || $_helper->canUsePakketAutomaat(true)): ?>
     <li id="postnl_billing_pickup_notification" style="display:none;">
         <em><?php echo $this->__('You can select a post office pick up location in the shipping method step. The address you select here will be used to determine which pick up locations are nearby.'); ?></em>
     </li>
@@ -47,25 +48,29 @@
 
     <script type="text/javascript">
         //<![CDATA[
-        var billingNotification = $('postnl_billing_pickup_notification');
-        var shippingNotification = $('postnl_shipping_pickup_notification');
+        try {
+            var billingNotification = $('postnl_billing_pickup_notification');
+            var shippingNotification = $('postnl_shipping_pickup_notification');
 
-        $$('#co-billing-form ul')[0].insert({
-            bottom: billingNotification
-        });
-        $$('#co-shipping-form ul')[0].insert({
-            bottom: shippingNotification
-        });
+            $$('#co-billing-form ul')[0].insert({
+                bottom : billingNotification
+            });
+            $$('#co-shipping-form ul')[0].insert({
+                bottom : shippingNotification
+            });
 
-        var toggleBillingNotification = function() {
-            if ($$('input[name="billing[use_for_shipping]"]:checked')[0].getValue() == 1) {
-                billingNotification.show();
-            } else {
-                billingNotification.hide();
-            }
-        };
-        $$('#co-billing-form .control').invoke('observe', 'change', toggleBillingNotification);
-        toggleBillingNotification();
+            var toggleBillingNotification = function () {
+                if ($$('input[name="billing[use_for_shipping]"]:checked')[0].getValue() == 1) {
+                    billingNotification.show();
+                } else {
+                    billingNotification.hide();
+                }
+            };
+            $$('#co-billing-form .control').invoke('observe', 'change', toggleBillingNotification);
+            toggleBillingNotification();
+        } catch(e) {
+            console.error(e);
+        }
         //]]>
     </script>
 <?php endif; ?>

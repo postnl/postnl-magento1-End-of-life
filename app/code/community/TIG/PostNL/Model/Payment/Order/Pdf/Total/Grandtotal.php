@@ -124,4 +124,20 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
     {
         return Mage::helper('tax');
     }
+
+    /**
+     * Get full rate info
+     *
+     * @return array
+     */
+    protected function _getFullRateInfo()
+    {
+        if (method_exists('Mage_Tax_Model_Sales_Pdf_Grandtotal', '_getFullRateInfo')) {
+            return parent::_getFullRateInfo();
+        }
+
+        $rates = Mage::getModel('tax/sales_order_tax')->getCollection()->loadByOrder($this->getOrder())->toArray();
+        $fullInfo = Mage::getSingleton('tax/calculation')->reproduceProcess($rates['items']);
+        return $fullInfo;
+    }
 }
