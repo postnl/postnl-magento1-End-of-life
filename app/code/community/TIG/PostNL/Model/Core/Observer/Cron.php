@@ -1135,6 +1135,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $data = unserialize($data);
         $currentAttributeData = current($data);
+        if (empty($currentAttributeData[0]) || empty($currentAttributeData[1])) {
+            $helper->cronLog($helper->__('No attribute data found. Exiting cron.'));
+            return $this;
+        }
 
         $helper->cronLog(
             $helper->__('Updating product attribute data: %s', var_export($currentAttributeData, true))
