@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasStoreId()
@@ -286,13 +286,13 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         );
 
         /**
-         * Append a link to the TiG knowledgebase if available.
+         * Append a link to the TIG knowledgebase if available.
          */
         if ($link) {
             $errorMessage .= ' <a href="'
                            . $link
                            . '" target="_blank" class="postnl-message">'
-                           . $helper->__('Click here for more information from the TiG knowledgebase.')
+                           . $helper->__('Click here for more information from the TIG knowledgebase.')
                            . '</a>';
         }
 

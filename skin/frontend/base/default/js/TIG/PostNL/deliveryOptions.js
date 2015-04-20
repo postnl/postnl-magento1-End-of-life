@@ -32,7 +32,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -1407,6 +1407,10 @@ PostnlDeliveryOptions.prototype = {
             return true;
         }
 
+        if (typeof(this.timeframes[0]) == "undefined") {
+            return true;
+        }
+
         if (!this.getSelectedOption()) {
             this.selectTimeframe(this.timeframes[0].getElement());
         }
@@ -1430,8 +1434,8 @@ PostnlDeliveryOptions.prototype = {
         };
 
         var from = selectedOption.from;
-        if (selectedType == 'PG') {
-            from = '16:00:00';
+        if (selectedType == 'PG' || selectedType == 'PA') {
+            from = '15:00:00';
         } else if (selectedType == 'PGE') {
             from = '08:30:00'
         }
@@ -1703,6 +1707,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     filterEarly                   : false,
     filterEvening                 : false,
+    filterPA                      : false,
 
     /**
      * Constructor method.
@@ -1896,6 +1901,16 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     setFilterEvening : function(filter) {
         this.filterEvening = filter;
+
+        return this;
+    },
+
+    getFilterPa : function() {
+        return this.filterPa;
+    },
+
+    setFilterPa : function(filter) {
+        this.filterPa = filter;
 
         return this;
     },
@@ -2195,6 +2210,30 @@ PostnlDeliveryOptions.Map = new Class.create({
             } else {
                 this.setFilterEvening(true);
                 eveningPickupFilterResp.addClassName('selected');
+            }
+            this.filter();
+        }.bind(this));
+
+        var paPickupFilter = $('pa-filter');
+        paPickupFilter.observe('click', function() {
+            if (paPickupFilter.hasClassName('selected')) {
+                this.setFilterPa(false);
+                paPickupFilter.removeClassName('selected');
+            } else {
+                this.setFilterPa(true);
+                paPickupFilter.addClassName('selected');
+            }
+            this.filter();
+        }.bind(this));
+
+        var paPickupFilterResp = $('pa-filter-responsive');
+        paPickupFilterResp.observe('click', function() {
+            if (paPickupFilterResp.hasClassName('selected')) {
+                this.setFilterPa(false);
+                paPickupFilterResp.removeClassName('selected');
+            } else {
+                this.setFilterPa(true);
+                paPickupFilterResp.addClassName('selected');
             }
             this.filter();
         }.bind(this));
@@ -3588,12 +3627,13 @@ PostnlDeliveryOptions.Map = new Class.create({
     filter : function() {
         var filterEarly       = this.getFilterEarly();
         var filterEvening     = this.getFilterEvening();
+        var filterPa          = this.getFilterPa();
         var locations         = this.getLocations();
         var hasVisibleMarkers = false;
 
         locations.each(function(location) {
+            var type = location.getType();
             if (filterEarly) {
-                var type = location.getType();
                 if (type.indexOf('PGE') < 0 && type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getResponsiveMapElement().hide();
@@ -3605,6 +3645,16 @@ PostnlDeliveryOptions.Map = new Class.create({
 
             if (filterEvening) {
                 if (!location.getIsEveningLocation()) {
+                    location.getMapElement().hide();
+                    location.getResponsiveMapElement().hide();
+                    location.getMarker().setVisible(false);
+
+                    return false;
+                }
+            }
+
+            if (filterPa) {
+                if (type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getResponsiveMapElement().hide();
                     location.getMarker().setVisible(false);
@@ -3963,9 +4013,7 @@ PostnlDeliveryOptions.Location = new Class.create({
                     + '">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
-        if (this.getType().indexOf('PA') != -1) {
-            headerHtml += '<span class="location-type">' + Translator.translate('Package Dispenser') + '</span>';
-        } else {
+        if (this.getType().indexOf('PA') == -1) {
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }
         headerHtml += '</a>';
@@ -4149,7 +4197,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         if (type == 'PGE') {
             optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
         } else {
-            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
+            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 15:00</span>';
         }
 
         optionHtml += '<span class="option-comment">' + this.getCommentHtml(type) + '</span>';
@@ -4157,7 +4205,6 @@ PostnlDeliveryOptions.Location = new Class.create({
         optionHtml += '</div>';
         optionHtml += '</div>';
         optionHtml += '</li>';
-
         if (toHtml) {
             return optionHtml;
         }
@@ -4212,8 +4259,6 @@ PostnlDeliveryOptions.Location = new Class.create({
             }
 
             commentHtml = Translator.translate('early delivery') + extraCostHtml;
-        } else if (type == 'PA') {
-            commentHtml = '24/7 ' + Translator.translate('available');
         }
 
         return commentHtml;
@@ -4527,7 +4572,7 @@ PostnlDeliveryOptions.Location = new Class.create({
 
         var businessHoursText = '';
         if (this.getType().indexOf('PA') > -1) {
-            businessHoursText = Translator.translate('open 24/7');
+            businessHoursText = Translator.translate('parcel dispenser');
         } else {
             businessHoursText = Translator.translate('business hours');
         }

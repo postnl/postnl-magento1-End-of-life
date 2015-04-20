@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -440,6 +440,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'                      => 'date',
                     'header'                    => $helper->__('Send date'),
                     'index'                     => 'confirm_date',
+                    'filter'                    => 'postnl_adminhtml/widget_grid_column_filter_confirmDate',
                     'filter_condition_callback' => array($this, '_filterConfirmDate'),
                     'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
                     'width'                     => '150px',
@@ -1305,7 +1306,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         $postnlShippingMethodsRegex .= '$';
-        $collection->addFieldToFilter('order.shipping_method', array('regexp' => $postnlShippingMethodsRegex));
+        $collection->addFieldToFilter(
+            'postnl_join_order.shipping_method',
+            array(
+                'regexp' => $postnlShippingMethodsRegex
+            )
+        );
 
         /**
          * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders

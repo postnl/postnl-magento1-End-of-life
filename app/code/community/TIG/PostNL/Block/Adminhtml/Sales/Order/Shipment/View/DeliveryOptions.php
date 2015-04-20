@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipment()
@@ -172,11 +172,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND_COD:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
@@ -188,11 +188,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE_COD:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PA:

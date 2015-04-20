@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class containing all default methods used for CIF communication by this extension.
@@ -953,7 +953,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * In the case of a multi-colli shipment this is only added to the first parcel.
          */
         if (($shipmentNumber === false || $shipmentNumber == 1)
-            && ($postnlShipment->hasExtraCover() || $postnlShipment->isCod())
+            && ($postnlShipment->isExtraCover() || $postnlShipment->isCod())
         ) {
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment, $shipment);
         }
@@ -1268,12 +1268,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getAmount(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shipment = false)
     {
         $amount = array();
-        if (!$postnlShipment->hasExtraCover() && !$postnlShipment->isCod()) {
+        if (!$postnlShipment->isExtraCover() && !$postnlShipment->isCod()) {
             return $amount;
         }
 
-        if ($postnlShipment->hasExtraCover() && $postnlShipment->getExtraCoverAmount() > 0) {
-            $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2, '.', '');
+        if ($postnlShipment->isExtraCover()) {
+            $extraCoverAmount = $postnlShipment->getExtraCoverAmount();
+            if ($extraCoverAmount < 500) {
+                $extraCoverAmount = 500;
+            }
+
+            $extraCover = number_format($extraCoverAmount, 2, '.', '');
             $amount[] = array(
                 'AccountName'       => '',
                 'BIC'               => '',
@@ -1479,7 +1484,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $items = $shipment->getItemsCollection();
         foreach ($items as $key => $item) {
-            if ($item->isDeleted()) {
+            if ($item->isDeleted() || $item->getOrderItem()->getProductType() == 'bundle') {
                 $items->removeItemByKey($key);
             }
         }

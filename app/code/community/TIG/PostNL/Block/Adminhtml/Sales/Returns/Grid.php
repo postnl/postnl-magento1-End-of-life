@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block_Sales_Shipment_Grid
@@ -123,12 +123,6 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
                    )
                    ->addFieldToFilter(
                        'shipment_id',
-                       array(
-                           'notnull' => true
-                       )
-                   )
-                   ->addFieldToFilter(
-                       'postnl_shipment_barcode.barcode',
                        array(
                            'notnull' => true
                        )

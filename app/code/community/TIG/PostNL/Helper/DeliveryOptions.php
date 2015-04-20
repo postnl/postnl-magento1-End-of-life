@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @todo Cache the available delivery options in the checkout session. That way we only recalculate them if the quote
@@ -59,7 +59,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpaths to various business rule settings.
      */
-    const XPATH_SHOW_OPTIONS_FOR_BACKORDERS        = 'postnl/delivery_options/show_options_for_backorders';
+    const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
@@ -390,6 +390,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean                  $asVarienObject
      *
      * @return array|Varien_Object|false
+     *
+     * @todo refactor to reduce cyclomatic complexity
      */
     public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {
@@ -754,11 +756,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDateTime
      * @param boolean     $withTime
      * @param int|boolean $shippingDuration
+     * @param boolean     $orderDateInUtc
      *
      * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
-        $withTime = true, $shippingDuration = false
+        $withTime = true, $shippingDuration = false, $orderDateInUtc = false
     ) {
         if (!$orderDate) {
             $orderDate = new DateTime(
@@ -772,7 +775,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            if (false === $orderDateInUtc) {
+                $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            } else {
+                $utcTimezone = new DateTimeZone('UTC');
+                $orderDate = new DateTime($orderDate, $utcTimezone);
+            }
         }
 
         if (false === $shippingDuration) {
@@ -1800,7 +1808,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($pakketautomaatAllowed === '0') {
+            if (!is_null($pakketautomaatAllowed) && !$pakketautomaatAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -1952,7 +1960,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($deliveryDaysAllowed === '0') {
+            if (!is_null($deliveryDaysAllowed) && !$deliveryDaysAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -2083,7 +2091,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($timeframesAllowed === '0') {
+            if (!is_null($timeframesAllowed) && !$timeframesAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -2322,25 +2330,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $storeId = $quote->getStoreId();
-
         /**
-         * Check if PostNL delivery options may be used for out-og-stock orders and if not, whether the quote has any
-         * such products.
+         * Check if delivery options may be shown for the stock level of the current products.
          */
-        $showDeliveryOptionsForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_BACKORDERS, $storeId);
-        if (!$showDeliveryOptionsForBackorders) {
-            $containsOutOfStockItems = $this->quoteHasOutOfStockItems($quote);
-            if ($containsOutOfStockItems) {
-                $errors = array(
-                    array(
-                        'code'    => 'POSTNL-0102',
-                        'message' => $this->__('One or more items in the cart are out of stock.'),
-                    )
-                );
-                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-                return false;
-            }
+        if (!$this->canShowDeliveryOptionsForStock($quote)) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0121',
+                    'message' => $this->__(
+                                     'Delivery options are not allowed for one or more itme sin the cart based on the' .
+                                     ' configured stock options.'
+                                 ),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
         }
 
         /**
@@ -2356,7 +2360,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($allowDeliveryOptions === '0') {
+            if (!is_null($allowDeliveryOptions) && !$allowDeliveryOptions) {
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0161',
@@ -2366,6 +2370,100 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Wrapper method for _canShowDeliveryOptionsForStock() to allow observers to influence the result.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowDeliveryOptionsForStock(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Get the configured stock option.
+         */
+        $stockOption = Mage::getStoreConfig(self::XPATH_STOCK_OPTIONS, $quote->getStoreId());
+
+        Mage::dispatchEvent(
+            'postnl_deliveryoptions_can_show_delivery_options_for_quote_before',
+            array(
+                'quote'        => $quote,
+                'stock_option' => $stockOption,
+                'helper'       => $this,
+            )
+        );
+
+        $result = $this->_canShowDeliveryOptionsForStock($quote, $stockOption);
+
+        $transport = new Varien_Object(array('result' => $result));
+
+        Mage::dispatchEvent(
+            'postnl_deliveryoptions_can_show_delivery_options_for_quote_after',
+            array(
+                'quote'        => $quote,
+                'stock_option' => $stockOption,
+                'helper'       => $this,
+                'transport'    => $transport,
+            )
+        );
+
+        return (bool) $transport->getData('result');
+    }
+
+    /**
+     * Check if delivery options may be shown for the products in the quote based on their stock level and the
+     * configured stock option.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     * @param string                 $stockOption
+     *
+     * @return bool
+     */
+    protected function _canShowDeliveryOptionsForStock(Mage_Sales_Model_Quote $quote, $stockOption)
+    {
+        /**
+         * If out of stock products is allowed, there is nothing to check.
+         */
+        if ($stockOption == 'out_of_stock') {
+            return true;
+        }
+
+        /**
+         * Get the IDs of all products in the current quote.
+         */
+        $productIds = $quote->getItemsCollection()->getColumnValues('product_id');
+        $productIds = array_unique($productIds);
+
+        /**
+         * Get all inventory items for the products in the quote.
+         */
+        $inventoryItems = Mage::getResourceModel('cataloginventory/stock_item_collection');
+        $inventoryItems->addFieldToFilter('product_id', array('in', $productIds));
+
+        /**
+         * Add filters to the collection depending on the configured stock option.
+         */
+        switch ($stockOption) {
+            case 'in_stock':
+                $inventoryItems->addFieldToFilter('backorders', array('eq' => 0))
+                               ->addFieldToFilter('is_in_stock', array('eq' => 1));
+                break;
+            case 'backordered':
+                $inventoryItems->addFieldToFilter('is_in_stock', array('eq' => 1));
+                break;
+        }
+
+        /**
+         * If there are fewer items in the collection than there are products, not all products are allowed for the
+         * current stock option.
+         */
+        if (count($productIds) > $inventoryItems->getSize()) {
+            return false;
         }
 
         return true;

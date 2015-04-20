@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
@@ -67,35 +67,40 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
     {
         $request = Mage::app()->getRequest();
 
-        /**
-         * Check if the split_street field is enabled based on the current scope
-         */
         if ($request->getParam('store')) {
             $store = $request->getparam('store');
-
-            $checkoutExtension = Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION, $store);
-            $usePostcodeCheck  = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $store);
-            $splitStreet       = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $store);
+            $storeId = Mage::app()->getStore($store)->getId();
         } elseif ($request->getParam('website')) {
             $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
-
-            $checkoutExtension = $website->getConfig(self::XPATH_CHECKOUT_EXTENSION, $website->getId());
-            $usePostcodeCheck  = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK, $website->getId());
-            $splitStreet       = (bool) $website->getConfig(self::XPATH_SPLIT_STREET, $website->getId());
+            $store = $website->getDefaultStore();
+            $storeId = $store->getId();
         } else {
-            $store = Mage_Core_Model_App::ADMIN_STORE_ID;
-
-            $checkoutExtension = Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION, $store);
-            $usePostcodeCheck  = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $store);
-            $splitStreet       = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $store);
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        if ((!$checkoutExtension || $checkoutExtension == 'other') && !$splitStreet) {
-            return false;
-        } elseif ($checkoutExtension && $checkoutExtension != 'other' && $splitStreet) {
+        $helper = Mage::helper('postnl/addressValidation');
+        if ($helper->isPostcodeCheckEnabled($storeId)) {
+            return true;
+        } elseif ($helper->useSplitStreet($storeId)) {
             return true;
         }
 
-        return $usePostcodeCheck;
+        return false;
+    }
+
+    /**
+     * Check if this notification should be suppressed.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        $hiddenNotifications = Mage::helper('postnl/adminhtml')->getHiddenNotifications();
+
+        if (!empty($hiddenNotifications['split_address_warning'])) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }

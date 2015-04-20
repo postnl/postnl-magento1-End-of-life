@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
@@ -222,7 +222,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Shows a summary of the PostNL Checkout order before the user confirms it
+     * Shows a summary of the PostNL Checkout order before the user confirms it.
      *
      * @return $this
      */
@@ -232,7 +232,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $helper = Mage::helper('postnl');
 
         /**
-         * Validate the quote
+         * Validate the quote.
          */
         $quoteIsValid = $this->_validateQuote($quote);
         if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
@@ -241,7 +241,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Check if showing the checkout summary page is allowed
+         * Check if showing the checkout summary page is allowed.
          */
         $showSummarypage = Mage::getStoreConfigFlag(self::XPATH_SHOW_SUMMARY_PAGE);
         if (!$showSummarypage) {
@@ -251,18 +251,19 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 
         try {
             /**
-             * Get the order details from CIF for the order the customer just placed
+             * Get the order details from CIF for the order the customer just placed.
              */
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder();
 
             /**
-             * Update the quote with the received order details
+             * Update the quote with the received order details.
              */
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
-                    ->updateQuotePayment($orderDetails, true, true) //only set the payment method, not all possible fields
+                    ->updateQuotePayment($orderDetails, true, true) // Only set the payment method, not all possible
+                                                                    // fields.
                     ->updateQuoteCustomer($orderDetails)
                     ->updatePostnlOrder($orderDetails);
 
@@ -393,8 +394,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Next we update the quote's payment if we didn't get to do that in the previous step and then place the order. Also we
-         * need to process any chosen communication options
+         * Next we update the quote's payment if we didn't get to do that in the previous step and then place the order.
+         * Also we need to process any chosen communication options.
          */
         try {
             if ($skipUpdatePayment === false) {
@@ -404,23 +405,22 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $service->updatePostnlOrder($orderDetails);
 
             /**
-             * Create the order
+             * Create the order.
              */
             $order = $service->saveOrder();
 
             $service->confirmPostnlOrder();
 
             /**
-             * Parse any possible communication options
+             * Parse any possible communication options.
              */
             $this->_parseCommunicationOptions($orderDetails, $order);
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addSessionMessage('checkout/session', 'POSTNL-0021', 'error',
                 $this->__(
-                    'An error occurred while processing your order.'
-                    . 'Please try again. '
-                    . 'if this problem persists, please contact the webshop owner.'
+                    'An error occurred while processing your order. Please try again.  if this problem persists, ' .
+                    'please contact the webshop owner.'
                 )
             );
 

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > shipments grid
@@ -456,6 +456,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'type'           => 'date',
                     'header'         => $helper->__('Send Date'),
                     'index'          => 'confirm_date',
+                    'filter'         => 'postnl_adminhtml/widget_grid_column_filter_confirmDate',
                     'filter_index'   => 'postnl_shipment.confirm_date',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
                     'width'          => '150px',

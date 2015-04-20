@@ -34,14 +34,14 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.5.0</version>
+			<version>1.5.2</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -562,6 +562,16 @@
                     </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>
+            <core_block_abstract_to_html_after>
+                <observers>
+                    <!-- Fix conflict with Bpost's Shipping Manager extension -->
+                    <checkout_deliveryoptions>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
+                        <method>fixBpostConflict</method>
+                    </checkout_deliveryoptions>
+                </observers>
+            </core_block_abstract_to_html_after>
             <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
                 <observers>
                     <!-- Saves selected PostNL options for Onepage checkout. -->
@@ -701,14 +711,14 @@
                 </run>
             </postnl_update_config_settings>
             <!-- Verify PostNL's data integrity. -->
-            <!--<postnl_data_integrity_check>-->
-                <!--<schedule>-->
-                    <!--<cron_expr>0 5 * * *</cron_expr> &lt;!&ndash; every night at 5 AM. &ndash;&gt;-->
-                <!--</schedule>-->
-                <!--<run>-->
-                    <!--<model>postnl_core/observer_cron::integrityCheck</model>-->
-                <!--</run>-->
-            <!--</postnl_data_integrity_check>-->
+            <postnl_data_integrity_check>
+                <schedule>
+                    <cron_expr>0 5 * * *</cron_expr> <!-- every night at 5 AM. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::integrityCheck</model>
+                </run>
+            </postnl_data_integrity_check>
         </jobs>
     </crontab>
 
@@ -843,7 +853,7 @@
                 <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
                 <responsive>0</responsive> <!-- Do not use the responsive design -->
-                <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
+                <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
                 <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
@@ -1029,7 +1039,7 @@
         	<grid>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
-                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
+                <order_grid_columns>shipment_type,confirm_date,confirm_status,shipping_phase</order_grid_columns> <!-- Show the shipment type, confirm date, confirm status and shipping phase columns -->
                 <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
@@ -1090,7 +1100,7 @@
         </postnl>
     </default>
 
-    <!-- Custom TiG config values -->
+    <!-- Custom TIG config values -->
     <tig>
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
@@ -1098,12 +1108,17 @@
                 <enterprise>1.11,1.12,1.13,1.14</enterprise>
                 <community>1.6,1.7,1.8,1.9</community>
                 <php>5.3,5.4</php>
+                <!-- Compatibility with other extensions -->
+                <extensions>
+                    <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
+                    <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
+                </extensions>
             </postnl>
         </compatibility>
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -1660,9 +1675,9 @@
                 <type>notice</type>
             </POSTNL-0101>
             <POSTNL-0102>
-                <message>One or more items in the cart are out of stock.</message>
+                <message>One or more items in the cart are backordered or out of stock.</message>
                 <url>http://kb.tig.nl/topic/31993743</url>
-                <type>notice</type>
+                <type>error</type>
             </POSTNL-0102>
             <POSTNL-0103>
                 <message>PostNL Checkout has been disabled.</message>
@@ -1855,7 +1870,7 @@
                 <type>error</type>
             </POSTNL-0140>
             <POSTNL-0141>
-                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.</message>
+                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.</message>
                 <url>http://kb.tig.nl/topic/53037577</url>
                 <type>error</type>
             </POSTNL-0141>
@@ -2254,6 +2269,11 @@
                 <url>http://kb.tig.nl/topic/84686768</url>
                 <type>error</type>
             </POSTNL-0220>
+            <POSTNL-0121>
+                <message>Delivery options are not allowed for one or more items in the cart based on the configured stock options.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0121>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -349,7 +349,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
@@ -378,8 +378,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        //Zend_Debug::dump($request->debug());exit;
-
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
             /**
@@ -500,7 +498,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
@@ -580,7 +578,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         );
 
         if (!isset($codes[$type])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type)
+            );
         }
 
         if (''===$code) {
@@ -588,7 +589,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         if (!isset($codes[$type][$code])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code)
+            );
         }
 
         return $codes[$type][$code];
