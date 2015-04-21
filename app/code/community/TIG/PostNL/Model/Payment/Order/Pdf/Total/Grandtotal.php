@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method Mage_Sales_Model_Order                                                                  getOrder()
@@ -123,5 +123,21 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
     protected function _getTaxHelper()
     {
         return Mage::helper('tax');
+    }
+
+    /**
+     * Get full rate info
+     *
+     * @return array
+     */
+    protected function _getFullRateInfo()
+    {
+        if (method_exists('Mage_Tax_Model_Sales_Pdf_Grandtotal', '_getFullRateInfo')) {
+            return parent::_getFullRateInfo();
+        }
+
+        $rates = Mage::getModel('tax/sales_order_tax')->getCollection()->loadByOrder($this->getOrder())->toArray();
+        $fullInfo = Mage::getSingleton('tax/calculation')->reproduceProcess($rates['items']);
+        return $fullInfo;
     }
 }

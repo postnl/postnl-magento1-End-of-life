@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasOrder()
@@ -216,5 +216,53 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
         }
 
         return $formattedOptions;
+    }
+
+    /**
+     * Get delivery time information for this PostNL shipment.
+     *
+     * @return array|false
+     */
+    public function getDeliveryTimeInfo()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder->hasExpectedDeliveryTimeStart()) {
+            return false;
+        }
+
+        $info = array(
+            'delivery_time_start'       => '',
+            'delivery_time_end'         => '',
+            'store_delivery_time_start' => '',
+            'store_delivery_time_end'   => '',
+            'timezone_differ'           => false,
+        );
+
+        $dateModel = Mage::getSingleton('core/date');
+        $storeTimezone = Mage::getStoreConfig(
+            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+            $postnlOrder->getStoreId()
+        );
+        $storeTimezone = new DateTimeZone($storeTimezone);
+
+        $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+        $storeStartTime->setTimezone($storeTimezone);
+        $info['delivery_time_start'] = $dateModel->date('H:i', $postnlOrder->getExpectedDeliveryTimeStart());
+        $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+        if ($info['delivery_time_start'] != $info['store_delivery_time_start']) {
+            $info['timezone_differ'] = true;
+        }
+
+        if (!$postnlOrder->hasExpectedDeliveryTimeEnd()) {
+            return $info;
+        }
+
+        $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+        $storeEndTime->setTimezone($storeTimezone);
+        $info['delivery_time_end'] = $dateModel->date('H:i', $postnlOrder->getExpectedDeliveryTimeEnd());
+        $info['store_delivery_time_end'] = $storeEndTime->format('H:i');
+
+        return $info;
     }
 }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * This entire class is extended from Magento's core class for backwards compatibility on Magento 1.6.
@@ -155,8 +155,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
     protected function _getHeaderTitleHtml($element)
     {
         return '<div class="entry-edit-head collapseable" ><a id="' . $element->getHtmlId()
-        . '-head" href="#" onclick="Fieldset.toggleCollapse(\'' . $element->getHtmlId() . '\', \''
-        . $this->getUrl('*/*/state') . '\'); return false;">' . $element->getLegend() . '</a></div>';
+        . '-head" rel="' . $element->getHtmlId() . '-head" href="#" onclick="Fieldset.toggleCollapse(\''
+        . $element->getHtmlId() . '\', \'' . $this->getUrl('*/*/state') . '\'); return false;">'
+        . $element->getLegend() . '</a></div>';
     }
 
     /**

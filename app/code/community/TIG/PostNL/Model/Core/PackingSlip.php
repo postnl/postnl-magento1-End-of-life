@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_PackingSlip setStoreId(int $value)
@@ -938,7 +938,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if ($showBillingAddress && $billingAddress) {
             foreach ($billingAddress as $value){
                 if ($value !== '') {
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 33, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
@@ -954,7 +954,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $this->y = $addressesStartY;
             foreach ($shippingAddress as $value){
                 if ($value!=='') {
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 33, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
@@ -972,7 +972,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             foreach ($pakjeGemakAddress as $value){
                 if ($value!=='') {
                     $text = array();
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 45, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Service
@@ -160,6 +160,12 @@ class TIG_PostNL_Model_Core_Service
 
         $convertor = Mage::getModel('sales/convert_order');
 
+        $dummyPaymentMethod = Mage::getModel('postnl_core/service_paymentMethodDummy');
+
+        $dummyPayment = Mage::getModel('postnl_core/service_paymentDummy');
+        $dummyPayment->setMethod('postnl_dummy')
+                     ->setMethodInstance($dummyPaymentMethod);
+
         $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
         $dummyOrder->setData($order->getData())
                    ->setSubtotalInvoiced(0)
@@ -167,7 +173,8 @@ class TIG_PostNL_Model_Core_Service
                    ->setTaxInvoiced(0)
                    ->setHiddenTaxInvoiced(0)
                    ->setBaseTaxInvoiced(0)
-                   ->setBaseHiddenTaxInvoiced(0);
+                   ->setBaseHiddenTaxInvoiced(0)
+                   ->setPayment($dummyPayment);
 
         $invoice = Mage::getModel('postnl_core/service_invoiceDummy');
         $invoice->setOrder($dummyOrder)

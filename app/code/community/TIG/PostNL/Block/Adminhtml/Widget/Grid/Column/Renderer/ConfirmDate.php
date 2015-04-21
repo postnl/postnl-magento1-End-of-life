@@ -33,14 +33,14 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Additional column name used
+     * Additional column names used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
 
@@ -58,11 +58,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
             return '';
         }
 
-        $value    = $row->getData($this->getColumn()->getIndex());
-        $origDate = new DateTime($value);
-        $now      = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+        $value = $row->getData($this->getColumn()->getIndex());
+        $value = new DateTime($value);
+        $now   = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
 
-        $interval = $now->diff($origDate);
+        $interval = $now->diff($value);
 
         /**
          * Check if the shipment should be confirmed somewhere in the future.
@@ -71,7 +71,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
             (($interval->days > 0 || $interval->h > 0) && !$interval->invert)
             || ($interval->days == 0 && $interval->h < 24) && $interval->invert
         ) {
-            $confirmDate = new DateTime($value);
+            $confirmDate = clone $value;
             $diff = $now->diff($confirmDate);
 
             /**
@@ -109,6 +109,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
 
             return $renderedValue;
         }
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $value = $value->setTimezone($timeZone)->format('Y-m-d H:i:s');
+        $row->setData($this->getColumn()->getIndex(), $value);
 
         /**
          * Finally, simply render the date.

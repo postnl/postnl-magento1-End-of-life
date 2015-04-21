@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Adminhtml_Template
@@ -162,6 +162,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
          * Build the URL.
          */
         $url = $this->getUrl('postnl_admin/adminhtml_config/saveWizardStep', $urlParams);
+
+        return $url;
+    }
+
+    /**
+     * Get the hide notification URL.
+     *
+     * @return string
+     */
+    public function getHideNotificationUrl()
+    {
+        $url = $this->getUrl('postnl_admin/adminhtml_config/hideNotification');
 
         return $url;
     }

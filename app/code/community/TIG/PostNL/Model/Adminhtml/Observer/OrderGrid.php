@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -233,10 +233,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order table.
          */
         $select->joinInner(
-            array('order' => $resource->getTableName('sales/order')),
-            '`main_table`.`entity_id`=`order`.`entity_id`',
+            array('postnl_join_order' => $resource->getTableName('sales/order')),
+            '`main_table`.`entity_id`=`postnl_join_order`.`entity_id`',
             array(
-                'shipping_method' => 'order.shipping_method',
+                'shipping_method' => 'postnl_join_order.shipping_method',
             )
         );
 
@@ -244,10 +244,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order_payment table.
          */
         $select->joinLeft(
-            array('payment' => $resource->getTableName('sales/order_payment')),
-            '`main_table`.`entity_id`=`payment`.`parent_id`',
+            array('postnl_join_payment' => $resource->getTableName('sales/order_payment')),
+            '`main_table`.`entity_id`=`postnl_join_payment`.`parent_id`',
             array(
-                'payment_method' => 'payment.method',
+                'payment_method' => 'postnl_join_payment.method',
             )
         );
 
@@ -255,10 +255,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order_address table.
          */
         $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`entity_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array('postnl_join_shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`entity_id`=`postnl_join_shipping_address`.`parent_id` AND" .
+            " `postnl_join_shipping_address`.`address_type`='shipping'",
             array(
-                'country_id' => 'shipping_address.country_id',
+                'country_id' => 'postnl_join_shipping_address.country_id',
             )
         );
 
@@ -439,6 +440,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'                      => 'date',
                     'header'                    => $helper->__('Send date'),
                     'index'                     => 'confirm_date',
+                    'filter'                    => 'postnl_adminhtml/widget_grid_column_filter_confirmDate',
                     'filter_condition_callback' => array($this, '_filterConfirmDate'),
                     'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
                     'width'                     => '150px',
@@ -515,16 +517,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $class = $this->_getConfirmDateClass($value, $row, $column);
 
         $origValue = $row->getData($column->getIndex());
-        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+        $date = new DateTime($origValue);
+        $date->setTimezone(
+            Mage::helper('postnl')->getStoreTimeZone($row->getStoreId(), true)
+        );
 
-        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
+        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
+
+        $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
+        return $html;
     }
 
     /**
      * Gets class name for the confirmDate column of the current row.
      *
      * @param string|null                             $value
-     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Sales_Model_Order                  $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
      * @return string
@@ -540,9 +548,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $now       = new DateTime($dateModel->gmtDate());
 
         if (!$origValue) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
+            $helper = Mage::helper('postnl/deliveryOptions');
+            $shippingDuration = $helper->getOrderShippingDuration($row);
+            $deliveryDate = $helper->getDeliveryDate(
                 $row->getCreatedAt(),
-                $row->getStoreId()
+                $row->getStoreId(),
+                false,
+                true,
+                true,
+                $shippingDuration
             );
             $origDate = new DateTime($deliveryDate);
             $origDate = $origDate->sub(new DateInterval('P1D'));
@@ -1292,7 +1306,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         $postnlShippingMethodsRegex .= '$';
-        $collection->addFieldToFilter('order.shipping_method', array('regexp' => $postnlShippingMethodsRegex));
+        $collection->addFieldToFilter(
+            'postnl_join_order.shipping_method',
+            array(
+                'regexp' => $postnlShippingMethodsRegex
+            )
+        );
 
         /**
          * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders

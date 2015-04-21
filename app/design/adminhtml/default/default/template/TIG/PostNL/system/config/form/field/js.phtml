@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @var TIG_PostNL_Block_Adminhtml_System_Config_Js $this
@@ -45,6 +45,7 @@
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
 <?php $_currentWizardStep = $this->getCurrentWizardStep(); ?>
 <?php $_saveWizardStepUrl = $this->getSaveWizardStepUrl(); ?>
+<?php $_hideNotificationUrl = $this->getHideNotificationUrl(); ?>
 <script type="text/javascript">
     //<![CDATA[
     var postnlConfigWizard = new PostnlConfigWizard({});
@@ -75,7 +76,7 @@
 
         <?php if (!empty($_currentWizardStep)): ?>
             if (window.location.hash.length < 1) {
-                var hash = '<?php echo $_currentWizardStep?>';
+                var hash = '<?php echo $this->escapeHtml($_currentWizardStep); ?>';
                 postnlConfigWizard.toHash(hash);
 
                 if(window.history.pushState) {
@@ -161,6 +162,13 @@
         pattern : new RegExp("^([0-9]+_[0-9]+)$", "i")
     });
 
+    /**
+     * Add packing slip column header validation.
+     */
+    Validation.add('validate-packing-slip-column-header', '<?php echo $_helper->__('Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field.') ?>', {
+        pattern : new RegExp("^[0-9a-zA-Z,.#\(\)-_]*$")
+    });
+
     var postnlWizardSaveAndContinue = function(nextStepRel, currentStepRel) {
         var nextStepHash = '';
 
@@ -223,6 +231,8 @@
                         nextStepRel = currentStepRel;
                     }
 
+                    window.location.hash = nextStepHash;
+
                     /**
                      * Go to the next step.
                      */
@@ -231,9 +241,14 @@
                     /**
                      * Add a success message.
                      */
+                    var successMessageText = Translator.translate('The previous step has been saved successfully!');
+                    if (nextStepRel == currentStepRel) {
+                        successMessageText = Translator.translate('This step has been saved successfully!');
+                    }
+
                     var successMessage = new Element('div', {
                         'class' : 'wizard-success'
-                    }).update(Translator.translate('The previous has been saved successfully!'));
+                    }).update(successMessageText);
 
                     $(nextStepRel).insert({
                         top:successMessage
@@ -342,5 +357,24 @@
             Fieldset.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
         }
     };
+
+    hideNotification = function(event) {
+        event.stop();
+
+        var element = Event.element(event);
+        var notificationCode = element.getAttribute('data-notification_code');
+
+        new Ajax.Request('<?php echo $_hideNotificationUrl; ?>', {
+            method : 'post',
+            parameters : {
+                notification_code : notificationCode
+            },
+            onSuccess : function() {
+                element.up('.module-message').fade();
+            }
+        });
+    };
+
+    $$('.postnl-hide-notification-link').invoke('observe', 'click', hideNotification.bindAsEventListener());
     //]]>
 </script>

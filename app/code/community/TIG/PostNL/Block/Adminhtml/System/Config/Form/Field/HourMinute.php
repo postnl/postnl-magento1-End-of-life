@@ -33,14 +33,14 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
     extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
     /**
-     * Enter description here...
+     * Render the hour/minute field type.
      *
      * @param Varien_Data_Form_Element_Abstract $element
      * @return string
@@ -75,15 +75,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
 
         if ($element->getTooltip()) {
             $html .= '<td class="value with-tooltip">';
+            $html .= '<div id="' . $element->getHtmlId() . '">';
             $html .= $this->_getElementHtml($element);
             $html .= '<div class="field-tooltip"><div>' . $element->getTooltip() . '</div></div>';
         } else {
             $html .= '<td class="value">';
+            $html .= '<div id="' . $element->getHtmlId() . '">';
             $html .= $this->_getElementHtml($element);
         };
         if ($element->getComment()) {
             $html.= '<p class="note"><span>'.$element->getComment().'</span></p>';
         }
+        $html .= '</div>';
         $html.= '</td>';
 
         if ($addInheritCheckbox) {
@@ -133,8 +136,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
         $value = $element->getEscapedValue();
         $value = explode(':', $value);
 
-        $hour   = $value[0];
-        $minute = $value[1];
+        $hour   = '17';
+        $minute = '00';
+
+        if (!empty($value[0])) {
+            $hour = $value[0];
+        }
+
+        if (!empty($value[1])) {
+            $minute = $value[1];
+        }
 
         $options = $element->getValues();
 

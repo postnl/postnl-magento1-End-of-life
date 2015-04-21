@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Checkout_Service setQuote(Mage_Sales_Model_Quote $value)
@@ -572,16 +572,25 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
          */
-        if (isset($data->Voorkeuren)
-            && is_object($data->Voorkeuren)
-            && isset($data->Voorkeuren->Bezorging)
-            && is_object($data->Voorkeuren->Bezorging)
-            && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+        if (isset($data->Voorkeuren->Bezorging->VerzendDatum)
             && isset($data->Voorkeuren->Bezorging->Datum)
         ) {
             $delivery = $data->Voorkeuren->Bezorging;
-            $postnlOrder->setConfirmDate($delivery->VerzendDatum)
-                        ->setDeliveryDate($delivery->Datum);
+            $timeZone = Mage::getStoreConfig(
+                Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+                Mage::app()->getStore()->getId()
+            );
+            $timeZone = new DateTimeZone($timeZone);
+            $utcTimeZone = new DateTimeZone('UTC');
+
+            $confirmDate = new DateTime($delivery->VerzendDatum, $timeZone);
+            $confirmDate->setTimezone($utcTimeZone);
+
+            $deliveryDate = new DateTime($delivery->Datum, $timeZone);
+            $deliveryDate->setTimezone($utcTimeZone);
+
+            $postnlOrder->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
+                        ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
         }
 
         /**

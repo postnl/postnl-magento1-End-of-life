@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                    hasMaxLogSize()
@@ -86,6 +86,10 @@ class TIG_PostNL_Block_Adminhtml_LogNotification extends TIG_PostNL_Block_Adminh
          * Get all log files in the PostNL log folder.
          */
         $logs = glob($logFolder . DS . '*.log');
+
+        if (!is_array($logs) || empty($logs)) {
+            return 0;
+        }
 
         /**
          * Calculate the sum of the file sizes of all logs in the PostNL log folder.

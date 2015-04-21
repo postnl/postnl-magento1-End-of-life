@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -257,7 +257,11 @@
 
     function initDeliveryOptions() {
         var billingOrShipping;
-        if ($('billing:use_for_shipping_yes').checked) {
+        var billingOrShippingCheckbox = $('billing:use_for_shipping_yes');
+        if (!billingOrShippingCheckbox
+            || billingOrShippingCheckbox.type == 'hidden'
+            || billingOrShippingCheckbox.checked
+        ) {
             billingOrShipping = 'billing';
         } else {
             billingOrShipping = 'shipping';
@@ -437,8 +441,8 @@
          */
         if (!postcode
             || (
-            (!addressSelectField || addressSelectField.getValue() == '')
-            && postcode != $(billingOrShipping + ':postcode').getValue()
+                (!addressSelectField || addressSelectField.getValue() == '')
+                && postcode != $(billingOrShipping + ':postcode').getValue()
             )
         ) {
             var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
@@ -543,6 +547,7 @@
                     return;
                 }
 
+                element.stopObserving('change');
                 element.observe('change', function() {
                     if (deliveryOptions && deliveryOptions.timeframeRequest) {
                         deliveryOptions.timeframeRequest.transport.abort();
@@ -910,6 +915,170 @@
                 deliveryOptions.saveOscOptions();
             }
         });
+
+        function addressPreview(templates, target) {
+            var bparams = {};
+            var sparams = {};
+            var savedBillingItems = $('billing-address-select');
+            if(savedBillingItems && savedBillingItems.getValue()){
+                index = savedBillingItems.selectedIndex;
+                bparams = customerBAddresses[index];
+            } else {
+                var items = $$('input[name^=billing]').concat($$('select[name^=billing]'));
+                items.each(function(s) {
+                    if(s.getStyle('display') != 'none'){
+                        selectText = s.options
+                        if(selectText){
+                            value = selectText[s.selectedIndex].text;
+                        } else {
+                            value = s.getValue();
+                        }
+                        if(value){
+                            value = '<span class="' + s.id.replace(':','-') + '">' + value.escapeHTML() + '</span>';
+                        }
+                        if(s.id == 'billing:region_id'){
+                            bparams['billing:region'] = value;
+                        } else {
+                            bparams[s.id] = value;
+                        }
+                    }
+                });
+            }
+
+
+
+            var savedShippingItems = $('shipping-address-select');
+            if(savedShippingItems && savedShippingItems.getValue()){
+                index = savedShippingItems.selectedIndex;
+                sparams = customerSAddresses[index];
+            } else {
+                var items = $$('input[name^=shipping]').concat($$('select[name^=shipping]'));
+                items.each(function(s) {
+                    if(s.getStyle('display') != 'none'){
+                        selectText = s.options
+                        if(selectText){
+                            value = selectText[s.selectedIndex].text;
+                        } else {
+                            value = s.getValue();
+                        }
+                        if(value){
+                            value = '<span class="' + s.id.replace(':','-') + '">' + value.escapeHTML() + '</span>';
+                        }
+                        if(s.id == 'shipping:region_id'){
+                            sparams['shipping:region'] = value;
+                        } else {
+                            sparams[s.id] = value;
+                        }
+                    }
+                });
+            }
+
+
+            var form = $('onestepcheckout-form');
+
+            var shipping_method = $RF(form, 'shipping_method');
+            if(shipping_method){
+                var shipping_label = $('s_method_' + shipping_method).up('dt').down('label').innerHTML.stripScripts();
+                var shipping_title = $('s_method_' + shipping_method).up('dt').previous('dd').innerHTML.stripScripts();
+                var shipping_row = shipping_title + ' - ' + shipping_label
+            }
+
+            var useOnlyBilling = $('billing:use_for_shipping_yes').getValue();
+            billinga_template = new Template(templates.billing);
+
+            if(useOnlyBilling){
+                shippinga_template = new Template(templates.billing);
+            }else{
+                shippinga_template = new Template(templates.shipping);
+            }
+
+            var payment_method = payment.currentMethod;
+
+            if(payment_method){
+                var payment_label = $('p_method_'+payment_method).up('dt').down('label').innerHTML.stripScripts();
+            }
+
+            var targetelem = $(target + '_billinga').childElements()[1];
+            if(targetelem){
+                targetelem.update(billinga_template.evaluate(bparams));
+            }
+
+            targetelem = $(target + '_shippinga').childElements()[1];
+            if(targetelem){
+                if(useOnlyBilling){
+                    targetelem.update(shippinga_template.evaluate(bparams));
+                }else{
+                    targetelem.update(shippinga_template.evaluate(sparams));
+                }
+            }
+
+            targetelem = $(target + '_shipping').childElements()[1];
+            if(targetelem){
+                targetelem.update(shipping_row);
+            }
+
+            targetelem = $(target + '_payment').childElements()[1];
+            if(targetelem){
+                targetelem.update(payment_label);
+            }
+
+            targetelem = $(target + '_summary').childElements()[1];
+            if(targetelem){
+                targetelem.update('');
+                targetelem.insert($$('table.onestepcheckout-summary')[0].cloneNode(true));
+                targetelem.insert($$('table.onestepcheckout-totals')[0].cloneNode(true));
+            }
+
+            if (deliveryOptions
+                && (deliveryOptions.selectedType == 'PG'
+                    || deliveryOptions.selectedType == 'PGE'
+                    || deliveryOptions.selectedType == 'PA'
+                )
+            ) {
+                targetelem = $(target + '_pakjegemak');
+                if (!targetelem) {
+                    var pakjeGemakAddressElement = new Element('div');
+                    pakjeGemakAddressElement.id = 'addressreview_pakjegemak';
+
+                    var pakjeGemakAddressHeader = new Element('h4');
+                    pakjeGemakAddressHeader.addClassName('title')
+                        .update(Translator.translate('Post Office Address'));
+
+                    var pakjeGemakAddressData = new Element('div');
+                    pakjeGemakAddressData.addClassName('data');
+
+                    var selectedAddress = deliveryOptions.selectedOption.address;
+                    var pakjeGemakAddressObject = {};
+                    var pakjeGemakAddressObjectPrefix = 'shipping:';
+                    if(useOnlyBilling) {
+                        pakjeGemakAddressObjectPrefix = 'billing:';
+                    }
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'company'] = selectedAddress.Name;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'country_id'] = selectedAddress.Countrycode;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'postcode'] = selectedAddress.Zipcode;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'city'] = selectedAddress.City;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'street1'] = selectedAddress.Street;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'street2'] = selectedAddress.HouseNr;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'street3'] = selectedAddress.HouseNrExt;
+                    pakjeGemakAddressObject[pakjeGemakAddressObjectPrefix + 'telephone'] = selectedAddress.PhoneNumber;
+
+                    pakjeGemakAddressData.update(shippinga_template.evaluate(pakjeGemakAddressObject));
+
+                    pakjeGemakAddressElement.insert(pakjeGemakAddressHeader)
+                                            .insert(pakjeGemakAddressData);
+
+                    $(target + '_shippinga').insert({
+                        after : pakjeGemakAddressElement
+                    });
+                }
+            } else {
+                targetelem = $(target + '_pakjegemak');
+                if (targetelem) {
+                    targetelem.remove();
+                }
+            }
+        }
+
     <?php endif; ?>
     //]]>
 </script>

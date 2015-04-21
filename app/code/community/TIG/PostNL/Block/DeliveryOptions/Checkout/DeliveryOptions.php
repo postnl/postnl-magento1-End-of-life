@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
@@ -297,13 +297,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
-            $shippingDuration = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(null, null, true);
-
-            $nextDeliveryDay = new DateTime();
-            $nextDeliveryDay->setTimestamp(Mage::getModel('core/date')->timestamp());
-            $nextDeliveryDay->add(new DateInterval("P{$shippingDuration}D"));
-
-            $deliveryDate = $nextDeliveryDay->format('d-m-Y');
+            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(null, null, false, true)
+                                                                  ->format('d-m-Y');
         }
 
         $this->setDeliveryDate($deliveryDate);

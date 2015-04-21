@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Order
@@ -53,6 +53,10 @@
  * @method string                      getMobilePhoneNumber()
  * @method int                         getIsPakketautomaat()
  * @method array|boolean               getUnserializedOptions()
+ * @method string                      getExpectedDeliveryTimeStart()
+ * @method string                      getExpectedDeliveryTimeEnd()
+ * @method string                      getUpdatedAt()
+ * @method string                      getCreatedAt()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -71,6 +75,9 @@
  * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setPakjeGemakAddress(mixed $value)
  * @method TIG_PostNL_Model_Core_Order setUnserializedOptions(array $value)
+ * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeStart(string $value)
+ * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeEnd(string $value)
+ * @method TIG_PostNL_Model_Core_Order setStoreId(int $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
@@ -79,6 +86,9 @@
  * @method boolean                     hasDeliveryDate()
  * @method boolean                     hasUnserializedOptions()
  * @method boolean                     hasOptions()
+ * @method boolean                     hasExpectedDeliveryTimeStart()
+ * @method boolean                     hasExpectedDeliveryTimeEnd()
+ * @method boolean                     hasStoreId()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -89,6 +99,15 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const MOBILE_PHONE_NUMBER_PREFIX_REGEX       = '/^(06|00316){1}(.*?)$/i';
     const MOBILE_PHONE_NUMBER_PREFIX_REPLACEMENT = '+316$2';
     const MOBILE_PHONE_NUMBER_CONTENT_REGEX      = '/[^0-9+]/';
+
+    /**
+     * Available types.
+     */
+    const TYPE_OVERDAG = 'Overdag';
+    const TYPE_AVOND   = 'Avond';
+    const TYPE_PG      = 'PG';
+    const TYPE_PGE     = 'PGE';
+    const TYPE_PA      = 'PA';
 
     /**
      * Prefix of model events names.
@@ -119,6 +138,29 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     public function getPakjeGemakTypes()
     {
         return $this->_pakjeGemakTypes;
+    }
+
+    /**
+     * Get this PostNL order's store ID.
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if ($this->hasStoreId()) {
+            return $this->_getData('store_id');
+        }
+
+        if ($this->hasOrderId()) {
+            $storeId = $this->getOrder()->getStoreId();
+        } elseif ($this->hasQuoteId()) {
+            $storeId = $this->getQuote()->getStoreId();
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $this->setStoreId($storeId);
+        return $storeId;
     }
 
     /**

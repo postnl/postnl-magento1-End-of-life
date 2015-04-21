@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
@@ -69,10 +69,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
             $confirmDate = new DateTime($confirmDate);
             $confirmDate->add(new DateInterval('P1D'));
 
-            $deliveryDate = $confirmDate->format('Y-m-d H:i:s');
-
-            $row->setData($this->getColumn()->getIndex(), $deliveryDate);
+            $deliveryDate = $confirmDate;
+        } else {
+            $deliveryDate = new DateTime($value);
         }
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $deliveryDate = $deliveryDate->setTimezone($timeZone)->format('Y-m-d H:i:s');
+
+        $row->setData($this->getColumn()->getIndex(), $deliveryDate);
 
         /**
          * Finally, simply render the date

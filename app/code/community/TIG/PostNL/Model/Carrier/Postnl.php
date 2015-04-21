@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -349,7 +349,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
@@ -378,8 +378,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        //Zend_Debug::dump($request->debug());exit;
-
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
             /**
@@ -500,7 +498,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('tablerate');
+            $error->setCarrier('postnl');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
@@ -580,7 +578,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         );
 
         if (!isset($codes[$type])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code type: %s', $type)
+            );
         }
 
         if (''===$code) {
@@ -588,7 +589,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         if (!isset($codes[$type][$code])) {
-            throw Mage::exception('Mage_Shipping', Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code));
+            throw Mage::exception(
+                'Mage_Shipping',
+                Mage::helper('shipping')->__('Invalid Table Rate code for type %s: %s', $type, $code)
+            );
         }
 
         return $codes[$type][$code];
@@ -613,7 +617,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     }
 
     /**
-     * Get tracking information
+     * Get tracking information.
      *
      * @param string $tracking
      *
@@ -622,29 +626,22 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     public function getTrackingInfo($tracking)
     {
         $statusModel = Mage::getModel('shipping/tracking_result_status');
-        $track = $this->_getTrackByNumber($tracking);
-        $shipment = $track->getShipment();
+        $track       = $this->_getTrackByNumber($tracking);
+        $shipment    = $track->getShipment();
 
         $shippingAddress = $shipment->getShippingAddress();
-
-        /**
-         * @var Mage_Sales_Model_Order_Address $address
-         */
-        $addresses = $shipment->getOrder()->getAddressesCollection();
-        foreach ($addresses as $address) {
-            if ($address->getAddressType() == 'pakje_gemak') {
-                $shippingAddress = $address;
-                break;
-            }
-        }
+        $barcodeUrl      = $this->getHelper()->getBarcodeUrl(
+            $track->getTrackNumber(),
+            $shippingAddress,
+            false,
+            false
+        );
 
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl(
-                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, false, false)
-                    );
+                    ->setUrl($barcodeUrl);
 
         return $statusModel;
     }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Base CIF model. Contains general code for communicating with the CIF API
@@ -91,8 +91,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
     /**
      * CIF error namespace.
+     *
+     * N.B. Changed in v1.5.0.
      */
-    const CIF_ERROR_NAMESPACE = 'http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception';
+    const CIF_ERROR_NAMESPACE = 'http://postnl.nl/cif/services/common/';
 
     /**
      * XML paths for config options

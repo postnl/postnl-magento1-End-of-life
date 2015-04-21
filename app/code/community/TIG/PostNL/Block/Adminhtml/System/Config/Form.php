@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                       hasFieldsetParam()
@@ -386,6 +386,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         if (isset($dependent->separator)) {
                             $dependentValue = explode((string) $dependent->separator, $dependentValue);
                         }
+                        if (isset($dependent->eval)) {
+                            $dependentValue = array('eval' => (string) $dependent->eval);
+                        }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
                         $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
                         /*
@@ -528,5 +531,26 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 $this->getLayout()->createBlock('postnl_adminhtml/widget_form_element_dependence'));
         }
         return $this->getChild('element_dependense');
+    }
+
+    /**
+     * Prepare additional comment for field like tooltip
+     *
+     * @param Mage_Core_Model_Config_Element $element
+     * @param string $helper
+     * @return string
+     */
+    protected function _prepareFieldTooltip($element, $helper)
+    {
+        if ($element->tooltip_block) {
+            return $this->getLayout()
+                        ->createBlock((string)$element->tooltip_block)
+                        ->setElement($element)
+                        ->toHtml();
+        } elseif ($element->tooltip) {
+            return Mage::helper($helper)->__((string)$element->tooltip);
+        }
+
+        return '';
     }
 }

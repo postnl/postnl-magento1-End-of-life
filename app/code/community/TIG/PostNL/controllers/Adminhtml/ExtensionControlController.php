@@ -162,7 +162,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
             /**
              * Activate the webshop
              */
-            $webservice->activateWebshop($email);
+            $result = $webservice->activateWebshop($email);
+
+            if (isset($result['settings']) && is_array($result['settings'])) {
+                Mage::getModel('postnl_extensioncontrol/config')->saveConfigSettings($result['settings']);
+            }
         } catch (SoapFault $e) {
             /**
              * If the webshop is already registered (email, hostname combo exists), continue the activation by sending a

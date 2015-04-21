@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_Model_Handler_Controllers
@@ -65,6 +65,19 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
             return true;
         }
 
+        return true;
+    }
+
+    /**
+     * PostNL mass action postDispatch handler.
+     *
+     * @param Varien_Simplexml_Element       $config
+     * @param Enterprise_Logging_Model_Event $eventModel
+     *
+     * @return boolean
+     */
+    public function postDispatchAction($config, $eventModel)
+    {
         return true;
     }
 }

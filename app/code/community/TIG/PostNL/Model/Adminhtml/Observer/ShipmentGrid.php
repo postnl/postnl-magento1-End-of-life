@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > shipments grid
@@ -50,7 +50,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * The block we want to edit
      */
-    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_shipment_grid';
+    const SHIPMENT_GRID_CLASS_NAME       = 'adminhtml/sales_shipment_grid';
+    const POSTNL_RETURNS_GRID_CLASS_NAME = 'postnl_adminhtml/sales_returns_grid';
 
     /**
      * variable name for shipment grid filter
@@ -145,9 +146,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Unfortunately there is no unique event for this block
          */
         $block = $observer->getBlock();
-        $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
+        $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_CLASS_NAME);
+        $postnlReturnsGridClass = Mage::getConfig()->getBlockClassName(self::POSTNL_RETURNS_GRID_CLASS_NAME);
 
-        if (!($block instanceof $shipmentGridClass)) {
+        if (!($block instanceof $shipmentGridClass) || ($block instanceof $postnlReturnsGridClass)) {
             return $this;
         }
 
@@ -213,6 +215,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *     `postnl_shipment`.`is_parcelware_exported`,
      *     `postnl_shipment`.`product_code`,
      *     `postnl_shipment`.`extra_cover_amount`,
+     *     `postnl_shipment`.`return_labels_printed`,
+     *     `postnl_shipment`.`return_phase`,
      *     `postnl_order`.`is_pakje_gemak`,
      *     `postnl_order`.`delivery_date`,
      *     `postnl_order`.`is_pakketautomaat`,
@@ -247,11 +251,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join sales_flat_order table.
          */
         $select->joinInner(
-            array('order' => $resource->getTableName('sales/order')),
-            '`main_table`.`order_id`=`order`.`entity_id`',
+            array('postnl_join_order' => $resource->getTableName('sales/order')),
+            '`main_table`.`order_id`=`postnl_join_order`.`entity_id`',
             array(
-                'shipping_method'      => 'order.shipping_method',
-                'shipping_description' => 'order.shipping_description',
+                'shipping_method'      => 'postnl_join_order.shipping_method',
+                'shipping_description' => 'postnl_join_order.shipping_description',
             )
         );
 
@@ -259,11 +263,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join sales_flat_order_address table.
          */
         $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array('postnl_join_shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`order_id`=`postnl_join_shipping_address`.`parent_id` AND " .
+            "`postnl_join_shipping_address`.`address_type`='shipping'",
             array(
-                'postcode'   => 'shipping_address.postcode',
-                'country_id' => 'shipping_address.country_id',
+                'postcode'   => 'postnl_join_shipping_address.postcode',
+                'country_id' => 'postnl_join_shipping_address.country_id',
             )
         );
 
@@ -278,7 +283,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'main_barcode'           => 'postnl_shipment.main_barcode',
                 'confirm_status'         => 'postnl_shipment.confirm_status',
                 'labels_printed'         => 'postnl_shipment.labels_printed',
+                'return_labels_printed'  => 'postnl_shipment.return_labels_printed',
                 'shipping_phase'         => 'postnl_shipment.shipping_phase',
+                'return_phase'           => 'postnl_shipment.return_phase',
                 'parcel_count'           => 'postnl_shipment.parcel_count',
                 'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
                 'product_code'           => 'postnl_shipment.product_code',
@@ -449,6 +456,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'type'           => 'date',
                     'header'         => $helper->__('Send Date'),
                     'index'          => 'confirm_date',
+                    'filter'         => 'postnl_adminhtml/widget_grid_column_filter_confirmDate',
                     'filter_index'   => 'postnl_shipment.confirm_date',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
                     'width'          => '150px',
@@ -524,6 +532,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $after = 'labels_printed';
         }
 
+        if (in_array('return_labels_printed', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'return_labels_printed',
+                array(
+                    'header'         => $helper->__('Return Labels Printed'),
+                    'type'           => 'options',
+                    'index'          => 'return_labels_printed',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'frame_callback' => array($this, 'decorateYesNo'),
+                    'options'        => array(
+                        1 => $helper->__('Yes'),
+                        0 => $helper->__('No'),
+                    ),
+                ),
+                $after
+            );
+
+            $after = 'return_labels_printed';
+        }
+
         if (in_array('is_parcelware_exported', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'is_parcelware_exported',
@@ -574,6 +602,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 ),
                 $after
             );
+
+            $after = 'shipping_phase';
+        }
+
+        if (in_array('return_phase', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'return_phase',
+                array(
+                    'header'         => $helper->__('Return Phase'),
+                    'align'          => 'left',
+                    'index'          => 'return_phase',
+                    'type'           => 'options',
+                    'options'        => Mage::helper('postnl/cif')->getShippingPhases(),
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+                    'frame_callback' => array($this, 'decorateShippingPhase'),
+                ),
+                $after
+            );
+
+            $after = 'return_phase'; //Defined in case of future additions to the grid.
         }
 
         $actionColumn = $block->getColumn('action');
@@ -632,9 +680,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $origValue = $row->getData($column->getIndex());
-        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+        $date = new DateTime($origValue);
+        $date->setTimezone(
+            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
+        );
 
-        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
+        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
+
+        $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
+        return $html;
     }
 
     /**
@@ -691,7 +745,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the confirm_status column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport
@@ -737,7 +791,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the labels_printed column
      *
-     * @param string | null $value
+     * @param string|null $value
      * @param Mage_Sales_Model_Order_Shipment $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean $isExport
@@ -842,6 +896,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
+        $printPackingSlipsAndConfirmOptions = array(
+            'label' => $helper->__('PostNL - Print packing slips & confirm shipment'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingSlipsAndConfirm'),
+        );
+
         $printOptions = array(
             'label' => $helper->__('PostNL - Print shipping labels'),
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
@@ -860,6 +919,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $parcelWareOptions = array(
             'label' => $helper->__('PostNL - Create Parcelware export'),
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massCreateParcelwareExport')
+        );
+
+        $updateShippingStatusOptions = array(
+            'label' => $helper->__('PostNL - Update shipping status'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massUpdateShippingStatus')
         );
 
         /**
@@ -904,6 +968,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_print_labels_and_confirm':
                 $printAndConfirmOptions['selected'] = true;
                 break;
+            case 'postnl_print_packing_slips_and_confirm':
+                $printPackingSlipsAndConfirmOptions['selected'] = true;
+                break;
             case 'postnl_print_labels':
                 $printOptions['selected'] = true;
                 break;
@@ -915,6 +982,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 break;
             case 'postnl_parcelware_export':
                 $parcelWareOptions['selected'] = true;
+                break;
+            case 'postnl_update_status':
+                $updateShippingStatusOptions['selected'] = true;
                 break;
             // no default
         }
@@ -932,6 +1002,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'postnl_print_labels_and_confirm',
                 $printAndConfirmOptions
             );
+
+            if ($packingSlipAllowed) {
+                $massactionBlock->addItem(
+                    'postnl_print_packing_slips_and_confirm',
+                    $printPackingSlipsAndConfirmOptions
+                );
+            }
         }
 
         if ($printAllowed) {
@@ -962,6 +1039,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $parcelWareOptions
             );
         }
+
+        $massactionBlock->addItem(
+            'postnl_update_status',
+            $updateShippingStatusOptions
+        );
 
         return $this;
     }
@@ -1059,6 +1141,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
+        /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
         $column = $block->getColumn($sort);
         if (!$column) {
             return $this;

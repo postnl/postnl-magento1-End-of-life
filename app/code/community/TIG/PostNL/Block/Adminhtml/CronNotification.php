@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Adminhtml_Template
@@ -110,11 +110,12 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
          * Check if the last execution time was more than an hour ago.
          * If no crontask has been executed in an hour it's likely that something is wrong.
          */
-        $currentTime = new DateTime();
+        $utcTimeZone = new DateTimeZone('UTC');
+        $currentTime = new DateTime('now', $utcTimeZone);
         $currentTime->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         $oneHourAgo        = $currentTime->sub(new DateInterval('PT1H'));
-        $lastExecutionTime = new DateTime($lastExecutionTime);
+        $lastExecutionTime = new DateTime($lastExecutionTime, $utcTimeZone);
 
         if ($lastExecutionTime < $oneHourAgo) {
             return false;

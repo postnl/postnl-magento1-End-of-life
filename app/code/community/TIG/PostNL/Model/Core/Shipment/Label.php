@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Shipment_Label
@@ -85,5 +85,22 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
         }
 
         return $label;
+    }
+
+    /**
+     * Check if this label is a return label.
+     *
+     * @return bool
+     */
+    public function isReturnLabel()
+    {
+        $labelType = $this->getLabelType();
+        $returnLabelTypes = Mage::helper('postnl/cif')->getReturnLabelTypes();
+
+        if (in_array($labelType, $returnLabelTypes)) {
+            return true;
+        }
+
+        return false;
     }
 }
