@@ -203,12 +203,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
         if (isset($value['select'])) {
             if ($value['select'] == 'today') {
                 $today = new DateTime('today');
-                $tomorrow = new DateTime('tomorrow');
+                $tomorrow = new DateTime('tomorrow - 1 second');
                 $value['from'] = $today->format('d-m-Y');
                 $value['to'] = $tomorrow->format('d-m-Y');
             } elseif ($value['select'] == 'tomorrow') {
                 $tomorrow = new DateTime('tomorrow');
-                $dayAfterTomorrow = new DateTime('tomorrow + 1day');
+                $dayAfterTomorrow = new DateTime('tomorrow + 1day - 1 second');
                 $value['from'] = $tomorrow->format('d-m-Y');
                 $value['to'] = $dayAfterTomorrow->format('d-m-Y');
             }
