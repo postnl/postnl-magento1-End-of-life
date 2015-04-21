@@ -33,24 +33,25 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
 <?php /** @var Mage_Sales_Model_Order $_order */ ?>
 <?php $_order = $this->getOrder(); ?>
 <?php $_helper = Mage::helper('postnl'); ?>
-<?php $_pakjeGemakAddress = Mage::helper('postnl')->getPakjeGemakAddressForOrder($_order); ?>
+<?php $_pakjeGemakAddress = $_helper->getPakjeGemakAddressForOrder($_order); ?>
 <?php if ($_pakjeGemakAddress): ?>
     <table cellspacing="0" cellpadding="0" border="0" width="650">
         <thead>
             <tr>
-                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;"><?php echo $this->__('Post office address:'); ?></th>
+                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;"><?php echo $_helper->__('Post office address:'); ?></th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                    <?php echo $_helper->__('You have chosen to pick up your address at the following post office location:') ?><br/><br/>
                     <?php echo $_pakjeGemakAddress->format('html'); ?>
                 </td>
             </tr>
