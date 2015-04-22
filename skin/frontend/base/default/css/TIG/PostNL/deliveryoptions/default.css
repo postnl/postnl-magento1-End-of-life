@@ -234,7 +234,7 @@ div.pac-container { z-index:5000; width:380px !important; }
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    max-width: 100% !important; padding-right:15px; float:left; }
+    max-width: 100% !important; padding-right:1px; float:left; }
 .location-list .overflow-protect { float:left; width:528px; }
 #palocation .location-name.overflow-protect,
 .pa-location .location-name.overflow-protect { max-width:275px !important; }

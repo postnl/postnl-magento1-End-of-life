@@ -392,16 +392,6 @@
 
     <!-- DELIVERY OPTIONS -->
 
-    <checkout_onepage_shipping>
-        <reference name="root">
-            <block type="postnl_deliveryoptions/pickupNotification" name="postnl_pickup_notification" template="TIG/PostNL/delivery_options/onepage/pickup_notification.phtml" output="toHtml">
-                <action method="setAddressType">
-                    <type>shipping</type>
-                </action>
-            </block>
-        </reference>
-    </checkout_onepage_shipping>
-
     <checkout_onepage_shippingmethod>
         <reference name="root">
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
