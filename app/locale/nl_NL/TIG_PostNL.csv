@@ -1245,4 +1245,4 @@ TIG_PostNL::In stock and backordered products,Op voorraad en in nabestelling.
 "TIG_PostNL::In stock, backordered and out of stock products","Op voorraad, in nabestelling en niet op voorraad."
 TIG_PostNL::Product option '%s' (%s) is not allowed for this shipment.,Productoptie '%s' (%s) is niet toegestaan voor deze zending.
 TIG_PostNL::You have chosen to pick up your address at the following post office location:,U heeft gekozen om uw bestelling op de volgende postkantoor locatie op te halen:
-TIG_PostNL::You can select a post office pick up location in the shipping method step. The address you select here will be used to determine which pick up locations are nearby.,U kunt in de verzendmethode stap kiezen voor een afhaallocatie. Het adres dat u hier selecteert zal gebruikt worden om de dichtstbijzijnde afhaallocaties te berekenen.
+TIG_PostNL::You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.,U kunt verderop kiezen voor een afhaallocatie. Het adres dat u hier opgeeft zal gebruikt worden om de ichtstbijzijnde afhaallocaties te berekenen.
