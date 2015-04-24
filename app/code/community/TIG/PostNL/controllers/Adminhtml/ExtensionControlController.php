@@ -370,6 +370,15 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
     {
         $setup = Mage::getResourceModel('postnl/setup', 'postnl_setup');
         $setup->applyDataUninstall();
-        echo 'test2';exit;
+
+        // Set session message that we've been successful
+        $title = $this->__('The PostNL extension has been successfully uninstalled.');
+        Mage::getSingleton('core/session')->addSuccess($title);
+
+        $inbox = Mage::getModel('postnl_admin/inbox');
+        $inbox->addNotice('[POSTNL-0221] ' . $title, $title)
+              ->save();
+
+        $this->_redirect('adminhtml');
     }
 }

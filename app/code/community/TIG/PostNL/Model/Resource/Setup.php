@@ -252,6 +252,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     {
         $dataVer   = $this->_getResource()->getDataVersion($this->_resourceName);
         $configVer = (string)$this->_moduleConfig->version;
+
         if ($dataVer !== false) {
             $this->_uninstallData($dataVer, $configVer);
         }
