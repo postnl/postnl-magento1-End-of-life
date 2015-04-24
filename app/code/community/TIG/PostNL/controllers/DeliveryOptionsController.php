@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Action
@@ -48,7 +48,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      * Regular expressions to validate various address fields.
      */
     const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
-    const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
+    const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-.]*$#";
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
@@ -286,13 +286,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->getResponse()
-                 ->setBody('not_allowed');
-
-            return $this;
-        }
-
-        if (!$this->_canUseDeliveryOptions()) {
             $this->getResponse()
                  ->setBody('not_allowed');
 
@@ -967,7 +960,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         /**
          * Names are essentially impossible to build a regex for. Eventually you will run into a name that the regex
-         * thinks is 'wrong' and you will have offended someone. Better to just strip any tags to prevent SQL injection.
+         * thinks is 'wrong' and you will have offended someone. Better to just strip any tags to prevent XSS attacks.
          */
         $name = Mage::helper('core')->stripTags($name);
 

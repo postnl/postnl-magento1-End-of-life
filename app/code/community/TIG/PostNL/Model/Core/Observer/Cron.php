@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Cron
@@ -1135,6 +1135,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $data = unserialize($data);
         $currentAttributeData = current($data);
+        if (empty($currentAttributeData[0]) || empty($currentAttributeData[1])) {
+            $helper->cronLog($helper->__('No attribute data found. Exiting cron.'));
+            return $this;
+        }
 
         $helper->cronLog(
             $helper->__('Updating product attribute data: %s', var_export($currentAttributeData, true))

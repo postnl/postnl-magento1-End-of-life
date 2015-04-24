@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @todo Cache the available delivery options in the checkout session. That way we only recalculate them if the quote
@@ -682,9 +682,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Create a DateTime object for the order date with the cut off time for comparison.
          */
-        $utcTimeZone = new DateTimeZone('UTC');
+        $europeBerlinTimeZone = new DateTimeZone('Europe/Berlin');
+        $utcTimeZone          = new DateTimeZone('UTC');
 
-        $cutOffDate = clone $orderDate;
+        $cutOffDate = new DateTime('now', $europeBerlinTimeZone);
         $cutOffDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2])
                    ->setTimezone($utcTimeZone);
 
@@ -756,11 +757,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDateTime
      * @param boolean     $withTime
      * @param int|boolean $shippingDuration
+     * @param boolean     $orderDateInUtc
      *
      * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
-        $withTime = true, $shippingDuration = false
+        $withTime = true, $shippingDuration = false, $orderDateInUtc = false
     ) {
         if (!$orderDate) {
             $orderDate = new DateTime(
@@ -774,7 +776,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            if (false === $orderDateInUtc) {
+                $orderDate = new DateTime($orderDate, $this->getStoreTimeZone($storeId, true));
+            } else {
+                $utcTimezone = new DateTimeZone('UTC');
+                $orderDate = new DateTime($orderDate, $utcTimezone);
+            }
         }
 
         if (false === $shippingDuration) {
@@ -1802,7 +1809,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($pakketautomaatAllowed === '0') {
+            if (!is_null($pakketautomaatAllowed) && !$pakketautomaatAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -1954,7 +1961,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($deliveryDaysAllowed === '0') {
+            if (!is_null($deliveryDaysAllowed) && !$deliveryDaysAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -2085,7 +2092,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($timeframesAllowed === '0') {
+            if (!is_null($timeframesAllowed) && !$timeframesAllowed) {
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -2354,7 +2361,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($allowDeliveryOptions === '0') {
+            if (!is_null($allowDeliveryOptions) && !$allowDeliveryOptions) {
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0161',
@@ -2431,6 +2438,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the IDs of all products in the current quote.
          */
         $productIds = $quote->getItemsCollection()->getColumnValues('product_id');
+        $productIds = array_unique($productIds);
 
         /**
          * Get all inventory items for the products in the quote.

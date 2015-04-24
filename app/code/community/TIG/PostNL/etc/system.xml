@@ -4354,7 +4354,7 @@
                         </receive_updates>
                         <show_error_details_in_frontend translate="label tooltip" module="postnl">
                             <label>Show error details in the frontend</label>
-                            <tooltip>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</tooltip>
+                            <tooltip>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TIG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>

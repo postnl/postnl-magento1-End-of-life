@@ -36,18 +36,41 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_InfoBox
-    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-{
-    /**
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_infobox';
+?>
+<?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
+<?php if ($_helper->canUsePakjeGemak(false, true) || $_helper->canUsePakketAutomaat(true)): ?>
+    <li id="postnl_billing_pickup_notification" style="display:none;">
+        <em><?php echo $this->__('You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.'); ?></em>
+    </li>
+    <li id="postnl_shipping_pickup_notification">
+        <em><?php echo $this->__('You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.'); ?></em>
+    </li>
 
-    /**
-     * Template file used
-     *
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/system/config/form/field/info_box.phtml';
-}
+    <script type="text/javascript">
+        //<![CDATA[
+        try {
+            var billingNotification = $('postnl_billing_pickup_notification');
+            var shippingNotification = $('postnl_shipping_pickup_notification');
+
+            $$('#co-billing-form ul')[0].insert({
+                bottom : billingNotification
+            });
+            $$('#co-shipping-form ul')[0].insert({
+                bottom : shippingNotification
+            });
+
+            var toggleBillingNotification = function () {
+                if ($$('input[name="billing[use_for_shipping]"]:checked')[0].getValue() == 1) {
+                    billingNotification.show();
+                } else {
+                    billingNotification.hide();
+                }
+            };
+            $$('#co-billing-form .control').invoke('observe', 'change', toggleBillingNotification);
+            toggleBillingNotification();
+        } catch(e) {
+            console.error(e);
+        }
+        //]]>
+    </script>
+<?php endif; ?>

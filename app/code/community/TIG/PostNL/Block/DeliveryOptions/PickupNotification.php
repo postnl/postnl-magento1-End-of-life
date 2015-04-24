@@ -35,19 +35,28 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                             hasApiKey()
+ * @method TIG_PostNL_Block_DeliveryOptions_Js setApiKey()
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_InfoBox
-    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
+class TIG_PostNL_Block_DeliveryOptions_PickupNotification extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
      * @var string
      */
-    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_infobox';
+    protected $_eventPrefix = 'postnl_deliveryoptions_pickupnotification';
 
     /**
-     * Template file used
+     * Render the template if allowed.
      *
-     * @var string
+     * @return string
      */
-    protected $_template = 'TIG/PostNL/system/config/form/field/info_box.phtml';
+    protected function _toHtml()
+    {
+        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+            return '';
+        }
+
+        return parent::_toHtml();
+    }
 }
