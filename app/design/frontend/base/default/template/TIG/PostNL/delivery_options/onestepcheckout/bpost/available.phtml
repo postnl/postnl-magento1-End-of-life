@@ -1,0 +1,260 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $this
+ */
+?>
+<script type="text/javascript">
+    //<![CDATA[
+    if (window.deliveryOptions) {
+        window.deliveryOptions.reset();
+        window.deliveryOptions = false;
+    }
+    //]]>
+</script>
+<?php $_methodName = ''; ?>
+<?php if (!($_shippingRateGroups = $this->getShippingRates())): ?>
+    <strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong>
+<?php else: ?>
+    <?php $_deliveryOptionsShown = false; ?>
+    <?php $_canUseDeliveryOptions = false; ?>
+    <?php $_store = $this->getQuote()->getStore(); ?>
+    <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
+    <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
+
+    <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
+        && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+        <?php $_canUseDeliveryOptions = true; ?>
+    <?php endif; ?>
+    <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
+        <dl class="shipment-methods" style="display: none">
+
+            <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+            <dd><?php echo $this->getCarrierName($code) ?></dd>
+                <?php foreach ($_rates as $_rate): ?>
+                    <?php $_isPostnl = false; ?>
+                    <?php if (!$_deliveryOptionsShown
+                        && $_canUseDeliveryOptions
+                        && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())): ?>
+                        <?php $_isPostnl = true; ?>
+                    <?php endif; ?>
+
+                    <dt <?php if($_isPostnl): ?>id="carrier_postnl"<?php endif; ?> style="margin-bottom: 5px;">
+
+                   <?php if ($_rate->getErrorMessage()): ?>
+                   <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
+                   <?php else: ?>
+                        <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
+                        <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
+                   <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" />
+                   <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
+                        <strong>
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php echo $_excl; ?>
+                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                            (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                        <?php endif; ?>
+                        </strong>
+                    </label>
+
+                    <?php if ($_isPostnl && $this->getChild('postnl.osc.delivery.options')): ?>
+                        <div class="postnl-container" id="postnl_container" style="display:none;">
+                            <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
+                        </div>
+                        <?php $_deliveryOptionsShown = true; ?>
+                    <?php endif; ?>
+                   <?php endif ?>
+                   </dt>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </dl>
+    <?php else: ?>
+        <dl class="shipment-methods">
+            <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+                <dd><?php echo $this->getCarrierName($code) ?></dd>
+                    <?php foreach ($_rates as $_rate): ?>
+                        <?php $_isPostnl = false; ?>
+                        <?php if (!$_deliveryOptionsShown
+                            && $_canUseDeliveryOptions
+                            && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())): ?>
+                            <?php $_isPostnl = true; ?>
+                        <?php endif; ?>
+
+                        <dt <?php if($_isPostnl): ?>id="carrier_postnl"<?php endif; ?> style="margin-bottom: 5px;" class="<?php echo $code ?>">
+
+                           <?php if ($_rate->getErrorMessage()): ?>
+                            <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
+                           <?php else: ?>
+                                <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
+                                <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
+
+                                <input name="shipping_method" type="radio" class="validate-one-required-by-name" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> />
+                                <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
+                                <strong>
+                                <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                                <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+
+                                <?php echo $_excl; ?>
+                                <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                    (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                                <?php endif; ?>
+                                </strong>
+                                </label>
+
+                                <?php if ($_isPostnl && $this->getChild('postnl.osc.delivery.options')): ?>
+                                    <div class="postnl-container" id="postnl_container" style="display:none;">
+                                        <?php echo $this->getChild('postnl.osc.delivery.options')->setRate($_rate)->toHtml(); ?>
+                                    </div>
+                                    <?php $_deliveryOptionsShown = true; ?>
+                                    <?php $_methodName = 's_method_' . $_rate->getCode(); ?>
+                                <?php endif; ?>
+
+                           <?php endif ?>
+                        </dt>
+                    <?php endforeach; ?>
+            <?php endforeach; ?>
+        </dl>
+    <?php endif; ?>
+<?php endif; ?>
+<script type="text/javascript">
+    //<![CDATA[
+    function get_separate_save_methods_function(url, update_payments)
+    {
+        if(typeof update_payments == 'undefined')    {
+            var update_payments = false;
+        }
+
+        return function(e)    {
+            if(typeof e != 'undefined')    {
+                var element = e.element();
+
+                if(element.name != 'shipping_method')    {
+                    update_payments = false;
+                }
+            }
+
+            var form = $('onestepcheckout-form');
+            var shipping_method = $RF(form, 'shipping_method');
+            var payment_method = $RF(form, 'payment[method]');
+            var totals = get_totals_element();
+
+            var freeMethod = $('p_method_free');
+            if(freeMethod){
+                payment.reloadcallback = true;
+                payment.countreload = 1;
+            }
+
+            totals.update('<div class="loading-ajax">&nbsp;</div>');
+
+            if(update_payments)    {
+                var payment_methods = $$('div.payment-methods')[0];
+                payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
+            }
+
+            var parameters = {
+                shipping_method: shipping_method,
+                payment_method: payment_method
+            };
+
+            var onlyStatedAddressOption = $$('#<?php echo $_methodName; ?>_only_stated_address_option input')[0];
+            if (onlyStatedAddressOption) {
+                parameters[onlyStatedAddressOption.name] = onlyStatedAddressOption.getValue();
+            }
+
+            /* Find payment parameters and include */
+            var items = $$('input[name^=payment]').concat($$('select[name^=payment]'));
+            var names = items.pluck('name');
+            var values = items.pluck('value');
+
+            for(var x=0; x < names.length; x++)    {
+                if(names[x] != 'payment[method]')    {
+                    parameters[names[x]] = values[x];
+                }
+            }
+
+            new Ajax.Request(url, {
+                method: 'post',
+                onSuccess: function(transport)    {
+                    if(transport.status == 200)    {
+                        var data = transport.responseText.evalJSON();
+                        var form = $('onestepcheckout-form');
+
+                        totals.update(data.summary);
+
+                        if(update_payments)    {
+
+                            payment_methods.replace(data.payment_method);
+
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(url));
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function() {
+                                $$('div.onestepcheckout-payment-method-error').each(function(item) {
+                                    new Effect.Fade(item);
+                                });
+                            });
+
+                            if($RF($('onestepcheckout-form'), 'payment[method]') != null)    {
+                                try    {
+                                    var payment_method = $RF(form, 'payment[method]');
+                                    $('container_payment_method_' + payment_method).show();
+                                    $('payment_form_' + payment_method).show();
+                                } catch(err)    {
+
+                                }
+                            }
+                        }
+                    }
+                },
+                parameters: parameters
+            });
+        }
+    }
+
+    document.observe('dom:loaded', function() {
+        shm.show = function() {
+            $('bpost-radio-btn').checked = true;
+            startformUrl = shm.startformUrl;
+            setTimeout(function() {
+                if (!$('GB_window')) {
+                    GB_show('bpost', startformUrl, 522, 800);
+                }
+            }, 500);
+        };
+    });
+    //]]>
+</script>

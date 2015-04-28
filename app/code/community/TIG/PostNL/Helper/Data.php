@@ -259,7 +259,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @var string[]
      */
-    protected $_storeTimeZones = array();
+    protected $_storeTimeZones;
 
     /**
      * Get required fields array.
@@ -432,6 +432,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getStoreTimeZones()
     {
+        /**
+         * Get the stored store time zones.
+         */
+        $storeTimeZones = $this->_storeTimeZones;
+
+        /**
+         * If no store time zones are stored, try to get them from the PostNL cache.
+         */
+        if (is_null($storeTimeZones) && $this->getCache()) {
+            $storeTimeZones = $this->getCache()->getStoreTimeZones();
+
+            if (is_array($storeTimeZones)) {
+                $this->_storeTimeZones = $storeTimeZones;
+            } else {
+                $this->_storeTimeZones = array();
+            }
+        } elseif (is_null($storeTimeZones)) {
+            $this->_storeTimeZones = array();
+        }
+
         return $this->_storeTimeZones;
     }
 
@@ -942,10 +962,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 return false;
             }
 
+            $product = $item->getProduct();
+            /**
+             * @todo optimize this code.
+             */
+            if (!$product) {
+                $product = Mage::getModel('catalog/product')->load($item->getProductId());
+            }
+
             /**
              * The max qty attribute is only available on simple products.
              */
-            if ($item->getProduct()->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+            if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
                 continue;
             }
 
@@ -2495,7 +2523,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $errorMessage .= ' <a href="'
                 . $link
                 . '" target="_blank" class="postnl-message">'
-                . $this->__('Click here for more information from the TiG knowledgebase.')
+                . $this->__('Click here for more information from the TIG knowledgebase.')
                 . '</a>';
         }
 
@@ -2526,5 +2554,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Save the stored time zones to the PostNl cache.
+     */
+    public function __destruct()
+    {
+        if ($this->getStoreTimeZones() && $this->getCache()) {
+            $this->getCache()
+                 ->setStoreTimeZones($this->getStoreTimeZones())
+                 ->saveCache();
+        }
     }
 }

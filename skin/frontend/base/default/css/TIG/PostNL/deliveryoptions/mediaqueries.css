@@ -55,7 +55,7 @@
 
     .tooltip-container { display:none !important; }
     .responsive-tooltip { display:block; }
-    .responsive-tooltip-open { display:block; width:19px; height:19px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent:-9999em; float:right; }
+    .responsive-tooltip-open { display: block; position: absolute; right: 5px; top: 0; width: 19px; height: 19px; background: url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent: -9999em; float: right; }
     .close-wrapper { text-align:center; }
     .responsive-tooltip-close { display:inline-block; width:20px; height:12px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip_close.png) 0 0 no-repeat; text-indent:-9999em; margin-top:6px; }
     .responsive-tooltip { margin:-2px 0 2px; width:100%; overflow:hidden; transition:all .5s cubic-bezier(0, 1, 0.5, 1); -webkit-transition:all .5s cubic-bezier(0, 1, 0.5, 1); -moz-transition:all .5s cubic-bezier(0, 1, 0.5, 1); max-height:250px; }
@@ -189,6 +189,7 @@
         background:none;
     }
     .option-list .location {
+        position: relative;
         background:#666;
         padding:0 8px;
         -webkit-border-radius:3px;

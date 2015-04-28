@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Adminhtml_Shipment
@@ -1524,6 +1524,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             }
 
             /**
+             * Printing many labels can take a while, therefore we need to disable the PHP execution time limit.
+             */
+            set_time_limit(0);
+
+            /**
              * Load the shipments and check if they are valid
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
@@ -1786,6 +1791,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     'POSTNL-0014'
                 );
             }
+
+            /**
+             * Printing many labels can take a while, therefore we need to disable the PHP execution time limit.
+             */
+            set_time_limit(0);
 
             /**
              * Load the shipments and check if they are valid.

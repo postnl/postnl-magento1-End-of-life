@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -270,6 +270,16 @@
     document.observe('postnl:selectOptionSaved', function() {
         checkout.reloadProgressBlock('shipping_method');
         checkout.reloadProgressBlock('postnl_deliveryoptions');
+
+        var shippingProgressElements = $$('#shipping-progress-opcheckout dt,#shipping-progress-opcheckout dd');
+        if (deliveryOptions.selectedType == 'PG'
+            || deliveryOptions.selectedType == 'PGE'
+            || deliveryOptions.selectedType == 'PA'
+        ) {
+            shippingProgressElements.invoke('hide');
+        } else {
+            shippingProgressElements.invoke('show');
+        }
     });
 
     /**
@@ -289,54 +299,56 @@
         }
     }
 
-    Object.extend(shippingMethod, {
-        save: function(){
-            if (checkout.loadWaiting!=false) return;
-            if (this.validate()) {
-                var continueWithSave;
-                var selectedShippingMethod = $$('#co-shipping-method-form input:checked[name="shipping_method"]')[0];
-                if (selectedShippingMethod.identify() == '<?php echo $_methodName ? $_methodName : 's_method_postnl_flatrate'; ?>') {
-                    if (postnlDebugMode) {
-                        console.info('Selected shipping method is linked to PostNL delivery options.');
+    if (typeof deliveryOptions != 'undefined') {
+        Object.extend(shippingMethod, {
+            save : function () {
+                if (checkout.loadWaiting != false) return;
+                if (this.validate()) {
+                    var continueWithSave;
+                    var selectedShippingMethod = $$('#co-shipping-method-form input:checked[name="shipping_method"]')[0];
+                    if (selectedShippingMethod.identify() == '<?php echo $_methodName ? $_methodName : 's_method_postnl_flatrate'; ?>') {
+                        if (postnlDebugMode) {
+                            console.info('Selected shipping method is linked to PostNL delivery options.');
+                        }
+                        continueWithSave = false;
+                    } else {
+                        if (postnlDebugMode) {
+                            console.info('Selected shipping method is not linked to PostNL delivery options.');
+                        }
+                        continueWithSave = true;
                     }
-                    continueWithSave = false;
-                } else {
-                    if (postnlDebugMode) {
-                        console.info('Selected shipping method is not linked to PostNL delivery options.');
+
+                    if (typeof deliveryOptions != 'undefined' && deliveryOptions && !continueWithSave) {
+                        continueWithSave = deliveryOptions.saveSelectedOption();
+                    } else {
+                        continueWithSave = true;
                     }
-                    continueWithSave = true;
-                }
 
-                if (deliveryOptions && !continueWithSave) {
-                    continueWithSave = deliveryOptions.saveSelectedOption();
-                } else {
-                    continueWithSave = true;
-                }
-
-                if (continueWithSave && postnlDebugMode) {
-                    console.info('Saving the shipping method is allowed.');
-                } else if (postnlDebugMode) {
-                    console.info('Saving the shipping method is not allowed.');
-                }
-
-                if (!continueWithSave) {
-                    return;
-                }
-
-                checkout.setLoadWaiting('shipping-method');
-                new Ajax.Request(
-                    this.saveUrl,
-                    {
-                        method:'post',
-                        onComplete: this.onComplete,
-                        onSuccess: this.onSave,
-                        onFailure: checkout.ajaxFailure.bind(checkout),
-                        parameters: Form.serialize(this.form)
+                    if (continueWithSave && postnlDebugMode) {
+                        console.info('Saving the shipping method is allowed.');
+                    } else if (postnlDebugMode) {
+                        console.info('Saving the shipping method is not allowed.');
                     }
-                );
+
+                    if (!continueWithSave) {
+                        return;
+                    }
+
+                    checkout.setLoadWaiting('shipping-method');
+                    new Ajax.Request(
+                        this.saveUrl,
+                        {
+                            method     : 'post',
+                            onComplete : this.onComplete,
+                            onSuccess  : this.onSave,
+                            onFailure  : checkout.ajaxFailure.bind(checkout),
+                            parameters : Form.serialize(this.form)
+                        }
+                    );
+                }
             }
-        }
-    });
+        });
+    }
 
     <?php if ($_canUseResponsive): ?>
         /**
