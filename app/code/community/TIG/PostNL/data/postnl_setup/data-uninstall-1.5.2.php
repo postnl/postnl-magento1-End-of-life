@@ -91,7 +91,7 @@ $ds = DIRECTORY_SEPARATOR;
 $xmlLocation = 'app' . $ds . 'etc' . $ds . 'modules' . $ds . 'TIG_PostNL.xml';
 
 // Check if the file exists and is writable
-if (file_exists($xmlFile)) {
+if (file_exists($xmlLocation)) {
     // If $xmlLocation is_writable, we can load the XML file, change it and then save it
     $writable = is_writable($xmlLocation);
     if ($writable) {
