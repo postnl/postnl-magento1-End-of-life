@@ -40,22 +40,33 @@
 /** @var TIG_PostNL_Model_Resource_Setup $this */
 $installer = $this;
 
-$config = Mage::getConfig();
-$config->deleteConfig('crontab/jobs/postnl_update_shipping_status/schedule/cron_expr');
-$config->deleteConfig('crontab/jobs/postnl_update_shipping_status/run/model');
-$config->deleteConfig('crontab/jobs/postnl_update_statistics/schedule/cron_expr');
-$config->deleteConfig('crontab/jobs/postnl_update_statistics/run/model');
-$config->deleteConfig('crontab/jobs/postnl_update_product_attribute/schedule/cron_expr');
-$config->deleteConfig('crontab/jobs/postnl_update_product_attribute/run/model');
-$config->deleteConfig('crontab/jobs/postnl_update_return_status/schedule/cron_expr');
-$config->deleteConfig('crontab/jobs/postnl_update_return_status/run/model');
-$config->deleteConfig('crontab/jobs/postnl_update_date_time_zone/schedule/cron_expr');
-$config->deleteConfig('crontab/jobs/postnl_update_date_time_zone/run/model');
+/** @var TIG_PostNL_Helper_Data $helper */
+$helper = Mage::helper('postnl');
 
+// First delete table row
 $installer->deleteTableRow($installer->getTable('core/resource'), 'code', 'postnl_setup');
 
-//Attributes to be deleted
-$deleteArray = array(
+// These are the cronjobs we're going to delete
+$config = Mage::getConfig();
+$deleteCronjobs = array(
+    'crontab/jobs/postnl_update_shipping_status/schedule/cron_expr',
+    'crontab/jobs/postnl_update_shipping_status/run/model',
+    'crontab/jobs/postnl_update_statistics/schedule/cron_expr',
+    'crontab/jobs/postnl_update_statistics/run/model',
+    'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr',
+    'crontab/jobs/postnl_update_product_attribute/run/model',
+    'crontab/jobs/postnl_update_return_status/schedule/cron_expr',
+    'crontab/jobs/postnl_update_return_status/run/model',
+    'crontab/jobs/postnl_update_date_time_zone/schedule/cron_expr',
+    'crontab/jobs/postnl_update_date_time_zone/run/model',
+);
+// And then we delete them
+foreach ($deleteCronjobs as $cron) {
+    $config->deleteConfig($cron);
+}
+
+// These are the attributes we're going to delete
+$deleteAttributes = array(
     'postnl_shipping_duration',
     'postnl_allow_delivery_options',
     'postnl_max_qty_for_buspakje',
@@ -64,22 +75,40 @@ $deleteArray = array(
     'postnl_allow_pakje_gemak',
     'postnl_allow_pakketautomaat'
 );
-
-//Delete the attributes
-foreach($deleteArray as $deleteElement){
-    $setup = Mage::getResourceModel('catalog/setup', 'core_setup');
+// And then we (try to) delete them
+foreach($deleteAttributes as $attribute){
     try {
-        $setup->startSetup();
-        $setup->removeAttribute('catalog_product', $deleteElement);
-        $setup->endSetup();
+        $installer->removeAttribute('catalog_product', $attribute);
     } catch (Mage_Core_Exception $e) {
-        print_r($e->getMessage());
+        // Log that we couldn't remove the attribute, but do continue
+        $message = $helper->__('PostNL uninstall failed on removing product attribute: %s', $attribute);
+        $helper->log($message);
     }
 }
 
-//Load TIG_PostNL.xml file and set active to false
-$TigPostNlXml = simplexml_load_file('app/etc/modules/TIG_PostNL.xml');
-if($TigPostNlXml) {
-    $TigPostNlXml->modules->TIG_PostNL->active = 'false';
-    file_put_contents('app/etc/modules/TIG_PostNL.xml', $TigPostNlXml->asXML());
+// Load TIG_PostNL.xml file and set active to false
+$ds = DIRECTORY_SEPARATOR;
+$xmlLocation = 'app' . $ds . 'etc' . $ds . 'modules' . $ds . 'TIG_PostNL.xml';
+
+// Check if the file exists and is writable
+if (file_exists($xmlFile)) {
+    // If $xmlLocation is_writable, we can load the XML file, change it and then save it
+    $writable = is_writable($xmlLocation);
+    if ($writable) {
+        // Load the XML
+        $xml = simplexml_load_file($xmlLocation);
+        $xml->modules->TIG_PostNL->active = 'false';
+        // Suppress errors in case of the file not being writable after all (which should not happen)
+        $writable = @file_put_contents($xmlLocation, $xml->asXML());
+    }
+    // If either $writable is false due to is_writable or because file_put_contents failed, we're going to log a message
+    if ($writable === false) {
+        // Log that we really couldn't write the file
+        $message = $helper->__('PostNL uninstall found but could not write to XML file: %s', $xmlLocation);
+        $helper->log($message);
+    }
+} else {
+    // Log that the file doesn't exist or isn't writable
+    $message = $helper->__('PostNL uninstall could not find or XML file: %s', $xmlLocation);
+    $helper->log($message);
 }
