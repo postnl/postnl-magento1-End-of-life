@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_Label setLabelSize(string $value)
@@ -466,7 +466,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @param array|TIG_PostNL_Model_Core_Shipment_Label $labels May be an array of labels or a single
      *                                                           TIG_PostNL_Model_Core_Shipment_Label label.
      *
-     * @return $this
+     * @return string
      *
      * @see TIG_PostNL_Fpdf
      * @see TIG_PostNL_Fpdi

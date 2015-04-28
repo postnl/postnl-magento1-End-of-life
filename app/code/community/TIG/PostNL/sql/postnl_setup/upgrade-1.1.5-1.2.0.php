@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -96,7 +96,9 @@ if (!$conn->tableColumnExists($tableName, 'is_pakketautomaat')) {
 /**
  * Modify the shipment_type column to avoid confusion with the PostNL order's 'type' column.
  */
-if ($conn->tableColumnExists($tableName, 'shipment_type')) {
+if ($conn->tableColumnExists($tableName, 'shipment_type')
+    && !$conn->tableColumnExists($tableName, 'globalpack_shipment_type')
+) {
     $conn->changeColumn(
         $tableName,
         'shipment_type',

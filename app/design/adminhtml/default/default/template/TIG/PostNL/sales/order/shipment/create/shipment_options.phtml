@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -52,9 +52,10 @@
 <?php $_isDutchShipment       = (bool) $_cifHelper->isDutchShipment($_shipment); ?>
 <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
+<?php $_isAvond               = (bool) $_cifHelper->isAvondShipment($_shipment); ?>
 <?php $_parcelCount           = $this->getParcelCount(); ?>
 <div id="postnl_product_options">
-    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDutchShipment && !$_isCod && !$_isPakjeGemak): ?>
+    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDutchShipment && !$_isCod && !$_isPakjeGemak && !$_isAvond): ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
         <?php $_buspakjeCalcMode = $this->getBuspakjeCalcMode(); ?>
         <div id="postnl_is_buspakje_container" <?php if ($_buspakjeCalcMode == 'automatic'): ?>style="display:none;"<?php endif; ?>>
@@ -181,6 +182,8 @@
             before: $('postnl_product_options')
         });
 
+        toggleExtraCoverField();
+
         var isBuspakjeField      = $('postnl_is_buspakje');
         var isBuspakjeCheckbox   = $('postnl_is_buspakje_checkbox');
         var parcelCountContainer = $('postnl_parcel_count_container');
@@ -210,8 +213,6 @@
         } else if (parcelCountContainer) {
             parcelCountContainer.show();
         }
-
-        toggleExtraCoverField();
 
         <?php if (isset($_buspakjeCalcMode) && $_buspakjeCalcMode == 'automatic'): ?>
             var showBuspakjeToggle = function() {

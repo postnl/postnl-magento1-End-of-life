@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Order
@@ -55,6 +55,8 @@
  * @method array|boolean               getUnserializedOptions()
  * @method string                      getExpectedDeliveryTimeStart()
  * @method string                      getExpectedDeliveryTimeEnd()
+ * @method string                      getUpdatedAt()
+ * @method string                      getCreatedAt()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -97,6 +99,15 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const MOBILE_PHONE_NUMBER_PREFIX_REGEX       = '/^(06|00316){1}(.*?)$/i';
     const MOBILE_PHONE_NUMBER_PREFIX_REPLACEMENT = '+316$2';
     const MOBILE_PHONE_NUMBER_CONTENT_REGEX      = '/[^0-9+]/';
+
+    /**
+     * Available types.
+     */
+    const TYPE_OVERDAG = 'Overdag';
+    const TYPE_AVOND   = 'Avond';
+    const TYPE_PG      = 'PG';
+    const TYPE_PGE     = 'PGE';
+    const TYPE_PA      = 'PA';
 
     /**
      * Prefix of model events names.

@@ -32,7 +32,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 var varienForm = new Class.create();
@@ -528,6 +528,16 @@ FormElementDependenceController.prototype = {
                 if (!from || valuesFrom[idFrom].indexOf(from.value) == -1) {
                     shouldShowUp = false;
                 }
+            } else if ((typeof valuesFrom[idFrom]) == 'object' && valuesFrom[idFrom].eval) {
+                var fromValue = from.value;
+
+                if (from.type == 'checkbox') {
+                    fromValue = from.checked ? '1' : '0';
+                }
+
+                if (!eval(valuesFrom[idFrom].eval.replace('{{value}}', fromValue))) {
+                    shouldShowUp = false;
+                }
             } else {
                 if (from && from.type == 'checkbox') {
                     var shouldBeChecked = (valuesFrom[idFrom] === '1');
@@ -561,4 +571,4 @@ FormElementDependenceController.prototype = {
             $(idTo).up(this._config.levels_up).hide();
         }
     }
-}
+};

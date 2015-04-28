@@ -33,10 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_hideNotificationUrl = $this->getUrl('postnl_admin/adminhtml_config/hideNotification'); ?>
+
 <div id="print_label_spinner" class="waiting-notification" style="display:none;">
     <div class="content">
         <img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="spinner" />
@@ -110,6 +112,25 @@
                 }
             }
         });
+
+        var hideNotification = function(event) {
+            event.stop();
+
+            var element = Event.element(event);
+            var notificationCode = element.getAttribute('data-notification_code');
+
+            new Ajax.Request('<?php echo $_hideNotificationUrl; ?>', {
+                method : 'post',
+                parameters : {
+                    notification_code : notificationCode
+                },
+                onSuccess : function() {
+                    element.up('.module-message').fade();
+                }
+            });
+        };
+
+        $$('.postnl-hide-notification-link').invoke('observe', 'click', hideNotification.bindAsEventListener());
     });
     printLabel = function(url) {
         $$('body')[0].addClassName('no-scroll').scrollTo();
