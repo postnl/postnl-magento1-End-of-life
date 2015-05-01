@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -4462,6 +4462,13 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-webservice-version</validate>
                         </cif_version_location>
+                        <uninstall_button>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_uninstallButton</frontend_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </uninstall_button>
                     </fields>
                 </advanced>
             </groups>
