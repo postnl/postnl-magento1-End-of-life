@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
+class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 {
     /**
      * Cron expression and cron model definitions for shipping_status cron
