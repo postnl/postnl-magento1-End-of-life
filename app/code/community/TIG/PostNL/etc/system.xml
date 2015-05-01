@@ -1057,7 +1057,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
@@ -1075,7 +1075,7 @@
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
                                 <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
@@ -1093,7 +1093,7 @@
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
                                 <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
@@ -1110,7 +1110,7 @@
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
                                 <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
@@ -1128,7 +1128,7 @@
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
                                 <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
@@ -1348,7 +1348,7 @@
                             <depends>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1379,7 +1379,7 @@
                             <depends>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1397,7 +1397,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1416,7 +1416,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1434,7 +1434,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1453,7 +1453,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1472,7 +1472,7 @@
                                 <enable_delivery_days>1</enable_delivery_days>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1492,7 +1492,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1513,7 +1513,7 @@
                                 <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1535,7 +1535,7 @@
                                 <enable_evening_timeframes>1</enable_evening_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1554,7 +1554,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1574,7 +1574,7 @@
                                 <enable_pakjegemak>1</enable_pakjegemak>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1595,7 +1595,7 @@
                                 <enable_pakjegemak_express>1</enable_pakjegemak_express>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1614,7 +1614,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1633,7 +1633,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1654,7 +1654,7 @@
                                 <buspakje_calculation_mode>automatic</buspakje_calculation_mode>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1676,7 +1676,7 @@
                                 <show_options_for_buspakje>1</show_options_for_buspakje>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1699,7 +1699,7 @@
                                 <enable_delivery_days>1</enable_delivery_days>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1723,7 +1723,7 @@
                                 <enable_pakjegemak>1</enable_pakjegemak>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1747,7 +1747,7 @@
                                 <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1763,7 +1763,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1782,7 +1782,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1801,7 +1801,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1819,7 +1819,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1835,7 +1835,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1854,7 +1854,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1873,7 +1873,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1893,7 +1893,7 @@
                                 <mijnpakket_notification>1</mijnpakket_notification>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
@@ -1913,7 +1913,7 @@
                                 <mijnpakket_notification>1</mijnpakket_notification>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
