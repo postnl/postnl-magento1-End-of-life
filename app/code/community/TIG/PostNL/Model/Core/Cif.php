@@ -403,9 +403,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!is_object($response)
-            || !isset($response->Barcode)
-        ) {
+        if (!isset($response->Barcode)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid barcode response: %s', "\n" . var_export($response, true)),
                 'POSTNL-0054'
@@ -443,8 +441,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!is_object($response)
-            || !isset($response->Shipments)
+        if (!isset($response->Shipments)
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
             throw new TIG_PostNL_Exception(
@@ -509,8 +506,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!is_object($response)
-            || !isset($response->Shipments)
+        if (!isset($response->Shipments)
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
             throw new TIG_PostNL_Exception(
@@ -678,8 +674,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!is_object($response)
-            || !isset($response->Labels)
+        if (!isset($response->Labels)
             || !is_object($response->Labels)
         ) {
             throw new TIG_PostNL_Exception(
@@ -770,8 +765,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!is_object($response)
-            || !isset($response->Labels)
+        if (!isset($response->Labels)
             || !is_object($response->Labels)
         ) {
             throw new TIG_PostNL_Exception(
@@ -895,12 +889,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Get and format this shipment's delivery date if available.
          */
-        $deliveryDate = $postnlShipment->getDeliveryDate();
-        if ($deliveryDate) {
-            $deliveryTime = new DateTime($deliveryDate);
-            $deliveryTime->setTimezone(new DateTimeZone('Europe/Berlin'));
+        $deliveryDate = null;
+        if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryDays(false)) {
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+            if ($deliveryDate) {
+                $deliveryTime = new DateTime($deliveryDate);
+                $deliveryTime->setTimezone(new DateTimeZone('Europe/Berlin'));
 
-            $deliveryDate = $deliveryTime->format('d-m-Y H:i:s');
+                $deliveryDate = $deliveryTime->format('d-m-Y H:i:s');
+            }
         }
 
         $reference = $this->_getReference($shipment);
