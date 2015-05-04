@@ -682,9 +682,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Create a DateTime object for the order date with the cut off time for comparison.
          */
-        $utcTimeZone = new DateTimeZone('UTC');
+        $europeBerlinTimeZone = new DateTimeZone('Europe/Berlin');
+        $utcTimeZone          = new DateTimeZone('UTC');
 
-        $cutOffDate = clone $orderDate;
+        $cutOffDate = new DateTime('now', $europeBerlinTimeZone);
         $cutOffDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2])
                    ->setTimezone($utcTimeZone);
 

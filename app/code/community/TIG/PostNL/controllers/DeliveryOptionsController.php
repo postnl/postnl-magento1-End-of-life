@@ -292,13 +292,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        if (!$this->_canUseDeliveryOptions()) {
-            $this->getResponse()
-                 ->setBody('not_allowed');
-
-            return $this;
-        }
-
         $params = $this->getRequest()->getPost();
 
         try {
