@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -1118,7 +1118,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>develop</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
