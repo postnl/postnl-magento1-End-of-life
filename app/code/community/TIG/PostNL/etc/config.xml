@@ -592,6 +592,16 @@
                     </checkout_shipping_method_save_options>
                 </observers>
             </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
+			<controller_action_predispatch_gomage_checkout_onepage_ajax>
+                <observers>
+                    <!-- Set a registry flag to prevent the PostNL order from being reset. -->
+                    <set_registry_flag>
+                        <type>model</type>
+                        <class>postnl_deliveryoptions/observer_goMage_lightCheckout_ajax</class>
+                        <method>setRegistryFlag</method>
+                    </set_registry_flag>
+                </observers>
+			</controller_action_predispatch_gomage_checkout_onepage_ajax>
         </events>
     </frontend>
 

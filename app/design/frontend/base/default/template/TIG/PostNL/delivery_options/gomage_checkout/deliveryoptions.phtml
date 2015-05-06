@@ -39,7 +39,7 @@
 ?>
 <?php
 /**
- * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $this
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions $this
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
@@ -569,6 +569,25 @@
             });
         }
 
+        <?php if (!$this->isPostcodeAjaxEnabled()): ?>
+            var billingPostcodeField  = $('billing_postcode');
+            var shippingPostcodeField = $('shipping_postcode');
+
+            if (billingPostcodeField) {
+                billingPostcodeField.stopObserving('change');
+                billingPostcodeField.observe('change', function () {
+                    checkout.submit(checkout.getFormData(), 'get_methods');
+                });
+            }
+
+            if (shippingPostcodeField) {
+                shippingPostcodeField.stopObserving('change');
+                shippingPostcodeField.observe('change', function () {
+                    checkout.submit(checkout.getFormData(), 'get_methods');
+                });
+            }
+        <?php endif; ?>
+
         /**
          * After delivery options have loaded, show the default option.
          */
@@ -917,14 +936,11 @@
                 }
             }.bind({elem : e, obj : checkout}));
         }.bind(checkout));
-        console.log('test3');
     };
 
     if (typeof checkout == 'undefined') {
-        console.log('test');
         document.observe('dom:loaded', modifyCheckoutJs);
     } else {
-        console.log('test2');
         modifyCheckoutJs();
     }
     //]]>

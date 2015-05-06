@@ -45,6 +45,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     const BPOST_BLOCK_NAME = 'shippingmanager/onepage_shipping_method_available';
 
     /**
+     *
+     */
+    const IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY = 'IGNORE_POSTNL_ORDER_RESET_FLAG';
+
+    /**
      * @var boolean|null
      */
     protected $_canUseDeliveryOptions = null;
@@ -167,7 +172,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
-        $this->_resetPostnlOrder();
+        $ignorePostnlOrderResetFlag = Mage::registry(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY);
+        if (true !== $ignorePostnlOrderResetFlag) {
+            $this->_resetPostnlOrder();
+        }
 
         if (!$this->getCanUseDeliveryOptions()) {
             return $this;
@@ -293,10 +301,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     protected function _addGoMageDeliveryOptionBlocks(Mage_Checkout_Block_Onepage_Shipping_Method_Available $block)
     {
         /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $firstChild
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions $firstChild
          */
         $firstChild = $block->getLayout()->createBlock(
-            'postnl_deliveryoptions/checkout_deliveryOptions',
+            'postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions',
             'postnl.gomage.delivery.options'
         );
         $firstChild->setTemplate('TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml');
