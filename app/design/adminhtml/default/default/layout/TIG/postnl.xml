@@ -56,6 +56,13 @@
 
     <adminhtml_system_config_edit>
         <reference name="head">
+            <reference name="head">
+                <action method="addItem">
+                    <type>js_css</type>
+                    <name>prototype/windows/themes/default.css</name>
+                </action>
+                <block type="postnl_adminhtml/windowsTheme" name="postnl_order_windows_theme" template="TIG/PostNL/sales/order/windows_theme.phtml" output="toHtml"/>
+            </reference>
             <action method="addItem">
                 <type>skin_css</type>
                 <name>css/TIG/PostNL/system_config_edit.css</name>

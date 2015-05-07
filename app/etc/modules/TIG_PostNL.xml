@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <active>false</active>
+            <active>true</active>
             <codePool>community</codePool>
             <depends>
                 <Mage_Sales/>
