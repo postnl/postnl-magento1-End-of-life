@@ -366,6 +366,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
         return $this;
     }
 
+    /**
+     * Uninstall the PostNl extension.
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     *
+     * @return void
+     */
     public function uninstallAction()
     {
         $setup = Mage::getResourceModel('postnl/setup', 'postnl_setup');
@@ -373,10 +381,12 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
 
         // Set session message that we've been successful
         $title = $this->__('The PostNL extension has been successfully uninstalled.');
-        Mage::getSingleton('core/session')->addSuccess($title);
+        Mage::helper('postnl')->addSessionMessage('core/session', 'POSTNL-0223', 'success', $title);
+
+        $message = Mage::helper('postnl')->getSessionMessage('POSTNL-0223', 'success', $title);
 
         $inbox = Mage::getModel('postnl_admin/inbox');
-        $inbox->addNotice('[POSTNL-0221] ' . $title, $title)
+        $inbox->addNotice($message, $title)
               ->save();
 
         $this->_redirect('adminhtml');
