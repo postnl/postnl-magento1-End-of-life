@@ -635,11 +635,11 @@
         <?php endif; ?>
     }
 
-    <?php if ($_canUseResponsive && false): ?>
+    <?php if ($_canUseResponsive): ?>
         /**
          * Delivery and Pickup switch for Responsive purposes
          */
-        window.siteWidth = $("onestepcheckout-form").offsetWidth;
+        window.siteWidth = $$(".shipping-method")[0].offsetWidth - 34;
 
         window.setSiteWidth = function() {
             if (window.innerWidth < 954) {
@@ -694,12 +694,12 @@
         };
 
         document.observe('postnl:loadingFinished', function() {
-            window.siteWidth = $("onestepcheckout-form").offsetWidth;
+            window.siteWidth = $$(".shipping-method")[0].offsetWidth;
             setSiteWidth();
         });
 
         Event.observe(window, "resize", function() {
-            window.siteWidth = $("onestepcheckout-form").offsetWidth;
+            window.siteWidth = $$(".shipping-method")[0].offsetWidth;
             setSiteWidth();
 
             if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 952) {
@@ -924,6 +924,18 @@
             });
 
             checkout.prepareDeliveryDate();
+        };
+        
+        checkout.applyDisocunt = function (flag) {
+            if (flag) {
+                $('remove_coupone').value = 1;
+                checkout.shippingmethodsSubmit({coupon_code: GlcUrl.encode($('coupon_code').value),
+                    remove: $('remove_coupone').value}, 'discount');
+            } else {
+                $('remove_coupone').value = 0;
+                checkout.shippingmethodsSubmit({coupon_code: GlcUrl.encode($('coupon_code').value),
+                    remove: $('remove_coupone').value}, 'discount');
+            }
         };
 
         $$('#gcheckout-shipping-method-available input').each(function (e) {
