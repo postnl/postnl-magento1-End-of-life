@@ -5208,6 +5208,14 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     renderAsOsc : function() {
         var html = this.render(false, true);
 
+        /**
+         * Remove existing timeframes and locations.
+         */
+        $$('#postnl_add_moment .option-list li.option').invoke('remove');
+
+        /**
+         * Render the selected timeframe or location.
+         */
         $$('#postnl_add_moment .option-list')[0].insert({
             bottom : html
         });

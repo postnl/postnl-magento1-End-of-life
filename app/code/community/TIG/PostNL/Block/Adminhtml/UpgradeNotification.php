@@ -58,7 +58,7 @@ class TIG_PostNL_Block_Adminhtml_UpgradeNotification extends TIG_PostNL_Block_Ad
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
         /**
-         * Check if the cron job has an expression. This will indicate if it is still working or if it has already
+         * Check if the cron job has a cron expression. This will indicate if it is still updating or if it has already
          * finished.
          */
         $attributeCronjob = Mage::getStoreConfig(
@@ -70,7 +70,7 @@ class TIG_PostNL_Block_Adminhtml_UpgradeNotification extends TIG_PostNL_Block_Ad
             $storeId
         );
 
-        if (empty($cronjob) && empty($dateTimeZoneCronjob)) {
+        if (empty($attributeCronjob) && empty($dateTimeZoneCronjob)) {
             return false;
         }
 
