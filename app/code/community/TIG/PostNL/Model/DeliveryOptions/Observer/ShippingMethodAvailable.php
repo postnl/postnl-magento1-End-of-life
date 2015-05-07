@@ -45,6 +45,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     const BPOST_BLOCK_NAME = 'shippingmanager/onepage_shipping_method_available';
 
     /**
+     *
+     */
+    const IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY = 'IGNORE_POSTNL_ORDER_RESET_FLAG';
+
+    /**
      * @var boolean|null
      */
     protected $_canUseDeliveryOptions = null;
@@ -167,7 +172,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
-        $this->_resetPostnlOrder();
+        $ignorePostnlOrderResetFlag = Mage::registry(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY);
+        if (true !== $ignorePostnlOrderResetFlag) {
+            $this->_resetPostnlOrder();
+        }
 
         if (!$this->getCanUseDeliveryOptions()) {
             return $this;
@@ -182,6 +190,12 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
 
             if (!$block->getChild('postnl.osc.delivery.options')) {
                 $block = $this->_addDeliveryOptionBlocks($block);
+            }
+        } elseif (Mage::app()->getRequest()->getModuleName() == 'gomage_checkout') {
+            $template = 'TIG/PostNL/delivery_options/gomage_checkout/available.phtml';
+
+            if (!$block->getChild('postnl.gomage.delivery.options')) {
+                $block = $this->_addGoMageDeliveryOptionBlocks($block);
             }
         }
 
@@ -257,6 +271,50 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         $secondChild = $block->getLayout()->createBlock(
             'core/template',
             'postnl.osc.add.location'
+        );
+        $secondChild->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
+
+        /**
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $thirdChild
+         */
+        $thirdChild = $block->getLayout()->createBlock(
+            'postnl_deliveryoptions/checkout_addPhoneNumber',
+            'postnl.add.phonenumber'
+        );
+        $thirdChild->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
+
+        $secondChild->append($thirdChild);
+        $firstChild->append($secondChild);
+        $block->append($firstChild);
+
+        return $block;
+    }
+
+    /**
+     * Adds the delivery option blocks in case these were not added by the layout XML. This occurs during certain GoMage
+     * LightCheckout AJAX requests that ignore the layout XML and generate blocks manually instead.
+     *
+     * @param Mage_Checkout_Block_Onepage_Shipping_Method_Available $block
+     *
+     * @return Mage_Checkout_Block_Onepage_Shipping_Method_Available
+     */
+    protected function _addGoMageDeliveryOptionBlocks(Mage_Checkout_Block_Onepage_Shipping_Method_Available $block)
+    {
+        /**
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions $firstChild
+         */
+        $firstChild = $block->getLayout()->createBlock(
+            'postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions',
+            'postnl.gomage.delivery.options'
+        );
+        $firstChild->setTemplate('TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml');
+
+        /**
+         * @var Mage_Core_Block_Template $secondChild
+         */
+        $secondChild = $block->getLayout()->createBlock(
+            'core/template',
+            'postnl.gomage.add.location'
         );
         $secondChild->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
 

@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -592,6 +592,16 @@
                     </checkout_shipping_method_save_options>
                 </observers>
             </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
+			<controller_action_predispatch_gomage_checkout_onepage_ajax>
+                <observers>
+                    <!-- Set a registry flag to prevent the PostNL order from being reset. -->
+                    <set_registry_flag>
+                        <type>model</type>
+                        <class>postnl_deliveryoptions/observer_goMage_lightCheckout_ajax</class>
+                        <method>setRegistryFlag</method>
+                    </set_registry_flag>
+                </observers>
+			</controller_action_predispatch_gomage_checkout_onepage_ajax>
         </events>
     </frontend>
 
@@ -1118,7 +1128,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>develop</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

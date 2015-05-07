@@ -184,6 +184,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Save Extra costs associated with a selected option.
      *
+     * @deprecated v1.6.0
+     *
      * @return $this
      */
     public function saveOptionCostsAction()

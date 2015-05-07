@@ -93,7 +93,7 @@
 
     <script type="text/javascript">
         //<![CDATA[
-        var shippingFieldset = $$('.box-right fieldset')[1];
+        var shippingFieldset = $$('.box-right .head-shipping-method')[0].up('.entry-edit').down('fieldset');
 
         shippingFieldset.insert({
             bottom: $('postnl_delivery_option_info')
