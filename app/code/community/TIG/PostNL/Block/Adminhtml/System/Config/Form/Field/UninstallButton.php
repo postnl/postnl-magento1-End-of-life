@@ -79,7 +79,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
                      ->setType('button')
                      ->setClass('scalable postnl-button')
                      ->setLabel($this->__('Permanently disable the PostNL extension'))
-//                     ->setOnClick("confirmSetLocation('" . $confirmText . "', '" . $uninstallUrl . "');")
                      ->setOnClick("openModalConfirm('" . $confirmTitle . "', '" . $confirmText . "', handleConfirmUninstall, '" . $uninstallUrl . "');")
                      ->toHtml();
 

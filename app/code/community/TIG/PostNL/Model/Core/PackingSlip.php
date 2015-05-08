@@ -699,6 +699,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         /**
          * Payment info.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $paymentInfo = Mage::helper('payment')
                            ->getInfoBlock($order->getPayment())
                            ->setIsSecureMode(true)
@@ -772,6 +773,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top -= 10;
 
         $deliveryDate = $postnlShipment->getDeliveryDate();
+        /** @noinspection PhpParamsInspection */
         $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText($text, $x, $top, 'UTF-8');
@@ -793,6 +795,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if ($this->getConfig('show_shipping_date')) {
             $font = $this->_setFontRegular($page, 8);
             $confirmDate = $postnlShipment->getConfirmDate();
+            /** @noinspection PhpParamsInspection */
             $text = $this->getCoreHelper()->formatDate($confirmDate, 'full', false);
             $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
             $page->drawText(
@@ -971,7 +974,6 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $this->y = $addressesStartY;
             foreach ($pakjeGemakAddress as $value){
                 if ($value!=='') {
-                    $text = array();
                     foreach ($this->getStringHelper()->str_split($value, 45, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
@@ -1100,6 +1102,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     public function renderItem(Varien_Object $item, Zend_Pdf_Page $page, Mage_Sales_Model_Order $order, $renderer)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $renderer->setOrder($order)
                  ->setItem($item)
                  ->setPdf($this)
@@ -1200,10 +1203,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
          * @var Mage_Sales_Model_Order_Pdf_Total_Default $total
          */
         foreach ($totals as $total) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $total->setOrder($order)
                   ->setSource($invoice);
 
             if ($total->canDisplay()) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $total->setFontSize(10);
                 foreach ($total->getTotalsForDisplay() as $totalData) {
                     $label = array(
@@ -1222,6 +1227,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                         'height'    => 15,
                     );
 
+                    /** @noinspection PhpUndefinedMethodInspection */
                     if ($total->getSourceField() == 'grand_total') {
                         $label['font'] = 'bold';
                         $value['font'] = 'bold';
