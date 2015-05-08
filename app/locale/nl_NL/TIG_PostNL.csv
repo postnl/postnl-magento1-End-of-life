@@ -1271,3 +1271,8 @@ TIG_PostNL::The PostNL extension has been successfully uninstalled.,De PostNL ex
 TIG_PostNL::PostNL uninstall failed on removing product attribute: %s,PostNL deïnstallatie is vastgelopen op het verwijderen van attribuut: %s
 TIG_PostNL::PostNL uninstall found but could not write to XML file: %s,PostNL deïnstallatie kon niet schrijven naar het XML bestand: %s
 TIG_PostNL::PostNL uninstall could not find or XML file: %s,PostNL deïnstallatie kon het XML bestand niet vinden: %s
+"TIG_PostNL::An error occurred while saving this step of the configuration wizard. Please use the regular ""Save Config"" button instead.","Er is een fout opgetreden bij het opslaan van de configuratie stap. Gebruik s.v.p. de reguliere ""Configuratie Opslaan"" knop."
+TIG_PostNL::Permanently disable the PostNL extension,De PostNL extensie permanent deactiveren
+TIG_PostNL::Uninstall PostNL Extension,PostNL extensie deïnstalleren
+TIG_PostNL::Uninstall the PostNL extension,De PostNL extensie deïnstalleren
+"TIG_PostNL::Click <a href=""http://kb.tig.nl/"" target=""_blank"">here</a> for more information about the uninstall process.","Klik <a href=""http://kb.tig.nl/"" target=""_blank"">hier</a> voor meer informatie over de deïnstallatie procedure."
