@@ -525,6 +525,12 @@
                 <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
                 <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
             </block>
+            <block type="postnl_addressvalidation/goMage_lightCheckout_shipping" name="checkout.onepage.address.shipping" as="shipping" template="TIG/PostNL/address_validation/gomage_checkout/shipping.phtml">
+                <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>
+                <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
+                <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
+                <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+            </block>
         </reference>
 
         <reference name="checkout.onepage.shipping_method.available">

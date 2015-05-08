@@ -163,34 +163,6 @@
             $('billing_country_id').observe('change', function() {
                 postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing_country_id').getValue());
             });
-
-            /**
-             * Extend the shipping object as the default is unable to handle the 'virtual:' field ID prefix.
-             */
-            Object.extend(shipping, {
-                syncWithBilling : function() {
-                    $('billing-address-select') && this.newAddress(!$('billing-address-select').value);
-                    $('shipping_same_as_billing').checked = true;
-                    if (!$('billing-address-select') || !$('billing-address-select').value) {
-                        arrElements = Form.getElements(this.form);
-                        for (var elemIndex in arrElements) {
-                            if (arrElements[elemIndex].id) {
-                                var sourceField = $(arrElements[elemIndex].id.replace(/shipping_/, 'billing_'));
-                                if (sourceField){
-                                    arrElements[elemIndex].value = sourceField.value;
-                                }
-                            }
-                        }
-                        //$('shipping_country_id').value = $('billing_country_id').value;
-                        shippingRegionUpdater.update();
-                        $('shipping_region_id').value = $('billing_region_id').value;
-                        $('shipping_region').value = $('billing_region').value;
-                        //shippingForm.elementChildLoad($('shipping_country_id'), this.setRegionValue.bind(this));
-                    } else {
-                        $('shipping-address-select').value = $('billing-address-select').value;
-                    }
-                }
-            });
         <?php endif; ?>
     };
 
