@@ -2,8 +2,17 @@
 
 class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends GoMage_Checkout_Block_Onepage_Billing
 {
+    /**
+     * @param array $fields
+     *
+     * @return string
+     */
     protected function _renderFields($fields)
     {
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, 'checkout')) {
+            return parent::_renderFields($fields);
+        }
+
         $html = '';
 
         foreach ($fields as $_fields) {

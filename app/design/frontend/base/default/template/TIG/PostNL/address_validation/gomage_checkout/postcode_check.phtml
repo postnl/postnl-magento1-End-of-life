@@ -141,7 +141,9 @@
     <?php endfor; ?>
 
     initPostcodeCheck<?php echo $_addressType; ?> = function() {
-        console.log('test');
+        $('virtual_<?php echo $_addressType; ?>_street2').stopObserving('change');
+        $('virtual_<?php echo $_addressType; ?>_street3').stopObserving('change');
+
         var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
             '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
             '<?php echo $_addressType; ?>',

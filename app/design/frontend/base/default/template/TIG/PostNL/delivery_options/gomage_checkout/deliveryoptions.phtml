@@ -535,58 +535,50 @@
                 postnlDeliveryOptionsDiv.hide();
             });
         }
+        /**
+         * These fields' values are used to determine available delivery options.
+         */
+        if (!$('virtual_billing_street' + streetnameField) && !$('virtual_shipping_street' + streetnameField)) {
+            var fieldsToObserve = [
+                'billing_street' + streetnameField,
+                'shipping_street' + streetnameField,
+                'billing_postcode',
+                'shipping_postcode'
+            ];
 
-        var billingHouseNumberField  = $('billing_street' + housenumberField);
-        var billingStreetField       = $('billing_street' + streetnameField);
-        var shippingHouseNumberField = $('shipping_street' + housenumberField);
-        var shippingStreetField      = $('shipping_street' + streetnameField);
-
-        if (billingHouseNumberField) {
-            billingHouseNumberField.stopObserving('change');
-            billingHouseNumberField.observe('change', function () {
-                checkout.submit(checkout.getFormData(), 'get_methods');
-            });
-        }
-
-        if (shippingHouseNumberField) {
-            shippingHouseNumberField.stopObserving('change');
-            shippingHouseNumberField.observe('change', function () {
-                checkout.submit(checkout.getFormData(), 'get_methods');
-            });
-        }
-
-        if (billingStreetField) {
-            billingStreetField.stopObserving('change');
-            billingStreetField.observe('change', function () {
-                checkout.submit(checkout.getFormData(), 'get_methods');
-            });
-        }
-
-        if (shippingStreetField) {
-            shippingStreetField.stopObserving('change');
-            shippingStreetField.observe('change', function () {
-                checkout.submit(checkout.getFormData(), 'get_methods');
-            });
-        }
-
-        <?php if (!$this->isPostcodeAjaxEnabled()): ?>
-            var billingPostcodeField  = $('billing_postcode');
-            var shippingPostcodeField = $('shipping_postcode');
-
-            if (billingPostcodeField) {
-                billingPostcodeField.stopObserving('change');
-                billingPostcodeField.observe('change', function () {
-                    checkout.submit(checkout.getFormData(), 'get_methods');
-                });
+            if (streetnameField != housenumberField) {
+                fieldsToObserve = fieldsToObserve.concat([
+                    'billing_street' + housenumberField,
+                    'shipping_street' + housenumberField
+                ]);
             }
 
-            if (shippingPostcodeField) {
-                shippingPostcodeField.stopObserving('change');
-                shippingPostcodeField.observe('change', function () {
+            <?php if (!$this->isPostcodeAjaxEnabled()): ?>
+                fieldsToObserve = fieldsToObserve.concat([
+                    'billing_postcode',
+                    'shipping_postcode'
+                ]);
+            <?php endif; ?>
+
+            /**
+             * Reload available delivery options with new address data.
+             */
+            fieldsToObserve.each(function(field) {
+                var element = $(field);
+                if (!element) {
+                    return;
+                }
+
+                element.stopObserving('change');
+                element.observe('change', function() {
+                    if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                        deliveryOptions.timeframeRequest.transport.abort();
+                    }
+
                     checkout.submit(checkout.getFormData(), 'get_methods');
                 });
-            }
-        <?php endif; ?>
+            });
+        }
 
         /**
          * After delivery options have loaded, show the default option.
