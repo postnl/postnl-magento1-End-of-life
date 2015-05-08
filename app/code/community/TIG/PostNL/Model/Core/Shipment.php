@@ -2077,6 +2077,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * @var $barcodeModel TIG_PostNL_Model_Core_Shipment_Barcode
          */
+        /** @noinspection PhpParamsInspection */
         $barcodeModel = Mage::getConfig()->getModelClassName('postnl_core/shipment_barcode');
         $barcodes = $this->getBarcodes(false, $barcodeModel::BARCODE_TYPE_RETURN);
 
@@ -3972,6 +3973,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Add a comment to the order and shipment that the track & trace email has been sent.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->addStatusHistoryComment(
                   $helper->__(
                       'PostNL track & trace email has been sent for shipment #%s.',
@@ -4378,6 +4380,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /** @var Zend_Mail $mail */
         $mail = $transactionalEmail->getMail();
+        /** @noinspection PhpUndefinedClassInspection */
         $mail->createAttachment(
             $returnLabelObject->getData('label_pdf'),
             Zend_Mime::TYPE_OCTETSTREAM,
@@ -4398,6 +4401,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Add a comment to the order and shipment that the return label email has been sent.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->addStatusHistoryComment(
                   $helper->__(
                       'PostNL return label email has been sent for shipment #%s.',
