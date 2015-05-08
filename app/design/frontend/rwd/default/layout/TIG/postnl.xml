@@ -481,23 +481,10 @@
         </reference>
     </onestepcheckout_index_index>
 
-    <!-- DELIVERY OPTIONS -->
-
-    <onestepcheckout_ajax_save_billing>
-        <reference name="choose-shipping-method">
-            <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
-                <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
-                <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
-            </block>
-        </reference>
-    </onestepcheckout_ajax_save_billing>
-
-    <!--  DELIVERY OPTIONS, POSTCODE CHECK AND MIJNPAKKET LOGIN  -->
-
     <gomage_checkout_onepage_index>
         <reference name="head">
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/onestepcheckout.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/gomage_checkout.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/rwd_osc.css</stylesheet></action>
             <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
@@ -507,8 +494,8 @@
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
             <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml">
-                <action method="setIsOsc">
-                    <isOsc>true</isOsc>
+                <action method="setisGoMage">
+                    <isGoMage>true</isGoMage>
                 </action>
             </block>
         </reference>
@@ -524,6 +511,17 @@
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
         </reference>
     </gomage_checkout_onepage_index>
+
+    <!-- DELIVERY OPTIONS -->
+
+    <onestepcheckout_ajax_save_billing>
+        <reference name="choose-shipping-method">
+            <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
+                <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
+            </block>
+        </reference>
+    </onestepcheckout_ajax_save_billing>
 
     <!-- POSTNL COD FEE -->
 

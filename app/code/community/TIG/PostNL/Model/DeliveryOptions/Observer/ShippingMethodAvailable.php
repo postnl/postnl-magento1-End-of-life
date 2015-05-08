@@ -165,6 +165,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          *
          * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $block
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $block = $observer->getBlock();
         $blockClass = $this->getBlockClass();
 
@@ -259,33 +260,34 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $firstChild
          */
-        $firstChild = $block->getLayout()->createBlock(
+        $deliveryOptionsBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_deliveryOptions',
             'postnl.osc.delivery.options'
         );
-        $firstChild->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml');
+        $deliveryOptionsBlock->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml');
 
         /**
-         * @var Mage_Core_Block_Template $secondChild
+         * @var Mage_Core_Block_Template $addLocationBlock
          */
-        $secondChild = $block->getLayout()->createBlock(
+        $addLocationBlock = $block->getLayout()->createBlock(
             'core/template',
             'postnl.osc.add.location'
         );
-        $secondChild->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
+        $addLocationBlock->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
 
         /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $thirdChild
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $addPhoneNumberBlock
          */
-        $thirdChild = $block->getLayout()->createBlock(
+        $addPhoneNumberBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_addPhoneNumber',
             'postnl.add.phonenumber'
         );
-        $thirdChild->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
+        $addPhoneNumberBlock->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
 
-        $secondChild->append($thirdChild);
-        $firstChild->append($secondChild);
-        $block->append($firstChild);
+        $deliveryOptionsBlock->append($addLocationBlock)
+                             ->append($addPhoneNumberBlock);
+
+        $block->append($deliveryOptionsBlock);
 
         return $block;
     }
@@ -301,35 +303,36 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     protected function _addGoMageDeliveryOptionBlocks(Mage_Checkout_Block_Onepage_Shipping_Method_Available $block)
     {
         /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions $firstChild
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions $deliveryOptionsBlock
          */
-        $firstChild = $block->getLayout()->createBlock(
+        $deliveryOptionsBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions',
             'postnl.gomage.delivery.options'
         );
-        $firstChild->setTemplate('TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml');
+        $deliveryOptionsBlock->setTemplate('TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml');
 
         /**
-         * @var Mage_Core_Block_Template $secondChild
+         * @var Mage_Core_Block_Template $addLocationBlock
          */
-        $secondChild = $block->getLayout()->createBlock(
+        $addLocationBlock = $block->getLayout()->createBlock(
             'core/template',
             'postnl.gomage.add.location'
         );
-        $secondChild->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
+        $addLocationBlock->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
 
         /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $thirdChild
+         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $addPhoneNumberBlock
          */
-        $thirdChild = $block->getLayout()->createBlock(
+        $addPhoneNumberBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_addPhoneNumber',
             'postnl.add.phonenumber'
         );
-        $thirdChild->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
+        $addPhoneNumberBlock->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
 
-        $secondChild->append($thirdChild);
-        $firstChild->append($secondChild);
-        $block->append($firstChild);
+        $deliveryOptionsBlock->append($addLocationBlock)
+                             ->append($addPhoneNumberBlock);
+
+        $block->append($deliveryOptionsBlock);
 
         return $block;
     }
@@ -347,6 +350,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
+        /** @noinspection PhpUndefinedClassInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -368,6 +373,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * Make sure we don't end up in an infinite loop.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($block->getTemplate() == 'TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml') {
             return $this;
         }
@@ -377,6 +383,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          * altered.
          */
         if (Mage::getStoreConfig('onestepcheckout/general/rewrite_checkout_links') == 1) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $block->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml');
 
             $this->setBpostBlockModified(true);
@@ -389,9 +396,12 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
              * solution.
              */
             /** @var Varien_Object $transport */
+            /** @noinspection PhpUndefinedMethodInspection */
             $transport = $observer->getTransport();
+            /** @noinspection PhpUndefinedMethodInspection */
             $transport->setHtml($block->renderView());
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $observer->setTransport($transport);
         }
 

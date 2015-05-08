@@ -4487,9 +4487,18 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-webservice-version</validate>
                         </cif_version_location>
-                        <uninstall_button>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_uninstallButton</frontend_model>
+                        <uninstall_header translate="label" module="postnl">
+                            <label>Uninstall the PostNL extension</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </uninstall_header>
+                        <uninstall_button translate="comment" module="postnl">
+                            <comment><![CDATA[Click <a href="http://kb.tig.nl/" target="_blank">here</a> for more information about the uninstall process.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_uninstallButton</frontend_model>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
