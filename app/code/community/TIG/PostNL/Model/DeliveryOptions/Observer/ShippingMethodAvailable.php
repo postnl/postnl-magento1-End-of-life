@@ -165,6 +165,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          *
          * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $block
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $block = $observer->getBlock();
         $blockClass = $this->getBlockClass();
 
@@ -327,8 +328,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         );
         $thirdChild->setTemplate('TIG/PostNL/delivery_options/addphonenumber.phtml');
 
-        $secondChild->append($thirdChild);
-        $firstChild->append($secondChild);
+        $firstChild->append($secondChild)
+                   ->append($thirdChild);
         $block->append($firstChild);
 
         return $block;
@@ -347,6 +348,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
+        /** @noinspection PhpUndefinedClassInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -368,6 +371,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * Make sure we don't end up in an infinite loop.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($block->getTemplate() == 'TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml') {
             return $this;
         }
@@ -377,6 +381,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          * altered.
          */
         if (Mage::getStoreConfig('onestepcheckout/general/rewrite_checkout_links') == 1) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $block->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml');
 
             $this->setBpostBlockModified(true);
@@ -389,9 +394,12 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
              * solution.
              */
             /** @var Varien_Object $transport */
+            /** @noinspection PhpUndefinedMethodInspection */
             $transport = $observer->getTransport();
+            /** @noinspection PhpUndefinedMethodInspection */
             $transport->setHtml($block->renderView());
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $observer->setTransport($transport);
         }
 

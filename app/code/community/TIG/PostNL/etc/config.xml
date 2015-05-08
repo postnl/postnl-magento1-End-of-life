@@ -1151,6 +1151,12 @@
                                 <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
                             </responsive>
                         </onestepcheckout>
+                        <gomage_checkout>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <gomage_checkout>css/TIG/PostNL/deliveryoptions/gomage_checkout_mediaqueries.css</gomage_checkout>
+                            </responsive>
+                        </gomage_checkout>
                     </files>
                 </default>
                 <!-- An unbranded, white, gray and blue theme -->
@@ -1171,6 +1177,13 @@
                                 <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
                             </responsive>
                         </onestepcheckout>
+                        <gomage_checkout>
+                            <main>css/TIG/PostNL/deliveryoptions/gomage_checkout_neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <gomage_checkout>css/TIG/PostNL/deliveryoptions/gomage_checkout_mediaqueries.css</gomage_checkout>
+                            </responsive>
+                        </gomage_checkout>
                     </files>
                 </neutral>
             </themes>

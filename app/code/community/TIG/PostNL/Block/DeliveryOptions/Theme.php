@@ -37,6 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasIsOsc()
+ * @method boolean hasIsGoMage()
  */
 class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOptions_Template
 {
@@ -62,6 +63,20 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         }
 
         return $this->_getData('is_osc');
+    }
+
+    /**
+     * Gets whether the current checkout page is GoMage LightCheckout.
+     *
+     * @return boolean|mixed
+     */
+    public function getIsGoMage()
+    {
+        if (!$this->hasIsGoMage()) {
+            return false;
+        }
+
+        return $this->_getData('is_go_mage');
     }
 
     /**
@@ -93,6 +108,11 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
             && isset($files->onestepcheckout->main)
         ) {
             $file = (string) $files->onestepcheckout->main;
+        } elseif ($this->getIsGoMage()
+            && isset($files->gomage_checkout)
+            && isset($files->gomage_checkout->main)
+        ) {
+            $file = (string) $files->gomage_checkout->main;
         } elseif (isset($files->onepage)
             && isset($files->onepage->main)
         ) {
