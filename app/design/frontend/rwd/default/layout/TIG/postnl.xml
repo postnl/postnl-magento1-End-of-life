@@ -500,6 +500,15 @@
             </block>
         </reference>
 
+        <reference name="checkout.onepage.address">
+            <block type="postnl_addressvalidation/goMage_lightCheckout_billing" name="checkout.onepage.address.billing" as="billing" template="TIG/PostNL/address_validation/gomage_checkout/billing.phtml">
+                <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>
+                <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
+                <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
+                <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+            </block>
+        </reference>
+
         <reference name="checkout.onepage.shipping_method.available">
             <block type="postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions" name="postnl.gomage.delivery.options" template="TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.gomage.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
@@ -508,6 +517,7 @@
         </reference>
 
         <reference name="before_body_end">
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
         </reference>
     </gomage_checkout_onepage_index>
