@@ -156,6 +156,15 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
              */
             $cssFiles = $files->onestepcheckout->responsive;
             $cssFiles = $cssFiles->asArray();
+        } elseif ($this->getIsGoMage()
+            && isset($files->gomage_checkout)
+            && isset($files->gomage_checkout->responsive)
+        ) {
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->gomage_checkout->responsive;
+            $cssFiles = $cssFiles->asArray();
         } elseif (isset($files->onepage)
             && isset($files->onepage->responsive)
         ) {

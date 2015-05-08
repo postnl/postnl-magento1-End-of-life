@@ -75,6 +75,7 @@ $deleteAttributes = array(
     'postnl_allow_pakje_gemak',
     'postnl_allow_pakketautomaat'
 );
+
 // And then we (try to) delete them
 foreach($deleteAttributes as $attribute){
     try {
@@ -82,13 +83,12 @@ foreach($deleteAttributes as $attribute){
     } catch (Mage_Core_Exception $e) {
         // Log that we couldn't remove the attribute, but do continue
         $message = $helper->__('PostNL uninstall failed on removing product attribute: %s', $attribute);
-        $helper->log($message);
+        $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
     }
 }
 
 // Load TIG_PostNL.xml file and set active to false
-$ds = DIRECTORY_SEPARATOR;
-$xmlLocation = 'app' . $ds . 'etc' . $ds . 'modules' . $ds . 'TIG_PostNL.xml';
+$xmlLocation = 'app' . DS . 'etc' . DS . 'modules' . DS . 'TIG_PostNL.xml';
 
 // Check if the file exists and is writable
 if (file_exists($xmlLocation)) {
@@ -105,10 +105,13 @@ if (file_exists($xmlLocation)) {
     if ($writable === false) {
         // Log that we really couldn't write the file
         $message = $helper->__('PostNL uninstall found but could not write to XML file: %s', $xmlLocation);
-        $helper->log($message);
+        $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
+    } else {
+        $message = $helper->__('PostNL has been uninstalled successfully.');
+        $helper->log($message, Zend_Log::NOTICE, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
     }
 } else {
     // Log that the file doesn't exist or isn't writable
     $message = $helper->__('PostNL uninstall could not find or XML file: %s', $xmlLocation);
-    $helper->log($message);
+    $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
 }
