@@ -651,7 +651,7 @@
         /**
          * Delivery and Pickup switch for Responsive purposes
          */
-        window.siteWidth = $$(".shipping-method")[0].offsetWidth - 34;
+        window.siteWidth = $$(".shipping-method")[0].offsetWidth - 32;
 
         window.setSiteWidth = function() {
             if (window.innerWidth < 954) {
@@ -683,10 +683,10 @@
 
         var switchDelivery = function() {
             $("osc_scrollbar_content").setStyle({
-                "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
-                "-ms-transform" : "translateX(-" + (siteWidth+34) + "px)",
-                "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
-                "transform" : "translateX(-" + (siteWidth+34) + "px)"
+                "-webkit-transform" : "translateX(-" + (siteWidth+32) + "px)",
+                "-ms-transform" : "translateX(-" + (siteWidth+32) + "px)",
+                "-o-transform" : "translateX(-" + (siteWidth+32) + "px)",
+                "transform" : "translateX(-" + (siteWidth+32) + "px)"
             });
 
             $("postnl_switch_pickup").removeClassName('active');
@@ -706,12 +706,12 @@
         };
 
         document.observe('postnl:loadingFinished', function() {
-            window.siteWidth = $$(".shipping-method")[0].offsetWidth;
+            window.siteWidth = $$(".shipping-method")[0].offsetWidth - 32;
             setSiteWidth();
         });
 
         Event.observe(window, "resize", function() {
-            window.siteWidth = $$(".shipping-method")[0].offsetWidth;
+            window.siteWidth = $$(".shipping-method")[0].offsetWidth - 32;
             setSiteWidth();
 
             if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 952) {
