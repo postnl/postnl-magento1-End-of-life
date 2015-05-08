@@ -51,12 +51,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_GoMage_LightCheckout_Ajax
         Mage::unregister(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY);
 
         /** @var GoMage_Checkout_OnepageController $controller */
+        /** @noinspection PhpUndefinedMethodInspection */
         $controller = $observer->getControllerAction();
 
         $request = $controller->getRequest();
         $action = $request->getParam('action', false);
 
-        if ($action == 'get_totals') {
+        if ($action == 'get_totals' || $action == 'discount') {
             Mage::register(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY, true);
         }
 

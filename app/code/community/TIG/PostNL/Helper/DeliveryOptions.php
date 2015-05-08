@@ -3027,4 +3027,63 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         return $isActive;
     }
+
+    /**
+     * Check if the GoMage LighTCheckout delivery date functionality conflicts with PostNl delivery options.
+     *
+     * @return boolean
+     */
+    public function checkGoMageDeliveryDateConflicts($storeId = null)
+    {
+        /**
+         * Check if the GoMage LightCheckout extension is installed and is active.
+         */
+        $goMageLightCheckoutIsInstalled = $this->isModuleEnabled('GoMage_Checkout');
+        if (!$goMageLightCheckoutIsInstalled) {
+            return false;
+        }
+
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        /**
+         * Check if the GoMage LightCheckout extension is enabled.
+         */
+        $goMageLightCheckoutIsEnabled = Mage::getStoreConfigFlag('gomage_checkout/general/enabled', $storeId);
+        if (!$goMageLightCheckoutIsEnabled) {
+            return false;
+        }
+
+        /**
+         * Check if the GoMage LightCheckout extension's delivery date functionality is enabled.
+         */
+        $goMageDeliveryDateIsEnabled = Mage::getStoreConfigFlag('gomage_checkout/deliverydate/deliverydate', $storeId);
+        if (!$goMageDeliveryDateIsEnabled) {
+            return false;
+        }
+
+        /**
+         * Check for which shipping methods the GoMage LightCheckout extension's delivery date functionality is enabled.
+         */
+        $goMageDeliveryDateShippingMethods = Mage::getStoreConfig(
+            'gomage_checkout/deliverydate/shipping_methods',
+            $storeId
+        );
+        $goMageDeliveryDateShippingMethods = explode(',', $goMageDeliveryDateShippingMethods);
+
+        /**
+         * Check if this intersects with the PostNL shipping methods.
+         *
+         * N.B. The PostNL shipping methods are not dependant on the selected store view.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+
+        $conflictingShippingMethods = array_intersect($goMageDeliveryDateShippingMethods, $postnlShippingMethods);
+        if (empty($conflictingShippingMethods)) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -39,14 +39,23 @@
 class TIG_PostNL_Controller_Adminhtml_Config extends Mage_Adminhtml_Controller_Action
 {
     /**
+     * Regex to validate the supplied wizard step hash.
+     */
+    const VALIDATE_WIZARD_HASH_REGEX = '/^[a-zA-Z0-9-_#]+$/';
+
+    /**
      * Saves the current wizard step.
      *
      * @param string $step
      *
      * @return $this
+     *
+     * @throws TIG_PostNL_Exception
      */
     protected function _saveCurrentWizardStep($step)
     {
+        $step = $this->_validateStep($step);
+
         /**
          * @var Mage_Admin_Model_User $adminUser
          */
@@ -58,5 +67,31 @@ class TIG_PostNL_Controller_Adminhtml_Config extends Mage_Adminhtml_Controller_A
         $adminUser->saveExtra($extra);
 
         return $this;
+    }
+
+    /**
+     * Validate the step hash. If the step is not valid, return an empty string.
+     *
+     * @param string $step
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _validateStep($step)
+    {
+        $validator = new Zend_Validate_Regex(array('pattern' => self::VALIDATE_WIZARD_HASH_REGEX));
+
+        if (!$validator->isValid($step)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'An error occurred while saving this step of the configuration wizard. Please use the regular ' .
+                    '"Save Config" button instead.'
+                ),
+                'POSTNL-0224'
+            );
+        }
+
+        return $step;
     }
 }

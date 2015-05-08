@@ -35,18 +35,43 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox $this
  */
-?>
-<?php $_htmlId  = $this->getHtmlId(); ?>
-<?php $_label   = $this->getElement()->getLabel(); ?>
-<?php $_comment = $this->getElement()->getComment(); ?>
-<tr id='row-<?php echo $_htmlId; ?>'>
-    <td colspan='5'>
-        <div class="module-message warning">
-            <h4 id="<?php echo $_htmlId; ?>"><?php echo $_label; ?></h4>
-            <p id="<?php echo $_htmlId; ?>"><?php echo $_comment; ?></p>
-        </div>
-    </td>
-</tr>
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ReturnView
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
+{
+    /**
+     * Renders the column value as a view link with appropriate parameters
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        $actions = $this->getColumn()->getActions();
+
+        if ( empty($actions) || !is_array($actions) ) {
+            return '&nbsp;';
+        }
+
+        if(sizeof($actions)==1 && !$this->getColumn()->getNoLink()) {
+            foreach ($actions as $action) {
+                if (is_array($action)) {
+                    // All we need to do is intercept & change the url value
+                    if (isset($action['url'])) {
+                        // Set the url to the correct location with the correct parameters
+                        $action['url'] = $this->getUrl('adminhtml/sales_shipment/view',
+                            array(
+                                'shipment_id' => $row->getId(),
+                                'come_from_postnl'   => Mage::helper('core')->urlEncode('postnl_admin/adminhtml_returns')
+                            )
+                        );
+                    }
+                    return $this->_toLinkHtml($action, $row);
+                }
+            }
+        }
+
+        return '&nbsp;';
+    }
+}
