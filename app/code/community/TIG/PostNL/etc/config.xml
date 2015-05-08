@@ -69,6 +69,9 @@
             <postnl_payment>
                 <class>TIG_PostNL_Block_Payment</class>
             </postnl_payment>
+            <postnl_addressvalidation>
+                <class>TIG_PostNL_Block_AddressValidation</class>
+            </postnl_addressvalidation>
 		</blocks>
 		<helpers>
 			<postnl>
