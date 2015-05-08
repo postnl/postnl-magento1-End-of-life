@@ -249,7 +249,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
                 ),
                 'filter'    => false,
                 'sortable'  => false,
-                'is_system' => true
+                'is_system' => true,
+                'renderer'  => 'postnl_adminhtml/widget_grid_column_renderer_returnView',
             )
         );
 
@@ -330,7 +331,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         return $this->getUrl('adminhtml/sales_shipment/view',
             array(
                 'shipment_id' => $row->getId(),
-                'come_from'   => Mage::helper('core')->urlEncode('postnl_admin/adminhtml_returns')
+                'come_from_postnl'   => Mage::helper('core')->urlEncode('postnl_admin/adminhtml_returns')
             )
         );
     }
