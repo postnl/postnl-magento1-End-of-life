@@ -141,6 +141,7 @@
     <?php endfor; ?>
 
     initPostcodeCheck<?php echo $_addressType; ?> = function() {
+        $('<?php echo $_addressType; ?>_postcode').stopObserving('change');
         $('virtual_<?php echo $_addressType; ?>_street2').stopObserving('change');
         $('virtual_<?php echo $_addressType; ?>_street3').stopObserving('change');
 
