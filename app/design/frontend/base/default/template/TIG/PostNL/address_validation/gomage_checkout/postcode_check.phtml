@@ -126,21 +126,22 @@
 <script type="text/javascript">
     //<![CDATA[
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
-    $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
-        var element = Event.element(event);
-        var value = element.getValue();
+        $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
+            var element = Event.element(event);
+            var value = element.getValue();
 
-        $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
-    });
-    $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
-        var element = Event.element(event);
-        var value = element.getValue();
+            $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
+        });
+        $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
+            var element = Event.element(event);
+            var value = element.getValue();
 
-        $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
-    });
+            $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
+        });
     <?php endfor; ?>
 
-    document.observe('dom:loaded', function() {
+    initPostcodeCheck<?php echo $_addressType; ?> = function() {
+        console.log('test');
         var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
             '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
             '<?php echo $_addressType; ?>',
@@ -157,38 +158,163 @@
         postcodeCheck<?php echo $_addressType; ?>.init();
 
         <?php if ($_addressType == 'shipping'): ?>
-        $('billing_country_id').observe('change', function() {
-            postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing_country_id').getValue());
-        });
+            $('billing_country_id').observe('change', function() {
+                postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing_country_id').getValue());
+            });
 
-        /**
-         * Extend the shipping object as the default is unable to handle the 'virtual:' field ID prefix.
-         */
-        Object.extend(shipping, {
-            syncWithBilling : function() {
-                $('billing-address-select') && this.newAddress(!$('billing-address-select').value);
-                $('shipping_same_as_billing').checked = true;
-                if (!$('billing-address-select') || !$('billing-address-select').value) {
-                    arrElements = Form.getElements(this.form);
-                    for (var elemIndex in arrElements) {
-                        if (arrElements[elemIndex].id) {
-                            var sourceField = $(arrElements[elemIndex].id.replace(/shipping_/, 'billing_'));
-                            if (sourceField){
-                                arrElements[elemIndex].value = sourceField.value;
+            /**
+             * Extend the shipping object as the default is unable to handle the 'virtual:' field ID prefix.
+             */
+            Object.extend(shipping, {
+                syncWithBilling : function() {
+                    $('billing-address-select') && this.newAddress(!$('billing-address-select').value);
+                    $('shipping_same_as_billing').checked = true;
+                    if (!$('billing-address-select') || !$('billing-address-select').value) {
+                        arrElements = Form.getElements(this.form);
+                        for (var elemIndex in arrElements) {
+                            if (arrElements[elemIndex].id) {
+                                var sourceField = $(arrElements[elemIndex].id.replace(/shipping_/, 'billing_'));
+                                if (sourceField){
+                                    arrElements[elemIndex].value = sourceField.value;
+                                }
                             }
                         }
+                        //$('shipping_country_id').value = $('billing_country_id').value;
+                        shippingRegionUpdater.update();
+                        $('shipping_region_id').value = $('billing_region_id').value;
+                        $('shipping_region').value = $('billing_region').value;
+                        //shippingForm.elementChildLoad($('shipping_country_id'), this.setRegionValue.bind(this));
+                    } else {
+                        $('shipping-address-select').value = $('billing-address-select').value;
                     }
-                    //$('shipping_country_id').value = $('billing_country_id').value;
-                    shippingRegionUpdater.update();
-                    $('shipping_region_id').value = $('billing_region_id').value;
-                    $('shipping_region').value = $('billing_region').value;
-                    //shippingForm.elementChildLoad($('shipping_country_id'), this.setRegionValue.bind(this));
-                } else {
-                    $('shipping-address-select').value = $('billing-address-select').value;
                 }
-            }
-        });
+            });
         <?php endif; ?>
-    });
+    };
+
+    if (!window.domLoaded) {
+        document.observe('dom:loaded', function () {
+            window.domLoaded = true;
+            initPostcodeCheck<?php echo $_addressType; ?>();
+
+            checkoutloginform.submit = function (params) {
+
+                if (typeof params != 'undefined' && params == 0) {
+                    return true;
+                }
+
+                $$('#gcheckout-login-form .actions button')[0].style.display = 'none';
+                $$('#gcheckout-login-form .actions .loadinfo')[0].style.display = 'block';
+
+                var self = this;
+
+                var request = new Ajax.Request(this.url,
+                    {
+                        method: 'post',
+                        parameters: {'login[username]': $$('#gcheckout-login-form #email')[0].value, 'login[password]': $$('#gcheckout-login-form #pass')[0].value},
+                        onSuccess: function (transport) {
+                            try {
+                                eval('var response = ' + transport.responseText);
+                            } catch (e) {
+                                var response = new Object();
+                                response.error = true;
+                                response.message = 'Unknow error.';
+                            }
+                            if (!response.error) {
+
+                                $$('.validation-advice').each(function (e) {
+                                    e.remove()
+                                });
+
+                                var form = $('gcheckout-onepage-form');
+
+                                var content = response.content;
+                                var js_scripts = content.extractScripts();
+
+                                form.innerHTML = content.stripScripts();
+
+                                if ($$('.header .links').length && response.links) {
+                                    var tempelement = document.createElement('div');
+                                    tempelement.innerHTML = response.links;
+                                    var links = $$('.header .links')[0];
+                                    links.parentNode.replaceChild(tempelement.firstChild, links);
+                                }
+
+                                if (response.header && $$('.header-container').length) {
+                                    // enterprise
+                                    var element = $$('.header-container')[0];
+                                    var js_header_scripts = response.header.extractScripts();
+
+                                    var tempelement = document.createElement('div');
+                                    tempelement.innerHTML = response.header.stripScripts();
+
+                                    element.parentNode.replaceChild(tempelement.firstChild, element);
+
+                                    for (var i = 0; i < js_header_scripts.length; i++) {
+                                        if (typeof(js_header_scripts[i]) != 'undefined') {
+                                            LightcheckoutglobalEval(js_header_scripts[i]);
+                                        }
+                                    }
+                                }
+
+                                if (!response.is_virtual) {
+                                    var wrap = $$('div.gcheckout-onepage-wrap')[0];
+                                    if (wrap && wrap.hasClassName('not_shipping_mode')) {
+                                        wrap.removeClassName('not_shipping_mode');
+                                    }
+                                }
+
+                                $('gcheckout-login-link').hide();
+
+                                Event.stopObserving(document, "dom:loaded");
+                                for (var i = 0; i < js_scripts.length; i++) {
+                                    if (typeof(js_scripts[i]) != 'undefined') {
+                                        LightcheckoutglobalEval(js_scripts[i]);
+                                    }
+                                }
+                                try {
+                                    Event.fire(document, "dom:loaded");
+                                } catch (e) {
+                                }
+
+                                if (typeof response.verify_result != 'undefined') {
+                                    checkout.taxvat_verify_result = response.verify_result;
+                                } else {
+                                    checkout.taxvat_verify_result = null;
+                                }
+
+                                checkout.hideLoginForm();
+
+                                initAddresses();
+                                checkout.initialize();
+                                payment.init();
+
+                                self.logged_in = true;
+
+                                initPostcodeCheckbilling();
+                                initPostcodeCheckshipping();
+                            } else {
+
+                                if ($$('#gcheckout-login-form div.error').length == 0) {
+                                    $('gcheckout-login-form').insert({'top': '<div class="error"></div>'});
+                                }
+                                $$('#gcheckout-login-form div.error')[0].innerHTML = '';
+                                $$('#gcheckout-login-form div.error')[0].insert(response.message);
+                            }
+
+                            $$('#gcheckout-login-form .actions button')[0].style.display = 'block';
+                            $$('#gcheckout-login-form .actions .loadinfo')[0].style.display = 'none';
+
+                        }.bind(this),
+                        onFailure: function () {
+                            // ...
+                        }
+                    });
+
+                return false;
+
+            }.bind(checkoutloginform);
+        });
+    }
     //]]>
 </script>

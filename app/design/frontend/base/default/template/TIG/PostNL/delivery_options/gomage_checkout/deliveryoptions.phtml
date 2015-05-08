@@ -614,6 +614,18 @@
             checkout.shippingmethodsSubmit(checkout.getFormData(), 'get_totals');
         });
 
+        /**
+         * After postcode check has found an address, show the new delivery options.
+         */
+        document.stopObserving('postnl:postcodeCheckSuccess');
+        document.observe('postnl:postcodeCheckSuccess', function() {
+            if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                deliveryOptions.timeframeRequest.transport.abort();
+            }
+
+            checkout.submit(checkout.getFormData(), 'get_methods');
+        });
+
         <?php if ($_canShowStatedAddressOnlyOption): ?>
             var onlyStatedAddressCheckbox = $('<?php echo $_methodName; ?>_only_stated_address');
             var onlyStatedAddressContainer = $('<?php echo $_methodName; ?>_only_stated_address_option');
