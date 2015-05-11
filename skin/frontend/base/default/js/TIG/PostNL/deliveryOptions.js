@@ -1322,7 +1322,7 @@ PostnlDeliveryOptions.prototype = {
         var shippingMethodName = this.getOptions().shippingMethodName;
         var checkbox = $(shippingMethodName);
 
-        if (checkbox) {
+        if (checkbox && !this.getOptions().isOsc) {
             checkbox.checked = true;
 
             return this;
