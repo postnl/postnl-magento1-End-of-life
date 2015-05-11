@@ -278,7 +278,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         }
 
         $message = $helper->__(
-            'You can read the full changelog in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
+            'You can read the release notes in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
             'knowledgebase</a>.',
             $helper->getChangelogUrl()
         );
@@ -1447,6 +1447,39 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
                 self::UPDATE_DATE_TIME_ZONE_ERROR_CODE,
                 $e
             );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Moves and merges the PostNL delivery options allow backorders setting to and with the PostNL delivery options
+     * stock options setting.
+     *
+     * @return $this
+     */
+    public function moveDeliveryOptionsStockSetting()
+    {
+        $conn = $this->getConnection();
+
+        try {
+            /**
+             * Modify all mode settings with value 1 (allow backorders) to value 'backordered' and modify the path to
+             * the new setting.
+             */
+            $conn->update(
+                $this->getTable('core/config_data'),
+                array(
+                    'path = ?' => 'postnl/delivery_options/stock_options',
+                    'value'    => 'backordered',
+                ),
+                array(
+                    'path = ?' => 'postnl/delivery_options/show_options_for_backorders',
+                    'value = ?' => 1
+                )
+            );
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
         }
 
         return $this;

@@ -370,12 +370,12 @@ TIG_PostNL::The shop's base currency code must be set to EUR for PostNL to funct
 TIG_PostNL::The extension has not been activated.,The extension has not been activated.
 TIG_PostNL::Product code %s is not allowed for this shipment.,Product code %s is not allowed for this shipment.
 TIG_PostNL::PostNL Checkout is not available due to the following reasons:,PostNL Checkout is not available due to the following reasons:
-TIG_PostNL::Click here for more information from the TiG knowledgebase.,Click here for more information from the TiG knowledgebase.
+TIG_PostNL::Click here for more information from the TIG knowledgebase.,Click here for more information from the TIG knowledgebase.
 "TIG_PostNL::This action is not available for shipment #%s, because it was not shipped using PostNL.","This action is not available for shipment #%s, because it was not shipped using PostNL."
 TIG_PostNL::Shipment #%s cannot be confirmed at this time.,Shipment #%s cannot be confirmed at this time.
 "TIG_PostNL::Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.","Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed."
 TIG_PostNL::Show error details in the frontend,Show error details in the frontend
-"TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment."
+"TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TIG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TIG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment."
 TIG_PostNL::The PostNL extension is not compatible with your Magento version!,The PostNL extension is not compatible with your Magento version!
 TIG_PostNL::Invalid Magento edition detected: %s,Invalid Magento edition detected: %s
 TIG_PostNL::Invalid rate type requested: %s,Invalid rate type requested: %s
@@ -426,7 +426,7 @@ TIG_PostNL::Invalid confirmShipment response: %s,Invalid confirmShipment respons
 "TIG_PostNL::The extension has been registered. Click <a href=""#"" onclick=""%s"">here</a> to be able to register the extension under a different name.","The extension has been registered. Click <a href=""#"" onclick=""%s"">here</a> to be able to register the extension under a different name."
 "TIG_PostNL::Please fill in the fields below to finish the extension registration procedure. Click <a href=""#"" onclick=""%s"">here</a> to reset the registration procedure.","Please fill in the fields below to finish the extension registration procedure. Click <a href=""#"" onclick=""%s"">here</a> to reset the registration procedure."
 TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL Checkout.,The quote's total weight is below the miniumum required to use PostNL Checkout.
-TIG_PostNL::One or more items in the cart are out of stock.,One or more items in the cart are out of stock.
+TIG_PostNL::Delivery options are not allowed for one or more items in the cart based on the configured stock options.,Delivery options are not allowed for one or more items in the cart based on the configured stock options.
 TIG_PostNL::Shipping event history,Shipping event history
 TIG_PostNL::PostNL version %s,PostNL version %s
 TIG_PostNL::Status Code,Status Code
@@ -453,8 +453,8 @@ TIG_PostNL::For questions about installing and configuring the extension please 
 TIG_PostNL::A list of documents regarding the extension.,A list of documents regarding the extension.
 TIG_PostNL::View the installation manual.,View the installation manual.
 TIG_PostNL::Installation manual,Installation manual
-TIG_PostNL::View the complete changelog of the extension.,View the complete changelog of the extension.
-TIG_PostNL::Full changelog,Full changelog
+TIG_PostNL::View the release notes of the extension.,View the release notes of the extension.
+TIG_PostNL::Release notes,Release notes
 TIG_PostNL::PostNL Checkout has been disabled,PostNL Checkout has been disabled
 TIG_PostNL::The quote is virtual.,The quote is virtual.
 TIG_PostNL::The quote's grand total is below the minimum amount required.,The quote's grand total is below the minimum amount required.
@@ -574,7 +574,7 @@ TIG_PostNL::early delivery,early delivery
 TIG_PostNL::available,available
 TIG_PostNL::evening,evening
 TIG_PostNL::Post Office,Post Office
-TIG_PostNL::Package Dispenser,Package Dispenser
+#REF!,#REF!
 TIG_PostNL::Delivery Options,Delivery Options
 TIG_PostNL::Delivery,Delivery
 TIG_PostNL::or Pickup,or Pickup
@@ -746,7 +746,7 @@ TIG_PostNL::Create Parcelware export,Create Parcelware export
 TIG_PostNL::You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.,You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.
 TIG_PostNL::Rate Source,Rate Source
 TIG_PostNL::Use Magento's Table Rates,Use Magento's Table Rates
-TIG_PostNL::Use seperate table rates for PostNL,Use seperate table rates for PostNL
+TIG_PostNL::Use separate table rates for PostNL,Use separate table rates for PostNL
 TIG_PostNL::Export Rates,Export Rates
 TIG_PostNL::Import Rates,Import Rates
 TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.
@@ -838,9 +838,9 @@ TIG_PostNL::Allow for non-PostNL orders,Allow for non-PostNL orders
 TIG_PostNL::Sort order,Sort order
 TIG_PostNL::Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.,Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.
 TIG_PostNL::Send a copy of the track & trace email,Send a copy of the track & trace email
-"TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer."
+"TIG_PostNL::If enabled, you may enter separate email addresses to which the track & trace email will be sent in addition to the customer.","If enabled, you may enter separate email addresses to which the track & trace email will be sent in addition to the customer."
 TIG_PostNL::Send track & trace email copy to,Send track & trace email copy to
-TIG_PostNL::You can enter multiple email addresses seperated by commas.,You can enter multiple email addresses seperated by commas.
+TIG_PostNL::You can enter multiple email addresses separated by commas.,You can enter multiple email addresses separated by commas.
 TIG_PostNL::Track & trace email copy method,Track & trace email copy method
 PostNL configuration.,PostNL configuration.
 TIG_PostNL::A required configuration value is missing: %s.,A required configuration value is missing: %s.
@@ -973,7 +973,7 @@ TIG_PostNL::We recommend you disable logging and remove these log files.,We reco
 "TIG_PostNL::Create shipments, print labels and confirm","Create shipments, print labels and confirm"
 TIG_PostNL::The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.,The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.
 TIG_PostNL::This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of Magento at your own risk.,This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of Magento at your own risk.
-"TIG_PostNL::You can read the full changelog in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>.","You can read the full changelog in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>."
+"TIG_PostNL::You can read the release notes in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>.","You can read the release notes in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>."
 TIG_PostNL::hour,hour
 TIG_PostNL::minutes,minutes
 TIG_PostNL::Delivery date:,Delivery date:
@@ -1232,3 +1232,14 @@ TIG_PostNL::Select this checkbox to only show parcel dispensers.,Select this che
 TIG_PostNL::Choose date,Choose date
 "TIG_PostNL::You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>."
 TIG_PostNL::Hide this warning.,Hide this warning.
+TIG_PostNL::You are currently using the Postcode.nl extension. This extension conflicts with the PostNL extension's built-in postcode validator. We recommend you disable the Postcode.nl extension if you wish to use the PostNL extensions' postcode validator.,You are currently using the Postcode.nl extension. This extension conflicts with the PostNL extension's built-in postcode validator. We recommend you disable the Postcode.nl extension if you wish to use the PostNL extensions' postcode validator.
+"TIG_PostNL::Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field.","Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field."
+TIG_PostNL::One or more items in the cart are backordered or out of stock.,One or more items in the cart are backordered or out of stock.
+TIG_PostNL::Stock options,Stock options
+TIG_PostNL::Select for which products PostNL delivery options should be available.,Select for which products PostNL delivery options should be available.
+TIG_PostNL::In stock products only,In stock products only
+TIG_PostNL::In stock and backordered products,In stock and backordered products
+"TIG_PostNL::In stock, backordered and out of stock products","In stock, backordered and out of stock products"
+TIG_PostNL::Product option '%s' (%s) is not allowed for this shipment.,Product option '%s' (%s) is not allowed for this shipment.
+TIG_PostNL::You have chosen to pick up your address at the following post office location:,You have chosen to pick up your address at the following post office location:
+TIG_PostNL::You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.,You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
@@ -93,17 +93,35 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          */
         $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
-        $now = new DateTime();
-        $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
+        $adminTimeZone = $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true);
+        $now = new DateTime('now', $adminTimeZone);
+        $now->setTimestamp(Mage::getModel('core/date')->timestamp());
+
+        $valueCopy = clone $value;
+        $valueCopy->setTimezone($adminTimeZone);
 
         /**
-         * Check if the shipment should be confirmed somewhere in the future.
+         * Check if today is the same date as the confirm date. N.B. only the date is checked, not the time.
          */
-        $diff = $now->diff($value);
-        if (
-            (($diff->days > 0 || $diff->h > 0) && !$diff->invert)
-            || ($diff->days == 0 && $diff->h < 24) && $diff->invert
-        ) {
+        if ($now->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
+            return $helper->__('Today');
+        }
+
+        /**
+         * Check if the confirm date is tomorrow.
+         */
+        $tomorrow = clone $now;
+        $tomorrow->add(new DateInterval('P1D'));
+        if ($tomorrow->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
+            return $helper->__('Tomorrow');
+        }
+
+        /**
+         * Check if the confirm date is somewhere in the future.
+         */
+        if ($now < $value) {
+            $diff = $now->diff($valueCopy);
+
             /**
              * Get the number of days until the shipment should be confirmed.
              */
@@ -116,28 +134,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
                 $diffDays++;
             }
 
-            /**
-             * Check if the shipment should be confirmed today.
-             */
-            if ($diffDays == 0) {
-                return $helper->__('Today');
-            }
-
-            /**
-             * Check if it should be confirmed tomorrow.
-             */
-            if ($diffDays == 1) {
-                $renderedValue = $helper->__('Tomorrow');
-
-                return $renderedValue;
-            }
-
-            /**
-             * Render the number of days before the shipment should be confirmed.
-             */
-            $renderedValue = $helper->__('%s days from now', $diffDays);
-
-            return $renderedValue;
+            return $helper->__('%s days from now', $diffDays);
         }
 
         /**

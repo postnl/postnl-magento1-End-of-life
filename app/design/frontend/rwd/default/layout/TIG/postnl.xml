@@ -386,6 +386,7 @@
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
             <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login_button.phtml"/>
+            <block type="postnl_deliveryoptions/pickupNotification" name="postnl_billing_pickup_notification" template="TIG/PostNL/delivery_options/onepage/pickup_notification.phtml"/>
         </reference>
     </checkout_onepage_index>
 

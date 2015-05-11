@@ -106,7 +106,7 @@
         }
     );
 
-    if (deliveryOptions && deliveryOptions.options.isOsc) {
+    if (typeof deliveryOptions != 'undefined' && deliveryOptions.options.isOsc) {
 
         if (typeof togglePostnlCod != 'undefined') {
             document.stopObserving('postnl:selectTimeframe', togglePostnlCod);

@@ -33,21 +33,23 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck $this
  */
 ?>
-<?php $_testEnabled = $this->isTestEnabled(); ?>
-<?php $_isTestMode  = $this->isTestModeActive(); ?>
-<?php $_helper      = Mage::helper('postnl'); ?>
-<?php if (!$_testEnabled || !$_isTestMode): ?>
+<?php $_testEnabled         = $this->isTestEnabled(); ?>
+<?php $_isTestMode          = $this->isTestModeActive(); ?>
+<?php $_helper              = Mage::helper('postnl/adminhtml'); ?>
+<?php $_hiddenNotifications = $_helper->getHiddenNotifications(); ?>
+<?php if (!empty($_hiddenNotifications['test_mode_warning']) || !$_testEnabled || !$_isTestMode): ?>
     <?php return ''; ?>
 <?php endif; ?>
 
 <div class="module-message warning" id="postnl_testmode_warning">
-    <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+    <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TIG knowledgebase.') ?></a></h4>
     <p><?php echo $this->__('You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.'); ?></p>
     <p><?php echo $this->__("You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."); ?></p>
+    <p><a class="postnl-hide-notification-link" data-notification_code="test_mode_warning" href="#" title="<?php echo $this->__('Hide this warning.'); ?>"><?php echo $this->__('Hide this warning.'); ?></a></p>
 </div>

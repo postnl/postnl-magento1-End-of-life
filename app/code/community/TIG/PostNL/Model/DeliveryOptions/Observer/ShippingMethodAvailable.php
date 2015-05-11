@@ -42,11 +42,17 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      * The block class that we want to edit.
      */
     const BLOCK_NAME = 'checkout/onepage_shipping_method_available';
+    const BPOST_BLOCK_NAME = 'shippingmanager/onepage_shipping_method_available';
 
     /**
      * @var boolean|null
      */
     protected $_canUseDeliveryOptions = null;
+
+    /**
+     * @var boolean
+     */
+    protected $_bpostBlockModified = false;
 
     /**
      * @param boolean $canUseDeliveryOptions
@@ -76,6 +82,26 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     }
 
     /**
+     * @return boolean
+     */
+    public function isBpostBlockModified()
+    {
+        return $this->_bpostBlockModified;
+    }
+
+    /**
+     * @param boolean $bpostBlockModified
+     *
+     * @return $this
+     */
+    public function setBpostBlockModified($bpostBlockModified)
+    {
+        $this->_bpostBlockModified = $bpostBlockModified;
+
+        return $this;
+    }
+
+    /**
      * Gets the classname for the block that we want to alter.
      *
      * @return string
@@ -93,6 +119,23 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     }
 
     /**
+     * Gets the classname for the Bpost block that we want to alter.
+     *
+     * @return string
+     */
+    public function getBpostBlockClass()
+    {
+        if ($this->hasData('bpost_block_class')) {
+            return $this->getData('bpost_block_class');
+        }
+
+        $blockClass = Mage::getConfig()->getBlockClassName(self::BPOST_BLOCK_NAME);
+
+        $this->setData('bpost_block_class', $blockClass);
+        return $blockClass;
+    }
+
+    /**
      * Alters the template of the onepage checkout shipping method available block so that we can display our delivery
      * options.
      *
@@ -106,6 +149,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      */
     public function addDeliveryOptions(Varien_Event_Observer $observer)
     {
+        if ($this->isBpostBlockModified()) {
+            return $this;
+        }
+
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -227,5 +274,69 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         $block->append($firstChild);
 
         return $block;
+    }
+
+    /**
+     * Fix a conflict between PostNL delivery options and the Bpost shipping manager extension.
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     */
+    public function fixBpostConflict(Varien_Event_Observer $observer)
+    {
+        if ($this->isBpostBlockModified()) {
+            return $this;
+        }
+
+        /**
+         * Checks if the current block is the one we want to edit.
+         *
+         * Unfortunately there is no unique event for this block.
+         *
+         * @var Bpost_ShippingManager_Block_Onepage_Shipping_Method_Available $block
+         */
+        $block = $observer->getBlock();
+        $blockClass = $this->getBpostBlockClass();
+
+        if (!($block instanceof $blockClass)) {
+            return $this;
+        }
+
+        if (!$this->getCanUseDeliveryOptions()) {
+            return $this;
+        }
+
+        /**
+         * Make sure we don't end up in an infinite loop.
+         */
+        if ($block->getTemplate() == 'TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml') {
+            return $this;
+        }
+
+        /**
+         * Same check as used by the Bpost ShippingManager extension to decide whether the block's template needs to be
+         * altered.
+         */
+        if (Mage::getStoreConfig('onestepcheckout/general/rewrite_checkout_links') == 1) {
+            $block->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/bpost/available.phtml');
+
+            $this->setBpostBlockModified(true);
+
+            /**
+             * Re-render the block so it uses a modified version of the PostNL extension's shipping method available
+             * template that is compatible with both PostNL delivery options and the Bpost shipping manager.
+             *
+             * Re-rendering the block like this is a performance drain, however at present we have no other viable
+             * solution.
+             */
+            /** @var Varien_Object $transport */
+            $transport = $observer->getTransport();
+            $transport->setHtml($block->renderView());
+
+            $observer->setTransport($transport);
+        }
+
+        return $this;
     }
 }

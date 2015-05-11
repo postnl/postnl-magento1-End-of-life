@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -252,9 +252,6 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/cart.css</file>
             </action>
-            <action method="addCss">
-                <stylesheet>css/TIG/PostNL/rwd.css</stylesheet>
-            </action>
             <action method="addItem">
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/checkout.js</file>
@@ -307,9 +304,6 @@
             <action method="addItem">
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/postcodecheck.css</file>
-            </action>
-            <action method="addCss">
-                <stylesheet>css/TIG/PostNL/rwd.css</stylesheet>
             </action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
@@ -382,6 +376,7 @@
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
             <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login_button.phtml"/>
+            <block type="postnl_deliveryoptions/pickupNotification" name="postnl_billing_pickup_notification" template="TIG/PostNL/delivery_options/onepage/pickup_notification.phtml"/>
         </reference>
     </checkout_onepage_index>
 
@@ -438,7 +433,6 @@
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/onestepcheckout.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/TIG/PostNL/rwd_osc.css</stylesheet></action>
             <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/postcodecheck.css</stylesheet></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>

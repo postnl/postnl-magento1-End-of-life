@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
@@ -166,18 +166,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
     public function getValue($index=null)
     {
         if ($index) {
-            $data = $this->getData('value', 'orig_' . $index);
-            if ($data) {
-                return $data;//date('d-m-Y', strtotime($data));
+            if ($data = $this->getData('value', 'orig_'.$index)) {
+                return $data;
             }
             return null;
         }
-
         $value = $this->getData('value');
         if (is_array($value)) {
-            $value['date'] = true;
+            $value['datetime'] = true;
         }
+        if (!empty($value['to']) && !$this->getColumn()->getFilterTime()) {
+            $datetimeTo = $value['to'];
 
+            //calculate end date considering timezone specification
+            $datetimeTo->setTimezone(
+                Mage::app()->getStore()->getConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE)
+            );
+            $datetimeTo->addDay(1)->subSecond(1);
+            $datetimeTo->setTimezone(Mage_Core_Model_Locale::DEFAULT_TIMEZONE);
+        }
         return $value;
     }
 
@@ -196,12 +203,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
         if (isset($value['select'])) {
             if ($value['select'] == 'today') {
                 $today = new DateTime('today');
+                $tomorrow = new DateTime('tomorrow - 1 second');
                 $value['from'] = $today->format('d-m-Y');
-                $value['to'] = $today->format('d-m-Y');
+                $value['to'] = $tomorrow->format('d-m-Y');
             } elseif ($value['select'] == 'tomorrow') {
                 $tomorrow = new DateTime('tomorrow');
+                $dayAfterTomorrow = new DateTime('tomorrow + 1day - 1 second');
                 $value['from'] = $tomorrow->format('d-m-Y');
-                $value['to'] = $tomorrow->format('d-m-Y');
+                $value['to'] = $dayAfterTomorrow->format('d-m-Y');
             }
         } else {
             $value['from'] = null;
