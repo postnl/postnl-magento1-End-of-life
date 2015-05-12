@@ -296,7 +296,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         }
 
         $message = $helper->__(
-            'You can read the full changelog in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
+            'You can read the release notes in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
             'knowledgebase</a>.',
             $helper->getChangelogUrl()
         );

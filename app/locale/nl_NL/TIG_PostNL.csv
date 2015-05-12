@@ -453,8 +453,8 @@ TIG_PostNL::For questions about installing and configuring the extension please 
 TIG_PostNL::A list of documents regarding the extension.,Een lijst van documenten met betrekking tot de extensie.
 TIG_PostNL::View the installation manual.,Bekijk de installatiehandleiding.
 TIG_PostNL::Installation manual,Installatiehandleiding
-TIG_PostNL::View the complete changelog of the extension.,Bekijk de volledige changelog van de extensie.
-TIG_PostNL::Full changelog,Volledig changelog
+TIG_PostNL::View the release notes of the extension.,Bekijk de release notes van de extensie.
+TIG_PostNL::Release notes,Release notes
 TIG_PostNL::PostNL Checkout has been disabled,PostNL Checkout is uitgeschakeld
 TIG_PostNL::The quote is virtual.,De winkelwagen bevat enkel virtuele producten
 TIG_PostNL::The quote's grand total is below the minimum amount required.,Het totaalbedrag van de winkelwagen is beneden het minimum.
@@ -976,7 +976,7 @@ TIG_PostNL::We recommend you disable logging and remove these log files.,Wij rad
 "TIG_PostNL::Create shipments, print labels and confirm","Maak zendingen aan, print verzendlabels en meld voor"
 TIG_PostNL::The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors., De PostNL extensie vereist minimaal %.0fMB geheugen om correct te functioneren. Gebruik maken van de PostNL extensie op servers met minder geheugen kan leiden tot onverwachte foutmeldingen.
 TIG_PostNL::This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of Magento at your own risk.,Dit kan onverwachte problemen veroorzaken. Het gebruik van de PostNL extensie op niet ondersteunde versies van Magento is op eigen risico.
-"TIG_PostNL::You can read the full changelog in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>.","U kunt het volledige changelog nalezen in de <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>."
+"TIG_PostNL::You can read the release notes in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>.","U kunt de release notes nalezen in de <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>."
 TIG_PostNL::hour,uur
 TIG_PostNL::minutes,minuten
 TIG_PostNL::Delivery date:,Bezorgdatum:
@@ -1247,3 +1247,7 @@ TIG_PostNL::Product option '%s' (%s) is not allowed for this shipment.,Productop
 TIG_PostNL::You have chosen to pick up your address at the following post office location:,U heeft gekozen om uw bestelling op de volgende postkantoor locatie op te halen:
 TIG_PostNL::You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.,U kunt verderop kiezen voor een afhaallocatie. Het adres dat u hier opgeeft zal gebruikt worden om de ichtstbijzijnde afhaallocaties te berekenen.
 TIG_PostNL::The PostNL extension has been successfully uninstalled.,De PostNL extensie is succesvol gedeïnstalleerd.
+TIG_PostNL::PostNL uninstall failed on removing product attribute: %s,PostNL deïnstallatie is vastgelopen op het verwijderen van attribuut: %s
+TIG_PostNL::PostNL uninstall found but could not write to XML file: %s,PostNL deïnstallatie kon niet schrijven naar het XML bestand: %s
+TIG_PostNL::PostNL uninstall could not find or XML file: %s,PostNL deïnstallatie kon het XML bestand niet vinden: %s
+"TIG_PostNL::Are you sure you wish to disable the PostNL extension?\n\nWarning: this action cannot be undone!\n\nThe following changes will be made:\n- the extension will be disabled in the app/etc/modules/TIG_PostNL.xml file\n- the PostNL product attributes will be removed from the webshop\n\nThe following will be preserved: \n- All data pertaining to existing orders and shipments\n- All PostNL configuration settings\n- All PostNL code files.\n\nFor questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk.",Weet u zeker dat u de PostNL extensie wilt uitschakelen?\n\nWaarschuwing: dit kan niet ongedaan gemaakt worden!\n\nDe volgende veranderingen zullen gemaakt worden:\n- de extensie zal worden uitgeschakeld in het app/etc/modules/TIG_PostNL.xml bestand\n- de PostNL product attributen zullen worden verwijderd van de webshop\n\nHet volgende zal worden bewaard: \n- Alle data betreffende bestaande orders en verzendingen\n- Alle PostNL configuratie instellingen\n- Alle PostNL code bestanden\n\nVoor vragen betreffende dit proces en het herinstalleren van de PostNL extensie kunt u contact opnemen met de TIG servicedesk.

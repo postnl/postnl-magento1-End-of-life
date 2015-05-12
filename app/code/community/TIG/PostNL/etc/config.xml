@@ -1118,7 +1118,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
