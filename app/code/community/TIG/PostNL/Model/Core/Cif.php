@@ -41,19 +41,21 @@
  * If you wish to add new methods you can extend this class or create a new class that extends
  * TIG_PostNL_Model_Core_Cif_Abstract.
  *
- * @method TIG_PostNL_Model_Core_Cif setStoreId(int $value)
- * @method boolean                   hasHSTariffAttribute()
  * @method string                    getHSTariffAttribute()
- * @method TIG_PostNL_Model_Core_Cif setHSTariffAttribute(string $value)
- * @method boolean                   hasCountryOfOriginAttribute()
  * @method string                    getCountryOfOriginAttribute()
- * @method TIG_PostNL_Model_Core_Cif setCountryOfOriginAttribute(string $value)
- * @method boolean                   hasCustomsValueAttribute()
  * @method string                    getCustomsValueAttribute()
- * @method TIG_PostNL_Model_Core_Cif setCustomsValueAttribute(string $value)
- * @method boolean                   hasCustomsDescriptionAttribute()
  * @method string                    getCustomsDescriptionAttribute()
+ *
+ * @method TIG_PostNL_Model_Core_Cif setStoreId(int $value)
+ * @method TIG_PostNL_Model_Core_Cif setHSTariffAttribute(string $value)
+ * @method TIG_PostNL_Model_Core_Cif setCountryOfOriginAttribute(string $value)
+ * @method TIG_PostNL_Model_Core_Cif setCustomsValueAttribute(string $value)
  * @method TIG_PostNL_Model_Core_Cif setCustomsDescriptionAttribute(string $value)
+ *
+ * @method boolean                   hasHSTariffAttribute()
+ * @method boolean                   hasCountryOfOriginAttribute()
+ * @method boolean                   hasCustomsValueAttribute()
+ * @method boolean                   hasCustomsDescriptionAttribute()
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {

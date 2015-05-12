@@ -35,18 +35,32 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox $this
  */
-?>
-<?php $_htmlId  = $this->getHtmlId(); ?>
-<?php $_label   = $this->getElement()->getLabel(); ?>
-<?php $_comment = $this->getElement()->getComment(); ?>
-<tr id='row-<?php echo $_htmlId; ?>'>
-    <td colspan='5'>
-        <div class="module-message warning">
-            <h4 id="<?php echo $_htmlId; ?>"><?php echo $_label; ?></h4>
-            <p id="<?php echo $_htmlId; ?>"><?php echo $_comment; ?></p>
-        </div>
-    </td>
-</tr>
+class TIG_PostNL_Model_DeliveryOptions_Observer_GoMage_LightCheckout_Ajax
+    extends TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable
+{
+    /**
+     * Set a registry flag to prevent the PostNL Order from being reset unintentionally.
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     */
+    public function setRegistryFlag(Varien_Event_Observer $observer)
+    {
+        Mage::unregister(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY);
+
+        /** @var GoMage_Checkout_OnepageController $controller */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $controller = $observer->getControllerAction();
+
+        $request = $controller->getRequest();
+        $action = $request->getParam('action', false);
+
+        if ($action == 'get_totals' || $action == 'discount') {
+            Mage::register(self::IGNORE_POSTNL_ORDER_RESET_REGISTRY_KEY, true);
+        }
+
+        return $this;
+    }
+}

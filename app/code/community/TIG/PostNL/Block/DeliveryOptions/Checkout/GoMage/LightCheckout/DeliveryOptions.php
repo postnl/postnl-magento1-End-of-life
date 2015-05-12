@@ -35,18 +35,32 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox $this
  */
-?>
-<?php $_htmlId  = $this->getHtmlId(); ?>
-<?php $_label   = $this->getElement()->getLabel(); ?>
-<?php $_comment = $this->getElement()->getComment(); ?>
-<tr id='row-<?php echo $_htmlId; ?>'>
-    <td colspan='5'>
-        <div class="module-message warning">
-            <h4 id="<?php echo $_htmlId; ?>"><?php echo $_label; ?></h4>
-            <p id="<?php echo $_htmlId; ?>"><?php echo $_comment; ?></p>
-        </div>
-    </td>
-</tr>
+class TIG_PostNL_Block_DeliveryOptions_Checkout_GoMage_LightCheckout_DeliveryOptions
+    extends TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
+{
+    /**
+     * Xpath to the postcode ajax enabled config setting for GoMage LightCheckout.
+     */
+    const XPATH_POSTCODE_AJAX_ENABLED = 'gomage_checkout/ajax/postcode';
+
+    /**
+     * @var boolean
+     */
+    protected $_isPostcodeAjaxEnabled;
+
+    /**
+     * Check if ajax reload is enabled on the postcode field in GoMage LightCheckout.
+     *
+     * @return bool
+     */
+    public function isPostcodeAjaxEnabled()
+    {
+        if (!is_null($this->_isPostcodeAjaxEnabled)) {
+            return $this->_isPostcodeAjaxEnabled;
+        }
+
+        $this->_isPostcodeAjaxEnabled = Mage::getStoreConfigFlag(self::XPATH_POSTCODE_AJAX_ENABLED);
+        return $this->_isPostcodeAjaxEnabled;
+    }
+}
