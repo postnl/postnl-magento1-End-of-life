@@ -17,7 +17,7 @@
     #postnl_delivery_options { display:none !important; }
     #carrier_postnl.options-available { max-width:100% !important; }
     .postnl-container .col-1,
-    .postnl-container .col-2 { padding:0; min-width:0; }
+    .postnl-container .col-2 { padding:0; min-width:0 !important; }
     #osc_scrollbar_content .option-list li { padding:0 8px; }
     #osc_scrollbar_content .option-list li.responsive-tooltip { padding:0; }
     #osc_scrollbar_content #add_location.option-list li { padding:0; }
