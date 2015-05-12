@@ -380,14 +380,39 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
             Mage::dispatchEvent("admin_system_config_changed_section_{$section}",
                 array('website' => $website, 'store' => $store)
             );
-        }
-        catch (Mage_Core_Exception $e) {
+
+            $this->_saveState($this->getRequest()->getPost('config_state'));
+
+            /**
+             * Save the next wizard step as the current step the admin user is on.
+             */
+            $nextStep = $this->getRequest()->getPost('next_step_hash');
+            if ($nextStep) {
+                $this->_saveCurrentWizardStep($nextStep);
+            }
+
+            $this->getResponse()
+                 ->setBody('success');
+        } catch (TIG_PostNL_Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $this->getResponse()
+                 ->setBody(
+                     Mage::helper('postnl')->getSessionMessage($e->getCode(), 'error', $e->getMessage()
+                 )
+            );
+
+            return $this;
+        } catch (Mage_Core_Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
             $this->getResponse()
                  ->setBody($e->getMessage());
 
             return $this;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
             $this->getResponse()
                  ->setBody(
                      Mage::helper('adminhtml')->__('An error occurred while saving this configuration:')
@@ -397,19 +422,6 @@ class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminh
 
             return $this;
         }
-
-        $this->_saveState($this->getRequest()->getPost('config_state'));
-
-        /**
-         * Save the next wizard step as the current step the admin user is on.
-         */
-        $nextStep = $this->getRequest()->getPost('next_step_hash');
-        if ($nextStep) {
-            $this->_saveCurrentWizardStep($nextStep);
-        }
-
-        $this->getResponse()
-             ->setBody('success');
 
         return $this;
     }

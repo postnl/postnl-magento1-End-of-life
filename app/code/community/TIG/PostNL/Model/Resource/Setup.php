@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
+class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 {
     const TYPE_DATA_UNINSTALL = 'data-uninstall';
 
@@ -296,7 +296,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         }
 
         $message = $helper->__(
-            'You can read the full changelog in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
+            'You can read the release notes in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
             'knowledgebase</a>.',
             $helper->getChangelogUrl()
         );
@@ -406,6 +406,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
                     $this->_setResourceVersion($actionType, $file['toVersion']);
                 }
             } catch (Exception $e) {
+                // This printf is core Magento
                 printf('<pre>%s</pre>', print_r($e, true));
                 throw Mage::exception('Mage_Core', Mage::helper('core')->__('Error in file: "%s" - %s', $fileName, $e->getMessage()));
             }

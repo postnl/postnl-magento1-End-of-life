@@ -35,18 +35,45 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox $this
  */
-?>
-<?php $_htmlId  = $this->getHtmlId(); ?>
-<?php $_label   = $this->getElement()->getLabel(); ?>
-<?php $_comment = $this->getElement()->getComment(); ?>
-<tr id='row-<?php echo $_htmlId; ?>'>
-    <td colspan='5'>
-        <div class="module-message warning">
-            <h4 id="<?php echo $_htmlId; ?>"><?php echo $_label; ?></h4>
-            <p id="<?php echo $_htmlId; ?>"><?php echo $_comment; ?></p>
-        </div>
-    </td>
-</tr>
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConflicts
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
+{
+    /**
+     * Get whether the GoMage LightCheckout delivery date functionality is conflicting with PostNL delivery options.
+     *
+     * @return int
+     */
+    protected function _getValue()
+    {
+        $storeId = $this->_getStoreId();
+
+        $goMageDeliveryDateConflicts = Mage::helper('postnl/deliveryOptions')
+                                           ->checkGoMageDeliveryDateConflicts($storeId);
+
+        return (int) $goMageDeliveryDateConflicts;
+    }
+
+    /**
+     * Get the current store ID based on the request parameters.
+     *
+     * @return int
+     */
+    protected function _getStoreId()
+    {
+        $request = Mage::app()->getRequest();
+
+        if ($request->getParam('store')) {
+            $store = $request->getparam('store');
+            $storeId = Mage::app()->getStore($store)->getId();
+        } elseif ($request->getParam('website')) {
+            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
+            $store = $website->getDefaultStore();
+            $storeId = $store->getId();
+        } else {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        return $storeId;
+    }
+}

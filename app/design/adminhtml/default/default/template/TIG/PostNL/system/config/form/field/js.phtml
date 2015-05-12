@@ -46,8 +46,46 @@
 <?php $_currentWizardStep = $this->getCurrentWizardStep(); ?>
 <?php $_saveWizardStepUrl = $this->getSaveWizardStepUrl(); ?>
 <?php $_hideNotificationUrl = $this->getHideNotificationUrl(); ?>
+
 <script type="text/javascript">
     //<![CDATA[
+    /**
+     *
+     */
+    function openModalConfirm(title, text, callback, url) {
+        var confirm = Dialog.confirm(
+            text,
+            {
+                draggable: true,
+                resizable: true,
+                closable: true,
+                className:"magento",
+                windowClassName:"popup-window",
+                width: 500,
+                title: title,
+                okLabel: "<?php echo $_helper->__('Uninstall'); ?>",
+                cancelLabel: "<?php echo $_helper->__('Cancel'); ?>",
+                buttonClass: "myButtonClass",
+                id: "myDialogId",
+                cancel: function(win) { callback('cancel', url); },
+                ok:     function(win) { callback('ok', url); return false; }
+            }
+        );
+    }
+
+    function handleConfirmUninstall(value, url) {
+        if (value === 'ok') {
+            var uninstallVerify = $('verify_uninstall').value;
+            if (uninstallVerify === 'uninstall') {
+                window.location.href = url;
+                return true;
+            }
+            alert('<?php echo $_helper->__('You did not enter the correct verification text. Try again.'); ?>');
+        }
+        console.log('redirect not');
+        return false;
+    }
+
     var postnlConfigWizard = new PostnlConfigWizard({});
     document.observe('dom:loaded', function() {
         $('postnl_cif_labels_and_confirming_checkout_extension').observe('change', function() {

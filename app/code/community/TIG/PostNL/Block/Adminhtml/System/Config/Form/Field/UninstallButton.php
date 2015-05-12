@@ -53,22 +53,25 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
     {
         $this->setElement($element);
 
-        $confirmText = $this->__(
-            "Are you sure you wish to disable the PostNL extension?<br/>Warning: this action cannot be undone.<br/>" .
-            "The following changes will be made:" .
-            "<ul>" .
-            "<li>The extension will be disabled in the app/etc/modules/TIG_PostNL.xml file.</li>" .
-            "<li>The PostNL product attributes will be removed from the webshop.</li>" .
-            "</ul>" .
-            "The following will be preserved:" .
-            "<ul>" .
-            "<li>All data pertaining to existing orders and shipments.</li>" .
-            "<li>All PostNL configuration settings.</li>" .
-            "<li>All PostNL code files.</li>" .
-            "</ul>" .
-            "For questions regarding this process and how to re-install the PostNl extension, please contact the " .
-            "TIG servicedesk."
-        );
+        $warningTitle = 'Uninstall PostNL Extension';
+
+        $warningMessage = array();
+        $warningMessage[] = "<br><div class=\'module-message warning\'><h4>" . $this->__('Warning: this action cannot be undone!') ."</h4></div>";
+        $warningMessage[] = $this->__('The following changes will be made:');
+        $warningMessage[] = "<br>- " . $this->__('The extension will be disabled in the app/etc/modules/TIG_PostNL.xml file');
+        $warningMessage[] = "<br>- " . $this->__('The PostNL product attributes will be removed from the webshop');
+        $warningMessage[] = "<br><br>" . $this->__('The following will be preserved:');
+        $warningMessage[] = "<br>- " . $this->__('All data pertaining to existing orders and shipments');
+        $warningMessage[] = "<br>- " . $this->__('All PostNL configuration settings');
+        $warningMessage[] = "<br>- " . $this->__('All PostNL code files.');
+        $warningMessage[] = "<br><br>" . $this->__('For questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk.');
+        $warningMessage[] = "<br><br><div class=\'module-message\'><h4>";
+        $warningMessage[] = $this->__('Type `uninstall` in the box to proceed') . "&nbsp; &nbsp;";
+        $warningMessage[] = "<input type=\'text\' id=\'verify_uninstall\' />";
+        $warningMessage[] = "</h4></div>";
+
+        $confirmText = implode($warningMessage);
+        $confirmTitle = $this->__($warningTitle);
         $uninstallUrl = $this->getUrl('postnl_admin/adminhtml_extensionControl/uninstall');
 
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
@@ -76,7 +79,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
                      ->setType('button')
                      ->setClass('scalable postnl-button')
                      ->setLabel($this->__('Permanently disable the PostNL extension'))
-                     ->setOnClick("confirmSetLocation('" . $confirmText . "', '" . $uninstallUrl . "');")
+                     ->setOnClick("openModalConfirm('" . $confirmTitle . "', '" . $confirmText . "', handleConfirmUninstall, '" . $uninstallUrl . "');")
                      ->toHtml();
 
         return $html;

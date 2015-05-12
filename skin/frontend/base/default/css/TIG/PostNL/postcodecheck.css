@@ -34,3 +34,16 @@
 #osc_postnl .input-extension .input-text { width:54px; }
 #osc_postnl .postnl-loading { position:absolute; right:-26px; top:24px; }
 /* ======================================================================================= */
+
+/* GoMage LightCheckout ================================================================== */
+#gomage_postnl_ce .field { float:left; width:180px; }
+#gomage_postnl_ce .input-box { width:auto; }
+#gomage_postnl_ce .input-text { width:164px; }
+#gomage_postnl_ce .field-postcode,
+#gomage_postnl_ce .field-housenumber,
+#gomage_postnl_ce .field-extension{ width:28%;  }
+#gomage_postnl_ce .field-postcode .input-text { width:169px;  }
+#gomage_postnl_ce .postnl.postnl-validation-advice { width:auto; float:left; margin-top:2px; }
+#gomage_postnl_ce .postnl-loading { float:left; margin-top:22px; margin-left:7px; }
+.glc input.input-text.postnl-readonly:focus { background-color: #DADADA !important}
+/* ======================================================================================= */
