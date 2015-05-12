@@ -306,6 +306,10 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         $timeout = (int) Mage::getStoreConfig(self::XPATH_POSTCODE_CHECK_TIMEOUT, $storeId);
+        if ($timeout < 1) {
+            $timeout = 3600; // 1 hour
+        }
+
         return $timeout;
     }
 

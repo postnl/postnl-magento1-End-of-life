@@ -44,7 +44,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
      */
     const XPATH_SPLIT_STREET       = 'postnl/cif_labels_and_confirming/split_street';
     const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_labels_and_confirming/use_postcode_check';
-    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_address/checkout_extension';
 
     /**
      * @var string

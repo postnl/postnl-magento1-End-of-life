@@ -1,0 +1,95 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+
+<div class="shipping-address" id="gcheckout-shipping-address" <?php if($this->asBilling()):?>style="display:none;"<?php endif;?>>
+
+    <h2 class="glc-title"><span class="glc-number">2</span><strong><?php echo $this->__('Shipping address');?></strong></h2>
+
+    <div class="glc-col">
+
+        <ul class="form-list">
+            <?php if ($this->customerHasAddresses()): ?>
+                <li class="wide">
+                    <label for="billing-address-select"><?php echo $this->__('Select a shipping address') ?></label>
+                    <div class="input-box">
+                        <?php echo $this->getAddressesHtmlSelect('shipping') ?>
+                    </div>
+                </li>
+            <?php endif; ?>
+            <li id="shipping-new-address-form">
+                <fieldset>
+                    <ul>
+                        <li class="fields"><?php echo $this->getLayout()->createBlock('gomage_checkout/onepage_name')->setObject($this->getAddress())->setFieldIdFormat('shipping_%s')->setFieldNameFormat('shipping[%s]')->toHtml() ?></li>
+                        <?php echo $this->getSortedFields();?>
+
+                        <?php $_taxvat = $this->getLayout()->createBlock('customer/widget_taxvat')->setTemplate('gomage/checkout/html/taxvat.phtml') ?>
+                        <?php if ($_taxvat->isEnabled()): ?>
+                            <?php
+
+                            $_taxvat->setIsValidVat($this->getAddress()->getIsValidVat());
+
+                            $taxvat_value = '';
+
+                            if ($this->getAddress()->getTaxvat()){
+                                $taxvat_value = $this->getAddress()->getTaxvat();
+                            } elseif ($this->getAddress()->getVatId()){
+                                $taxvat_value = $this->getAddress()->getVatId();
+                            } elseif ($this->getQuote()->getCustomerTaxvat()){
+                                $taxvat_value = $this->getQuote()->getCustomerTaxvat();
+                            }
+
+                            ?>
+                            <li>
+                                <?php echo $_taxvat->setTaxvat($taxvat_value)->setFieldIdFormat('shipping_%s')->setFieldNameFormat('shipping[%s]')->toHtml() ?>
+                            </li>
+                        <?php endif ?>
+                    </ul>
+                </fieldset>
+            </li>
+            <?php if ($this->isCustomerLoggedIn()):?>
+                <li id="shipping_address_book" class="control" style="display:none">
+                    <input type="checkbox" name="shipping[save_in_address_book]" id="shipping_save_in_address_book" value="1" title="<?php echo  $this->__('Save in address book') ?>" class="checkbox" /><label for="shipping_save_in_address_book"><?php echo  $this->__('Save in address book') ?></label>
+                </li>
+            <?php endif; ?>
+        </ul>
+
+    </div>
+
+</div>
