@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -37,47 +36,11 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
--->
-<config>
-    <api>
-        <resources>
-            <postnl translate="title" module="postnl">
-                <title>PostNL Resource</title>
-                <acl>postnl</acl>
-                <model>postnl_core/api</model>
-                <methods>
-                    <createShipments translate="title" module="postnl">
-                        <title>Create PostNL Shipments</title>
-                        <acl>postnl/create_shipments</acl>
-                        <method>createShipments</method>
-                    </createShipments>
-                </methods>
-                <faults module="postnl">
-                    <test>
-                        <code>100</code >
-                        <message>Test</message>
-                    </test>
-                </faults>
-            </postnl>
-        </resources>
-
-        <v2>
-            <resources_function_prefix>
-                <postnl>postnl</postnl>
-            </resources_function_prefix>
-        </v2>
-
-        <acl>
-            <resources>
-                <postnl translate="title" module="postnl">
-                    <title>PostNL API</title>
-                    <sort_order>1</sort_order>
-                    <create_shipments translate="title" module="postnl">
-                        <title>Create PostNL Shipments</title>
-                        <sort_order>1</sort_order>
-                    </create_shipments>
-                </postnl>
-            </resources>
-        </acl>
-    </api>
-</config>
+class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
+{
+    public function createShipments($orderIds = array())
+    {
+        return $orderIds;
+        $this->_fault('test');
+    }
+}

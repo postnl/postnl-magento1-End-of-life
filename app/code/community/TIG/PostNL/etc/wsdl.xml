@@ -1,60 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/"
-    name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}" xmlns:ns0="urn:Magento">
+<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}" xmlns:ns0="urn:Magento">
+
     <types>
         <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
             <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
         </schema>
     </types>
 
-<!--END TYPES -->
-
-<!--BEGIN MESSAGES -->
-
-    <message name="postnlListRequest">
+    <message name="postnlCreateShipmentsRequest">
         <part name="sessionId" type="xsd:string" />
-    </message>
-    <message name="postnlListResponse">
-        <part name="result" type="wildcard" />
+        <part name="orderIds" type="typens:ArrayOfString" />
     </message>
 
-    <message name="postnlCreateShipmentRequest">
-        <part name="sessionId" type="xsd:string" />
+    <message name="postnlCreateShipmentsResponse">
+        <part name="result" type="typens:ArrayOfString" />
     </message>
-    <message name="postnlCreateShipmentResponse">
-        <part name="result" type="wildcard" />
-    </message>
-
-<!--END MESSAGES -->
-
-
-<!--BEGIN PORT TYPES -->
 
     <portType name="{{var wsdl.handler}}PortType">
-
-        <operation name="postnlList">
-            <documentation>Retrieve customer groups</documentation>
-            <input message="typens:postnlListRequest" />
-            <output message="typens:postnlListResponse" />
+        <operation name="postnlCreateShipments">
+            <documentation>Create PostNL Shipments</documentation>
+            <input message="typens:postnlCreateShipmentsRequest" />
+            <output message="typens:postnlCreateShipmentsResponse" />
         </operation>
-        <operation name="postnlCreateShipment">
-            <documentation>Create PostNL Shipment</documentation>
-            <input message="typens:postnlCreateShipmentRequest" />
-            <output message="typens:postnlCreateShipmentResponse" />
-        </operation>
-
     </portType>
-
-<!--END PORT TYPES -->
-
-<!--BEGIN BINDINGS -->
 
     <binding name="{{var wsdl.handler}}Binding" type="typens:{{var wsdl.handler}}PortType">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
-
-
-        <operation name="postnlList">
+        <operation name="postnlCreateShipments">
             <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
             <input>
                 <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
@@ -63,18 +35,6 @@
                 <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
             </output>
         </operation>
-
-        <operation name="postnlCreateShipment">
-            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
-            <input>
-                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-            </input>
-            <output>
-                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-            </output>
-        </operation>
-
     </binding>
-<!--END BINDINGS -->
 
 </definitions>

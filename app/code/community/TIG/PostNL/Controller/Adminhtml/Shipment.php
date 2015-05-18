@@ -240,6 +240,17 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      */
     protected function _createShipments(array $orderIds, $loadExisting = false, $registerExisting = true)
     {
+        $serviceModel = Mage::getModel('postnl_core/service_shipment');
+        $shipmentIds = $serviceModel->createShipments($orderIds, $loadExisting, $registerExisting);
+
+        $warnings = $serviceModel->getWarnings();
+        foreach ($warnings as $warning) {
+            $this->addWarning($warning);
+            $this->_errors++;
+        }
+
+        /////////////////////////////////////////
+
         $helper = Mage::helper('postnl');
 
         /**
