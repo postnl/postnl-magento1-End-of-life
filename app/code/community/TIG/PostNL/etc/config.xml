@@ -158,6 +158,9 @@
                     </matrixrate>
                 </entities>
             </postnl_carrier_resource>
+            <postnl_api>
+                <class>TIG_PostNL_Model_Api</class>
+            </postnl_api>
         </models>
         <resources>
             <postnl_setup>

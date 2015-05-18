@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+-->
+<config>
+    <api>
+        <resources>
+            <postnl_api translate="title" module="postnl">
+                <title>PostNL Resource</title>
+                <acl>postnl_acl</acl>
+                <model>postnl/api</model>
+                <methods>
+                    <list translate="title" module="postnl">
+                        <title>Retrive customers</title>
+                        <acl>postnl_acl/list</acl>
+                        <method>postnlList</method>
+                    </list>
+                    <createShipment translate="title" module="postnl">
+                        <title>Create PostNL Shipment</title>
+                        <acl>postnl_acl/createShipment</acl>
+                        <method>postnlCreateShipment</method>
+                    </createShipment>
+                </methods>
+                <faults module="postnl"> <!-- module="customer" specifies the module which will be used for translation. -->
+                    <data_invalid> <!-- if we get invalid input data for customers -->
+                        <code>100</code >
+                        <!-- we cannot know all the errors that can appear, their details can be found in error message for call -->
+                        <message>Invalid customer data. Details in error message.</message>
+                    </data_invalid>
+                    <filters_invalid>
+                        <code>101</code >
+                        <message>Invalid filters specified. Details in error message.</message>
+                    </filters_invalid>
+                    <not_exists>
+                        <code>102</code >
+                        <message>Customer doesn't exist.</message>
+                    </not_exists>
+                    <not_deleted>
+                        <code>103</code >
+                        <message>Customer was not deleted. Details in error message.</message>
+                    </not_deleted>
+                </faults>
+            </postnl_api>
+        </resources>
+        <v2>
+            <resources_function_prefix>
+                <postnl_api>postnl</postnl_api>
+            </resources_function_prefix>
+        </v2>
+        <acl>
+            <resources>
+                <postnl_acl translate="title" module="postnl">
+                    <title>PostNL API</title>
+                    <list translate="title" module="postnl">
+                        <title>View All</title>
+                    </list>
+                    <createShipment translate="title" module="postnl">
+                        <title>Create PostNL Shipment</title>
+                    </createShipment>
+                </postnl_acl>
+            </resources>
+        </acl>
+    </api>
+</config>
