@@ -40,7 +40,48 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
 {
     public function createShipments($orderIds = array())
     {
-        return $orderIds;
-        $this->_fault('test');
+        $return = array(
+            array(
+                'order_id' => 1,
+                'shipment_id' => 2,
+            ),
+            array(
+                'order_id' => 2,
+                'shipment_id' => 3,
+                'warning' => 'test warning',
+            ),
+        );
+
+        return $return;
+    }
+
+    public function fullPostnlFlow($orderIds = array())
+    {
+        return array('test2');
+    }
+
+    public function confirmShipments($shipmentsIds = array())
+    {
+        return array('test3');
+    }
+
+    public function printShippingLabels($shipmentsIds = array())
+    {
+        return array('test4');
+    }
+
+    public function confirmAndPrintShippingLabels($shipmentIds = array())
+    {
+        return array('test5');
+    }
+
+    public function getTrackAndTraceUrls($shipmentIds = array())
+    {
+        return array('test6');
+    }
+
+    public function getStatusInfo($shipmentIds = array())
+    {
+        return array('test7');
     }
 }

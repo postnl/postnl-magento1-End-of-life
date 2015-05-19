@@ -48,9 +48,39 @@
                 <methods>
                     <createShipments translate="title" module="postnl">
                         <title>Create PostNL Shipments</title>
-                        <acl>postnl/create_shipments</acl>
+                        <acl>postnl/order/create_shipments</acl>
                         <method>createShipments</method>
                     </createShipments>
+                    <createShipmentsConfirmAndPrintLabels translate="title" module="postnl">
+                        <title>Create PostNL Shipments, Confirm and Print Shipping Labels</title>
+                        <acl>postnl/order/create_shipment_confirm_and_print_labels</acl>
+                        <method>fullPostnlFlow</method>
+                    </createShipmentsConfirmAndPrintLabels>
+                    <confirmShipments translate="title" module="postnl">
+                        <title>Confirm PostNL Shipments</title>
+                        <acl>postnl/shipment/confirm</acl>
+                        <method>confirmShipments</method>
+                    </confirmShipments>
+                    <printShippingLabels translate="title" module="postnl">
+                        <title>Print PostNL Shipping Labels</title>
+                        <acl>postnl/shipment/print_labels</acl>
+                        <method>printShippingLabels</method>
+                    </printShippingLabels>
+                    <confirmAndPrintShippingLabels translate="title" module="postnl">
+                        <title>Confirm PostNL Shipments and Print Shipping Labels</title>
+                        <acl>postnl/shipment/confirm_and_print_labels</acl>
+                        <method>confirmAndPrintShippingLabels</method>
+                    </confirmAndPrintShippingLabels>
+                    <getTrackAndTraceUrls translate="title" module="postnl">
+                        <title>Get PostNL Shipments Track And Trace URLs</title>
+                        <acl>postnl/shipment/get_track_and_trace_urls</acl>
+                        <method>getTrackAndTraceUrls</method>
+                    </getTrackAndTraceUrls>
+                    <getStatusInfo translate="title" module="postnl">
+                        <title>Get PostNL Shipments Shipping Status Info</title>
+                        <acl>postnl/shipment/get_status_info</acl>
+                        <method>getStatusInfo</method>
+                    </getStatusInfo>
                 </methods>
                 <faults module="postnl">
                     <test>
@@ -70,12 +100,44 @@
         <acl>
             <resources>
                 <postnl translate="title" module="postnl">
-                    <title>PostNL API</title>
-                    <sort_order>1</sort_order>
-                    <create_shipments translate="title" module="postnl">
-                        <title>Create PostNL Shipments</title>
-                        <sort_order>1</sort_order>
-                    </create_shipments>
+                    <title>PostNL</title>
+                    <sort_order>2</sort_order>
+                    <order translate="title" module="postnl">
+                        <title>Order</title>
+                        <sort_order>10</sort_order>
+                        <create_shipments translate="title" module="postnl">
+                            <title>Create PostNL Shipments</title>
+                            <sort_order>10</sort_order>
+                        </create_shipments>
+                        <create_shipment_confirm_and_print_labels translate="title" module="postnl">
+                            <title>Create PostNL Shipments, Confirm and Print Labels</title>
+                            <sort_order>20</sort_order>
+                        </create_shipment_confirm_and_print_labels>
+                    </order>
+                    <shipment translate="title" module="postnl">
+                        <title>Shipment</title>
+                        <sort_order>10</sort_order>
+                        <confirm translate="title" module="postnl">
+                            <title>Confirm Shipment</title>
+                            <sort_order>10</sort_order>
+                        </confirm>
+                        <print_labels translate="title" module="postnl">
+                            <title>Print Shipping Labels</title>
+                            <sort_order>20</sort_order>
+                        </print_labels>
+                        <confirm_and_print_labels translate="title" module="postnl">
+                            <title>Confirm Shipment and Print Shipping Labels</title>
+                            <sort_order>30</sort_order>
+                        </confirm_and_print_labels>
+                        <get_track_and_trace_urls translate="title" module="postnl">
+                            <title>Get Track and Trace URLs</title>
+                            <sort_order>40</sort_order>
+                        </get_track_and_trace_urls>
+                        <get_status_info translate="title" module="postnl">
+                            <title>Get Shipping Status</title>
+                            <sort_order>50</sort_order>
+                        </get_status_info>
+                    </shipment>
                 </postnl>
             </resources>
         </acl>
