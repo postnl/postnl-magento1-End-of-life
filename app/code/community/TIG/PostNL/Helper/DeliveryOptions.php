@@ -685,6 +685,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $europeBerlinTimeZone = new DateTimeZone('Europe/Berlin');
         $utcTimeZone          = new DateTimeZone('UTC');
 
+        /**
+         * @todo refactor so we don't have to use 'format()' to modify a date.
+         */
         $cutOffDate = new DateTime('now', $europeBerlinTimeZone);
         $cutOffDate->setDate($orderDate->format('Y'), $orderDate->format('m'), $orderDate->format('d'))
                    ->setTime((int) $cutOffTime[0], (int) $cutOffTime[1], (int) $cutOffTime[2])
