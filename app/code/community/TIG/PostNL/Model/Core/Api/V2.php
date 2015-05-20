@@ -40,6 +40,18 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
 {
     public function createShipments($orderIds = array())
     {
+        $resultArray = array();
+
+        $serviceModel = Mage::getModel('postnl_core/service_shipment');
+        foreach ($orderIds as $orderId) {
+            $shipmentId = $serviceModel->createShipment($orderId);
+
+            $resultArray[] = array(
+                'order_id' => $orderId,
+
+            );
+        }
+
         $return = array(
             array(
                 'order_id' => 1,
