@@ -383,10 +383,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             true
         );
 
-        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)
-                               ->sub(new DateInterval('P1D'));
+        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate);
 
-        $confirmDate = $helper->getValidConfirmDate($deliveryDate);
+        $confirmDate = clone $deliveryDate;
+        $confirmDate->sub(new DateInterval('P1D'));
+        $confirmDate = $helper->getValidConfirmDate($confirmDate);
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());
