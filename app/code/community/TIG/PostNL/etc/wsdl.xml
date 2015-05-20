@@ -4,11 +4,26 @@
     <types>
         <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
             <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
+            <complexType name="postnlWarning">
+                <all>
+                    <element name="entity_id" type="xsd:string" minOccurs="0" />
+                    <element name="code" type="xsd:string" minOccurs="0" />
+                    <element name="description" type="xsd:string" minOccurs="1" />
+                </all>
+            </complexType>
+            <complexType name="postnlWarningArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlWarning[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
             <complexType name="postnlShipmentEntity">
                 <all>
                     <element name="order_id" type="xsd:string" minOccurs="1" />
                     <element name="shipment_id" type="xsd:string" minOccurs="1" />
-                    <element name="warning" type="xsd:string" minOccurs="0" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                 </all>
             </complexType>
             <complexType name="postnlShipmentEntityArray">
@@ -24,7 +39,7 @@
                     <element name="order_id" type="xsd:string" minOccurs="1" />
                     <element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <element name="label" type="xsd:string" minOccurs="1" />
-                    <element name="warning" type="xsd:string" minOccurs="0" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                 </all>
             </complexType>
             <complexType name="postnlPrintedLabelEntityArray">
@@ -41,7 +56,7 @@
                     <element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
                     <element name="main_barcode" type="xsd:string" minOccurs="1" />
-                    <element name="warning" type="xsd:string" minOccurs="0" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                 </all>
             </complexType>
             <complexType name="postnlTrackAndTraceUrlEntityArray">
@@ -58,7 +73,7 @@
                     <element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <element name="shipping_phase" type="xsd:string" minOccurs="1" />
                     <element name="return_phase" type="xsd:string" minOccurs="0" />
-                    <element name="warning" type="xsd:string" minOccurs="0" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                 </all>
             </complexType>
             <complexType name="postnlShippingStatusEntityArray">

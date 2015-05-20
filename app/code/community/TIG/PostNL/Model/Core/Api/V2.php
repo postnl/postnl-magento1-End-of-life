@@ -42,29 +42,50 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
     {
         $resultArray = array();
 
-        $serviceModel = Mage::getModel('postnl_core/service_shipment');
-        foreach ($orderIds as $orderId) {
-            $shipmentId = $serviceModel->createShipment($orderId);
+//        $serviceModel = Mage::getModel('postnl_core/service_shipment');
+//        foreach ($orderIds as $orderId) {
+//            $serviceModel->resetWarnings();
+//            $shipmentId = $serviceModel->createShipment($orderId);
+//
+//            $resultArray[] = array(
+//                'order_id'    => $orderId,
+//                'shipment_id' => $shipmentId,
+//                'warning'     => $serviceModel->getWarnings()
+//            );
+//        }
 
-            $resultArray[] = array(
-                'order_id' => $orderId,
-
-            );
-        }
-
-        $return = array(
+        return array(
             array(
                 'order_id' => 1,
                 'shipment_id' => 2,
-            ),
-            array(
-                'order_id' => 2,
-                'shipment_id' => 3,
-                'warning' => 'test warning',
+                'warning' => array(
+                    array(
+                        'entity_id' => 1,
+                        'code' => 'test',
+                        'description' => 'test',
+                    ),
+                    array(
+                        'entity_id' => 2,
+                        'code' => 'test2',
+                        'description' => 'test2',
+                    ),
+                ),
             ),
         );
 
-        return $return;
+//        $return = array(
+//            array(
+//                'order_id' => 1,
+//                'shipment_id' => 2,
+//            ),
+//            array(
+//                'order_id' => 2,
+//                'shipment_id' => 3,
+//                'warning' => 'test warning',
+//            ),
+//        );
+
+        return $resultArray;
     }
 
     public function fullPostnlFlow($orderIds = array())

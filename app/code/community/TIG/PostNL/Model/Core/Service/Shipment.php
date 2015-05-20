@@ -82,6 +82,16 @@ class TIG_PostNL_Model_Core_Service_Shipment
     }
 
     /**
+     * @return $this
+     */
+    public function resetWarnings()
+    {
+        $this->setWarnings(array());
+
+        return $this;
+    }
+
+    /**
      * @param array|string $warning
      *
      * @return $this
@@ -298,7 +308,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function createShipment($order)
+    public function createShipment($order)
     {
         $helper = Mage::helper('postnl');
 
