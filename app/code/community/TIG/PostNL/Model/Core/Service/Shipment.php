@@ -629,10 +629,18 @@ class TIG_PostNL_Model_Core_Service_Shipment
             /**
              * The shipment is already confirmed.
              */
-            throw new TIG_PostNL_Exception(
-                $helper->__('Shipment #%s has already been confirmed.', $postnlShipment->getShipment()->getIncrementId()),
-                'POSTNL-0017'
+            $this->addWarning(
+                array(
+                    'entity_id'   => $postnlShipment->getShipmentId(),
+                    'code'        => 'POSTNL-0017',
+                    'description' => $helper->__(
+                        'Shipment #%s has already been confirmed.',
+                        $postnlShipment->getShipment()->getIncrementId()
+                    ),
+                )
             );
+
+            return $this;
         }
 
         if (!$postnlShipment->canConfirm()) {

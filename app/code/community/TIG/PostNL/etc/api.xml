@@ -91,6 +91,14 @@
                         <code>POSTNL-0227</code>
                         <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
                     </POSTNL-0227>
+                    <POSTNL-0228>
+                        <code>POSTNL-0228</code>
+                        <message>The 'orderIds' parameter must contain a non-empty array of order IDs.</message>
+                    </POSTNL-0228>
+                    <POSTNL-0229>
+                        <code>POSTNL-0229</code>
+                        <message>The 'shipmentIds' parameter must contain a non-empty array of shipment IDs.</message>
+                    </POSTNL-0229>
                 </faults>
             </postnl>
         </resources>
