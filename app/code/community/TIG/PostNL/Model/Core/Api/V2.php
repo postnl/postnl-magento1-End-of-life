@@ -45,6 +45,8 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
 
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
         foreach ($orderIds as $orderId) {
+            $error = null;
+            $warnings = null;
             $serviceModel->resetWarnings();
             try{
                 $shipmentId = $serviceModel->createShipment($orderId);
@@ -56,29 +58,31 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
                 if (empty($code)) {
                     $code = null;
                 }
-                $serviceModel->addWarning(
-                    array(
-                        'entity_id' => $orderId,
-                        'code' => $code,
-                        'description' => $e->getMessage(),
-                    )
+
+                $error = array(
+                    'entity_id' => $orderId,
+                    'code' => $code,
+                    'description' => $e->getMessage(),
                 );
             } catch (Exception $e) {
                 $shipmentId = null;
                 $helper->logException($e);
-                $serviceModel->addWarning(
-                    array(
-                        'entity_id' => $orderId,
-                        'code' => null,
-                        'description' => $e->getMessage(),
-                    )
+                $error = array(
+                    'entity_id' => $orderId,
+                    'code' => null,
+                    'description' => $e->getMessage(),
                 );
+            }
+
+            if ($serviceModel->hasWarnings()) {
+                $warnings = $serviceModel->getWarnings();
             }
 
             $resultArray[] = array(
                 'order_id'    => $orderId,
                 'shipment_id' => $shipmentId,
-                'warning'     => $serviceModel->getWarnings()
+                'warning'     => $warnings,
+                'error'       => array($error),
             );
         }
 
