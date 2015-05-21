@@ -3,11 +3,38 @@
 
     <wsdl:types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:{{var wsdl.name}}">
+            <xsd:complexType name="postnlError">
+                <xsd:sequence>
+                    <xsd:element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="code" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="description" type="xsd:string" minOccurs="1" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlErrorArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlError" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlWarning">
+                <xsd:sequence>
+                    <xsd:element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="code" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="description" type="xsd:string" minOccurs="1" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlWarningArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlWarning" />
+                </xsd:sequence>
+            </xsd:complexType>
+
             <xsd:complexType name="postnlShipmentEntity">
                 <xsd:sequence>
                     <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
-                    <xsd:element name="warning" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="postnlShipmentEntityArray">
@@ -21,7 +48,8 @@
                     <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="label" type="xsd:string" minOccurs="1" />
-                    <xsd:element name="warning" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="postnlPrintedLabelEntityArray">
@@ -36,7 +64,8 @@
                     <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
                     <xsd:element name="main_barcode" type="xsd:string" minOccurs="1" />
-                    <xsd:element name="warning" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="postnlTrackAndTraceUrlEntityArray">
@@ -51,7 +80,8 @@
                     <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="shipping_phase" type="xsd:string" minOccurs="1" />
                     <xsd:element name="return_phase" type="xsd:string" minOccurs="0" />
-                    <xsd:element name="warning" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="postnlShippingStatusEntityArray">
@@ -96,7 +126,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
-                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -112,7 +142,9 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
-                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelSize" type="xsd:string" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelStartPosition" type="xsd:int" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -128,7 +160,9 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
-                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelSize" type="xsd:string" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelStartPosition" type="xsd:int" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -144,7 +178,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
-                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -160,7 +194,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
-                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
