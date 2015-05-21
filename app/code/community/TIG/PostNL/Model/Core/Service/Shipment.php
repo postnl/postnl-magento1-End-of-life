@@ -316,7 +316,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $order = Mage::getModel('sales/order')->load($order);
         }
 
-        if (!is_object($order) || !($order instanceof Mage_Sales_Model_Order)) {
+        if (!is_object($order) || !($order instanceof Mage_Sales_Model_Order) || !$order->getId()) {
             throw new InvalidArgumentException(
                 'Order must be an instance of Mage_Sales_Model_Order or a valid entity ID.'
             );
