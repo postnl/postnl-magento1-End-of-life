@@ -41,49 +41,46 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
     public function createShipments($orderIds = array())
     {
         $resultArray = array();
+        $helper = Mage::helper('postnl');
 
-//        $serviceModel = Mage::getModel('postnl_core/service_shipment');
-//        foreach ($orderIds as $orderId) {
-//            $serviceModel->resetWarnings();
-//            $shipmentId = $serviceModel->createShipment($orderId);
-//
-//            $resultArray[] = array(
-//                'order_id'    => $orderId,
-//                'shipment_id' => $shipmentId,
-//                'warning'     => $serviceModel->getWarnings()
-//            );
-//        }
+        $serviceModel = Mage::getModel('postnl_core/service_shipment');
+        foreach ($orderIds as $orderId) {
+            $serviceModel->resetWarnings();
+            try{
+                $shipmentId = $serviceModel->createShipment($orderId);
+            } catch(TIG_PostNL_Exception $e) {
+                $shipmentId = null;
+                $helper->logException($e);
 
-        return array(
-            array(
-                'order_id' => 1,
-                'shipment_id' => 2,
-                'warning' => array(
+                $code = $e->getCode();
+                if (empty($code)) {
+                    $code = null;
+                }
+                $serviceModel->addWarning(
                     array(
-                        'entity_id' => 1,
-                        'code' => 'test',
-                        'description' => 'test',
-                    ),
+                        'entity_id' => $orderId,
+                        'code' => $code,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $shipmentId = null;
+                $helper->logException($e);
+                $serviceModel->addWarning(
                     array(
-                        'entity_id' => 2,
-                        'code' => 'test2',
-                        'description' => 'test2',
-                    ),
-                ),
-            ),
-        );
+                        'entity_id' => $orderId,
+                        'code' => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
 
-//        $return = array(
-//            array(
-//                'order_id' => 1,
-//                'shipment_id' => 2,
-//            ),
-//            array(
-//                'order_id' => 2,
-//                'shipment_id' => 3,
-//                'warning' => 'test warning',
-//            ),
-//        );
+            $resultArray[] = array(
+                'order_id'    => $orderId,
+                'shipment_id' => $shipmentId,
+                'warning'     => $serviceModel->getWarnings()
+            );
+        }
 
         return $resultArray;
     }
