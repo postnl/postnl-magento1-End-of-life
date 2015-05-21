@@ -83,10 +83,14 @@
                     </getStatusInfo>
                 </methods>
                 <faults module="postnl">
-                    <test>
-                        <code>100</code >
-                        <message>Test</message>
-                    </test>
+                    <POSTNL-0226>
+                        <code>POSTNL-0226</code>
+                        <message>Only A4 or A6 are valid values for the 'labelSize' parameter.</message>
+                    </POSTNL-0226>
+                    <POSTNL-0227>
+                        <code>POSTNL-0227</code>
+                        <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
+                    </POSTNL-0227>
                 </faults>
             </postnl>
         </resources>
