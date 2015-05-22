@@ -58,12 +58,21 @@
                 </xsd:sequence>
             </xsd:complexType>
 
+            <xsd:complexType name="postnlBarcodesArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="shipment" type="typens:ArrayOfString" />
+                    <xsd:element minOccurs="0" maxOccurs="1" name="return" type="typens:ArrayOfString" />
+                </xsd:sequence>
+            </xsd:complexType>
+
             <xsd:complexType name="postnlTrackAndTraceUrlEntity">
                 <xsd:sequence>
                     <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <xsd:element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
                     <xsd:element name="main_barcode" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="return_barcode" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="all_barcodes" type="typens:postnlBarcodesArray" minOccurs="1" />
                     <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                     <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </xsd:sequence>

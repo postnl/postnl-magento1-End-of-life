@@ -67,12 +67,21 @@
                 </complexContent>
             </complexType>
 
+            <complexType name="postnlBarcodesArray">
+                <all>
+                    <element name="shipment" type="typens:ArrayOfString" minOccurs="1" />
+                    <element name="return" type="typens:ArrayOfString" minOccurs="0" />
+                </all>
+            </complexType>
+
             <complexType name="postnlTrackAndTraceUrlEntity">
                 <all>
                     <element name="order_id" type="xsd:string" minOccurs="1" />
                     <element name="shipment_id" type="xsd:string" minOccurs="1" />
                     <element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
                     <element name="main_barcode" type="xsd:string" minOccurs="1" />
+                    <element name="return_barcode" type="xsd:string" minOccurs="0" />
+                    <element name="all_barcodes" type="typens:postnlBarcodesArray" minOccurs="1" />
                     <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
                     <element name="error" type="typens:postnlErrorArray" minOccurs="0" />
                 </all>

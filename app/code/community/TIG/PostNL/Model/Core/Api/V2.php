@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
 {
     /**
-     * Create shipments via API
+     * Create shipments via API.
      *
      * @param array $orderIds
      *
@@ -73,18 +73,19 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
     }
 
     /**
-     * Process the full PostNL flow for the supplied orders
+     * Process the full PostNL flow for the supplied orders.
      *
-     * @param array $orderIds
-     * @param bool  $labelSize
-     * @param null  $labelStartPosition
+     * @param array       $orderIds
+     * @param string|bool $labelSize
+     * @param int|null    $labelStartPosition
      *
      * @return array
      * @throws Mage_Api_Exception
      */
-    public function fullPostnlFlow($orderIds = array(), $labelSize = false,
-        $labelStartPosition = null)
+    public function fullPostnlFlow($orderIds = array(), $labelSize = false, $labelStartPosition = null)
     {
+        $this->_validateRequiredOrderIds($orderIds);
+
         $helper = Mage::helper('postnl');
 
         /**
@@ -108,9 +109,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         ) {
             $this->_fault(
                 'POSTNL-0227',
-                Mage::helper('postnl')->__(
-                    "The 'labelStartPosition' parameter must contain an integer value between 1 and 4."
-                )
+                $helper->__("The 'labelStartPosition' parameter must contain an integer value between 1 and 4.")
             );
         }
 
@@ -128,7 +127,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             $serviceModel->resetWarnings();
 
             /**
-             * Create shipments if needed and return all shipment IDs for the order
+             * Create shipments if needed and return all shipment IDs for the order.
              */
             $shipmentIds = $serviceModel->createShipments(array($orderId), true);
 
@@ -137,7 +136,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             }
 
             /**
-             * If no shipments could be found for this order, add an error to the response
+             * If no shipments could be found for this order, add an error to the response.
              */
             if (empty($shipmentIds)) {
                 $response[] = array(
@@ -153,8 +152,9 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
                         ),
                     ),
                 );
+
                 /**
-                 * Continue with next order
+                 * Continue with next order.
                  */
                 continue;
             }
@@ -166,7 +166,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
                 $serviceModel->resetWarnings();
 
                 /**
-                 * Get label for shipment and add the resulting data to the response
+                 * Get label for shipment and add the resulting data to the response.
                  */
                 $response[] = $this->_getLabels($serviceModel, $shipmentId, true, $labelSize, $labelStartPosition);
             }
@@ -355,8 +355,6 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
     {
         $this->_validateRequiredShipmentIds($shipmentIds);
 
-        $helper       = Mage::helper('postnl');
-
         /**
          * Get service model used for processing this request.
          */
@@ -373,48 +371,9 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             $serviceModel->resetWarnings();
 
             /**
-             * Get the PostNL Shipment for the current Shipment ID.
+             * Retrieve the Track & Trace data.
              */
-            $postnlShipment = $serviceModel->getPostnlShipment($shipmentId);
-
-            /**
-             * If the PostNL shipment does not exist, return an error.
-             */
-            if (!$postnlShipment || !is_object($postnlShipment) || !$postnlShipment->getId()) {
-                $response = array(
-                    'order_id'            => null,
-                    'shipment_id'         => $shipmentId,
-                    'track_and_trace_url' => null,
-                    'main_barcode'        => null,
-                    'warning'             => null,
-                    'error'               => array(
-                        array(
-                            'entity_id'   => $shipmentId,
-                            'code'        => null,
-                            'description' => $helper->__('No PostNL Shipment found for shipment ID #%s', $shipmentId)
-                        ),
-                    ),
-                );
-
-                return $response;
-            }
-
-            /**
-             * Add the resulting data to the response.
-             */
-            $response[] = array(
-                'order_id'            => $postnlShipment->getOrderId(),
-                'shipment_id'         => $postnlShipment->getShipmentId(),
-                'track_and_trace_url' => $postnlShipment->getBarcodeUrl(),
-                'main_barcode'        => $postnlShipment->getMainBarcode(),
-            );
-
-            /**
-             * Add any warnings that may have occurred.
-             */
-            if ($serviceModel->hasWarnings()) {
-                $response['warning'] = $serviceModel->getWarnings();
-            }
+            $response[] = $this->_getTrackAndTraceInfo($serviceModel, $shipmentId);
         }
 
         return $response;
@@ -786,6 +745,94 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         }
 
         return $result;
+    }
+
+    /**
+     * Get Track & Trace info for the supplied shipment ID.
+     *
+     * @param TIG_PostNL_Model_Core_Service_Shipment $serviceModel
+     * @param int                                    $shipmentId
+     *
+     * @return array
+     */
+    protected function _getTrackAndTraceInfo(TIG_PostNL_Model_Core_Service_Shipment $serviceModel, $shipmentId)
+    {
+        $helper       = Mage::helper('postnl');
+
+        /**
+         * Get the PostNL Shipment for the current Shipment ID.
+         */
+        $postnlShipment = $serviceModel->getPostnlShipment($shipmentId);
+
+        /**
+         * If the PostNL shipment does not exist, return an error.
+         */
+        if (!$postnlShipment || !is_object($postnlShipment) || !$postnlShipment->getId()) {
+            $response = array(
+                'order_id'            => null,
+                'shipment_id'         => $shipmentId,
+                'track_and_trace_url' => null,
+                'main_barcode'        => null,
+                'return_barcode'      => null,
+                'other_barcodes'      => null,
+                'warning'             => null,
+                'error'               => array(
+                    array(
+                        'entity_id'   => $shipmentId,
+                        'code'        => null,
+                        'description' => $helper->__('No PostNL Shipment found for shipment ID #%s', $shipmentId)
+                    ),
+                ),
+            );
+
+            return $response;
+        }
+
+        /**
+         * Add the resulting data to the response.
+         */
+        $response = array(
+            'order_id'            => $postnlShipment->getOrderId(),
+            'shipment_id'         => $postnlShipment->getShipmentId(),
+            'track_and_trace_url' => $postnlShipment->getBarcodeUrl(),
+            'main_barcode'        => $postnlShipment->getMainBarcode(),
+        );
+
+        /**
+         * Get all shipments barcodes.
+         */
+        $allBarcodes = array(
+            'shipment' => $postnlShipment->getBarcodes(
+                false,
+                TIG_PostNL_Model_Core_Shipment_Barcode::BARCODE_TYPE_SHIPMENT
+            ),
+        );
+
+        /**
+         * If the shipment also has return barcodes, add those.
+         */
+        if ($postnlShipment->hasReturnBarcode()) {
+            $allBarcodes['return'] = $postnlShipment->getBarcodes(
+                false,
+                TIG_PostNL_Model_Core_Shipment_Barcode::BARCODE_TYPE_RETURN
+            );
+
+            $response['return_barcode'] = $postnlShipment->getReturnBarcode();
+        }
+
+        /**
+         * Add all barcodes to the response array.
+         */
+        $response['all_barcodes'] = $allBarcodes;
+
+        /**
+         * Add any warnings that may have occurred.
+         */
+        if ($serviceModel->hasWarnings()) {
+            $response['warning'] = $serviceModel->getWarnings();
+        }
+
+        return $response;
     }
 
     /**
