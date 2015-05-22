@@ -1222,21 +1222,21 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * N.B.: if file logging is enabled, the log will be forced
      *
-     * @param Zend_Soap_Client $client
+     * @param SoapClient $client
      *
      * @return $this
      *
      * @see Mage::log()
      *
      */
-    public function logCifCall($client)
+    public function logCifCall(SoapClient $client)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
         }
 
-        $requestXml = $this->formatXml($client->getLastRequest());
-        $responseXML = $this->formatXml($client->getLastResponse());
+        $requestXml = $this->formatXml($client->__getLastRequest());
+        $responseXML = $this->formatXml($client->__getLastResponse());
 
         $logMessage = "<<< REQUEST SENT >>>"
                     . PHP_EOL

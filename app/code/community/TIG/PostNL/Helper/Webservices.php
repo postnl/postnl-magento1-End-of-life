@@ -148,13 +148,13 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * Logs a webservice request and response for debug purposes.
      *
-     * @param Zend_Soap_Client $client
+     * @param SoapClient $client
      *
      * @return $this
      *
      * @see Mage::log()
      */
-    public function logWebserviceCall($client)
+    public function logWebserviceCall(SoapClient $client)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
@@ -162,8 +162,8 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
 
         $this->createLogDir();
 
-        $requestXml = $this->formatXml($client->getLastRequest());
-        $responseXML = $this->formatXml($client->getLastResponse());
+        $requestXml = $this->formatXml($client->__getLastRequest());
+        $responseXML = $this->formatXml($client->__getLastResponse());
 
         $logMessage = "Request sent:\n"
                     . $requestXml
