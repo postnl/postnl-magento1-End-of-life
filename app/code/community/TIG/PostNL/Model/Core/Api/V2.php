@@ -376,7 +376,6 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             $response[] = $this->_getStatusInfo($serviceModel, $shipmentId);
         }
 
-        Mage::log(var_export($response, true), null, 'soap.log', true);
         return $response;
     }
 
