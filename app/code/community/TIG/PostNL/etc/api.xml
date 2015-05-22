@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+-->
+<config>
+    <api>
+        <resources>
+            <postnl translate="title" module="postnl">
+                <title>PostNL Resource</title>
+                <acl>postnl</acl>
+                <model>postnl_core/api</model>
+                <methods>
+                    <createShipments translate="title" module="postnl">
+                        <title>Create PostNL Shipments</title>
+                        <acl>postnl/order/create_shipments</acl>
+                        <method>createShipments</method>
+                    </createShipments>
+                    <createShipmentsConfirmAndPrintLabels translate="title" module="postnl">
+                        <title>Create PostNL Shipments, Confirm and Print Shipping Labels</title>
+                        <acl>postnl/order/create_shipment_confirm_and_print_labels</acl>
+                        <method>fullPostnlFlow</method>
+                    </createShipmentsConfirmAndPrintLabels>
+                    <confirmShipments translate="title" module="postnl">
+                        <title>Confirm PostNL Shipments</title>
+                        <acl>postnl/shipment/confirm</acl>
+                        <method>confirmShipments</method>
+                    </confirmShipments>
+                    <printShippingLabels translate="title" module="postnl">
+                        <title>Print PostNL Shipping Labels</title>
+                        <acl>postnl/shipment/print_labels</acl>
+                        <method>printShippingLabels</method>
+                    </printShippingLabels>
+                    <confirmAndPrintShippingLabels translate="title" module="postnl">
+                        <title>Confirm PostNL Shipments and Print Shipping Labels</title>
+                        <acl>postnl/shipment/confirm_and_print_labels</acl>
+                        <method>confirmAndPrintShippingLabels</method>
+                    </confirmAndPrintShippingLabels>
+                    <getTrackAndTraceUrls translate="title" module="postnl">
+                        <title>Get PostNL Shipments Track And Trace URLs</title>
+                        <acl>postnl/shipment/get_track_and_trace_urls</acl>
+                        <method>getTrackAndTraceUrls</method>
+                    </getTrackAndTraceUrls>
+                    <getStatusInfo translate="title" module="postnl">
+                        <title>Get PostNL Shipments Shipping Status Info</title>
+                        <acl>postnl/shipment/get_status_info</acl>
+                        <method>getStatusInfo</method>
+                    </getStatusInfo>
+                </methods>
+                <faults module="postnl">
+                    <POSTNL-0226>
+                        <code>POSTNL-0226</code>
+                        <message>Only A4 or A6 are valid values for the 'labelSize' parameter.</message>
+                    </POSTNL-0226>
+                    <POSTNL-0227>
+                        <code>POSTNL-0227</code>
+                        <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
+                    </POSTNL-0227>
+                    <POSTNL-0228>
+                        <code>POSTNL-0228</code>
+                        <message>The 'orderIds' parameter must contain a non-empty array of order IDs.</message>
+                    </POSTNL-0228>
+                    <POSTNL-0229>
+                        <code>POSTNL-0229</code>
+                        <message>The 'shipmentIds' parameter must contain a non-empty array of shipment IDs.</message>
+                    </POSTNL-0229>
+                </faults>
+            </postnl>
+        </resources>
+
+        <v2>
+            <resources_function_prefix>
+                <postnl>postnl</postnl>
+            </resources_function_prefix>
+        </v2>
+
+        <acl>
+            <resources>
+                <postnl translate="title" module="postnl">
+                    <title>PostNL</title>
+                    <sort_order>2</sort_order>
+                    <order translate="title" module="postnl">
+                        <title>Order</title>
+                        <sort_order>10</sort_order>
+                        <create_shipments translate="title" module="postnl">
+                            <title>Create PostNL Shipments</title>
+                            <sort_order>10</sort_order>
+                        </create_shipments>
+                        <create_shipment_confirm_and_print_labels translate="title" module="postnl">
+                            <title>Create PostNL Shipments, Confirm and Print Labels</title>
+                            <sort_order>20</sort_order>
+                        </create_shipment_confirm_and_print_labels>
+                    </order>
+                    <shipment translate="title" module="postnl">
+                        <title>Shipment</title>
+                        <sort_order>10</sort_order>
+                        <confirm translate="title" module="postnl">
+                            <title>Confirm Shipment</title>
+                            <sort_order>10</sort_order>
+                        </confirm>
+                        <print_labels translate="title" module="postnl">
+                            <title>Print Shipping Labels</title>
+                            <sort_order>20</sort_order>
+                        </print_labels>
+                        <confirm_and_print_labels translate="title" module="postnl">
+                            <title>Confirm Shipment and Print Shipping Labels</title>
+                            <sort_order>30</sort_order>
+                        </confirm_and_print_labels>
+                        <get_track_and_trace_urls translate="title" module="postnl">
+                            <title>Get Track and Trace URLs</title>
+                            <sort_order>40</sort_order>
+                        </get_track_and_trace_urls>
+                        <get_status_info translate="title" module="postnl">
+                            <title>Get Shipping Status</title>
+                            <sort_order>50</sort_order>
+                        </get_status_info>
+                    </shipment>
+                </postnl>
+            </resources>
+        </acl>
+    </api>
+</config>
