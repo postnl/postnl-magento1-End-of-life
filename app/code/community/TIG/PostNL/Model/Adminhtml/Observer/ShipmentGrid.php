@@ -880,6 +880,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
      * @return $this
+     *
+     * @todo optimize by placing acl checks before mass action generation
      */
     protected function _addMassaction($block)
     {

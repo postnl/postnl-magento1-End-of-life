@@ -540,13 +540,13 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * Logs a cendris request and response for debug purposes.
      *
-     * @param Zend_Soap_Client $client
+     * @param Soap>__getLastRe $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::log()
      */
-    public function logCendrisCall(Zend_Soap_Client $client)
+    public function logCendrisCall(SoapClient $client)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
@@ -554,8 +554,8 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         $this->createLogDir();
 
-        $requestXml = $this->formatXml($client->getLastRequest());
-        $responseXML = $this->formatXml($client->getLastResponse());
+        $requestXml = $this->formatXml($client->__getLastRequest());
+        $responseXML = $this->formatXml($client->__getLastResponse());
 
         $logMessage = 'Request sent:'
                     . PHP_EOL
@@ -575,7 +575,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * Logs a cendris exception in the database and/or a log file
      *
      * @param Mage_Core_Exception|TIG_PostNL_Exception|SoapFault $exception
-     * @param Zend_Soap_Client|boolean $client
+     * @param SoapClient|boolean $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *
@@ -589,9 +589,9 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         $logMessage = PHP_EOL . $exception->__toString();
 
-        if ($client && $client instanceof Zend_Soap_Client) {
-            $requestXml = $this->formatXml($client->getLastRequest());
-            $responseXML = $this->formatXml($client->getLastResponse());
+        if ($client && $client instanceof SoapClient) {
+            $requestXml = $this->formatXml($client->__getLastRequest());
+            $responseXML = $this->formatXml($client->__getLastResponse());
 
             $logMessage .= PHP_EOL
                          . 'Request sent:'
