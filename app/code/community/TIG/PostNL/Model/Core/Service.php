@@ -209,7 +209,13 @@ class TIG_PostNL_Model_Core_Service
 
             $orderItem->setQtyInvoiced(0)
                       ->setRowInvoiced(0)
-                      ->setBaseRowInvoiced(0);
+                      ->setBaseRowInvoiced(0)
+                      ->setTaxInvoiced(0)
+                      ->setBaseTaxInvoiced(0)
+                      ->setDiscountInvoiced(0)
+                      ->setBaseDiscountInvoiced(0)
+                      ->setHiddenTaxInvoiced(0)
+                      ->setBaseHiddenTaxInvoiced(0);
 
             $totalQty += $qty;
             $item->setData('qty', $qty);

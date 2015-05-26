@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}" xmlns:ns0="urn:Magento">
+
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
+            <complexType name="postnlError">
+                <all>
+                    <element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <element name="code" type="xsd:string" minOccurs="1" />
+                    <element name="description" type="xsd:string" minOccurs="1" />
+                </all>
+            </complexType>
+            <complexType name="postnlErrorArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlError[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="postnlWarning">
+                <all>
+                    <element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <element name="code" type="xsd:string" minOccurs="1" />
+                    <element name="description" type="xsd:string" minOccurs="1" />
+                </all>
+            </complexType>
+            <complexType name="postnlWarningArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlWarning[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="postnlShipmentEntity">
+                <all>
+                    <element name="order_id" type="xsd:string" minOccurs="1" />
+                    <element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </all>
+            </complexType>
+            <complexType name="postnlShipmentEntityArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlShipmentEntity[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="postnlPrintedLabelEntity">
+                <all>
+                    <element name="order_id" type="xsd:string" minOccurs="1" />
+                    <element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <element name="label" type="xsd:string" minOccurs="1" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </all>
+            </complexType>
+            <complexType name="postnlPrintedLabelEntityArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlPrintedLabelEntity[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="postnlBarcodesArray">
+                <all>
+                    <element name="shipment" type="typens:ArrayOfString" minOccurs="1" />
+                    <element name="return" type="typens:ArrayOfString" minOccurs="0" />
+                </all>
+            </complexType>
+
+            <complexType name="postnlTrackAndTraceUrlEntity">
+                <all>
+                    <element name="order_id" type="xsd:string" minOccurs="1" />
+                    <element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
+                    <element name="main_barcode" type="xsd:string" minOccurs="1" />
+                    <element name="return_barcode" type="xsd:string" minOccurs="0" />
+                    <element name="all_barcodes" type="typens:postnlBarcodesArray" minOccurs="1" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </all>
+            </complexType>
+            <complexType name="postnlTrackAndTraceUrlEntityArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlTrackAndTraceUrlEntity[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="postnlShippingStatusEntity">
+                <all>
+                    <element name="order_id" type="xsd:string" minOccurs="1" />
+                    <element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <element name="shipping_phase" type="xsd:string" minOccurs="1" />
+                    <element name="return_phase" type="xsd:string" minOccurs="1" />
+                    <element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </all>
+            </complexType>
+            <complexType name="postnlShippingStatusEntityArray">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:postnlShippingStatusEntity[]" />
+                    </restriction>
+                </complexContent>
+            </complexType>
+        </schema>
+    </types>
+
+    <message name="postnlCreateShipmentsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+    </message>
+    <message name="postnlCreateShipmentsResponse">
+        <part name="result" type="typens:postnlShipmentEntityArray" />
+    </message>
+
+    <message name="postnlCreateShipmentsConfirmAndPrintLabelsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+    </message>
+    <message name="postnlCreateShipmentsConfirmAndPrintLabelsResponse">
+        <part name="result" type="typens:postnlPrintedLabelEntityArray" />
+    </message>
+
+    <message name="postnlConfirmShipmentsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+    </message>
+    <message name="postnlConfirmShipmentsResponse">
+        <part name="result" type="typens:postnlShipmentEntityArray" />
+    </message>
+
+    <message name="postnlPrintShippingLabelsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+        <part name="labelSize" type="xsd:string" minOccurs="0" />
+        <part name="labelStartPosition" type="xsd:int" minOccurs="0" />
+    </message>
+    <message name="postnlPrintShippingLabelsResponse">
+        <part name="result" type="typens:postnlPrintedLabelEntityArray" />
+    </message>
+
+    <message name="postnlConfirmAndPrintShippingLabelsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+        <part name="labelSize" type="xsd:string" minOccurs="0" />
+        <part name="labelStartPosition" type="xsd:int" minOccurs="0" />
+    </message>
+    <message name="postnlConfirmAndPrintShippingLabelsResponse">
+        <part name="result" type="typens:postnlPrintedLabelEntityArray" />
+    </message>
+
+    <message name="postnlGetTrackAndTraceUrlsRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+    </message>
+    <message name="postnlGetTrackAndTraceUrlsResponse">
+        <part name="result" type="typens:postnlTrackAndTraceUrlEntityArray" />
+    </message>
+
+    <message name="postnlGetStatusInfoRequest">
+        <part name="sessionId" type="xsd:string" />
+        <part name="orderIds" type="typens:ArrayOfString" />
+    </message>
+    <message name="postnlGetStatusInfoResponse">
+        <part name="result" type="typens:postnlShippingStatusEntityArray" />
+    </message>
+
+    <portType name="{{var wsdl.handler}}PortType">
+        <operation name="postnlCreateShipments">
+            <documentation>Create PostNL Shipments</documentation>
+            <input message="typens:postnlCreateShipmentsRequest" />
+            <output message="typens:postnlCreateShipmentsResponse" />
+        </operation>
+        <operation name="postnlCreateShipmentsConfirmAndPrintLabels">
+            <documentation>Create PostNL Shipments, Confirm and Print Shipping Labels</documentation>
+            <input message="typens:postnlCreateShipmentsConfirmAndPrintLabelsRequest" />
+            <output message="typens:postnlCreateShipmentsConfirmAndPrintLabelsResponse" />
+        </operation>
+        <operation name="postnlConfirmShipments">
+            <documentation>Confirm PostNL Shipments</documentation>
+            <input message="typens:postnlConfirmShipmentsRequest" />
+            <output message="typens:postnlConfirmShipmentsResponse" />
+        </operation>
+        <operation name="postnlPrintShippingLabels">
+            <documentation>Print PostNL Shipping Labels</documentation>
+            <input message="typens:postnlPrintShippingLabelsRequest" />
+            <output message="typens:postnlPrintShippingLabelsResponse" />
+        </operation>
+        <operation name="postnlConfirmAndPrintShippingLabels">
+            <documentation>Confirm PostNL Shipments and Print Shipping Labels</documentation>
+            <input message="typens:postnlConfirmAndPrintShippingLabelsRequest" />
+            <output message="typens:postnlConfirmAndPrintShippingLabelsResponse" />
+        </operation>
+        <operation name="postnlGetTrackAndTraceUrls">
+            <documentation>Get PostNL Shipments Track And Trace URLs</documentation>
+            <input message="typens:postnlGetTrackAndTraceUrlsRequest" />
+            <output message="typens:postnlGetTrackAndTraceUrlsResponse" />
+        </operation>
+        <operation name="postnlGetStatusInfo">
+            <documentation>Get PostNL Shipments Shipping Status Info</documentation>
+            <input message="typens:postnlGetStatusInfoRequest" />
+            <output message="typens:postnlGetStatusInfoResponse" />
+        </operation>
+    </portType>
+
+    <binding name="{{var wsdl.handler}}Binding" type="typens:{{var wsdl.handler}}PortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <operation name="postnlCreateShipments">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlCreateShipmentsConfirmAndPrintLabels">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlConfirmShipments">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlPrintShippingLabels">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlConfirmAndPrintShippingLabels">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlGetTrackAndTraceUrls">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="postnlGetStatusInfo">
+            <soap:operation soapAction="urn:{{var wsdl.handler}}Action" />
+            <input>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:{{var wsdl.name}}" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+
+</definitions>

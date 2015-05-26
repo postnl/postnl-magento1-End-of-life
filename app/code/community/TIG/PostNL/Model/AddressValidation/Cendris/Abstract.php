@@ -68,11 +68,11 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
             );
 
             /**
-             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
+             * try to create a new SoapClient instance based on the supplied wsdl. if it fails, try again without using the
              * wsdl cache.
              */
             try {
-                $client  = new Zend_Soap_Client(
+                $client  = new SoapClient(
                     $wsdl,
                     $soapOptions
                 );
@@ -82,7 +82,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
                  */
                 $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
 
-                $client  = new Zend_Soap_Client(
+                $client  = new SoapClient(
                     $wsdl,
                     $soapOptions
                 );
