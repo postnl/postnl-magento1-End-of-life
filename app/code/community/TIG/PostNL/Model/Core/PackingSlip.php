@@ -742,57 +742,55 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertShipmentInfo(&$page, $order, $postnlShipment)
     {
-        if (!$this->getConfig('show_shipping_method')) {
-            return $this;
-        }
 
         $this->rightColumnY -= 14;
         $top = $this->rightColumnY;
 
-        $font = $this->_setFontBold($page, 8);
-        $text = $this->getHelper()->__('Shipping method');
-        $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-        $page->drawText(
-             $text,
-             $x,
-             $top,
-             'UTF-8'
-        );
+        if ($this->getConfig('show_shipping_method')) {
+            $font = $this->_setFontBold($page, 8);
+            $text = $this->getHelper()->__('Shipping method');
+            $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+            $page->drawText(
+                $text,
+                $x,
+                $top,
+                'UTF-8'
+            );
 
-        $top -= 10;
+            $top -= 10;
 
-        $shippingMethod = $order->getShippingDescription();
+            $shippingMethod = $order->getShippingDescription();
 
-        $font = $this->_setFontRegular($page, 8);
-        $text = strip_tags(trim($shippingMethod))
-              . ' - '
-              . $order->formatPriceTxt($order->getShippingAmount() + $order->getShippingTaxAmount());
-        $x = 584 - $this->widthForStringUsingFontSize($text, $font, 8);
-        $page->drawText($text, $x, $top, 'UTF-8');
+            $font = $this->_setFontRegular($page, 8);
+            $text = strip_tags(trim($shippingMethod))
+                . ' - '
+                . $order->formatPriceTxt($order->getShippingAmount() + $order->getShippingTaxAmount());
+            $x    = 584 - $this->widthForStringUsingFontSize($text, $font, 8);
+            $page->drawText($text, $x, $top, 'UTF-8');
 
-        $top -= 10;
+            $top -= 10;
 
-        $deliveryDate = $postnlShipment->getDeliveryDate();
-        /** @noinspection PhpParamsInspection */
-        $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
-        $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-        $page->drawText($text, $x, $top, 'UTF-8');
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+            /** @noinspection PhpParamsInspection */
+            $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
+            $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+            $page->drawText($text, $x, $top, 'UTF-8');
 
-        $top -= 24;
-
-        $font = $this->_setFontBold($page, 8);
-        $text = $this->getHelper()->__('Ship order on');
-        $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-        $page->drawText(
-             $text,
-             $x,
-             $top,
-             'UTF-8'
-        );
-
-        $top -= 10;
+            $top -= 24;
+        }
 
         if ($this->getConfig('show_shipping_date')) {
+            $font = $this->_setFontBold($page, 8);
+            $text = $this->getHelper()->__('Ship order on');
+            $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+            $page->drawText(
+                $text,
+                $x,
+                $top,
+                'UTF-8'
+            );
+
+            $top -= 10;
             $font = $this->_setFontRegular($page, 8);
             $confirmDate = $postnlShipment->getConfirmDate();
             /** @noinspection PhpParamsInspection */
