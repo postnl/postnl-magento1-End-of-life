@@ -154,7 +154,7 @@ function FormPopulate () {
         var data = this.getData();
         var defaultValues = this.getDefaultValues();
 
-        // before we start, use defaultValues to pre-populate where needed, if set
+        // before we start, use defaultValues to pre-populate where needed
         if (defaultValues !== undefined) {
             this.populateFormWithData(form, defaultValues[form]);
         }
@@ -172,64 +172,56 @@ function FormPopulate () {
      * @param data
      * @returns {FormPopulate}
      */
-    this.populateFormWithData = function(form, data) {
-        var mapper = this.getMapper();
-
-        if (mapper[form] === undefined || !data) {
-            return this;
+    this.populateFormWithData = function(form, data, mapper) {
+        // Either a given mapper or the configured mapper
+        if (mapper === undefined) {
+            var mapper = this.getMapper();
         }
 
+        if (mapper[form] !== undefined) {
+            mapper = mapper[form];
+        }
 
         for (var key in data) {
             // check if there's a mapper field configured for this data value
-            if (mapper[form][key] === undefined) {
+            if (mapper[key] === undefined) {
                 continue;
             }
 
             // check if this is an array, if so, check if the data is an array too
-            if (typeof mapper[form][key] === 'object') {
+            if (typeof mapper[key] === 'object') {
                 if (typeof data[key] === 'object') {
-                    // both are arrays, so we need to loop & set all data in their mapped fields
-                    var arrayData = data[key];
-                    var arrayMapper = mapper[form][key];
-
-                    for (var arrayKey in arrayData) {
-                        if (typeof arrayMapper[arrayKey] === 'function') { continue; }
-
-                        // check if the mapped fields are array-in-array (meaning linked to array data but multiple
-                        // target fields)
-                        if (typeof arrayMapper[arrayKey] === 'object') {
-                            var subArrayMapper = arrayMapper[arrayKey];
-                            for (var subArrayKey in subArrayMapper) {
-                                if (typeof arrayMapper[subArrayKey] === 'function') { continue; }
-
-                                this.populateElement($(subArrayMapper[subArrayKey]), arrayData[arrayKey]);
-                            }
-                        } else {
-                            this.populateElement($(arrayMapper[arrayKey]), arrayData[arrayKey]);
-                        }
-
-                    }
+                    // both are arrays, so we can call populateFormWithData with this nested level
+                    this.populateFormWithData(form, data[key], mapper[key]);
                 } else {
                     // only the mapper is an array, so we need to set 1 value in multiple fields
                     var targetData = data[key];
-                    var arrayMapper = mapper[form][key];
+                    var arrayMapper = mapper[key];
 
                     for (var arrayKey in arrayMapper) {
-                        if (typeof arrayMapper[arrayKey] === 'function') { continue; }
-
                         this.populateElement($(arrayMapper[arrayKey]), targetData);
                     }
                 }
             } else {
                 // single value with single mapped field
-                this.populateElement($(mapper[form][key]), data[key]);
+                this.populateElement($(mapper[key]), data[key]);
             }
         }
-
+        return this;
     }
 
-    this.populateElement = function(element, value, defaultValue) {
+    /**
+     * Generic function used to populate an <element> with a <value>
+     *
+     * @param element
+     * @param value
+     * @param defaultValue
+     * @returns {FormPopulate}
+     */
+    this.populateElement = function(element, value) {
+        if (typeof element === 'function') {
+            return this;
+        }
         if (element && (value || (!value && !this.getSkipEmpty()))) {
             element.setValue(value);
         } else if (element && defaultValue) {
