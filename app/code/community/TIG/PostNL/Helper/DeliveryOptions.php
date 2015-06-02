@@ -485,14 +485,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the time zone used by the store in which the order was placed.
          */
         $storeTimezone = $this->getStoreTimeZone($postnlOrder->getStoreId(), true);
+        $utcTimeZone = new DateTimeZone('UTC');
 
         /**
          * If the customer chose a specific delivery time, add that to the array.
          */
         if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
-            $startTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+            $startTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart(), $utcTimeZone);
 
-            $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart());
+            $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart(), $utcTimeZone);
             $storeStartTime->setTimezone($storeTimezone);
 
             $deliveryOptionsInfo['delivery_time_start'] = $startTime->format('H:i');
@@ -503,9 +504,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * In the case of PakjeGemak shipments there is only a start time and no end time.
              */
             if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
-                $endTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+                $endTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd(), $utcTimeZone);
 
-                $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd());
+                $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd(), $utcTimeZone);
                 $storeEndTime->setTimezone($storeTimezone);
 
                 $deliveryOptionsInfo['delivery_time_end'] = $endTime->format('H:i');
@@ -562,7 +563,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Add the delivery date.
          */
         if ($deliveryDate) {
-            $deliveryDate = new DateTime($deliveryDate);
+            $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
 
             $deliveryOptionsInfo['delivery_date'] = $deliveryDate->format('Y-m-d H:i:s');
             $deliveryOptionsInfo['store_delivery_date'] = $deliveryDate->setTimezone($storeTimezone)
@@ -573,7 +574,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Add the confirm date.
          */
         if ($confirmDate) {
-            $confirmDate = new DateTime($confirmDate);
+            $confirmDate = new DateTime($confirmDate, $utcTimeZone);
 
             $deliveryOptionsInfo['confirm_date'] = $confirmDate->format('Y-m-d H:i:s');
             $deliveryOptionsInfo['store_confirm_date'] = $confirmDate->setTimezone($storeTimezone)
@@ -662,12 +663,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function isPastCutOffTime($orderDate = null, $storeId = null)
     {
+        $utcTimeZone = new DateTimeZone('UTC');
+
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+            $orderDate = new DateTime(Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s'), $utcTimeZone);
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate);
+            $orderDate = new DateTime($orderDate, $utcTimeZone);
         }
 
         if ($storeId === null) {
@@ -683,7 +686,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Create a DateTime object for the order date with the cut off time for comparison.
          */
         $europeBerlinTimeZone = new DateTimeZone('Europe/Berlin');
-        $utcTimeZone          = new DateTimeZone('UTC');
 
         /**
          * @todo refactor so we don't have to use 'format()' to modify a date.
@@ -723,7 +725,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getCutOffTime($storeId = null, $checkForSunday = true, $orderDate = null)
     {
         if ($checkForSunday && !$orderDate) {
-            $orderDate = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+            $orderDate = new DateTime(Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s'), new DateTimeZone('UTC'));
         }
 
         if ($storeId === null) {
@@ -731,7 +733,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if (is_string($orderDate)) {
-            $orderDate = new DateTime($orderDate);
+            $orderDate = new DateTime($orderDate, new DateTimeZone('UTC'));
         }
 
         /**
@@ -857,7 +859,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getValidDeliveryDate($deliveryDate)
     {
         if (is_string($deliveryDate)) {
-            $deliveryDate = new DateTime($deliveryDate);
+            $deliveryDate = new DateTime($deliveryDate, new DateTimeZone('Europe/Berlin'));
         }
 
         if (!($deliveryDate instanceof DateTime)) {
@@ -1366,7 +1368,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * date('l') returns the full textual representation of the day of the week (Sunday through Saturday).
          */
-        $deliveryDate = new DateTime($deliveryDate);
+        $deliveryDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
         $weekDay = $deliveryDate->format('l');
 
         foreach ($locations as &$location) {

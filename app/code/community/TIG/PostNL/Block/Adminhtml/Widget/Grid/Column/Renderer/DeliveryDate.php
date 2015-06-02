@@ -66,12 +66,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
          */
         if (!$value) {
             $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
-            $confirmDate = new DateTime($confirmDate);
+            $confirmDate = new DateTime($confirmDate, new DateTimeZone('UTC'));
             $confirmDate->add(new DateInterval('P1D'));
 
             $deliveryDate = $confirmDate;
         } else {
-            $deliveryDate = new DateTime($value);
+            $deliveryDate = new DateTime($value, new DateTimeZone('UTC'));
         }
 
         $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);

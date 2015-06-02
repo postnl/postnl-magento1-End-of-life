@@ -39,11 +39,11 @@
  */
 -->
 <config>
-	<modules>
-		<TIG_PostNL>
-			<version>1.6.0</version>
-		</TIG_PostNL>
-	</modules>
+    <modules>
+        <TIG_PostNL>
+            <version>1.6.0</version>
+        </TIG_PostNL>
+    </modules>
 
     <global>
         <blocks>
@@ -72,12 +72,12 @@
             <postnl_addressvalidation>
                 <class>TIG_PostNL_Block_AddressValidation</class>
             </postnl_addressvalidation>
-		</blocks>
-		<helpers>
-			<postnl>
-				<class>TIG_PostNL_Helper</class>
-			</postnl>
-		</helpers>
+        </blocks>
+        <helpers>
+            <postnl>
+                <class>TIG_PostNL_Helper</class>
+            </postnl>
+        </helpers>
         <models>
             <!-- Model definitions per submodule -->
             <postnl>
@@ -391,13 +391,13 @@
     </admin>
 
     <adminhtml>
-		<layout>
+        <layout>
             <updates>
                 <postnl>
                     <file>TIG/postnl.xml</file>
                 </postnl>
-        	</updates>
-		</layout>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <TIG_PostNL>
@@ -407,29 +407,29 @@
                 </TIG_PostNL>
             </modules>
         </translate>
-		<events>
-			<adminhtml_block_html_before>
-			    <observers>
-			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
+        <events>
+            <adminhtml_block_html_before>
+                <observers>
+                       <!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
                     <postnl_adminhtml_ordergrid>
-					    <type>singleton</type>
-					    <class>postnl_adminhtml/observer_orderGrid</class>
-					    <method>modifyGrid</method>
-				    </postnl_adminhtml_ordergrid>
+                        <type>singleton</type>
+                        <class>postnl_adminhtml/observer_orderGrid</class>
+                        <method>modifyGrid</method>
+                    </postnl_adminhtml_ordergrid>
                     <!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
                     <postnl_adminhtml_shipmentgrid>
-						<type>singleton</type>
-						<class>postnl_adminhtml/observer_shipmentGrid</class>
-						<method>modifyGrid</method>
-					</postnl_adminhtml_shipmentgrid>
+                        <type>singleton</type>
+                        <class>postnl_adminhtml/observer_shipmentGrid</class>
+                        <method>modifyGrid</method>
+                    </postnl_adminhtml_shipmentgrid>
                     <!-- Adds a new print shipping label button to the shipment view page -->
                     <postnl_adminhtml_shipmentview>
                         <type>singleton</type>
                         <class>postnl_adminhtml/observer_shipmentView</class>
                         <method>addPrintLabelButton</method>
                     </postnl_adminhtml_shipmentview>
-			    </observers>
-			</adminhtml_block_html_before>
+                </observers>
+            </adminhtml_block_html_before>
             <postnl_shipment_confirm_after>
                 <observers>
                     <!-- Updates a PostNL Checkout order -->
@@ -440,7 +440,7 @@
                     </postnl_checkout_update_order>
                 </observers>
             </postnl_shipment_confirm_after>
-			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
+            <controller_action_predispatch_adminhtml_sales_order_shipment_save>
                 <observers>
                     <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
                     <postnl_core_shipment_save>
@@ -449,7 +449,7 @@
                         <method>registerProductOption</method>
                     </postnl_core_shipment_save>
                 </observers>
-			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
+            </controller_action_predispatch_adminhtml_sales_order_shipment_save>
             <controller_action_postdispatch_postnl_admin>
                 <observers>
                     <!-- Admin logging -->
@@ -490,7 +490,7 @@
                     </postnl_add_download_log_button>
                 </observers>
             </controller_action_layout_render_before_adminhtml_system_config_edit>
-		</events>
+        </events>
     </adminhtml>
 
     <frontend>
@@ -511,13 +511,13 @@
                 </args>
             </postnl>
         </routers>
-		<layout>
+        <layout>
             <updates>
                 <postnl>
                     <file>TIG/postnl.xml</file>
                 </postnl>
-        	</updates>
-		</layout>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <TIG_PostNL>
@@ -598,7 +598,7 @@
                     </checkout_shipping_method_save_options>
                 </observers>
             </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
-			<controller_action_predispatch_gomage_checkout_onepage_ajax>
+            <controller_action_predispatch_gomage_checkout_onepage_ajax>
                 <observers>
                     <!-- Set a registry flag to prevent the PostNL order from being reset. -->
                     <set_registry_flag>
@@ -607,19 +607,19 @@
                         <method>setRegistryFlag</method>
                     </set_registry_flag>
                 </observers>
-			</controller_action_predispatch_gomage_checkout_onepage_ajax>
+            </controller_action_predispatch_gomage_checkout_onepage_ajax>
         </events>
     </frontend>
 
     <crontab>
         <jobs>
-        	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
+            <!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
             <postnl_clean_temp_labels>
                 <schedule>
-                	<cron_expr>30 * * * *</cron_expr> <!-- every hour at 30 minutes minutes -->
+                    <cron_expr>30 * * * *</cron_expr> <!-- every hour at 30 minutes minutes -->
                 </schedule>
                 <run>
-                	<model>postnl_core/observer_cron::cleanTempLabels</model>
+                    <model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
             </postnl_clean_temp_labels>
             <!-- remove old lock files (by default files older than 1 hour will be deleted) -->
@@ -631,13 +631,13 @@
                     <model>postnl_core/observer_cron::cleanOldLocks</model>
                 </run>
             </postnl_clean_old_locks>
-        	<!-- get missing barcodes for postnl shipments -->
+            <!-- get missing barcodes for postnl shipments -->
             <postnl_get_missing_barcodes>
                 <schedule>
-                	<cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
+                    <cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
                 </schedule>
                 <run>
-                	<model>postnl_core/observer_cron::getBarcodes</model>
+                    <model>postnl_core/observer_cron::getBarcodes</model>
                 </run>
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
@@ -646,8 +646,8 @@
                     <cron_expr>30 3,11,15 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
                 </schedule>
                 <run>
-            		<model>postnl_core/observer_cron::updateShippingStatus</model>
-            	</run>
+                    <model>postnl_core/observer_cron::updateShippingStatus</model>
+                </run>
             </postnl_update_shipping_status>
             <!-- Update the return status for all undelivered PostNL shipments -->
             <postnl_update_return_status>
@@ -655,8 +655,8 @@
                     <cron_expr>30 2,10,18 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
                 </schedule>
                 <run>
-            		<model>postnl_core/observer_cron::updateReturnStatus</model>
-            	</run>
+                    <model>postnl_core/observer_cron::updateReturnStatus</model>
+                </run>
             </postnl_update_return_status>
             <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
             <postnl_expire_confirmation>
@@ -802,13 +802,13 @@
             </postnl>
         </carriers>
         <postnl>
-        	<general>
-        		<email/>
+            <general>
+                <email/>
                 <unique_key/>
-        		<private_key/>
-        		<is_activated>0</is_activated> <!-- Not activated -->
+                <private_key/>
+                <is_activated>0</is_activated> <!-- Not activated -->
                 <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
-        	    <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
+                <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
                 <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
                 <knowledgebase_url>http://kb.tig.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
                 <new_ticket_url>http://kb.tig.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
@@ -904,19 +904,19 @@
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
             </delivery_options>
-        	<cif>
+            <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
-        		<customer_code>TOTA</customer_code> <!-- Demo customer code -->
+                <customer_code>TOTA</customer_code> <!-- Demo customer code -->
                 <live_username/>
                 <live_password/>
                 <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
                 <test_password/> <!-- The demo password will be generated on install as it needs to be encrypted -->
-        		<collection_location>103861</collection_location> <!-- Demo collection location -->
+                <collection_location>103861</collection_location> <!-- Demo collection location -->
                 <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
-        	    <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
-        	    <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
+                <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
+                <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
                 <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
                 <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
             </cif>
@@ -993,35 +993,35 @@
                 <product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
             </cif_globalpack_settings>
-        	<checkout>
-        	    <active>0</active> <!-- PostNL Checkout is inactive -->
+            <checkout>
+                <active>0</active> <!-- PostNL Checkout is inactive -->
                 <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to MijnPakket users -->
-        	    <instruction_cms_page/>
-        	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
-        	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
-        	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
-        	    <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
-        	    <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
+                <instruction_cms_page/>
+                <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
+                <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
+                <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
+                <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
+                <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
                 <use_mobile>0</use_mobile> <!-- Do not use mobile phonenumbers -->
                 <use_dob>0</use_dob> <!-- Do not use the date of birth field -->
-        	    <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
-        	    <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
-        	    <allow_price_overview>1</allow_price_overview> <!-- Customers will see a price overview -->
-        	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
+                <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
+                <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
+                <allow_price_overview>1</allow_price_overview> <!-- Customers will see a price overview -->
+                <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
                 <contact_url/>
-        	    <service_url/>
+                <service_url/>
                 <checkout_button_test_base_url>https://tppcb-sandbox.e-id.nl/Button/Checkout</checkout_button_test_base_url> <!-- Base URL for PostNl Checkout button in test mode -->
                 <checkout_button_live_base_url>https://checkout.postnl.nl/Button/Checkout</checkout_button_live_base_url> <!-- Base URL for PostNl Checkout button -->
                 <test_checkout_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js</test_checkout_js_url> <!-- URL for PostNL Checkout JS file in test mode -->
                 <live_checkout_js_url>https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js</live_checkout_js_url> <!-- URL for PostNL Checkout JS file -->
                 <test_checkout_premium_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js</test_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file in test mode -->
                 <live_checkout_premium_js_url>https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js</live_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file -->
-        	</checkout>
-        	<checkout_payment_methods>
-        	    <ideal>0</ideal> <!-- Do not use iDEAL -->
-        	    <ideal_method/>
-        	    <ideal_option_field/>
-        	    <creditcard>0</creditcard> <!-- Do not use creditcard -->
+            </checkout>
+            <checkout_payment_methods>
+                <ideal>0</ideal> <!-- Do not use iDEAL -->
+                <ideal_method/>
+                <ideal_option_field/>
+                <creditcard>0</creditcard> <!-- Do not use creditcard -->
                 <creditcard_method/>
                 <creditcard_option_field/>
                 <checkpay>0</checkpay> <!-- Do not use Checkpay -->
@@ -1044,7 +1044,7 @@
                 <afterpay_method/>
                 <klarna>0</klarna> <!-- Do not use Klarna -->
                 <klarna_method/>
-        	</checkout_payment_methods>
+            </checkout_payment_methods>
             <parcelware_export>
                 <active>0</active> <!-- Inactive -->
                 <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
@@ -1052,7 +1052,7 @@
                 <contract_name/>
                 <sender_ref_nr/>
             </parcelware_export>
-        	<grid>
+            <grid>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
                 <order_grid_columns>shipment_type,confirm_date,confirm_status,shipping_phase</order_grid_columns> <!-- Show the shipment type, confirm date, confirm status and shipping phase columns -->
@@ -1071,38 +1071,38 @@
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
-        	</grid>
+            </grid>
             <cif_product_options>
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
             </cif_product_options>
-        	<advanced>
-        	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
-        		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
-        		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
-        		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
-        		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+            <advanced>
+                <debug_mode>1</debug_mode> <!-- Exception logging only -->
+                <infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
+                <max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
+                <max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
+                <confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
                 <return_expire_days>30</return_expire_days> <!-- 17 days -->
-        		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
-        		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
-        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
-        		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
-        		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
-        		<postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
+                <send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
+                <receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
+                <feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+                <feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
+                <show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
+                <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
                 <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
-        		<cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
-        		<cif_version_labelling>1_6</cif_version_labelling> <!-- v1.6 -->
-        		<cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
+                <cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
+                <cif_version_labelling>1_6</cif_version_labelling> <!-- v1.6 -->
+                <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
                 <cif_version_deliverydate>1_2</cif_version_deliverydate> <!-- v1.2 -->
                 <cif_version_timeframe>1_2</cif_version_timeframe> <!-- v1.2 -->
                 <cif_version_location>1_1</cif_version_location> <!-- v1.1 -->
-        	</advanced>
+            </advanced>
 
-        	<!-- Login data for the postcode check functionality. -->
-        	<cendris>
-        	    <username>tpgpost030</username>
-        	    <password>Post2014!</password>
-        	</cendris>
+            <!-- Login data for the postcode check functionality. -->
+            <cendris>
+                <username>tpgpost030</username>
+                <password>Post2014!</password>
+            </cendris>
 
             <!-- Google maps API key. -->
             <google_maps>

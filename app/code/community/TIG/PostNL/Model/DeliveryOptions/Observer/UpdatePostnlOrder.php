@@ -299,11 +299,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
 
+        $utcTimeZone = new DateTimeZone('UTC');
+
         /**
          * Get the quote and the PostNL order's created at times.
          */
-        $postnlOrderCreated = new DateTime($postnlOrder->getCreatedAt());
-        $quoteCreated       = new DateTime($quote->getCreatedAt());
+        $postnlOrderCreated = new DateTime($postnlOrder->getCreatedAt(), $utcTimeZone);
+        $quoteCreated       = new DateTime($quote->getCreatedAt(), $utcTimeZone);
 
         /**
          * The PostNL order cannot have been created before the quote.
