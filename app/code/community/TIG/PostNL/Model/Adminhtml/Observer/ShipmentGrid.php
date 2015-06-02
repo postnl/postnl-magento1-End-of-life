@@ -680,7 +680,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $origValue = $row->getData($column->getIndex());
-        $date = new DateTime($origValue);
+        $date = new DateTime($origValue, new DateTimeZone('UTC'));
         $date->setTimezone(
             Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
         );
@@ -713,8 +713,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
-        $origDate            = new DateTime($origValue);
-        $now                 = new DateTime($dateModel->gmtDate());
+        $origDate            = new DateTime($origValue, new DateTimeZone('UTC'));
+        $now                 = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
         $interval            = $now->diff($origDate);
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 

@@ -58,9 +58,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
             return '';
         }
 
-        $value = $row->getData($this->getColumn()->getIndex());
-        $value = new DateTime($value);
-        $now   = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
+        $utcTimeZone = new DateTimeZone('UTC');
+
+        $value       = $row->getData($this->getColumn()->getIndex());
+        $value       = new DateTime($value, $utcTimeZone);
+        $now         = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'), $utcTimeZone);
 
         $interval = $now->diff($value);
 

@@ -62,6 +62,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $helper = Mage::helper('postnl/deliveryOptions');
         $value  = $row->getData($this->getColumn()->getIndex());
 
+
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
          * order could be shipped.
@@ -80,7 +81,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             $value = $helper->getValidDeliveryDate($deliveryDate)
                             ->sub(new DateInterval('P1D'));
         } else {
-            $value = new DateTime($value);
+            $value = new DateTime($value, new DateTimeZone('UTC'));
         }
 
         /**
@@ -115,6 +116,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         if ($tomorrow->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
             return $helper->__('Tomorrow');
         }
+
+        /**
+         * Set the time zone of the row to the same time zone as the admin for comparison.
+         */
+        $value->setTimezone($adminTimeZone);
 
         /**
          * Check if the confirm date is somewhere in the future.

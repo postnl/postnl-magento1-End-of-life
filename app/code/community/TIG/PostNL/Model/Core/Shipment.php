@@ -1830,7 +1830,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->hasConfirmDate()) {
-            $confirmDate = new DateTime($postnlOrder->getConfirmDate());
+            $confirmDate = new DateTime($postnlOrder->getConfirmDate(), new DateTimeZone('UTC'));
 
             $this->setData('confirm_date', $confirmDate->getTimestamp());
             return $this;
@@ -1844,7 +1844,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Calculate the confirm based on the delivery date.
          */
-        $deliveryDate = new DateTime($deliveryDate);
+        $deliveryDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
 
         $confirmDate = clone $deliveryDate;
         $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
