@@ -116,7 +116,6 @@
         $('print_label_spinner').show();
         var printWindow = window.open(url);
         Event.observe(printWindow, 'unload', function() {
-            Event.stopObserving(printWindow);
             window.location.reload();
         });
 
