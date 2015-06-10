@@ -61,140 +61,167 @@
  */
 function FormPopulate () {
     this.data           = null;
-    this.mapper         = {};
+    this.mapper         = null;
+    this.defaultValues  = null;
     this.skipEmpty      = false;
 
     /**
      * Get data
      *
-     * @returns {null|*}
+     * @returns {null|Object}
      */
     this.getData = function() {
         return this.data;
     }
 
     /**
-     * Set data (javascript object expected)
+     * Set data
      *
-     * @param data
+     * @param data Object
      * @returns {FormPopulate}
      */
     this.setData = function(data) {
-        this.data = data;
+        if (typeof data === 'object') {
+            this.data = data;
+        }
         return this;
     }
 
     /**
      * Get mapper
      *
-     * @returns {{}|*}
+     * @returns {null|Object}
      */
     this.getMapper = function() {
         return this.mapper;
     }
 
     /**
-     * Set mapper (javascript object expected, with values being either strings or arrays)
+     * Set mapper
      *
-     * @param mapper
+     * @param mapper Object
      * @returns {FormPopulate}
      */
     this.setMapper = function(mapper) {
-        this.mapper = mapper;
+        if (typeof mapper === 'object') {
+            this.mapper = mapper;
+        }
         return this;
     }
 
     /**
-     * Get skipEmpty
+     * Set skipEmpty to true
      *
-     * @returns {{}|*}
-     */
-    this.getSkipEmpty = function() {
-        return this.skipEmpty;
-    }
-
-    /**
-     * Set skipEmpty value (bool)
-     *
-     * @param value (bool)
      * @returns {FormPopulate}
      */
-    this.setSkipEmpty = function(value) {
-        this.skipEmpty = value;
+    this.enableSkipEmpty = function() {
+        this.skipEmpty = true;
         return this;
+    }
+
+    /**
+     * Set skipEmpty to false
+     *
+     * @returns {FormPopulate}
+     */
+    this.disableSkipEmpty = function() {
+        this.skipEmpty = false;
+        return this;
+    }
+
+    /**
+     * Get skipEmpty value
+     *
+     * @returns {boolean}
+     */
+    this.canSkipEmpty = function() {
+        return this.skipEmpty;
     }
 
     /**
      * Get defaultValues
      *
-     * @returns {{}|*}
+     * @returns {null|Object}
      */
     this.getDefaultValues = function() {
         return this.defaultValues;
     }
 
     /**
-     * Set defaultValues (javascript object expected, with values being either strings or arrays)
+     * Set defaultValues
      *
-     * @param defaultValues
+     * @param defaultValues Object
      * @returns {FormPopulate}
      */
     this.setDefaultValues = function(defaultValues) {
-        this.defaultValues = defaultValues;
+        if (typeof defaultValues === 'object') {
+            this.defaultValues = defaultValues;
+        }
         return this;
     }
 
     /**
-     * Populate elements based on mapper
+     * Start populating form
      *
-     * @param form
-     * @returns {FormPopulate}
+     * @param form string
+     * @returns {false|FormPopulate}
      */
     this.populate = function(form) {
-        var data = this.getData();
-        var defaultValues = this.getDefaultValues();
+        // Return false if either data or mapper isn't set.
+        if (!this.getData() || !this.getMapper()) {
+            return false;
+        }
 
-        // before we start, use defaultValues to pre-populate where needed
-        if (defaultValues !== undefined) {
+        // Before we start, use defaultValues to pre-populate where needed
+        if (this.getDefaultValues()) {
+            var defaultValues = this.getDefaultValues();
             this.populateFormWithData(form, defaultValues[form]);
         }
 
-        // now populate with the actual data
-        this.populateFormWithData(form, data);
+        // Populate the form with the actual data
+        this.populateFormWithData(form, this.getData());
 
         return this;
     }
 
+
     /**
-     * Generic function to populate <form> with <data>
+     * Populate form with data & mapper
      *
-     * @param form
-     * @param data
-     * @returns {FormPopulate}
+     * @param form string
+     * @param data Object
+     * @param mapper Object|Array|undefined
+     * @returns {false|FormPopulate}
      */
     this.populateFormWithData = function(form, data, mapper) {
         // Either a given mapper or the configured mapper
-        if (mapper === undefined) {
+        if (!mapper) {
             var mapper = this.getMapper();
         }
 
+        // In case we're using this.mapper, we need to go into the relevant form sub-array. Since we're working with
+        // these sub-arrays, we can do so consistently.
         if (mapper[form] !== undefined) {
             mapper = mapper[form];
         }
 
         for (var key in data) {
-            // check if there's a mapper field configured for this data value
+            // Continue if data has not haveOwnProperty key, which means it's a proto thing
+            if (!data.hasOwnProperty(key)) {
+                continue;
+            }
+            // Continue if there's no mapper field configured for this data value
             if (mapper[key] === undefined) {
                 continue;
             }
 
-            // check if this is an array, if so, check if the data is an array too
+            // Check if this is an object, if so, check if the data is an object too
             if (typeof mapper[key] === 'object') {
                 if (typeof data[key] === 'object') {
-                    // both are arrays, so we can call populateFormWithData with this nested level
+                    // both are objects, so we can call populateFormWithData with this nested level
                     this.populateFormWithData(form, data[key], mapper[key]);
                 } else {
-                    // only the mapper is an array, so we need to set 1 value in multiple fields
+                    // only the mapper is an object, so we need to set 1 value in multiple fields
                     var targetData = data[key];
                     var arrayMapper = mapper[key];
 
@@ -203,7 +230,7 @@ function FormPopulate () {
                     }
                 }
             } else {
-                // single value with single mapped field
+                // Single value with single mapped field
                 this.populateElement($(mapper[key]), data[key]);
             }
         }
@@ -211,66 +238,41 @@ function FormPopulate () {
     }
 
     /**
-     * Generic function used to populate an <element> with a <value>
+     * Handles actually populating an element with a value
      *
-     * @param element
-     * @param value
-     * @param defaultValue
+     * @param element object
+     * @param value string
      * @returns {FormPopulate}
      */
     this.populateElement = function(element, value) {
-        if (typeof element === 'function') {
+        // If element is not a valid value, we're going to ignore it
+        if (!element || element === undefined || typeof element === 'function') {
             return this;
         }
-        if (element && (value || (!value && !this.getSkipEmpty()))) {
+
+        // If value is set or we're not allowed to skip, we put the value even if it's empty
+        if (value || !this.canSkipEmpty()) {
             element.setValue(value);
-        } else if (element && defaultValue) {
-            element.setValue(defaultValue);
         }
+        return this;
     }
 
     /**
-     * Populates all mapped forms
+     * Populate all configured forms in this.mapper
      *
-     * @returns {FormPopulate}
+     * @returns {false|FormPopulate}
      */
     this.populateAll = function() {
+        // If mapper is not set, return false
+        if (!this.getMapper()) {
+            return false;
+        }
+
+        // Loop through mapper to call populate with all configured forms
         for (var form in this.getMapper()) {
             this.populate(form);
         }
         return this;
     }
 
-    /**
-     * Copy all data from source to target, based on mapper
-     *
-     * @param source
-     * @param target
-     * @returns {FormPopulate}
-     */
-    this.copyFormData = function(source, target) {
-        var mapper = this.getMapper();
-        if (mapper[source] === undefined || mapper[target] === undefined) {
-            return this;
-        }
-
-        for (var key in mapper[source]) {
-            this.populateElement($(mapper[target][key]), $(mapper[source][key]).value);
-        }
-        return this;
-    }
-
-    /**
-     * Without the use of a mapper, simply put .value from source into target
-     *
-     * @param source
-     * @param target
-     * @returns {FormPopulate}
-     */
-    this.copyElementData = function(source, target) {
-        this.populateElement($(target), $(source).value);
-        return this;
-    }
-
-    return this;
 }
