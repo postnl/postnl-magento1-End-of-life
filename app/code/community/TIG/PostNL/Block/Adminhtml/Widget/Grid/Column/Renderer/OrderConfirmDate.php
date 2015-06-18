@@ -95,8 +95,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
         $adminTimeZone = $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true);
-        $now = new DateTime('now', $adminTimeZone);
-        $now->setTimestamp(Mage::getModel('core/date')->timestamp());
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now->setTimezone($adminTimeZone);
 
         $valueCopy = clone $value;
         $valueCopy->setTimezone($adminTimeZone);
