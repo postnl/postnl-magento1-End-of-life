@@ -120,6 +120,105 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     );
 
     /**
+     * @var null
+     */
+    protected $_configManageStock = null;
+
+    /**
+     * @var null
+     */
+    protected $_configBackorders = null;
+
+    /**
+     * @var null
+     */
+    protected $_configMinQty = null;
+
+    /**
+     * @return int
+     */
+    public function getConfigBackorders()
+    {
+        $configBackorders = $this->_configBackorders;
+
+        if (is_null($configBackorders)) {
+            $configBackorders  = Mage::getStoreConfig(Mage_CatalogInventory_Model_Stock_Item::XML_PATH_BACKORDERS);
+
+            $this->setConfigBackorders($configBackorders);
+        }
+
+        return $configBackorders;
+    }
+
+    /**
+     * @param int $configBackorders
+     *
+     * @return $this
+     */
+    public function setConfigBackorders($configBackorders)
+    {
+        $this->_configBackorders = $configBackorders;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getConfigManageStock()
+    {
+        $configManageStock = $this->_configManageStock;
+
+        if (is_null($configManageStock)) {
+            $configManageStock  = Mage::getStoreConfig(Mage_CatalogInventory_Model_Stock_Item::XML_PATH_MANAGE_STOCK);
+
+            $this->setConfigManageStock($configManageStock);
+        }
+
+        return $configManageStock;
+    }
+
+    /**
+     * @param bool $configManageStock
+     *
+     * @return $this
+     */
+    public function setConfigManageStock($configManageStock)
+    {
+        $this->_configManageStock = $configManageStock;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getConfigMinQty()
+    {
+        $configMinQty = $this->_configManageStock;
+
+        if (is_null($configMinQty)) {
+            $configMinQty  = Mage::getStoreConfig(Mage_CatalogInventory_Model_Stock_Item::XML_PATH_MIN_QTY);
+
+            $this->setConfigMinQty($configMinQty);
+        }
+
+        return $configMinQty;
+    }
+
+    /**
+     * @param int $configMinQty
+     *
+     * @return $this
+     */
+    public function setConfigMinQty($configMinQty)
+    {
+        $this->_configMinQty = $configMinQty;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getValidTypes()
@@ -257,6 +356,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
 
             $pakjeGemakShippingRate = $pakjeGemakShippingRates->getCheapestRate();
+            /** @noinspection PhpUndefinedMethodInspection */
             $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
 
             $difference = $pakjeGemakShippingRate - $currentRate;
@@ -2440,36 +2540,87 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return true;
         }
 
+        /** @var Mage_Sales_Model_Quote_Item[] $quoteItems */
+        $quoteItems = $quote->getItemsCollection();
+        foreach ($quoteItems as $item) {
+            $product = $item->getProduct();
+
+            /** @var Mage_CatalogInventory_Model_Stock_item $stockItem */
+            /** @noinspection PhpUndefinedMethodInspection */
+            $stockItem = $product->getStockItem();
+
+            if (!$stockItem) {
+                $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+            }
+
+            $available = false;
+            switch ($stockOption) {
+                case 'in_stock':
+                    $available = $this->_isStockItemInStock($stockItem, false, $item->getQty());
+                    break;
+                case 'backordered':
+                    $available = $this->_isStockItemInStock($stockItem, true, $item->getQty());
+                    break;
+            }
+
+            if (true !== $available) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the stock item is in stock.
+     *
+     * @param Mage_CatalogInventory_Model_Stock_Item $stockItem
+     * @param bool                                   $allowBackorders
+     * @param int                                    $requiredQty
+     *
+     * @return bool
+     */
+    protected function _isStockItemInStock(Mage_CatalogInventory_Model_Stock_Item $stockItem, $allowBackorders = false,
+                                           $requiredQty = 1)
+    {
         /**
-         * Get the IDs of all products in the current quote.
+         * Get several config values determining stock status.
          */
-        $productIds = $quote->getItemsCollection()->getColumnValues('product_id');
-        $productIds = array_unique($productIds);
+        $configMinQty      = $this->getConfigMinQty();
+        $configBackorders  = $this->getConfigBackorders();
+        $configManageStock = $this->getConfigManageStock();
 
         /**
-         * Get all inventory items for the products in the quote.
+         * If stock is not managed for this product, it is always in stock.
          */
-        $inventoryItems = Mage::getResourceModel('cataloginventory/stock_item_collection');
-        $inventoryItems->addFieldToFilter('product_id', array('in', $productIds));
-
-        /**
-         * Add filters to the collection depending on the configured stock option.
-         */
-        switch ($stockOption) {
-            case 'in_stock':
-                $inventoryItems->addFieldToFilter('backorders', array('eq' => 0))
-                               ->addFieldToFilter('is_in_stock', array('eq' => 1));
-                break;
-            case 'backordered':
-                $inventoryItems->addFieldToFilter('is_in_stock', array('eq' => 1));
-                break;
+        if ($stockItem->getUseConfigManageStock() && !$configManageStock) {
+            return true;
+        } elseif (!$stockItem->getManageStock()) {
+            return true;
         }
 
         /**
-         * If there are fewer items in the collection than there are products, not all products are allowed for the
-         * current stock option.
+         * If backorders are allowed for this product, it is always in stock.
          */
-        if (count($productIds) > $inventoryItems->getSize()) {
+        if ($allowBackorders && $stockItem->getUseConfigBackorders() && $configBackorders > 0) {
+            return true;
+        } elseif ($allowBackorders && $stockItem->getBackorders() > 0) {
+            return true;
+        }
+
+        /**
+         * Get the minimum quantity for this product.
+         */
+        if (!$stockItem->getUseConfigMinQty()) {
+            $minQty = $stockItem->getMinQty();
+        } else {
+            $minQty = $configMinQty;
+        }
+
+        /**
+         * Check if the product has the required qty available.
+         */
+        if (($stockItem->getQty() - $minQty) < $requiredQty) {
             return false;
         }
 
@@ -3035,9 +3186,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if the GoMage LighTCheckout delivery date functionality conflicts with PostNl delivery options.
+     * Check if the GoMage LightCheckout delivery date functionality conflicts with PostNl delivery options.
      *
-     * @return boolean
+     * @param null|int $storeId
+     *
+     * @return bool
      */
     public function checkGoMageDeliveryDateConflicts($storeId = null)
     {

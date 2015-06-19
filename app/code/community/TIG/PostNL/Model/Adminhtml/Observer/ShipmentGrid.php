@@ -680,12 +680,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $origValue = $row->getData($column->getIndex());
-        $date = new DateTime($origValue, new DateTimeZone('UTC'));
-        $date->setTimezone(
-            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
-        );
 
-        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
+        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
 
         $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
         return $html;
