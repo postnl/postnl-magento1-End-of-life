@@ -901,6 +901,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
 
         /**
+         * Check if the order time is greater than the cut-off time. We need to take yesterday as the requested date as
+         * the cut-off time is based on the confirm date and not the delivery date.
+         */
+        if ($this->isPastCutOffTime($orderDate, $storeId)) {
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
+        }
+
+        /**
          * Get the delivery day (1-7).
          */
         $deliveryDay = $deliveryTime->format('N');
@@ -919,17 +928,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * monday is not possible.
          */
         if ($deliveryDay == 1 && !$this->canUseSundaySorting()) {
-            $deliveryTime->add(new DateInterval('P1D'));
-            $shippingDuration++;
-        }
-
-        /**
-         * Check if the order time is greater than the cut-off time. We need to take yesterday as the requested date as
-         * the cut-off time is based on the confirm date and not the delivery date.
-         */
-        $confirmDate = clone $deliveryTime;
-        $confirmDate->sub(new DateInterval('P1D'));
-        if ($this->isPastCutOffTime($confirmDate, $storeId)) {
             $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }
@@ -967,6 +965,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $deliveryDay = $deliveryDate->format('N');
+
+        /**
+         * Sunday is never allowed as a delivery day.
+         */
+        if ($deliveryDay == 7) {
+            $deliveryDate->add(new DateInterval('P1D'));
+            $deliveryDay = 1;
+        }
 
         /**
          * Get the configured shipping days.
@@ -1042,11 +1048,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $availableDeliveryDay = $availableShippingDay + 1;
 
             /**
-             * Sunday is not available as a delivery day. If sunday sorting is not allowed, neither is monday.
+             * Sunday is not available as a delivery day. If sunday sorting is not allowed, monday is not allowed
+             * either.
              */
             if ($this->canUseSundaySorting()
                 && ($availableDeliveryDay < 1
-                    || $availableDeliveryDay > 7
+                    || $availableDeliveryDay > 6
                 )
             ) {
                 $availableDeliveryDay = 1;
@@ -1069,11 +1076,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $availableDeliveryDay = $shippingDays[0] + 1;
 
         /**
-         * Sunday is not available as a delivery day. If sunday sorting is not allowed, neither is monday.
+         * Sunday is not available as a delivery day. If sunday sorting is not allowed, monday is not allowed either.
          */
         if ($this->canUseSundaySorting()
             && ($availableDeliveryDay < 1
-                || $availableDeliveryDay > 7
+                || $availableDeliveryDay > 6
             )
         ) {
             $availableDeliveryDay = 1;
@@ -1132,7 +1139,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shippingDay  = (int) $shippingDate->format('N');
 
         /**
-         * Check fit he shipping day is a monday. If so, check if monday is allowed. If not, modify it to the previous
+         * Check if the shipping day is a monday. If so, check if monday is allowed. If not, modify it to the previous
          * saturday if saturdays are allowed.
          */
         if (!in_array($shippingDay, $shippingDays)
