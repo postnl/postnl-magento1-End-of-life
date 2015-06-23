@@ -1064,7 +1064,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * Convert the delivery day of the week to the actual date.
              */
-            $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
+            $availableDeliveryDate = $deliveryDate->modify(
+                "next {$dayArr[$availableDeliveryDay]} {$deliveryDate->format('H:i:s')}"
+            );
             return $availableDeliveryDate;
         }
 
@@ -1091,7 +1093,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Convert the delivery day of the week to the actual date.
          */
-        $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
+        $availableDeliveryDate = $deliveryDate->modify(
+            "next {$dayArr[$availableDeliveryDay]} {$deliveryDate->format('H:i:s')}"
+        );
         return $availableDeliveryDate;
     }
 
@@ -1146,7 +1150,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             && $shippingDay == 1
             && in_array(6, $shippingDays)
         ) {
-            $date->modify('last saturday');
+            $date->modify('last saturday ' . $date->format('H:i:s'));
         }
 
         $date->setTimezone($timeZone);
