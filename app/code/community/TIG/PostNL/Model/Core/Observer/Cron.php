@@ -1127,6 +1127,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog($helper->__('UpdateProductAttribute cron starting...'));
 
+        Mage::app()->getCacheInstance()->cleanType('config');
+
         $data = Mage::getStoreConfig(self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$data) {
             /**
@@ -1223,6 +1225,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
                     'default',
                     Mage_Core_Model_App::ADMIN_STORE_ID
                 );
+
+                Mage::app()->getCacheInstance()->cleanType('config');
             } else {
                 /**
                  * If all attributes have been processed, remove the cron from the schedule.
@@ -1259,6 +1263,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
             ->save();
 
+        Mage::app()->getCacheInstance()->cleanType('config');
+
         return $this;
     }
 
@@ -1273,6 +1279,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper = Mage::helper('postnl');
 
         $helper->cronLog($helper->__('UpdateDateTimeZone cron starting...'));
+
+        Mage::app()->getCacheInstance()->cleanType('config');
 
         $data = Mage::getStoreConfig(
             TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
@@ -1325,6 +1333,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             'default',
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
+
+        Mage::app()->getCacheInstance()->cleanType('config');
 
         $helper->cronLog($helper->__('UpdateDateTimeZone cron has finished.'));
 
