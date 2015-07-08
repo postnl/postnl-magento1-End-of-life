@@ -2213,10 +2213,9 @@
                         </packing_slip_fields_header>
                         <show_label translate="label tooltip" module="postnl">
                             <label>Show shipping label</label>
-                            <tooltip>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <tooltip>If you select 'on the same page' in some cases the shipping label may not fit. In this case, the shipping label will be printed on a separate page instead.</tooltip>
+                            <frontend_type>postnl_radios</frontend_type>
+                            <source_model>postnl_core/system_config_source_packingSlipLabel</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -4508,7 +4507,7 @@
                             <show_in_store>0</show_in_store>
                         </uninstall_header>
                         <uninstall_button translate="comment" module="postnl">
-                            <comment><![CDATA[Click <a href="http://kb.tig.nl/" target="_blank">here</a> for more information about the uninstall process.]]></comment>
+                            <comment><![CDATA[Click <a href="https://kb.tig.nl/topic/94842766" target="_blank">here</a> for more information about the uninstall process.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_uninstallButton</frontend_model>
                             <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>

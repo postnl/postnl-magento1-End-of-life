@@ -795,7 +795,7 @@
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
-                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->
                 <sort_order>0</sort_order> <!-- First method shown -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
@@ -923,7 +923,7 @@
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
-                <show_label>1</show_label> <!-- Automatically add the shipping label to the packing slip -->
+                <show_label>together</show_label> <!-- Automatically add the shipping label to the packing slip -->
                 <logo/>
                 <show_webshop_info>1</show_webshop_info> <!-- Show webshop info on the packing slip -->
                 <coc_number/>
@@ -1128,6 +1128,7 @@
                 <extensions>
                     <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
+                    <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
                 </extensions>
             </postnl>
         </compatibility>

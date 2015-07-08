@@ -1241,7 +1241,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
 
         $orderIds = $this->_getOrderIds();
 
-        $shipmentIds = $this->getServiceModel()->createShipments($orderIds);
+        $shipmentIds = $this->getServiceModel()->createShipments($orderIds, true);
 
         /**
          * Add either a success or failure message and redirect the user accordingly.
@@ -1682,55 +1682,48 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             }
 
             /**
-             * Load the shipments and check if they are valid
-             */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
-
-            /**
              * Get the labels from CIF.
              *
              * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
             $output = false;
-            foreach ($shipments as $shipment) {
-                try {
-                    /**
-                     * Load the shipments and check if they are valid
-                     */
-                    $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+            try {
+                /**
+                 * Load the shipments and check if they are valid
+                 */
+                $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
 
-                    $output = $this->_getMassPackingSlipsOutput($shipments);
-                    $this->_checkForWarnings();
-                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                $output = $this->_getMassPackingSlipsOutput($shipments);
+                $this->_checkForWarnings();
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
 
-                    $helper->logException($e);
-                    $this->getServiceModel()->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (TIG_PostNL_Exception $e) {
-                    $helper->logException($e);
-                    $this->getServiceModel()->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (Exception $e) {
-                    $helper->logException($e);
-                    $this->getServiceModel()->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => null,
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                }
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
             }
 
             /**

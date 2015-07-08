@@ -256,10 +256,14 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $labels     = $labelModel->sortLabels($labels);
         $firstLabel = current($labels);
 
-        if (!$firstLabel) {
-            return $pdf;
+        if (!$firstLabel || $this->getConfig('show_label') == 'none') {
+            foreach($pdf->pages as $page) {
+                $mainPdf->pages[] = clone $page;
+            }
+
+            return $mainPdf;
         } elseif (
-            !$this->getConfig('show_label')
+            $this->getConfig('show_label') == 'separate'
             || $this->y < 421
             || ($firstLabel->getLabelType() != 'Label'
                 && $firstLabel->getLabelType() != 'Label-combi'
