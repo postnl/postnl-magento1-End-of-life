@@ -64,8 +64,21 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
-        if (!$postnlOrder->getId()) {
+        /**
+         * Check if the order was placed using a PostNL shipping method.
+         */
+        $orderIsPostnl = Mage::helper('postnl/carrier')->isPostnlShippingMethod($order->getShippingMethod());
+
+        /**
+         * If the order was placed using a PostNL shipping method, yet does not have a PostNL order object; create one.
+         * Otherwise, if the order was not placed using a PostNL shipping method, yet does have a PostNL order object;
+         * delete the PostNL order object.
+         */
+        if ($orderIsPostnl && !$postnlOrder->getId()) {
             $this->_createPostnlOrder($postnlOrder, $order);
+            return $this;
+        } elseif (!$orderIsPostnl && $postnlOrder->getId()) {
+            $postnlOrder->delete();
             return $this;
         }
 
@@ -73,10 +86,24 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * Validate the PostNL order.
          */
         if (!$this->_validatePostnlOrder($postnlOrder, $order)) {
+            /**
+             * Always remove the PakjeGemak order if it's available.
+             */
             $this->_removePakjeGemakAddress($order);
 
+            /**
+             * If the PostNL order exists, delete it.
+             */
             if ($postnlOrder && $postnlOrder->getId()) {
                 $postnlOrder->delete();
+
+                /**
+                 * If the order is a PostNL order, create a new one. this way we can guarantee the new PostNL order will
+                 * contain the correct data.
+                 */
+                if ($orderIsPostnl) {
+                    $this->_createPostnlOrder($postnlOrder, $order);
+                }
             }
             return $this;
         }

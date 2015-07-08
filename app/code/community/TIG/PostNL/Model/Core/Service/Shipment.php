@@ -44,6 +44,11 @@ class TIG_PostNL_Model_Core_Service_Shipment
     const XPATH_PRINT_RETURN_AND_SHIPPING_LABEL = 'postnl/returns/print_return_and_shipping_label';
 
     /**
+     * Xpath to 'show_label' setting.
+     */
+    const XPATH_SHOW_LABEL = 'postnl/packing_slip/show_label';
+
+    /**
      * @var array
      */
     protected $_warnings = array();
@@ -845,7 +850,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
                     $shipment->getStoreId()
                 );
 
-                $shipmentLabels = $this->getLabels($shipment, true, $printReturnLabels);
+                $showLabelsOption = Mage::getStoreConfig(self::XPATH_SHOW_LABEL, Mage_Core_Model_App::ADMIN_STORE_ID);
+                if ($showLabelsOption == 'none') {
+                    $shipmentLabels = array();
+                } else {
+                    $shipmentLabels = $this->getLabels($shipment, true, $printReturnLabels);
+                }
+
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
