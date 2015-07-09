@@ -36,13 +36,8 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller_Action
+class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adminhtml_Abstract
 {
-    /**
-     * Used module name in current adminhtml controller.
-     */
-    protected $_usedModuleName = 'TIG_PostNL';
-
     /**
      * @var TIG_PostNL_Model_Core_service_Shipment
      */
@@ -393,22 +388,5 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         );
 
         return $this;
-    }
-
-    /**
-     * Checks if the specified actions are allowed.
-     *
-     * @param array $actions
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return bool
-     */
-    protected function _checkIsAllowed($actions = array())
-    {
-        $helper = Mage::helper('postnl');
-        $isAllowed = $helper->checkIsPostnlActionAllowed($actions, false);
-
-        return $isAllowed;
     }
 }
