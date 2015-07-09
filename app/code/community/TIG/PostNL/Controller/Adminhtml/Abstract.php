@@ -36,62 +36,40 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Controller_Adminhtml_Config extends TIG_PostNL_Controller_Adminhtml_Abstract
+abstract class TIG_PostNL_Controller_Adminhtml_Abstract extends Mage_Adminhtml_Controller_Action
 {
     /**
-     * Regex to validate the supplied wizard step hash.
+     * Used module name in current adminhtml controller.
      */
-    const VALIDATE_WIZARD_HASH_REGEX = '/^[a-zA-Z0-9-_#]+$/';
+    protected $_usedModuleName = 'TIG_PostNL';
 
     /**
-     * Saves the current wizard step.
+     * Actions are always allowed as access validation is handled separately in each individual action.
      *
-     * @param string $step
+     * Checking access in each individual action allows us to tailor the displayed error message, instead of showing a
+     * generic 'access denied' message.
      *
-     * @return $this
-     *
-     * @throws TIG_PostNL_Exception
+     * @return bool
      */
-    protected function _saveCurrentWizardStep($step)
+    protected function _isAllowed()
     {
-        $step = $this->_validateStep($step);
-
-        /**
-         * @var Mage_Admin_Model_User $adminUser
-         */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        $extra = $adminUser->getExtra();
-
-        $extra['postnl']['current_wizard_step'] = $step;
-
-        $adminUser->saveExtra($extra);
-
-        return $this;
+        return true;
     }
 
     /**
-     * Validate the step hash. If the step is not valid, return an empty string.
+     * Checks if the specified actions are allowed.
      *
-     * @param string $step
-     *
-     * @return string
+     * @param array $actions
      *
      * @throws TIG_PostNL_Exception
+     *
+     * @return bool
      */
-    protected function _validateStep($step)
+    protected function _checkIsAllowed($actions = array())
     {
-        $validator = new Zend_Validate_Regex(array('pattern' => self::VALIDATE_WIZARD_HASH_REGEX));
+        $helper = Mage::helper('postnl');
+        $isAllowed = $helper->checkIsPostnlActionAllowed($actions, false);
 
-        if (!$validator->isValid($step)) {
-            throw new TIG_PostNL_Exception(
-                $this->__(
-                    'An error occurred while saving this step of the configuration wizard. Please use the regular ' .
-                    '"Save Config" button instead.'
-                ),
-                'POSTNL-0224'
-            );
-        }
-
-        return $step;
+        return $isAllowed;
     }
 }
