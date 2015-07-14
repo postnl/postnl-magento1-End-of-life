@@ -229,6 +229,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
                         ->setShipmentCosts(0)
                         ->setType(false)
                         ->setOptions(false)
+                        ->setExpectedDeliveryTimeStart(false)
+                        ->setExpectedDeliveryTimeEnd(false)
                         ->save();
         }
 

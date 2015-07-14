@@ -102,6 +102,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
                  * contain the correct data.
                  */
                 if ($orderIsPostnl) {
+                    /**
+                     * We need a new instance, because the previous instance has been deleted. Causing any further save
+                     * operations on that instance to fail.
+                     */
+                    $postnlOrder = Mage::getModel('postnl_core/order');
                     $this->_createPostnlOrder($postnlOrder, $order);
                 }
             }
@@ -111,8 +116,14 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * If no such PostNL order exists or if the PostNL order has already been updated we don't need to do anything.
          */
-        if (!$postnlOrder->getId() || $postnlOrder->getOrderId() || !$postnlOrder->getIsActive()) {
+        if (!$postnlOrder->getId() || $postnlOrder->getOrderId()) {
             return $this;
+        }
+
+        $type = $postnlOrder->getType();
+        if (!$type) {
+            $type = $postnlOrder::TYPE_OVERDAG;
+            $postnlOrder->setType($type);
         }
 
         /**
@@ -120,8 +131,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * system > config. Otherwise it will be set to 0.
          */
         $fee = 0;
-        $type = $postnlOrder->getType();
-        if ($type == 'PGE' || $type == 'Avond') {
+        if ($type == $postnlOrder::TYPE_PGE || $type == $postnlOrder::TYPE_AVOND) {
             /**
              * Check whether the shipping prices are entered with or without tax.
              */
@@ -133,10 +143,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             /**
              * Calculate the correct fee based on the order type.
              */
-            if ($type == 'PGE') {
+            if ($type == $postnlOrder::TYPE_PGE) {
                 $fee = Mage::helper('postnl/deliveryOptions')
                            ->getExpressFee(false, $includingTax, false);
-            } elseif ($type == 'Avond') {
+            } elseif ($type == $postnlOrder::TYPE_AVOND) {
                 $fee = Mage::helper('postnl/deliveryOptions')
                            ->getEveningFee(false, $includingTax, false);
             }
