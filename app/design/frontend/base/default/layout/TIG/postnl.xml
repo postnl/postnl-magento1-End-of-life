@@ -487,7 +487,6 @@
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/gomage_checkout.css</stylesheet></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/TIG/PostNL/rwd_osc.css</stylesheet></action>
             <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
             <action method="addCss"><stylesheet>css/TIG/PostNL/postcodecheck.css</stylesheet></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
