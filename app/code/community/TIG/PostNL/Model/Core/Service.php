@@ -162,16 +162,12 @@ class TIG_PostNL_Model_Core_Service
         $convertor = Mage::getModel('sales/convert_order');
 
         $dummyPaymentMethod = Mage::getModel('postnl_core/service_paymentMethodDummy');
+        $dummyPaymentMethod->setInfoInstance(Mage::getModel('payment/info'));
 
         $dummyPayment = Mage::getModel('postnl_core/service_paymentDummy');
         /** @noinspection PhpUndefinedMethodInspection */
         $dummyPayment->setMethod('postnl_dummy')
                      ->setMethodInstance($dummyPaymentMethod);
-
-        //get Method instance, and add an empty dummy info instance. This prevents crashing with payment extensions
-        $methodInstance = $dummyPayment->getMethodInstance();
-        $infoInstance = Mage::getModel('payment/info');
-        $methodInstance->setInfoInstance($infoInstance);
 
         $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
         /** @noinspection PhpUndefinedMethodInspection */
