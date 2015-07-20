@@ -168,6 +168,11 @@ class TIG_PostNL_Model_Core_Service
         $dummyPayment->setMethod('postnl_dummy')
                      ->setMethodInstance($dummyPaymentMethod);
 
+        //get Method instance, and add an empty dummy info instance. This prevents crashing with payment extensions
+        $methodInstance = $dummyPayment->getMethodInstance();
+        $infoInstance = Mage::getModel('payment/info');
+        $methodInstance->setInfoInstance($infoInstance);
+
         $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
         /** @noinspection PhpUndefinedMethodInspection */
         $dummyOrder->setData($order->getData())
