@@ -162,6 +162,7 @@ class TIG_PostNL_Model_Core_Service
         $convertor = Mage::getModel('sales/convert_order');
 
         $dummyPaymentMethod = Mage::getModel('postnl_core/service_paymentMethodDummy');
+        $dummyPaymentMethod->setInfoInstance(Mage::getModel('payment/info'));
 
         $dummyPayment = Mage::getModel('postnl_core/service_paymentDummy');
         /** @noinspection PhpUndefinedMethodInspection */
