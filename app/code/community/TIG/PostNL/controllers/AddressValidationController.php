@@ -166,7 +166,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
          * Return the result as a json response
          */
         $this->getResponse()
-             ->setHeader('Content-type', 'application/x-json')
+             ->setHeader('Content-type', 'application/x-json', true)
              ->setBody($response);
 
         return $this;

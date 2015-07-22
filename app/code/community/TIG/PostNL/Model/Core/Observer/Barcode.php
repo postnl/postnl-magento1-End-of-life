@@ -100,12 +100,12 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
         if ($postnlOrder->getId()) {
             if ($postnlOrder->hasConfirmDate()) {
-                $confirmDate = new DateTime($postnlOrder->getConfirmDate());
+                $confirmDate = new DateTime($postnlOrder->getConfirmDate(), new DateTimeZone('UTC'));
                 $postnlShipment->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->hasDeliveryDate()) {
-                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate());
+                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate(), new DateTimeZone('UTC'));
                 $postnlShipment->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
             }
 

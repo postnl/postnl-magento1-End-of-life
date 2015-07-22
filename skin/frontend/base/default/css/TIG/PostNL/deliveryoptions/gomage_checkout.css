@@ -1,0 +1,67 @@
+/* Default Styling Overrides /* ========================================================== */
+
+/* PostNL */
+.postnl-container { padding:0; margin:0; background:none; border:none; }
+#postnl_add_moment .option { cursor:default; }
+#postnl_add_moment .option span,
+#postnl_add_moment .option cufon { cursor:text !important; }
+#postnl_add_moment .option:hover .bkg { background-position:0 0 !important; }
+#postnl_add_moment .option:hover .bkg .bkg { background-position: 100% 0 !important; }
+#postnl_add_moment .option .option-radio { visibility:hidden; }
+#postnl_add_location .popup-overlay { background:transparent !important; }
+#postnl_pickup .location-name.overflow-protect { max-width:calc(100% - 84px) !important; }
+
+#palocation .location-name.overflow-protect, 
+.pa-location .location-name.overflow-protect { max-width:calc(100% - 19px) !important; padding-right:19px; }
+
+/* GoMage */
+#postnl_container button.button.btn-search,
+#postnl_container button.button.btn-search span { height:26px !important; }
+#postnl_container button.button.btn-search > span { padding:0 0 0 12px; }
+#postnl_container button.button.btn-search > span span { padding:0 12px 0 0; }
+#postnl_container button.button.button.btn-save.next > span { padding-left:12px; }
+#postnl_container button.button span span {  
+	-webkit-border-radius:0;
+  	   -moz-border-radius:0;
+  	        border-radius:0;
+  	-webkit-background-clip: initial !important;
+  	   -moz-background-clip: initial !important;
+  	        background-clip: initial !important;
+}
+
+/* OneStepCheckout */
+.postnl-container .option-list li { padding:0; }
+/* ======================================================================================= */
+
+/* Additional Styling /* ==================================================================*/
+#postnl_add_moment { max-width:334px; margin:24px 0; }
+#carrier_postnl.options-available { background:url(../../../../images/TIG/PostNL/deliveryoptions/osc_bkg_postnl-logo.png) 100% 0 no-repeat; padding:6px 0 0; margin-top:-6px; max-width:334px !important; }
+
+/* Add moment */
+#postnl_add_moment .location .location-type { display:none; }
+#postnl_add_moment .add-moment { display:block; height:22px; text-align:right; }
+#postnl_add_moment .add-moment a { display:inline-block; text-decoration:underline; margin:1px 8px 0 0; height:14px; padding-right:21px; font-weight:bold; line-height:13px; background: url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-location.png) 100% 0 no-repeat; white-space:nowrap; }
+#postnl_add_moment .add-moment a:hover { text-decoration:none; }
+
+#osc_initial_loader { display:inline-block; width:14px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
+
+/* Delivery Options Popup */
+#postnl_delivery_options .popup-window { width:665px; height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }
+#postnl_delivery_options .popup-header { min-height:54px; padding:0; background-position:483px 0; }
+#postnl_delivery_options .popup-content { height:333px; padding:0; }
+#postnl_delivery_options .btn-close { top:0; right:0; }
+#postnl_delivery_options .button-set { margin:21px -17px 0; }
+
+#postnl_delivery_options .tooltip.first { top:-18px !important; }
+#postnl_delivery_options .tooltip.second { top:-92px !important;  }
+#postnl_delivery_options .tooltip.third { top:-121px !important; }
+#postnl_delivery_options .tooltip.fourth { top:-169px !important; }
+
+/* Scrollbar */
+#osc_scrollbar_container { width:631px; position:relative; }
+#osc_scrollbar_track { position:absolute; top:0; right:-11px; height:100%; width:5px; }
+#osc_scrollbar_handle { width:5px; background-color:#bbbbbc; cursor:default; border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px; }
+#osc_scrollbar_handle:active,
+#osc_scrollbar_track:hover #osc_scrollbar_handle { background-color:#575756; }
+#osc_scrollbar_content { overflow:hidden; width:631px; }
+/* ======================================================================================= */

@@ -397,8 +397,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             $postnlShipment->getStoreId()
         );
         $storeTimezone = new DateTimeZone($storeTimezone);
+        $utcTimeZone = new DateTimeZone('UTC');
 
-        $storeStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart());
+        $storeStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart(), $utcTimeZone);
         $storeStartTime->setTimezone($storeTimezone);
         $info['delivery_time_start'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeStart());
         $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
@@ -411,7 +412,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             return $info;
         }
 
-        $storeEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd());
+        $storeEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd(), $utcTimeZone);
         $storeEndTime->setTimezone($storeTimezone);
         $info['delivery_time_end'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeEnd());
         $info['store_delivery_time_end'] = $storeEndTime->format('H:i');

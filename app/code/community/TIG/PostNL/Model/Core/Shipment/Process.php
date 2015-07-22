@@ -49,6 +49,11 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     protected $_isLocked = null;
 
     /**
+     * @var null|resource
+     */
+    protected $_lockFile = null;
+
+    /**
      * Get lock file resource
      *
      * @return resource | TIG_PostNL_Model_Core_Shipment_Process

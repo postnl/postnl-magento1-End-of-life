@@ -66,7 +66,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Progress extends TIG_PostNL_Bloc
      */
     public function getPakjeGemakAddress()
     {
-        $quote =$this->getCheckout()->getQuote();
+        $quote = $this->getCheckout()->getQuote();
 
         $pakjeGemakAddress = false;
         /** @var Mage_Sales_Model_Quote_Address $address */

@@ -1,0 +1,295 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_readOnly = ''; ?>
+<?php $_readOnlyClass = ''; ?>
+<?php if ($this->getAddress()->getCountryId() == 'NL'): ?>
+    <?php $_readOnly = 'readonly=""'; ?>
+    <?php $_readOnlyClass = 'postnl-readonly'; ?>
+<?php endif; ?>
+
+<?php $_postnlHelper = Mage::helper('postnl/addressValidation'); ?>
+
+<?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
+<?php $_streetValidationClass = $_postnlHelper->getAttributeValidationClass('street'); ?>
+<?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+
+<?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
+<?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>
+<li>
+    <label for="<?php echo $_addressType; ?>_country_id" class="required"><em>*</em><?php echo $_postnlHelper->__('Country'); ?></label>
+    <div class="input-box">
+        <?php echo $this->getCountryHtmlSelect() ?>
+    </div>
+</li>
+<li class="fields" id="gomage_postnl_ce">
+    <div class="field field-postcode">
+        <label for="<?php echo $_addressType; ?>_postcode" class="required"><em>*</em><?php echo $_postnlHelper->__('Zip/Postal Code') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>_postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('postnl/addressValidation')->getAttributeValidationClass('postcode') ?>" />
+        </div>
+    </div>
+    <div class="field field-housenumber">
+        <label for="<?php echo $_addressType; ?>_street2" class="required"><em>*</em><?php echo $_postnlHelper->__('Housenumber') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Housenumber') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual_<?php echo $_addressType; ?>_street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+        </div>
+    </div>
+    <div class="field field-extension">
+        <label for="<?php echo $_addressType; ?>_street3"><?php echo $_postnlHelper->__('Extension') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Extension') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual_<?php echo $_addressType; ?>_street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+        </div>
+    </div>
+    <div id="postnl_postcodecheck_spinner_<?php echo $_addressType ?>" class="postnl-loading" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/opc-ajax-loader.gif') ?>"/>
+    </div>
+    <div class="postnl postnl-validation-advice" style="display:none;" id="postnl_address_error_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+    </div>
+    <div class="postnl postnl-validation-advice" style="display:none;" id="postnl_address_missing_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Please enter a postcode and housenumber.'); ?>
+    </div>
+    <div class="postnl postnl-validation-advice" style="display:none;" id="postnl_address_invalid_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.'); ?>
+    </div>
+</li>
+<li>
+    <label for="<?php echo $_addressType; ?>_street1" class="required"><em>*</em><?php echo $_postnlHelper->__('Street name') ?></label>
+    <div class="input-box">
+        <input type="text" title="<?php echo $_postnlHelper->__('Street name') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual_<?php echo $_addressType; ?>_street1" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_readOnlyClass; ?>" <?php echo $_readOnly; ?>/>
+    </div>
+</li>
+<?php /* Only street lines 4+ will be used as expected. Street lines 1, 2 and 3 are used for the postcode check. */ ?>
+<?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+    <li class="add-field">
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Street Address %s', $_i) ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual_<?php echo $_addressType; ?>_street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+        </div>
+    </li>
+<?php endfor; ?>
+<li class="fields">
+    <div class="field">
+        <label for="<?php echo $_addressType; ?>_city" class="required"><em>*</em><?php echo $this->__('City') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('City') ?>" name="<?php echo $_addressType; ?>[city]" value="<?php echo $this->escapeHtml($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('postnl/addressValidation')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" id="<?php echo $_addressType; ?>_city" <?php echo $_readOnly; ?>/>
+        </div>
+    </div>
+</li>
+
+<!-- Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. -->
+<div style="display:none;">
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>_street1"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>_street2"/>
+    <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>_street3"/>
+    <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+        <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>_street<?php echo $_i ?>"/>
+    <?php endfor; ?>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+        $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
+            var element = Event.element(event);
+            var value = element.getValue();
+
+            $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
+        });
+        $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {
+            var element = Event.element(event);
+            var value = element.getValue();
+
+            $('<?php echo $_addressType; ?>_street<?php echo $_i; ?>').setValue(value);
+        });
+    <?php endfor; ?>
+
+    initPostcodeCheck<?php echo $_addressType; ?> = function() {
+        $('<?php echo $_addressType; ?>_postcode').stopObserving('change');
+        $('virtual_<?php echo $_addressType; ?>_street2').stopObserving('change');
+        $('virtual_<?php echo $_addressType; ?>_street3').stopObserving('change');
+
+        var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
+            '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
+            '<?php echo $_addressType; ?>',
+            '<?php echo $_addressType; ?>_country_id',
+            '<?php echo $_addressType; ?>_postcode',
+            '<?php echo $_addressType; ?>_street1',
+            '<?php echo $_addressType; ?>_street2',
+            '<?php echo $_addressType; ?>_street3',
+            '<?php echo $_addressType; ?>_city',
+            'virtual_'
+        );
+        postcodeCheck<?php echo $_addressType; ?>.errorMax = <?php echo $_maxAttempts; ?>;
+        postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
+        postcodeCheck<?php echo $_addressType; ?>.init();
+
+        <?php if ($_addressType == 'shipping'): ?>
+            $('billing_country_id').observe('change', function() {
+                postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing_country_id').getValue());
+            });
+        <?php endif; ?>
+    };
+
+    if (!window.domLoaded) {
+        document.observe('dom:loaded', function () {
+            window.domLoaded = true;
+            initPostcodeCheck<?php echo $_addressType; ?>();
+
+            checkoutloginform.submit = function (params) {
+
+                if (typeof params != 'undefined' && params == 0) {
+                    return true;
+                }
+
+                $$('#gcheckout-login-form .actions button')[0].style.display = 'none';
+                $$('#gcheckout-login-form .actions .loadinfo')[0].style.display = 'block';
+
+                var self = this;
+
+                var request = new Ajax.Request(this.url,
+                    {
+                        method: 'post',
+                        parameters: {'login[username]': $$('#gcheckout-login-form #email')[0].value, 'login[password]': $$('#gcheckout-login-form #pass')[0].value},
+                        onSuccess: function (transport) {
+                            try {
+                                eval('var response = ' + transport.responseText);
+                            } catch (e) {
+                                var response = new Object();
+                                response.error = true;
+                                response.message = 'Unknow error.';
+                            }
+                            if (!response.error) {
+
+                                $$('.validation-advice').each(function (e) {
+                                    e.remove()
+                                });
+
+                                var form = $('gcheckout-onepage-form');
+
+                                var content = response.content;
+                                var js_scripts = content.extractScripts();
+
+                                form.innerHTML = content.stripScripts();
+
+                                if ($$('.header .links').length && response.links) {
+                                    var tempelement = document.createElement('div');
+                                    tempelement.innerHTML = response.links;
+                                    var links = $$('.header .links')[0];
+                                    links.parentNode.replaceChild(tempelement.firstChild, links);
+                                }
+
+                                if (response.header && $$('.header-container').length) {
+                                    // enterprise
+                                    var element = $$('.header-container')[0];
+                                    var js_header_scripts = response.header.extractScripts();
+
+                                    var tempelement = document.createElement('div');
+                                    tempelement.innerHTML = response.header.stripScripts();
+
+                                    element.parentNode.replaceChild(tempelement.firstChild, element);
+
+                                    for (var i = 0; i < js_header_scripts.length; i++) {
+                                        if (typeof(js_header_scripts[i]) != 'undefined') {
+                                            LightcheckoutglobalEval(js_header_scripts[i]);
+                                        }
+                                    }
+                                }
+
+                                if (!response.is_virtual) {
+                                    var wrap = $$('div.gcheckout-onepage-wrap')[0];
+                                    if (wrap && wrap.hasClassName('not_shipping_mode')) {
+                                        wrap.removeClassName('not_shipping_mode');
+                                    }
+                                }
+
+                                $('gcheckout-login-link').hide();
+
+                                Event.stopObserving(document, "dom:loaded");
+                                for (var i = 0; i < js_scripts.length; i++) {
+                                    if (typeof(js_scripts[i]) != 'undefined') {
+                                        LightcheckoutglobalEval(js_scripts[i]);
+                                    }
+                                }
+                                try {
+                                    Event.fire(document, "dom:loaded");
+                                } catch (e) {
+                                }
+
+                                if (typeof response.verify_result != 'undefined') {
+                                    checkout.taxvat_verify_result = response.verify_result;
+                                } else {
+                                    checkout.taxvat_verify_result = null;
+                                }
+
+                                checkout.hideLoginForm();
+
+                                initAddresses();
+                                checkout.initialize();
+                                payment.init();
+
+                                self.logged_in = true;
+
+                                initPostcodeCheckbilling();
+                                initPostcodeCheckshipping();
+                            } else {
+
+                                if ($$('#gcheckout-login-form div.error').length == 0) {
+                                    $('gcheckout-login-form').insert({'top': '<div class="error"></div>'});
+                                }
+                                $$('#gcheckout-login-form div.error')[0].innerHTML = '';
+                                $$('#gcheckout-login-form div.error')[0].insert(response.message);
+                            }
+
+                            $$('#gcheckout-login-form .actions button')[0].style.display = 'block';
+                            $$('#gcheckout-login-form .actions .loadinfo')[0].style.display = 'none';
+
+                        }.bind(this),
+                        onFailure: function () {
+                            // ...
+                        }
+                    });
+
+                return false;
+
+            }.bind(checkoutloginform);
+        });
+    }
+    //]]>
+</script>

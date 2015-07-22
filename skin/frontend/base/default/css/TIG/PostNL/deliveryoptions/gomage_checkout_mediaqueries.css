@@ -1,0 +1,115 @@
+/* Additional Mediaqueries for OneStepCheckout =========================================== */
+@media screen and (min-width : 954px) {
+    .responsive-switch-wrapper,
+    #postnl_add_location_responsive,
+    #postnl_responsive,
+    .responsive-hidden { display:none; }
+    .responsive-noscroll { overflow:hidden; }
+    #postnl_add_location { display:block; }
+}
+
+@media screen and (max-width : 953px) {
+    /* General */
+    form { display:block !important; }
+    .tooltip-container,
+    #postnl_delivery_options h3.sub-title,
+    #postnl_add_moment,
+    #postnl_delivery_options { display:none !important; }
+    #carrier_postnl.options-available { max-width:100% !important; }
+    .postnl-container .col-1,
+    .postnl-container .col-2 { padding:0; min-width:0 !important; }
+    #osc_scrollbar_content .option-list li { padding:0 8px; }
+    #osc_scrollbar_content .option-list li.responsive-tooltip { padding:0; }
+    #osc_scrollbar_content #add_location.option-list li { padding:0; }
+    #carrier_postnl.options-available { background:none; }
+    .postnl-container .title { margin-bottom:11px; }
+    .postnl-container .title h2 { display:inline-block; }
+    .postnl-container .title #postnl_back_link { display:inline-block; width:12px; padding-right:18px; height:20px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_back_link.png) 0 0 no-repeat; text-indent:-999em; vertical-align:middle; margin-top:-4px; }
+      
+    /* Revert Popup Behavior  */
+    #postnl_delivery_options { display:block !important; }
+    #postnl_delivery_options .popup-overlay { position:static; }
+    #postnl_delivery_options .popup-window { position:static; margin:0; padding:0; width:auto; height:auto; -webkit-box-shadow:none; box-shadow:none; -moz-box-shadow:none;  }
+    #postnl_delivery_options .popup-content { width:9999em; height:auto; }
+    #postnl_delivery_options .popup-header,
+    #postnl_delivery_options .button-set,
+    #initial_loader,
+    #osc_scrollbar_track { display:none; }
+    #osc_scrollbar_container { width:100%; border:1px solid #bbbbbc; border-left:none; border-right:none; padding:11px 0; margin:16px 0 24px; }
+
+    /* Fix Default OSC   */
+    .checkoutcontainer div.onestepcheckout-column-left,
+    .checkoutcontainer div.onestepcheckout-column-middle,
+    .checkoutcontainer div.onestepcheckout-column-right { width:100% !important; margin:0 !important; padding-right:0 !important; }
+    table.onestepcheckout-totals,
+    table.onestepcheckout-summary { width:100% !important; }
+
+    #onestepcheckout-form .group-select { padding:0 !important; }
+    #osc_scrollbar_content {
+        -webkit-transition:-webkit-transform 250ms linear;
+             -o-transition:-o-transform 250ms linear;
+                transition:transform 250ms linear;
+    }
+    
+    /* Rating Table */
+    .responsive-switch-wrapper ul { margin-bottom:30px; }
+    .responsive-switch-wrapper.show-rates ul { margin-bottom:0; }
+    .responsive-protector p.rate { display:block !important; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_rwd_rate-line.png) left bottom no-repeat; padding:8px 8px 19px; margin-bottom:8px; font-weight:bold; font-size:13px; }
+      
+    /* Tooltip */
+    .responsive-tooltip { display:block; }
+    .responsive-tooltip-open { display:block; width:19px; height:19px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent:-9999em; float:right; }
+    .close-wrapper { text-align:center; }
+    .responsive-tooltip-close { display:inline-block; width:20px; height:12px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip_close.png) 0 0 no-repeat; text-indent:-9999em; margin-top:6px; }
+    .responsive-tooltip { margin:-2px 0 2px; width:100%; overflow:hidden; transition:all .5s cubic-bezier(0, 1, 0.5, 1); -webkit-transition:all .5s cubic-bezier(0, 1, 0.5, 1); -moz-transition:all .5s cubic-bezier(0, 1, 0.5, 1); max-height:250px; }
+    .responsive-tooltip.hidden { max-height:0; }
+    .responsive-tooltip .content { padding:16px 10px; background:#f2f2f2; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
+    .responsive-tooltip .content hr.divider { height:0; border:none; border-bottom:1px solid #bbbbbc; margin:12px 0 7px; }
+    .responsive-tooltip .location-address { font-size:13px; }
+    .responsive-tooltip .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
+    .responsive-tooltip .business-hours tbody th { width:40px; }
+
+    /* Styling */
+    .responsive-protector { overflow:hidden !important; font-size:11px; }
+    .responsive-switch-wrapper { display:block; margin:0; }
+    .responsive-switch-wrapper li { display:block; float:left; width:50%; box-sizing:border-box; text-align:center; }
+    .responsive-switch-wrapper li:first-child { padding-right:2px; }
+    .responsive-switch-wrapper li:last-child { padding-left:2px; }
+    .responsive-switch-wrapper li:first-child a { border-radius:3px 0 0 3px; }
+    .responsive-switch-wrapper li:last-child a { border-radius:0 3px 3px 0; }
+    .responsive-switch-wrapper li a { box-sizing:border-box; display:block; border:1px solid #bbb; width:100%; height:40px; background:#fff; line-height:38px; font-weight:bold; color:#ed8c00; font-size:13px; text-align:center; text-decoration:none !important; text-transform:uppercase; }
+    .responsive-switch-wrapper li a.active { color:#fff; border:none; line-height:40px;
+        background:-moz-linear-gradient(top, #f28d1f 0%, #ec6921 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#f28d1f), color-stop(100%,#ec6921));
+        background:-webkit-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
+        background:-o-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
+        background:-ms-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
+        background:linear-gradient(to bottom, #f28d1f 0%,#ec6921 100%);
+    }
+    .option-list.extras .option .bkg,
+    .option-list.extras .location .bkg,
+    .option-list .option .bkg,
+    .option-list .location .bkg { background:none !important; padding:0 !important; }
+    .option-list .location { background:#666; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
+    .option-list .option { padding:0 8px; background:#eaeaea; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+        background:-moz-linear-gradient(top, #eaeaea 0%, #e0e0e0 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#e0e0e0));
+        background:-webkit-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
+        background:-o-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
+        background:-ms-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
+        background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
+    }
+    .option-list.extras .location { background:#999; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
+    .option-list.extras .option { padding:0 8px; background:#eaeaea; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+        background:-moz-linear-gradient(top, #eaeaea 0%, #f1f1f1 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#f1f1f1));
+        background:-webkit-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-o-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-ms-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:linear-gradient(to bottom, #eaeaea 0%,#f1f1f1 100%);
+    }
+
+    #postnl_pickup,
+    #postnl_delivery { float:left !important; margin-right:32px; }
+}
+/* ======================================================================================= */

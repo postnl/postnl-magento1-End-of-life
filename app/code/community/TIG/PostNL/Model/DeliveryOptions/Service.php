@@ -185,7 +185,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
              * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
              * the delivery date, but may not be a sunday.
              */
-            $timeframeDate = new DateTime($timeframe->Date);
+            $timeframeDate = new DateTime($timeframe->Date, new DateTimeZone('UTC'));
             $deliveryDay   = (int) $timeframeDate->format('N');
 
             $shippingDate = clone $timeframeDate;
@@ -237,7 +237,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     protected function _validateSaturdayShipping($shippingDays, DateTime $shippingDate, DateTime $earliestShippingDate)
     {
-        $shippingDate->modify('last saturday');
+        $shippingDate->modify('last saturday ' . $shippingDate->format('H:i:s'));
         $shippingDay = 6;
 
         if (!in_array($shippingDay, $shippingDays)) {

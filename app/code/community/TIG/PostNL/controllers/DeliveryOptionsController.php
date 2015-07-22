@@ -184,6 +184,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Save Extra costs associated with a selected option.
      *
+     * @deprecated v1.6.0
+     *
      * @return $this
      */
     public function saveOptionCostsAction()
@@ -386,7 +388,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * Return the result as a json response
          */
         $this->getResponse()
-             ->setHeader('Content-type', 'application/x-json')
+             ->setHeader('Content-type', 'application/x-json', true)
              ->setBody($timeframes);
 
         return $this;
@@ -466,7 +468,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * Return the result as a json response
          */
         $this->getResponse()
-             ->setHeader('Content-type', 'application/x-json')
+             ->setHeader('Content-type', 'application/x-json', true)
              ->setBody($locations);
 
         return $this;

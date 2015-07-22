@@ -481,6 +481,55 @@
         </reference>
     </onestepcheckout_index_index>
 
+    <gomage_checkout_onepage_index>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/gomage_checkout.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/rwd_osc.css</stylesheet></action>
+            <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/postcodecheck.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/formPopulate.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
+            <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml">
+                <action method="setisGoMage">
+                    <isGoMage>true</isGoMage>
+                </action>
+            </block>
+        </reference>
+
+        <reference name="checkout.onepage.address">
+            <block type="postnl_addressvalidation/goMage_lightCheckout_billing" name="checkout.onepage.address.billing" as="billing" template="TIG/PostNL/address_validation/gomage_checkout/billing.phtml">
+                <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>
+                <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
+                <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
+                <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+            </block>
+            <block type="postnl_addressvalidation/goMage_lightCheckout_shipping" name="checkout.onepage.address.shipping" as="shipping" template="TIG/PostNL/address_validation/gomage_checkout/shipping.phtml">
+                <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>
+                <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
+                <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
+                <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+            </block>
+        </reference>
+
+        <reference name="checkout.onepage.shipping_method.available">
+            <block type="postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions" name="postnl.gomage.delivery.options" template="TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml">
+                <block type="core/template" name="postnl.gomage.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
+            </block>
+        </reference>
+
+        <reference name="before_body_end">
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/gomage_checkout/js.phtml"/>
+            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/gomage_checkout/login_button.phtml"/>
+        </reference>
+    </gomage_checkout_onepage_index>
+
     <!-- DELIVERY OPTIONS -->
 
     <onestepcheckout_ajax_save_billing>
