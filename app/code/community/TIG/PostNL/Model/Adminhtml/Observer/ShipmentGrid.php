@@ -680,12 +680,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $origValue = $row->getData($column->getIndex());
-        $date = new DateTime($origValue);
-        $date->setTimezone(
-            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true)
-        );
 
-        $formattedDate = Mage::helper('core')->formatDate($date->format('Y-m-d H:i:s'), 'full', false);
+        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
 
         $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
         return $html;
@@ -713,8 +709,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
-        $origDate            = new DateTime($origValue);
-        $now                 = new DateTime($dateModel->gmtDate());
+        $origDate            = new DateTime($origValue, new DateTimeZone('UTC'));
+        $now                 = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
         $interval            = $now->diff($origDate);
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
@@ -880,6 +876,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
      * @return $this
+     *
+     * @todo optimize by placing acl checks before mass action generation
      */
     protected function _addMassaction($block)
     {

@@ -1127,16 +1127,28 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog($helper->__('UpdateProductAttribute cron starting...'));
 
+        Mage::app()->getCacheInstance()->cleanType('config');
+
         $data = Mage::getStoreConfig(self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$data) {
-            $helper->cronLog($helper->__('No attribute data found. Exiting cron.'));
+            /**
+             * If all attributes have been processed, remove the cron from the schedule.
+             */
+            $helper->cronLog($helper->__('All attributes have been processed. Removing cron.'));
+
+            $this->_removeAttributeUpdateCron();
             return $this;
         }
 
         $data = unserialize($data);
         $currentAttributeData = current($data);
         if (empty($currentAttributeData[0]) || empty($currentAttributeData[1])) {
-            $helper->cronLog($helper->__('No attribute data found. Exiting cron.'));
+            /**
+             * If all attributes have been processed, remove the cron from the schedule.
+             */
+            $helper->cronLog($helper->__('All attributes have been processed. Removing cron.'));
+
+            $this->_removeAttributeUpdateCron();
             return $this;
         }
 
@@ -1213,28 +1225,45 @@ class TIG_PostNL_Model_Core_Observer_Cron
                     'default',
                     Mage_Core_Model_App::ADMIN_STORE_ID
                 );
+
+                Mage::app()->getCacheInstance()->cleanType('config');
             } else {
                 /**
                  * If all attributes have been processed, remove the cron from the schedule.
                  */
                 $helper->cronLog($helper->__('All attributes have been processed. Removing cron.'));
 
-                Mage::getConfig()->saveConfig(
-                    self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
-                    null,
-                    'default',
-                    Mage_Core_Model_App::ADMIN_STORE_ID
-                );
-
-                Mage::getModel('core/config_data')
-                    ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
-                    ->setValue(null)
-                    ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
-                    ->save();
+                $this->_removeAttributeUpdateCron();
             }
         }
 
         $helper->cronLog($helper->__('UpdateProductAttribute cron has finished.'));
+
+        return $this;
+    }
+
+    /**
+     * Remove the updateProductAttribute cron.
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function _removeAttributeUpdateCron()
+    {
+        Mage::getConfig()->saveConfig(
+            self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
+            null,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        Mage::getModel('core/config_data')
+            ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
+            ->setValue(null)
+            ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
+            ->save();
+
+        Mage::app()->getCacheInstance()->cleanType('config');
 
         return $this;
     }
@@ -1250,6 +1279,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper = Mage::helper('postnl');
 
         $helper->cronLog($helper->__('UpdateDateTimeZone cron starting...'));
+
+        Mage::app()->getCacheInstance()->cleanType('config');
 
         $data = Mage::getStoreConfig(
             TIG_PostNL_Model_Resource_Setup::XPATH_UPDATE_DATE_TIME_ZONE_DATA,
@@ -1302,6 +1333,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             'default',
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
+
+        Mage::app()->getCacheInstance()->cleanType('config');
 
         $helper->cronLog($helper->__('UpdateDateTimeZone cron has finished.'));
 

@@ -1241,16 +1241,25 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
 
         $orderIds = $this->_getOrderIds();
 
-        $this->_errors = 0;
-        $this->_createShipments($orderIds);
+        $shipmentIds = $this->getServiceModel()->createShipments($orderIds, true);
 
         /**
          * Add either a success or failure message and redirect the user accordingly.
          */
-        if ($this->_errors < count($orderIds)) {
+        if (count($shipmentIds) > 0 && !$this->getServiceModel()->hasWarnings()) {
             $helper->addSessionMessage(
                 'adminhtml/session', null, 'success',
                 $this->__('The shipments were successfully created.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+        } elseif (count($shipmentIds) > 0) {
+            $helper->addSessionMessage(
+                'adminhtml/session', null, 'success',
+                $this->__(
+                    'The shipments were successfully created, however some warnings may have occurred. Please check' .
+                    ' the warnings below.'
+                )
             );
 
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -1396,14 +1405,12 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             )
         );
 
-        $this->_errors = 0;
-
-        $shipmentIds = $this->_createShipments($orderIds, true);
+        $shipmentIds = $this->getServiceModel()->createShipments($orderIds, true);
 
         /**
          * Add either a success or failure message and redirect the user accordingly.
          */
-        if ($this->_errors < count($orderIds)) {
+        if (count($shipmentIds) > 0 && !$this->getServiceModel()->hasWarnings()) {
             $existingShipmentsLoaded = Mage::registry('postnl_existing_shipments_loaded');
             if (!is_array($existingShipmentsLoaded) || count($existingShipmentsLoaded) != count($shipmentIds)) {
                 $helper->addSessionMessage(
@@ -1411,6 +1418,16 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $this->__('The shipments were successfully created.')
                 );
             }
+        } elseif (count($shipmentIds) > 0) {
+            $helper->addSessionMessage(
+                'adminhtml/session', null, 'success',
+                $this->__(
+                    'The shipments were successfully created, however some warnings may have occurred. Please check' .
+                    ' the warnings below.'
+                )
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
         } else {
             $helper->addSessionMessage(
                 'adminhtml/session',
@@ -1550,7 +1567,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     Mage::helper('postnl/cif')->parseCifException($e);
 
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -1559,7 +1576,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     );
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -1568,7 +1585,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     );
                 } catch (Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
@@ -1665,55 +1682,48 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             }
 
             /**
-             * Load the shipments and check if they are valid
-             */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
-
-            /**
              * Get the labels from CIF.
              *
              * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
             $output = false;
-            foreach ($shipments as $shipment) {
-                try {
-                    /**
-                     * Load the shipments and check if they are valid
-                     */
-                    $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+            try {
+                /**
+                 * Load the shipments and check if they are valid
+                 */
+                $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
 
-                    $output = $this->_getMassPackingSlipsOutput($shipments);
-                    $this->_checkForWarnings();
-                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                $output = $this->_getMassPackingSlipsOutput($shipments);
+                $this->_checkForWarnings();
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
 
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (TIG_PostNL_Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => null,
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                }
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->getServiceModel()->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
             }
 
             /**
@@ -1817,7 +1827,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -1826,7 +1836,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     );
                 } catch (Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
@@ -2009,7 +2019,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     Mage::helper('postnl/cif')->parseCifException($e);
 
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2018,7 +2028,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     );
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2027,7 +2037,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     );
                 } catch (Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
@@ -2125,7 +2135,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     Mage::helper('postnl/cif')->parseCifException($e);
 
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2135,7 +2145,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $errors++;
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2145,7 +2155,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $errors++;
                 } catch (Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
@@ -2280,7 +2290,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     Mage::helper('postnl/cif')->parseCifException($e);
 
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2290,7 +2300,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $errors++;
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
@@ -2300,7 +2310,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                     $errors++;
                 } catch (Exception $e) {
                     $helper->logException($e);
-                    $this->addWarning(
+                    $this->getServiceModel()->addWarning(
                         array(
                             'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,

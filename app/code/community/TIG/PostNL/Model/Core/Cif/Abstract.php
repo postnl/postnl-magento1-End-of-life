@@ -41,7 +41,7 @@
  * @method boolean getTestMode()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract setHelper(Mage_Core_Helper_Abstract $value)
- * @method TIG_PostNL_Model_Core_Cif_Abstract setSoapClient(Zend_Soap_Client $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setSoapClient(SoapClient $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(boolean $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setPassword(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setUsername(string $value)
@@ -300,11 +300,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * Gets a Zend_Soap_Client instance for the specified wsdl type.
+     * Gets a SoapClient instance for the specified wsdl type.
      *
      * @param string|null $wsdlType
      *
-     * @return Zend_Soap_Client
+     * @return SoapClient
      */
     public function getSoapClient($wsdlType = null)
     {
@@ -320,14 +320,15 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $soapOptions = array(
             'soap_version' => SOAP_1_1,
             'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
+            'trace'        => true
         );
 
         /**
-         * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without
+         * try to create a new SoapClient instance based on the supplied wsdl. if it fails, try again without
          * using the wsdl cache.
          */
         try {
-            $client  = new Zend_Soap_Client(
+            $client  = new SoapClient(
                 $wsdlFile,
                 $soapOptions
             );
@@ -337,7 +338,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
 
-            $client  = new Zend_Soap_Client(
+            $client  = new SoapClient(
                 $wsdlFile,
                 $soapOptions
             );
@@ -369,7 +370,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             array_walk_recursive($soapParams, array($cifHelper, 'stripNonPrintableCharacters'));
 
             /**
-             * @var Zend_Soap_Client $client
+             * @var SoapClient $client
              */
             $client = $this->getSoapClient($wsdlType);
 
@@ -387,7 +388,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              * Add SOAP header.
              */
             $header = $this->_getSoapHeader();
-            $client->addSoapInputHeader($header, true); //permanent header
+            $client->__setSoapHeaders($header);
 
             /**
              * Call the SOAP method.
@@ -526,13 +527,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Check if warnings occurred while processing the CIF request. If so, parse and register them
      *
-     * @param Zend_Soap_Client $client
+     * @param SoapClient $client
      *
      * @return $this
      */
-    protected function _processWarnings($client)
+    protected function _processWarnings(SoapClient $client)
     {
-        $responseXML = $client->getLastResponse();
+        $responseXML = $client->__getLastResponse();
         $responseDOMDoc = new DOMDocument();
         $responseDOMDoc->loadXML($responseXML);
 
@@ -586,9 +587,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Handle a SoapFault thrown by CIF.
      *
-     * @param SoapFault        $e
-     * @param Zend_Soap_Client $client
-     * @param boolean          $throwException
+     * @param SoapFault  $e
+     * @param SoapClient $client
+     * @param boolean    $throwException
      *
      * @return $this
      *
@@ -608,8 +609,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Get the request and response XML data
          */
         if ($client) {
-            $requestXML  = $cifHelper->formatXml($client->getLastRequest());
-            $responseXML = $cifHelper->formatXml($client->getLastResponse());
+            $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
+            $responseXML = $cifHelper->formatXml($client->__getLastResponse());
         }
 
         /**

@@ -56,6 +56,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_CheckoutExtensions
                 'label' => $helper->__("Idev's OneStepCheckout"),
             ),
             array(
+                'value' => 'gomage_lightcheckout',
+                'label' => $helper->__('GoMage LightCheckout'),
+            ),
+            array(
                 'value' => 'other',
                 'label' => $helper->__('Other'),
             ),

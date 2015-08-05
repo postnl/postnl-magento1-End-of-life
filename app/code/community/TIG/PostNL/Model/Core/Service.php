@@ -66,6 +66,7 @@ class TIG_PostNL_Model_Core_Service
 
         $order = $invoice->getOrder();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setIsInProcess(true);
 
         /**
@@ -161,12 +162,15 @@ class TIG_PostNL_Model_Core_Service
         $convertor = Mage::getModel('sales/convert_order');
 
         $dummyPaymentMethod = Mage::getModel('postnl_core/service_paymentMethodDummy');
+        $dummyPaymentMethod->setInfoInstance(Mage::getModel('payment/info'));
 
         $dummyPayment = Mage::getModel('postnl_core/service_paymentDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
         $dummyPayment->setMethod('postnl_dummy')
                      ->setMethodInstance($dummyPaymentMethod);
 
         $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
         $dummyOrder->setData($order->getData())
                    ->setSubtotalInvoiced(0)
                    ->setBaseSubtotalInvoiced(0)
@@ -177,6 +181,7 @@ class TIG_PostNL_Model_Core_Service
                    ->setPayment($dummyPayment);
 
         $invoice = Mage::getModel('postnl_core/service_invoiceDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
         $invoice->setOrder($dummyOrder)
                 ->setStoreId($dummyOrder->getStoreId())
                 ->setCustomerId($dummyOrder->getCustomerId())
@@ -205,7 +210,13 @@ class TIG_PostNL_Model_Core_Service
 
             $orderItem->setQtyInvoiced(0)
                       ->setRowInvoiced(0)
-                      ->setBaseRowInvoiced(0);
+                      ->setBaseRowInvoiced(0)
+                      ->setTaxInvoiced(0)
+                      ->setBaseTaxInvoiced(0)
+                      ->setDiscountInvoiced(0)
+                      ->setBaseDiscountInvoiced(0)
+                      ->setHiddenTaxInvoiced(0)
+                      ->setBaseHiddenTaxInvoiced(0);
 
             $totalQty += $qty;
             $item->setData('qty', $qty);

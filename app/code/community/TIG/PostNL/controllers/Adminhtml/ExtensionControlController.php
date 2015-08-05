@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Controller_Adminhtml_Config
@@ -339,6 +339,19 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
      */
     public function showActivationFieldsAction()
     {
+        $this->_resetActivation();
+
+        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        return $this;
+    }
+
+    /**
+     * Reset the extension's activation state.
+     *
+     * @return $this
+     */
+    protected function _resetActivation()
+    {
         Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 0);
 
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
@@ -350,7 +363,32 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
          */
         $this->_saveCurrentWizardStep('#wizard1');
 
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
+    }
+
+    /**
+     * Uninstall the PostNl extension.
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     *
+     * @return void
+     */
+    public function uninstallAction()
+    {
+        $setup = Mage::getResourceModel('postnl/setup', 'postnl_setup');
+        $setup->applyDataUninstall();
+
+        // Set session message that we've been successful
+        $title = $this->__('The PostNL extension has been successfully uninstalled.');
+        Mage::helper('postnl')->addSessionMessage('core/session', 'POSTNL-0223', 'success', $title);
+
+        $message = Mage::helper('postnl')->getSessionMessage('POSTNL-0223', 'success', $title);
+
+        $inbox = Mage::getModel('postnl_admin/inbox');
+        $inbox->addNotice($message, $title)
+              ->save();
+
+        $this->_redirect('adminhtml');
     }
 }
