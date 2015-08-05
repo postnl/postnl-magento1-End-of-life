@@ -2353,6 +2353,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return Mage::registry($registryKey);
         }
 
+        Mage::unregister($registryKey);
         Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
         $deliveryOptionsEnabled = $this->isDeliveryOptionsEnabled();
