@@ -574,7 +574,6 @@ TIG_PostNL::early delivery,early delivery
 TIG_PostNL::available,available
 TIG_PostNL::evening,evening
 TIG_PostNL::Post Office,Post Office
-#REF!,#REF!
 TIG_PostNL::Delivery Options,Delivery Options
 TIG_PostNL::Delivery,Delivery
 TIG_PostNL::or Pickup,or Pickup
@@ -894,7 +893,7 @@ TIG_PostNL::Comment type,Comment type
 "TIG_PostNL::You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.","You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page."
 TIG_PostNL::Comment text,Comment text
 TIG_PostNL::Show shipping label,Show shipping label
-"TIG_PostNL::If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.","If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page."
+"TIG_PostNL::If you select 'on the same page' in some cases the shipping label may not fit. In this case, the shipping label will be printed on a separate page instead.","If you select 'on the same page' in some cases the shipping label may not fit. In this case, the shipping label will be printed on a separate page instead."
 TIG_PostNL::Pre-configured message,Pre-configured message
 TIG_PostNL::Last shipment comment (as shown on the shipment detail page),Last shipment comment (as shown on the shipment detail page)
 TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.
@@ -1132,7 +1131,7 @@ TIG_PostNL::Idev's OneStepCheckout,Idev's OneStepCheckout
 TIG_PostNL::Other,Other
 TIG_PostNL::Checkout extension,Checkout extension
 TIG_PostNL::Checkout settings,Checkout settings
-TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout and Idev's OneStepCheckout extensions.,PostNL delivery options are only available for Magento's One Page Checkout and Idev's OneStepCheckout extensions.
+"TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions.","PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions."
 TIG_PostNL::Specify checkout extension,Specify checkout extension
 TIG_PostNL::Checkout Settings,Checkout Settings
 TIG_PostNL::As soon as possible,As soon as possible
@@ -1243,3 +1242,45 @@ TIG_PostNL::In stock and backordered products,In stock and backordered products
 TIG_PostNL::Product option '%s' (%s) is not allowed for this shipment.,Product option '%s' (%s) is not allowed for this shipment.
 TIG_PostNL::You have chosen to pick up your address at the following post office location:,You have chosen to pick up your address at the following post office location:
 TIG_PostNL::You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.,You can select a pick up location later on. The address you select here will be used to determine which pick up locations are nearby.
+TIG_PostNL::The PostNL extension has been successfully uninstalled.,The PostNL extension has been successfully uninstalled.
+TIG_PostNL::PostNL uninstall failed on removing product attribute: %s,PostNL uninstall failed on removing product attribute: %s
+TIG_PostNL::PostNL uninstall found but could not write to XML file: %s,PostNL uninstall found but could not write to XML file: %s
+TIG_PostNL::PostNL uninstall could not find or XML file: %s,PostNL uninstall could not find or XML file: %s
+TIG_PostNL::GoMage LightCheckout,GoMage LightCheckout
+TIG_PostNL::Warning: this action cannot be undone!,Warning: this action cannot be undone!
+TIG_PostNL::The following changes will be made:,The following changes will be made:
+TIG_PostNL::The extension will be disabled in the app/etc/modules/TIG_PostNL.xml file,The extension will be disabled in the app/etc/modules/TIG_PostNL.xml file
+TIG_PostNL::The PostNL product attributes will be removed from the webshop,The PostNL product attributes will be removed from the webshop
+TIG_PostNL::The following will be preserved:,The following will be preserved:
+TIG_PostNL::All data pertaining to existing orders and shipments,All data pertaining to existing orders and shipments
+TIG_PostNL::All PostNL configuration settings,All PostNL configuration settings
+TIG_PostNL::All PostNL code files.,All PostNL code files.
+"TIG_PostNL::For questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk.","For questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk."
+TIG_PostNL::Type `uninstall` in the box to proceed,Type `uninstall` in the box to proceed
+TIG_PostNL::Uninstall,Uninstall
+TIG_PostNL::Warning: this action cannot be undone!,Warning: this action cannot be undone!
+TIG_PostNL::You did not enter the correct verification text. Try again.,You did not enter the correct verification text. Try again.
+"TIG_PostNL::If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href=""http://kb.tig.nl/topic/93469278"" target=""_blank"">here</a>.","If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href=""http://kb.tig.nl/topic/93469278"" target=""_blank"">here</a>."
+TIG_PostNL::You have enabled PostNL delivery options and GoMage LightCheckout's Delivery Date functionality for the same shipping methods. Unfortunately these two functionalities conflict. Please disable one of these features.,You have enabled PostNL delivery options and GoMage LightCheckout's Delivery Date functionality for the same shipping methods. Unfortunately these two functionalities conflict. Please disable one of these features.
+"TIG_PostNL::[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href=""http://kb.tig.nl/topic/"" target=""blank"">Click here for more information from the TIG knowledgebase.</a>","[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href=""http://kb.tig.nl/topic/"" target=""blank"">Click here for more information from the TIG knowledgebase.</a>"
+"TIG_PostNL::Are you sure you wish to disable the PostNL extension?\n\nWarning: this action cannot be undone!\n\nThe following changes will be made:\n- the extension will be disabled in the app/etc/modules/TIG_PostNL.xml file\n- the PostNL product attributes will be removed from the webshop\n\nThe following will be preserved: \n- All data pertaining to existing orders and shipments\n- All PostNL configuration settings\n- All PostNL code files.\n\nFor questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk.","Are you sure you wish to disable the PostNL extension?\n\nWarning: this action cannot be undone!\n\nThe following changes will be made:\n- the extension will be disabled in the app/etc/modules/TIG_PostNL.xml file\n- the PostNL product attributes will be removed from the webshop\n\nThe following will be preserved: \n- All data pertaining to existing orders and shipments\n- All PostNL configuration settings\n- All PostNL code files.\n\nFor questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk."
+TIG_PostNL::The PostNL extension has been successfully uninstalled.,The PostNL extension has been successfully uninstalled.
+TIG_PostNL::PostNL uninstall failed on removing product attribute: %s,PostNL uninstall failed on removing product attribute: %s
+TIG_PostNL::PostNL uninstall found but could not write to XML file: %s,PostNL uninstall found but could not write to XML file: %s
+TIG_PostNL::PostNL uninstall could not find or XML file: %s,PostNL uninstall could not find or XML file: %s
+"TIG_PostNL::An error occurred while saving this step of the configuration wizard. Please use the regular ""Save Config"" button instead.","An error occurred while saving this step of the configuration wizard. Please use the regular ""Save Config"" button instead."
+TIG_PostNL::Permanently disable the PostNL extension,Permanently disable the PostNL extension
+TIG_PostNL::Uninstall PostNL Extension,Uninstall PostNL Extension
+TIG_PostNL::Uninstall the PostNL extension,Uninstall the PostNL extension
+"TIG_PostNL::Click <a href=""https://kb.tig.nl/topic/94842766"" target=""_blank"">here</a> for more information about the uninstall process.","Click <a href=""https://kb.tig.nl/topic/94842766"" target=""_blank"">here</a> for more information about the uninstall process."
+TIG_PostNL::No PostNL Shipment found for shipment ID #%s.,No PostNL Shipment found for shipment ID #%s.
+TIG_PostNL::Only A4 or A6 are valid values for the 'labelSize' parameter.,Only A4 or A6 are valid values for the 'labelSize' parameter.
+TIG_PostNL::The 'labelStartPosition' parameter must contain an integer value between 1 and 4.,The 'labelStartPosition' parameter must contain an integer value between 1 and 4.
+TIG_PostNL::The 'orderIds' parameter must contain a non-empty array of order IDs.,The 'orderIds' parameter must contain a non-empty array of order IDs.
+TIG_PostNL::The 'shipmentIds' parameter must contain a non-empty array of shipment IDs.,The 'shipmentIds' parameter must contain a non-empty array of shipment IDs.
+TIG_PostNL::Could not create or find a shipment for order #%s.,Could not create or find a shipment for order #%s.
+TIG_PostNL::GoMage's Checkout version,GoMage's Checkout version
+TIG_PostNL::Print the shipping label on the same page as the packing slip,Print the shipping label on the same page as the packing slip
+TIG_PostNL::Print the shipping label on a separate page,Print the shipping label on a separate page
+TIG_PostNL::Don't print the shipping label,Don't print the shipping label
+TIG_PostNL::Loading available delivery options for your shipping address...,Loading available delivery options for your shipping address...
