@@ -82,7 +82,7 @@
             var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
             var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
 
-            if (postnlCodPaymentMethod && deliveryOptions) {
+            if (postnlCodPaymentMethod && typeof deliveryOptions != 'undefined') {
                 if (deliveryOptions.selectedType == 'PA') {
                     postnlCodPaymentMethod.disabled = true;
                     postnlCodPaymentMethod.up().hide();

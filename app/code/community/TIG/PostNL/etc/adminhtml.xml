@@ -54,27 +54,27 @@
         </sales>
     </menu>
     <acl>
-    	<resources>
+        <resources>
             <admin>
-            	<children>
+                <children>
                     <system>
-                    	<children>
-                    		<config>
-                    			<children>
-									<postnl translate="title" module="postnl">
-										<title>PostNL</title>
-										<sort_order>330</sort_order>
+                        <children>
+                            <config>
+                                <children>
+                                    <postnl translate="title" module="postnl">
+                                        <title>PostNL</title>
+                                        <sort_order>330</sort_order>
                                         <children>
                                             <download_logs translate="title" module="postnl">
                                                 <title>Download PostNL log files</title>
                                                 <sort_order>10</sort_order>
                                             </download_logs>
                                         </children>
-									</postnl>
-								</children>
-							</config>
-						</children>
-					</system>
+                                    </postnl>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
                     <postnl translate="title" module="postnl">
                         <title>PostNL</title>
                         <children>
@@ -165,8 +165,8 @@
                             </postnl_returns>
                         </children>
                     </sales>
-				</children>
-			</admin>
+                </children>
+            </admin>
         </resources>
     </acl>
 </config>
