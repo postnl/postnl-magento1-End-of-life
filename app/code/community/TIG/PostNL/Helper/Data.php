@@ -737,7 +737,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseBuspakje();
         }
 
-        $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE);
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE, $storeId);
 
         if (!$isBuspakjeActive) {
             if ($cache) {
@@ -913,9 +915,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * if buspakje is turned off, return setting 'manual' to prevent extra checks while getting same functionality
+         * If buspakje is turned off, return setting 'manual' to prevent extra checks while getting same functionality.
          */
-        $buspakjeActive = Mage::getStoreConfig(self::XPATH_USE_BUSPAKJE);
+        $buspakjeActive = $this->canUseBuspakje();
         if(!$buspakjeActive){
             return self::BUSPAKJE_CALCULATION_MODE_MANUAL;
         }
