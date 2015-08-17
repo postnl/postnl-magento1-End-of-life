@@ -912,6 +912,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        /**
+         * if buspakje is turned off, return setting 'manual' to prevent extra checks while getting same functionality
+         */
+        $buspakjeActive = Mage::getStoreConfig(self::XPATH_USE_BUSPAKJE);
+        if(!$buspakjeActive){
+            return self::BUSPAKJE_CALCULATION_MODE_MANUAL;
+        }
+
         $calculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, $storeId);
 
         return $calculationMode;
