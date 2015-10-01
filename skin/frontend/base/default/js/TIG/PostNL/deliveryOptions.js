@@ -805,7 +805,7 @@ PostnlDeliveryOptions.prototype = {
             for (var i = 0, m = currentTimeframe.Timeframes.TimeframeTimeFrame.length; i < m ; i++, o++) {
                 var currentSubTimeframe = currentTimeframe.Timeframes.TimeframeTimeFrame[i];
                 if (this.isEveningTimeframesAllowed() === false
-                    && currentSubTimeframe.TimeframeType == 'Avond'
+                    && currentSubTimeframe.Options.string[0] == 'Evening'
                 ) {
                     continue;
                 }
@@ -5057,7 +5057,16 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.date = date;
         this.from = timeframe.From;
         this.to   = timeframe.To;
-        this.type = timeframe.TimeframeType;
+
+        var type =  timeframe.Options.string[0];
+        switch (type) {
+            case 'Evening' :
+                this.type = 'Avond';
+                break;
+            default :
+                this.type = 'Overdag';
+                break;
+        }
 
         this.timeframeIndex = timeframeIndex;
 
