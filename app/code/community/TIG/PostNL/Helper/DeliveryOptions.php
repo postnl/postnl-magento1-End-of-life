@@ -2563,8 +2563,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /** @var Mage_Sales_Model_Quote_Item[] $quoteItems */
-        $quoteItems = $quote->getItemsCollection();
+        $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
+            /**
+             * The stock check only applies to simple products.
+             *
+             * @todo add stock check to physicial gift cards.
+             */
+            $productType = $item->getProductType();
+            if ($productType != 'simple') {
+                continue;
+            }
+
             $product = $item->getProduct();
 
             /** @var Mage_CatalogInventory_Model_Stock_item $stockItem */

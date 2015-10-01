@@ -1126,6 +1126,7 @@
                     <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
                     <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
+                    <Picqer_PostNL>1.0</Picqer_PostNL>
                 </extensions>
             </postnl>
         </compatibility>
