@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_DeliveryOptions_Cif setStoreId(int $value)
@@ -92,12 +92,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDuration($quote);
+        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getQuoteShippingDuration($quote);
+
+        $date = new DateTime('now', Mage::helper('postnl')->getStoreTimeZone($quote->getStoreId(), true));
+        $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'Postalcode'                 => $postcode,
-                'ShippingDate'               => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
+                'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
                 'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
@@ -129,11 +132,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Get evening timeframes for the specified postcode and delivery window.
+     * Get evening time frames for the specified postcode and delivery window.
      *
      * @param array $data
      *
-     * @return StdClass
+     * @return StdClass[]
      *
      * @throws TIG_PostNL_Exception
      */
@@ -155,15 +158,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
         $maximumNumberOfDeliveryDays--;
 
-        $endDate = new DateTime($startDate);
+        $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
         $soapParams = array(
             'Timeframe' => array(
-                'PostalCode'  => $data['postcode'],
-                'HouseNumber' => $data['housenumber'],
-                'StartDate'   => $startDate,
-                'EndDate'     => $endDate->format('d-m-Y'),
+                'PostalCode'    => $data['postcode'],
+                'HouseNumber'   => $data['housenumber'],
+                'StartDate'     => $startDate,
+                'EndDate'       => $endDate->format('d-m-Y'),
+                'SundaySorting' => $this->_getSundaySortingAllowed(),
             ),
             'Message' => $this->_getMessage('')
         );
@@ -212,8 +216,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
+
         );
 
         /**
@@ -238,7 +244,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * gets post office locations within a specific area, marked by a set of coordinates.
+     * Gets post office locations within a specific area, marked by a set of coordinates.
      *
      * @param $data
      *
@@ -259,8 +265,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
         );
 
         /**

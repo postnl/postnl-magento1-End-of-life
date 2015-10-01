@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -42,6 +42,8 @@
 <?php $_helper = Mage::helper('postnl'); ?>
 
 <?php $_postnlOrder = $this->getPostnlOrder(); ?>
+
+<?php $_deliveryTimeInfo = $this->getDeliveryTimeInfo(); ?>
 <?php if ($_postnlOrder->getId() && $_postnlOrder->getType()): ?>
     <div class="hor-scroll" id="postnl_delivery_option_info">
         <table cellspacing="0" class="form-list">
@@ -62,12 +64,34 @@
                 <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
                 <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
             </tr>
+            <?php if ($_deliveryTimeInfo): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Requested delivery time'); ?></label></td>
+                    <?php if (!empty($_deliveryTimeInfo['delivery_time_end'])): ?>
+                        <td class="value"><strong><?php echo $_deliveryTimeInfo['delivery_time_start']; ?> - <?php echo $_deliveryTimeInfo['delivery_time_end']; ?></strong><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php  echo $_deliveryTimeInfo['store_delivery_time_start']; ?> - <?php  echo $_deliveryTimeInfo['store_delivery_time_end']; ?>)<?php endif;?></td>
+                    <?php else: ?>
+                        <td class="value"><strong><?php echo $this->__('from'); ?> <?php echo $_deliveryTimeInfo['delivery_time_start']; ?><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php echo $_deliveryTimeInfo['store_delivery_time_start'] ?>)<?php endif;?></strong></td>
+                    <?php endif; ?>
+                </tr>
+            <?php endif; ?>
+            <?php if ($this->hasExtraOptions()): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Extra options'); ?></label></td>
+                    <td class="value">
+                        <ul>
+                            <?php foreach ($this->getFormattedExtraOptions() as $option): ?>
+                                <li><?php echo $this->__($option); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </td>
+                </tr>
+            <?php endif; ?>
         </table>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        var shippingFieldset = $$('.box-right fieldset')[1];
+        var shippingFieldset = $$('.box-right .head-shipping-method')[0].up('.entry-edit').down('fieldset');
 
         shippingFieldset.insert({
             bottom: $('postnl_delivery_option_info')

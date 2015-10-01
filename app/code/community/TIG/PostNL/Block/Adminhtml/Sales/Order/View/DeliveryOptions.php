@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasOrder()
@@ -172,5 +172,98 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
 
         $subType .= ' + ' . $this->__('COD');
         return $subType;
+    }
+
+    /**
+     * Check if the customer chose any additional options during checkout.
+     *
+     * @return bool
+     */
+    public function hasExtraOptions()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+
+        $hasOptions = $postnlOrder->hasOptions();
+        return $hasOptions;
+    }
+
+    /**
+     * Get additional options the customer chose during checkout.
+     *
+     * @return array
+     */
+    public function getFormattedExtraOptions()
+    {
+        $postnlOptions = $this->getPostnlOrder();
+
+        $options = $postnlOptions->getOptions();
+        if (!$options) {
+            return array();
+        }
+
+        $formattedOptions = array();
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    $formattedOptions[] = $this->__('deliver to stated address only');
+                    break;
+                //no default
+            }
+        }
+
+        return $formattedOptions;
+    }
+
+    /**
+     * Get delivery time information for this PostNL shipment.
+     *
+     * @return array|false
+     */
+    public function getDeliveryTimeInfo()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder->hasExpectedDeliveryTimeStart()) {
+            return false;
+        }
+
+        $info = array(
+            'delivery_time_start'       => '',
+            'delivery_time_end'         => '',
+            'store_delivery_time_start' => '',
+            'store_delivery_time_end'   => '',
+            'timezone_differ'           => false,
+        );
+
+        $dateModel = Mage::getSingleton('core/date');
+        $storeTimezone = Mage::getStoreConfig(
+            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+            $postnlOrder->getStoreId()
+        );
+        $storeTimezone = new DateTimeZone($storeTimezone);
+        $utcTimeZone = new DateTimeZone('UTC');
+
+        $storeStartTime = new DateTime($postnlOrder->getExpectedDeliveryTimeStart(), $utcTimeZone);
+        $storeStartTime->setTimezone($storeTimezone);
+        $info['delivery_time_start'] = $dateModel->date('H:i', $postnlOrder->getExpectedDeliveryTimeStart());
+        $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+        if ($info['delivery_time_start'] != $info['store_delivery_time_start']) {
+            $info['timezone_differ'] = true;
+        }
+
+        if (!$postnlOrder->hasExpectedDeliveryTimeEnd()) {
+            return $info;
+        }
+
+        $storeEndTime = new DateTime($postnlOrder->getExpectedDeliveryTimeEnd(), $utcTimeZone);
+        $storeEndTime->setTimezone($storeTimezone);
+        $info['delivery_time_end'] = $dateModel->date('H:i', $postnlOrder->getExpectedDeliveryTimeEnd());
+        $info['store_delivery_time_end'] = $storeEndTime->format('H:i');
+
+        return $info;
     }
 }

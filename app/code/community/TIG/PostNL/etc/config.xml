@@ -26,24 +26,24 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
 <config>
-	<modules>
-		<TIG_PostNL>
-			<version>1.3.1</version>
-		</TIG_PostNL>
-	</modules>
+    <modules>
+        <TIG_PostNL>
+            <version>1.6.0</version>
+        </TIG_PostNL>
+    </modules>
 
     <global>
         <blocks>
@@ -69,12 +69,15 @@
             <postnl_payment>
                 <class>TIG_PostNL_Block_Payment</class>
             </postnl_payment>
-		</blocks>
-		<helpers>
-			<postnl>
-				<class>TIG_PostNL_Helper</class>
-			</postnl>
-		</helpers>
+            <postnl_addressvalidation>
+                <class>TIG_PostNL_Block_AddressValidation</class>
+            </postnl_addressvalidation>
+        </blocks>
+        <helpers>
+            <postnl>
+                <class>TIG_PostNL_Helper</class>
+            </postnl>
+        </helpers>
         <models>
             <!-- Model definitions per submodule -->
             <postnl>
@@ -139,6 +142,9 @@
                     <shipment_status_history>
                         <table>tig_postnl_shipment_status_history</table>
                     </shipment_status_history>
+                    <integrity>
+                        <table>tig_postnl_integrity</table>
+                    </integrity>
                 </entities>
             </postnl_core_resource>
             <postnl_carrier_resource>
@@ -147,6 +153,9 @@
                     <tablerate>
                         <table>tig_postnl_tablerate</table>
                     </tablerate>
+                    <matrixrate>
+                        <table>tig_postnl_matrixrate</table>
+                    </matrixrate>
                 </entities>
             </postnl_carrier_resource>
         </models>
@@ -225,11 +234,16 @@
         </events>
         <template>
             <email>
-                <postnl_cif_labels_and_confirming_track_and_trace_email_template translate="label" module="postnl">
+                <postnl_track_and_trace_track_and_trace_email_template translate="label" module="postnl">
                     <label>PostNL Track &amp; Trace Email</label>
                     <file>TIG/PostNL/track_and_trace.html</file>
                     <type>html</type>
-                </postnl_cif_labels_and_confirming_track_and_trace_email_template>
+                </postnl_track_and_trace_track_and_trace_email_template>
+                <postnl_returns_email_template translate="label" module="postnl">
+                    <label>PostNL Return Label Email</label>
+                    <file>TIG/PostNL/return_label.html</file>
+                    <type>html</type>
+                </postnl_returns_email_template>
             </email>
         </template>
         <payment>
@@ -374,13 +388,13 @@
     </admin>
 
     <adminhtml>
-		<layout>
+        <layout>
             <updates>
                 <postnl>
                     <file>TIG/postnl.xml</file>
                 </postnl>
-        	</updates>
-		</layout>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <TIG_PostNL>
@@ -390,29 +404,29 @@
                 </TIG_PostNL>
             </modules>
         </translate>
-		<events>
-			<adminhtml_block_html_before>
-			    <observers>
-			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
+        <events>
+            <adminhtml_block_html_before>
+                <observers>
+                       <!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
                     <postnl_adminhtml_ordergrid>
-					    <type>singleton</type>
-					    <class>postnl_adminhtml/observer_orderGrid</class>
-					    <method>modifyGrid</method>
-				    </postnl_adminhtml_ordergrid>
+                        <type>singleton</type>
+                        <class>postnl_adminhtml/observer_orderGrid</class>
+                        <method>modifyGrid</method>
+                    </postnl_adminhtml_ordergrid>
                     <!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
                     <postnl_adminhtml_shipmentgrid>
-						<type>singleton</type>
-						<class>postnl_adminhtml/observer_shipmentGrid</class>
-						<method>modifyGrid</method>
-					</postnl_adminhtml_shipmentgrid>
+                        <type>singleton</type>
+                        <class>postnl_adminhtml/observer_shipmentGrid</class>
+                        <method>modifyGrid</method>
+                    </postnl_adminhtml_shipmentgrid>
                     <!-- Adds a new print shipping label button to the shipment view page -->
                     <postnl_adminhtml_shipmentview>
                         <type>singleton</type>
                         <class>postnl_adminhtml/observer_shipmentView</class>
                         <method>addPrintLabelButton</method>
                     </postnl_adminhtml_shipmentview>
-			    </observers>
-			</adminhtml_block_html_before>
+                </observers>
+            </adminhtml_block_html_before>
             <postnl_shipment_confirm_after>
                 <observers>
                     <!-- Updates a PostNL Checkout order -->
@@ -423,7 +437,7 @@
                     </postnl_checkout_update_order>
                 </observers>
             </postnl_shipment_confirm_after>
-			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
+            <controller_action_predispatch_adminhtml_sales_order_shipment_save>
                 <observers>
                     <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
                     <postnl_core_shipment_save>
@@ -432,7 +446,7 @@
                         <method>registerProductOption</method>
                     </postnl_core_shipment_save>
                 </observers>
-			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
+            </controller_action_predispatch_adminhtml_sales_order_shipment_save>
             <controller_action_postdispatch_postnl_admin>
                 <observers>
                     <!-- Admin logging -->
@@ -473,12 +487,14 @@
                     </postnl_add_download_log_button>
                 </observers>
             </controller_action_layout_render_before_adminhtml_system_config_edit>
-		</events>
+        </events>
     </adminhtml>
 
     <frontend>
         <secure_url>
-            <postnl_checkout>/postnl/checkout</postnl_checkout>
+            <postnl_checkout_summary>/postnl/checkout/summary/</postnl_checkout_summary>
+            <postnl_checkout_finishcheckout>/postnl/checkout/finishCheckout/</postnl_checkout_finishcheckout>
+            <postnl_checkout_cancel>/postnl/checkout/cancel/</postnl_checkout_cancel>
             <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
             <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
             <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
@@ -492,13 +508,13 @@
                 </args>
             </postnl>
         </routers>
-		<layout>
+        <layout>
             <updates>
                 <postnl>
                     <file>TIG/postnl.xml</file>
                 </postnl>
-        	</updates>
-		</layout>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <TIG_PostNL>
@@ -541,20 +557,66 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
+                    <!-- Adds a link to the returns page on the sales/order/view page -->
+                    <returns_view_link>
+                        <type>singleton</type>
+                        <class>postnl_core/observer_returns</class>
+                        <method>addReturnLinkToAccount</method>
+                    </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>
+            <core_block_abstract_to_html_after>
+                <observers>
+                    <!-- Fix conflict with Bpost's Shipping Manager extension -->
+                    <checkout_deliveryoptions>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
+                        <method>fixBpostConflict</method>
+                    </checkout_deliveryoptions>
+                </observers>
+            </core_block_abstract_to_html_after>
+            <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
+                <observers>
+                    <!-- Saves selected PostNL options for Onepage checkout. -->
+                    <checkout_shipping_method_save_options>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>saveOptions</method>
+                    </checkout_shipping_method_save_options>
+                </observers>
+            </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
+            <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
+                <observers>
+                    <!-- Saves a selected PostNL options for OneStepCheckout. -->
+                    <checkout_shipping_method_save_options>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>saveOptions</method>
+                    </checkout_shipping_method_save_options>
+                </observers>
+            </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
+            <controller_action_predispatch_gomage_checkout_onepage_ajax>
+                <observers>
+                    <!-- Set a registry flag to prevent the PostNL order from being reset. -->
+                    <set_registry_flag>
+                        <type>model</type>
+                        <class>postnl_deliveryoptions/observer_goMage_lightCheckout_ajax</class>
+                        <method>setRegistryFlag</method>
+                    </set_registry_flag>
+                </observers>
+            </controller_action_predispatch_gomage_checkout_onepage_ajax>
         </events>
     </frontend>
 
     <crontab>
         <jobs>
-        	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
+            <!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
             <postnl_clean_temp_labels>
                 <schedule>
-                	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
+                    <cron_expr>30 * * * *</cron_expr> <!-- every hour at 30 minutes minutes -->
                 </schedule>
                 <run>
-                	<model>postnl_core/observer_cron::cleanTempLabels</model>
+                    <model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
             </postnl_clean_temp_labels>
             <!-- remove old lock files (by default files older than 1 hour will be deleted) -->
@@ -566,22 +628,33 @@
                     <model>postnl_core/observer_cron::cleanOldLocks</model>
                 </run>
             </postnl_clean_old_locks>
-        	<!-- get missing barcodes for postnl shipments -->
+            <!-- get missing barcodes for postnl shipments -->
             <postnl_get_missing_barcodes>
                 <schedule>
-                	<cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
+                    <cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
                 </schedule>
                 <run>
-                	<model>postnl_core/observer_cron::getBarcodes</model>
+                    <model>postnl_core/observer_cron::getBarcodes</model>
                 </run>
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
-                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
-            	<run>
-            		<model>postnl_core/observer_cron::updateShippingStatus</model>
-            	</run>
+                <schedule>
+                    <cron_expr>30 3,11,15 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::updateShippingStatus</model>
+                </run>
             </postnl_update_shipping_status>
+            <!-- Update the return status for all undelivered PostNL shipments -->
+            <postnl_update_return_status>
+                <schedule>
+                    <cron_expr>30 2,10,18 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::updateReturnStatus</model>
+                </run>
+            </postnl_update_return_status>
             <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
             <postnl_expire_confirmation>
                 <schedule>
@@ -602,7 +675,9 @@
             </postnl_send_track_and_trace_email>
             <!-- Update the shop's statistics with the extension control system -->
             <postnl_update_statistics>
-                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <schedule>
+                    <cron_expr>30 6,18 * * *</cron_expr> <!-- This schedule will be overwritten by a semi-random cron expression that is generated when the extension is first installed. It's stored in the core_config_data table. -->
+                </schedule>
                 <run>
                     <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
                 </run>
@@ -610,7 +685,7 @@
             <!-- Update the shop's statistics with the extension control system -->
             <postnl_update_notification_feed>
                 <schedule>
-                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                    <cron_expr>15 * * * *</cron_expr> <!-- every hour at 15 minutes on the hour -->
                 </schedule>
                 <run>
                     <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
@@ -625,6 +700,38 @@
                     <model>postnl_core/observer_cron::removeOldLabels</model>
                 </run>
             </postnl_remove_old_labels>
+            <!-- Update product attributes data. This needs to be performed for certain update scripts, however it can be very taxing on the server when there are a lot of products. Therefore we'll process it using a cronjob. -->
+            <postnl_update_product_attribute>
+                <!-- No cron expression. The cron expression is generated when the extension is updated and will be removed once the update has finished. -->
+                <run>
+                    <model>postnl_core/observer_cron::updateProductAttribute</model>
+                </run>
+            </postnl_update_product_attribute>
+            <!-- Update PostNl shipment and order dates to the correct (UTC) time zone. This needs to be performed for certain update scripts, however it can be very taxing on the server when there are a lot of products. Therefore we'll process it using a cronjob. -->
+            <postnl_update_date_time_zone>
+                <!-- No cron expression. The cron expression is generated when the extension is updated and will be removed once the update has finished. -->
+                <run>
+                    <model>postnl_core/observer_cron::updateDateTimeZone</model>
+                </run>
+            </postnl_update_date_time_zone>
+            <!-- Update PostNl config settings. Currently this is used for the Google Maps API key, and the Cendris username and password. -->
+            <postnl_update_config_settings>
+                <schedule>
+                    <cron_expr>0 0 * * 0</cron_expr> <!-- every sunday at midnight. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::updateDateTimeZone</model>
+                </run>
+            </postnl_update_config_settings>
+            <!-- Verify PostNL's data integrity. -->
+            <postnl_data_integrity_check>
+                <schedule>
+                    <cron_expr>0 5 * * *</cron_expr> <!-- every night at 5 AM. -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::integrityCheck</model>
+                </run>
+            </postnl_data_integrity_check>
         </jobs>
     </crontab>
 
@@ -657,9 +764,9 @@
                 <fee>17.45</fee> <!-- Charge an additional fee of 17.45 EUR for the use of PostNL COD. This is the amount PostNL charges for using COD -->
                 <fee_label>PostNL rembourstoeslag</fee_label> <!-- PostNL COD fee -->
                 <order_status>processing</order_status> <!-- Pending status -->
+                <instructions/>
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL</specificcountry> <!-- Allow only NL -->
-                <instructions/>
                 <min_order_total/>
                 <max_order_total>2000</max_order_total> <!-- PostNL COD is only available for orders whose base grand total amount is less than 2000 EUR -->
                 <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
@@ -685,60 +792,135 @@
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
-                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->
                 <sort_order>0</sort_order> <!-- First method shown -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
         </carriers>
         <postnl>
-        	<general>
-        		<active>0</active> <!-- Inactive -->
-        		<is_activated>0</is_activated> <!-- Not activated -->
-        		<email/>
+            <general>
+                <email/>
                 <unique_key/>
-        		<private_key/>
-        	</general>
-        	<cif>
-                <mode>1</mode> <!-- Test mode -->
-                <customer_number>11223344</customer_number> <!-- Demo customer number -->
-        		<customer_code>TOTA</customer_code> <!-- Demo customer code -->
-                <live_username/>
-                <live_password/>
-                <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
-                <test_password/> <!-- The demo password will be generated on install as it needs to be encrypted -->
-        		<collection_location>103861</collection_location> <!-- Demo collection location -->
-                <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
-                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
-        		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
-        		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
-        		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
-        	</cif>
-        	<cif_labels_and_confirming>
+                <private_key/>
+                <is_activated>0</is_activated> <!-- Not activated -->
+                <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
+                <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
+                <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
+                <knowledgebase_url>http://kb.tig.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
+                <new_ticket_url>http://kb.tig.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
+                <installation_manual_url>http://kb.tig.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
+                <user_guide_url>http://kb.tig.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
+                <kb_url>http://kb.tig.nl/forum/23046087</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
+            </general>
+            <cif_address>
+                <firstname/>
+                <lastname/>
+                <company/>
+                <streetname/>
+                <housenumber/>
+                <housenumber_extension/>
+                <postcode/>
+                <city/>
+                <region/>
+                <country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
+                <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
+                <alternative_sender_firstname/>
+                <alternative_sender_lastname/>
+                <alternative_sender_company/>
+                <alternative_sender_streetname/>
+                <alternative_sender_housenumber/>
+                <alternative_sender_housenumber_extension/>
+                <alternative_sender_postcode/>
+                <alternative_sender_city/>
+                <alternative_sender_region/>
+                <alternative_sender_country>NL</alternative_sender_country> <!-- All alternative sender addresses must be located in the Netherlands -->
+            </cif_address>
+            <cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
-                <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
-                <weight_unit>gram</weight_unit> <!-- gram -->
-                <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
-                <custom_shipment_reference/>
-                <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
-                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
                 <sunday_cutoff_time/>
-                <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
-                <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
-                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
-                <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
-                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
-                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
-                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
-                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
-        	    <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
-                <copy_to/>
-                <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
+                <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
+                <checkout_extension>magento_onepagecheckout</checkout_extension> <!-- Use Magento's One Page CHeckout as the default checkout extension -->
+                <checkout_extension_other/>
+                <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
+                <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
+                <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
+                <postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
+                <postcode_check_timeout>5</postcode_check_timeout> <!-- Postcode check will timeout after 5 seconds -->
+                <split_street>1</split_street> <!-- split street -->
+                <streetname_field>1</streetname_field> <!-- first address line -->
+                <housenr_field>2</housenr_field> <!-- second address line -->
+                <split_housenr>0</split_housenr> <!-- do not split housenumber and houndenumber extension -->
+                <housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+                <area_field/>
+                <building_name_field/>
+                <department_field/>
+                <doorcode_field/>
+                <floor_field/>
+                <remark_field/>
             </cif_labels_and_confirming>
+            <delivery_options>
+                <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
+                <theme>default</theme> <!-- Use the default PostNL theme -->
+                <responsive>0</responsive> <!-- Do not use the responsive design -->
+                <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
+                <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
+                <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
+                <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
+                <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
+                <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
+                <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
+                <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
+                <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
+                <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
+                <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
+                <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
+                <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->
+                <enable_delivery_days_for_buspakje>1</enable_delivery_days_for_buspakje> <!-- Show delivery days for letter box parcel orders -->
+                <enable_pakjegemak_for_buspakje>0</enable_pakjegemak_for_buspakje> <!-- Do not show post office locations for letter box parcel orders -->
+                <enable_pakketautomaat_for_buspakje>0</enable_pakketautomaat_for_buspakje> <!-- Do not show parcel dispenser locations for letter box parcel orders -->
+                <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
+                <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
+                <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
+                <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
+                <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
+                <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
+                <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
+                <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
+                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
+                <create_account_base_url>https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?</create_account_base_url> <!-- Base URl for create MijnPakket account link -->
+                <mijnpakket_live_base_url>https://mijnpakket.postnl.nl/</mijnpakket_live_base_url> <!-- Base URL for MijnPakket in live mode -->
+                <mijnpakket_test_base_url>https://tppwscheckout-sandbox.e-id.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
+                <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
+                <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
+                <mijnpakket_login_btn_live_base_url>checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
+                <mijnpakket_login_btn_test_base_url>tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
+                <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
+                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
+            </delivery_options>
+            <cif>
+                <mode>0</mode> <!-- The extension is disabled by default -->
+                <customer_number>11223344</customer_number> <!-- Demo customer number -->
+                <customer_code>TOTA</customer_code> <!-- Demo customer code -->
+                <live_username/>
+                <live_password/>
+                <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
+                <test_password/> <!-- The demo password will be generated on install as it needs to be encrypted -->
+                <collection_location>103861</collection_location> <!-- Demo collection location -->
+                <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
+                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
+                <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
+                <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
+                <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
+                <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+            </cif>
             <packing_slip>
+                <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
+                <custom_shipment_reference/>
+                <show_label>together</show_label> <!-- Automatically add the shipping label to the packing slip -->
                 <logo/>
                 <show_webshop_info>1</show_webshop_info> <!-- Show webshop info on the packing slip -->
                 <coc_number/>
@@ -756,145 +938,87 @@
                 <show_comment>1</show_comment> <!-- Show a comment on the packing slip -->
                 <comment_type>shipment_comment</comment_type> <!-- Show the shipment's last comment, rather than a pre-defined comment -->
                 <comment_text/>
-                <show_label>1</show_label> <!-- Automatically add the shipping label to the packing slip -->
+                <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
+                <weight_unit>gram</weight_unit> <!-- gram -->
             </packing_slip>
-        	<parcelware_export>
-        	    <active>0</active> <!-- Inactive -->
-        	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
-        	    <contract_ref_nr/>
-        	    <contract_name/>
-        	    <sender_ref_nr/>
-        	</parcelware_export>
-        	<cif_address>
-        	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
-        	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
-        	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
-        		<postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
-        		<postcode_check_timeout>5</postcode_check_timeout> <!-- Postcode check will timeout after 5 seconds -->
-        		<split_street>1</split_street> <!-- split street -->
-        		<streetname_field>1</streetname_field> <!-- first address line -->
-        		<housenr_field>2</housenr_field> <!-- second address line -->
-        		<split_housenr>0</split_housenr> <!-- do not split housenumber and houndenumber extension -->
-        		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
-        	    <area_field/>
-        	    <building_name_field/>
-        	    <department_field/>
-        	    <doorcode_field/>
-        	    <floor_field/>
-        	    <remark_field/>
-        	</cif_address>
-        	<cif_sender_address>
-        		<firstname/>
-        		<lastname/>
-        		<company/>
-        		<streetname/>
-                <housenumber/>
-                <housenumber_extension/>
-        		<postcode/>
-        		<city/>
-        		<region/>
-        		<country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
-        	</cif_sender_address>
-        	<cif_return_address>
-        	    <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
-                <firstname/>
-                <lastname/>
-                <company/>
-                <streetname/>
-                <housenumber/>
-                <housenumber_extension/>
-                <postcode/>
-                <city/>
-                <region/>
-                <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
-        	</cif_return_address>
-        	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
-                <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
-        		<default_product_option>3085</default_product_option> <!-- standard shipment -->
-        		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
-        		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
-        		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
-                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
-                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
-                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
-                <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
-        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-                <default_eu_be_product_option>4952</default_eu_be_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
-                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
-        	    <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
-                <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
-                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
-                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
-            </cif_product_options>
+            <track_and_trace>
+                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
+                <track_and_trace_email_template>postnl_track_and_trace_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
+                <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
+                <copy_to/>
+                <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
+            </track_and_trace>
+            <returns>
+                <return_labels_active>0</return_labels_active> <!-- Do not use return labels -->
+                <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
+                <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
+                <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
+                <email_template>postnl_returns_email_template</email_template> <!-- Default template from locale -->
+                <return_label_instructions_block/>
+                <return_company/>
+                <return_department/>
+                <return_freepost_number/>
+                <return_postcode/>
+                <return_city/>
+                <return_region/>
+                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
+            </returns>
             <cod>
                 <account_name/>
                 <iban/>
                 <bic/>
                 <auto_invoice>1</auto_invoice> <!-- Enable auto-invoice -->
                 <allow_cod_for_buspakje>0</allow_cod_for_buspakje> <!-- Disable COD for letter box parcels -->
+                <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
+                <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
+                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
+                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
             </cod>
-        	<cif_globalpack_settings>
-        	    <customs_license_number/>
-        	    <customs_certificate_number/>
+            <cif_globalpack_settings>
+                <use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
+                <global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
+                <global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
+                <customs_license_number/>
+                <customs_certificate_number/>
                 <default_shipment_type>Commercial Goods</default_shipment_type>
-        		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
-        		<hs_tariff_attribute/>
-        		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
-        		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
-        		<description_attribute>name</description_attribute> <!-- name attribute -->
-        		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
-        		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
-        	</cif_globalpack_settings>
-        	<delivery_options>
-        	    <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
-                <theme>default</theme> <!-- Use the default PostNL theme -->
-                <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
-                <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
-                <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
-                <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
-        	    <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
-                <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
-        	    <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
-        	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
-        	    <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
-        	    <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
-        	    <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
-        	    <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
-                <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
-                <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
-                <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->
-                <enable_delivery_days_for_buspakje>1</enable_delivery_days_for_buspakje> <!-- Show delivery days for letter box parcel orders -->
-                <enable_pakjegemak_for_buspakje>0</enable_pakjegemak_for_buspakje> <!-- Do not show post office locations for letter box parcel orders -->
-                <enable_pakketautomaat_for_buspakje>0</enable_pakketautomaat_for_buspakje> <!-- Do not show parcel dispenser locations for letter box parcel orders -->
-                <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
-                <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
-                <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
-        	</delivery_options>
-        	<checkout>
-        	    <active>0</active> <!-- PostNL Checkout is inactive -->
+                <use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
+                <hs_tariff_attribute/>
+                <customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
+                <country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
+                <description_attribute>name</description_attribute> <!-- name attribute -->
+                <product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
+                <product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
+                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
+            </cif_globalpack_settings>
+            <checkout>
+                <active>0</active> <!-- PostNL Checkout is inactive -->
                 <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to MijnPakket users -->
-        	    <instruction_cms_page/>
-        	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
-        	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
-        	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
-        	    <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
-        	    <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
+                <instruction_cms_page/>
+                <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
+                <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
+                <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
+                <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
+                <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
                 <use_mobile>0</use_mobile> <!-- Do not use mobile phonenumbers -->
                 <use_dob>0</use_dob> <!-- Do not use the date of birth field -->
-        	    <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
-        	    <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
-        	    <allow_price_overview>1</allow_price_overview> <!-- Customers will see a price overview -->
-        	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
+                <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
+                <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
+                <allow_price_overview>1</allow_price_overview> <!-- Customers will see a price overview -->
+                <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
                 <contact_url/>
-        	    <service_url/>
-        	</checkout>
-        	<checkout_payment_methods>
-        	    <ideal>0</ideal> <!-- Do not use iDEAL -->
-        	    <ideal_method/>
-        	    <ideal_option_field/>
-        	    <creditcard>0</creditcard> <!-- Do not use creditcard -->
+                <service_url/>
+                <checkout_button_test_base_url>https://tppcb-sandbox.e-id.nl/Button/Checkout</checkout_button_test_base_url> <!-- Base URL for PostNl Checkout button in test mode -->
+                <checkout_button_live_base_url>https://checkout.postnl.nl/Button/Checkout</checkout_button_live_base_url> <!-- Base URL for PostNl Checkout button -->
+                <test_checkout_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js</test_checkout_js_url> <!-- URL for PostNL Checkout JS file in test mode -->
+                <live_checkout_js_url>https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js</live_checkout_js_url> <!-- URL for PostNL Checkout JS file -->
+                <test_checkout_premium_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js</test_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file in test mode -->
+                <live_checkout_premium_js_url>https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js</live_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file -->
+            </checkout>
+            <checkout_payment_methods>
+                <ideal>0</ideal> <!-- Do not use iDEAL -->
+                <ideal_method/>
+                <ideal_option_field/>
+                <creditcard>0</creditcard> <!-- Do not use creditcard -->
                 <creditcard_method/>
                 <creditcard_option_field/>
                 <checkpay>0</checkpay> <!-- Do not use Checkpay -->
@@ -917,43 +1041,79 @@
                 <afterpay_method/>
                 <klarna>0</klarna> <!-- Do not use Klarna -->
                 <klarna_method/>
-        	</checkout_payment_methods>
-        	<advanced>
-        	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
-        		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
-        		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
-        		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
-        		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
-        		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
-        		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
-        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
-        		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
-        		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
-        		<postnl_shipping_methods>postnl_flatrate,postnl_tablerate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
-                <cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
-        		<cif_version_confirming>1_4</cif_version_confirming> <!-- v1.4 -->
-        		<cif_version_labelling>1_5</cif_version_labelling> <!-- v1.5 -->
-        		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
+            </checkout_payment_methods>
+            <parcelware_export>
+                <active>0</active> <!-- Inactive -->
+                <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
+                <contract_ref_nr/>
+                <contract_name/>
+                <sender_ref_nr/>
+            </parcelware_export>
+            <grid>
+                <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
+                <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
+                <order_grid_columns>shipment_type,confirm_date,confirm_status,shipping_phase</order_grid_columns> <!-- Show the shipment type, confirm date, confirm status and shipping phase columns -->
+                <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
+                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
+                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
+                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
+                <default_product_option>3085</default_product_option> <!-- standard shipment -->
+                <use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
+                <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
+                <alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
+                <default_pakjegemak_product_option>3544</default_pakjegemak_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
+                <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
+                <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+            </grid>
+            <cif_product_options>
+                <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
+            </cif_product_options>
+            <advanced>
+                <debug_mode>1</debug_mode> <!-- Exception logging only -->
+                <infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
+                <max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
+                <max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
+                <confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+                <return_expire_days>30</return_expire_days> <!-- 17 days -->
+                <send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
+                <receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
+                <feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+                <feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
+                <show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
+                <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
+                <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
+                <cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
+                <cif_version_labelling>1_6</cif_version_labelling> <!-- v1.6 -->
+                <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
-                <cif_version_deliverydate>1_1</cif_version_deliverydate> <!-- v1.1 -->
-                <cif_version_timeframe>1_0</cif_version_timeframe> <!-- v1.0 -->
-                <cif_version_location>1_0</cif_version_location> <!-- v1.0 -->
-        	</advanced>
+                <cif_version_deliverydate>1_2</cif_version_deliverydate> <!-- v1.2 -->
+                <cif_version_timeframe>1_2</cif_version_timeframe> <!-- v1.2 -->
+                <cif_version_location>1_1</cif_version_location> <!-- v1.1 -->
+            </advanced>
 
-        	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
-        	<cendris>
-        	    <username>tpgpost030</username>
-        	    <password>Post2014!</password>
-        	</cendris>
+            <!-- Login data for the postcode check functionality. -->
+            <cendris>
+                <username>tpgpost030</username>
+                <password>Post2014!</password>
+            </cendris>
 
-            <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
+            <!-- Google maps API key. -->
             <google_maps>
-                <api_key>AIzaSyCHq62q_WNkFPdfgQkQzX46H4n2AGD0ubs</api_key>
+                <api_key>AIzaSyB09S8SLpSPRF6YRZJDTuRpQIW71c51wm8</api_key>
             </google_maps>
+
+            <!-- These settings are used by the PostNl extension for upgrade scripts. -->
+            <update>
+                <product_attribute_update_data/>
+            </update>
         </postnl>
     </default>
 
-    <!-- Custom TiG config values -->
+    <!-- Custom TIG config values -->
     <tig>
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
@@ -961,6 +1121,12 @@
                 <enterprise>1.11,1.12,1.13,1.14</enterprise>
                 <community>1.6,1.7,1.8,1.9</community>
                 <php>5.3,5.4</php>
+                <!-- Compatibility with other extensions -->
+                <extensions>
+                    <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
+                    <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
+                    <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
+                </extensions>
             </postnl>
         </compatibility>
 
@@ -977,14 +1143,51 @@
                 <default translate="label" module="postnl">
                     <label>Default PostNL theme</label>
                     <use_cufon>1</use_cufon>
+                    <files>
+                        <onepage>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                            </responsive>
+                        </onepage>
+                        <onestepcheckout>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
+                            </responsive>
+                        </onestepcheckout>
+                        <gomage_checkout>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <gomage_checkout>css/TIG/PostNL/deliveryoptions/gomage_checkout_mediaqueries.css</gomage_checkout>
+                            </responsive>
+                        </gomage_checkout>
+                    </files>
                 </default>
                 <!-- An unbranded, white, gray and blue theme -->
                 <neutral translate="label" module="postnl">
                     <label>Neutral theme</label>
                     <use_cufon>1</use_cufon>
                     <files>
-                        <onepage>css/TIG/PostNL/deliveryoptions/neutral.css</onepage>
-                        <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</onestepcheckout>
+                        <onepage>
+                            <main>css/TIG/PostNL/deliveryoptions/neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                            </responsive>
+                        </onepage>
+                        <onestepcheckout>
+                            <main>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
+                            </responsive>
+                        </onestepcheckout>
+                        <gomage_checkout>
+                            <main>css/TIG/PostNL/deliveryoptions/gomage_checkout_neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <gomage_checkout>css/TIG/PostNL/deliveryoptions/gomage_checkout_mediaqueries.css</gomage_checkout>
+                            </responsive>
+                        </gomage_checkout>
                     </files>
                 </neutral>
             </themes>
@@ -996,32 +1199,32 @@
             <!-- These are errors, warnings and notices that are generated by this extension -->
             <POSTNL-0001>
                 <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31114923</url>
+                <url>http://kb.tig.nl/topic/31114923</url>
                 <type>warning</type>
             </POSTNL-0001>
             <POSTNL-0002>
                 <message>You have not yet fully configured the extension. You must complete this process before you can use it.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31565256</url>
+                <url>http://kb.tig.nl/topic/31565256</url>
                 <type>error</type>
             </POSTNL-0002>
             <POSTNL-0003>
                 <message>You have not yet configured the extension to use GlobalPack shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31566436</url>
+                <url>http://kb.tig.nl/topic/31566436</url>
                 <type>notice</type>
             </POSTNL-0003>
             <POSTNL-0004>
                 <message>You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31567046</url>
+                <url>http://kb.tig.nl/topic/31567046</url>
                 <type>notice</type>
             </POSTNL-0004>
             <POSTNL-0005>
                 <message>You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31080848</url>
+                <url>http://kb.tig.nl/topic/31080848</url>
                 <type>warning</type>
             </POSTNL-0005>
             <POSTNL-0006>
                 <message>PostNL: It appears that your cron is not working properly. PostNL requires the cron to be active in order to function.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31060037</url>
+                <url>http://kb.tig.nl/topic/31060037</url>
                 <type>warning</type>
             </POSTNL-0006>
             <POSTNL-0007>
@@ -1031,22 +1234,22 @@
             </POSTNL-0007>
             <POSTNL-0008>
                 <message>Please fill in your unique and private keys and try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31079168</url>
+                <url>http://kb.tig.nl/topic/31079168</url>
                 <type>error</type>
             </POSTNL-0008>
             <POSTNL-0009>
                 <message>This action is not available for shipment #%s, because it was not shipped using PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31061687</url>
+                <url>http://kb.tig.nl/topic/31061687</url>
                 <type>error</type>
             </POSTNL-0009>
             <POSTNL-0010>
                 <message>An error occurred while processing this action.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31062917</url>
+                <url>http://kb.tig.nl/topic/31062917</url>
                 <type>error</type>
             </POSTNL-0010>
             <POSTNL-0011>
                 <message>Please select one or more orders.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31570156</url>
+                <url>http://kb.tig.nl/topic/31570156</url>
                 <type>error</type>
             </POSTNL-0011>
             <POSTNL-0012>
@@ -1056,432 +1259,432 @@
             </POSTNL-0012>
             <POSTNL-0013>
                 <message>Please select one or more shipments.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31120533</url>
+                <url>http://kb.tig.nl/topic/31120533</url>
                 <type>error</type>
             </POSTNL-0013>
             <POSTNL-0014>
                 <message>You can print a maximum of 200 labels at once.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31083628</url>
+                <url>http://kb.tig.nl/topic/31083628</url>
                 <type>error</type>
             </POSTNL-0014>
             <POSTNL-0015>
                 <message>Order #%s cannot be shipped at this time.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31083718</url>
+                <url>http://kb.tig.nl/topic/31083718</url>
                 <type>error</type>
             </POSTNL-0015>
             <POSTNL-0016>
                 <message>Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31573296</url>
+                <url>http://kb.tig.nl/topic/31573296</url>
                 <type>error</type>
             </POSTNL-0016>
             <POSTNL-0017>
                 <message>Shipment #%s has already been confirmed.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31066127</url>
+                <url>http://kb.tig.nl/topic/31066127</url>
                 <type>error</type>
             </POSTNL-0017>
             <POSTNL-0018>
                 <message>Shipment #%s cannot be confirmed at this time.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31123903</url>
+                <url>http://kb.tig.nl/topic/31123903</url>
                 <type>error</type>
             </POSTNL-0018>
             <POSTNL-0019>
                 <message>PostNL replied with the following warnings: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31573886</url>
+                <url>http://kb.tig.nl/topic/31573886</url>
                 <type>warning</type>
             </POSTNL-0019>
             <POSTNL-0020>
                 <message>Error code %s: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31086988</url>
+                <url>http://kb.tig.nl/topic/31086988</url>
                 <type>warning</type>
             </POSTNL-0020>
             <POSTNL-0021>
                 <message>An error occurred while processing your order. Please try again</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31085978</url>
+                <url>http://kb.tig.nl/topic/31085978</url>
                 <type>error</type>
             </POSTNL-0021>
             <POSTNL-0022>
                 <message>Unable to set Payment Method.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31086728</url>
+                <url>http://kb.tig.nl/topic/31086728</url>
                 <type>error</type>
             </POSTNL-0022>
             <POSTNL-0023>
                 <message>Your order has been cancelled. Please try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31069277</url>
+                <url>http://kb.tig.nl/topic/31069277</url>
                 <type>notice</type>
             </POSTNL-0023>
             <POSTNL-0024>
                 <message>Unfortunately the checkout process cannot be finished. Please try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31069397</url>
+                <url>http://kb.tig.nl/topic/31069397</url>
                 <type>error</type>
             </POSTNL-0024>
             <POSTNL-0025>
                 <message>Unfortunately no PostNL Checkout order could be found. Please try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31069667</url>
+                <url>http://kb.tig.nl/topic/31069667</url>
                 <type>error</type>
             </POSTNL-0025>
             <POSTNL-0026>
                 <message>It seems your cart has been changed since you started the checkout process. Please try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31126613</url>
+                <url>http://kb.tig.nl/topic/31126613</url>
                 <type>error</type>
             </POSTNL-0026>
             <POSTNL-0027>
                 <message>You have not yet enabled PostNL Checkout.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31576976</url>
+                <url>http://kb.tig.nl/topic/31576976</url>
                 <type>error</type>
             </POSTNL-0027>
             <POSTNL-0028>
                 <message>You need to enable at least one payment method.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31070197</url>
+                <url>http://kb.tig.nl/topic/31070197</url>
                 <type>error</type>
             </POSTNL-0028>
             <POSTNL-0029>
                 <message>Unable to get valid barcodetype for postnl shipment id #%s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31147298</url>
+                <url>http://kb.tig.nl/topic/31147298</url>
                 <type>error</type>
             </POSTNL-0029>
             <POSTNL-0030>
                 <message>You have not yet enabled the extension.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31185593</url>
+                <url>http://kb.tig.nl/topic/31185593</url>
                 <type>error</type>
             </POSTNL-0030>
             <POSTNL-0031>
                 <message>The PostNL shipping method has not been enabled.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31129647</url>
+                <url>http://kb.tig.nl/topic/31129647</url>
                 <type>error</type>
             </POSTNL-0031>
             <POSTNL-0032>
                 <message>The shop's base currency code must be set to EUR for PostNL to function.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31129917</url>
+                <url>http://kb.tig.nl/topic/31129917</url>
                 <type>error</type>
             </POSTNL-0032>
             <POSTNL-0033>
                 <message>The extension has not been activated.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31186323</url>
+                <url>http://kb.tig.nl/topic/31186323</url>
                 <type>error</type>
             </POSTNL-0033>
             <POSTNL-0034>
                 <message>%s > %s is required.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31186983</url>
+                <url>http://kb.tig.nl/topic/31186983</url>
                 <type>error</type>
             </POSTNL-0034>
             <POSTNL-0035>
                 <message>Invalid Magento edition detected: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31131717</url>
+                <url>http://kb.tig.nl/topic/31131717</url>
                 <type>error</type>
             </POSTNL-0035>
             <POSTNL-0036>
                 <message>Invalid rate type requested: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31150488</url>
+                <url>http://kb.tig.nl/topic/31150488</url>
                 <type>error</type>
             </POSTNL-0036>
             <POSTNL-0037>
                 <message>Invalid UpdateOrder response received!</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31133667</url>
+                <url>http://kb.tig.nl/topic/31133667</url>
                 <type>error</type>
             </POSTNL-0037>
             <POSTNL-0038>
                 <message>Invalid PingStatus response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31638656</url>
+                <url>http://kb.tig.nl/topic/31638656</url>
                 <type>error</type>
             </POSTNL-0038>
             <POSTNL-0039>
                 <message>No quote available to initiate PostNL Checkout.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31639136</url>
+                <url>http://kb.tig.nl/topic/31639136</url>
                 <type>error</type>
             </POSTNL-0039>
             <POSTNL-0040>
                 <message>Invalid PrepareOrder response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31191183</url>
+                <url>http://kb.tig.nl/topic/31191183</url>
                 <type>error</type>
             </POSTNL-0040>
             <POSTNL-0041>
                 <message>Invalid ReadOrder response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31191443</url>
+                <url>http://kb.tig.nl/topic/31191443</url>
                 <type>error</type>
             </POSTNL-0041>
             <POSTNL-0042>
                 <message>Invalid ConfirmOrder response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31191933</url>
+                <url>http://kb.tig.nl/topic/31191933</url>
                 <type>error</type>
             </POSTNL-0042>
             <POSTNL-0043>
                 <message>Invalid reference type requested: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31640636</url>
+                <url>http://kb.tig.nl/topic/31640636</url>
                 <type>error</type>
             </POSTNL-0043>
             <POSTNL-0044>
                 <message>Invalid object specified: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31641096</url>
+                <url>http://kb.tig.nl/topic/31641096</url>
                 <type>error</type>
             </POSTNL-0044>
             <POSTNL-0045>
                 <message>OrderToken missing for quote #%s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31662856</url>
+                <url>http://kb.tig.nl/topic/31662856</url>
                 <type>error</type>
             </POSTNL-0045>
             <POSTNL-0046>
                 <message>This PostNL Checkout order cannot be cancelled: it has no associated magento order.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31157957</url>
+                <url>http://kb.tig.nl/topic/31157957</url>
                 <type>error</type>
             </POSTNL-0046>
             <POSTNL-0047>
                 <message>This PostNL Checkout order cannot be cancelled: it has already been canceled.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31177418</url>
+                <url>http://kb.tig.nl/topic/31177418</url>
                 <type>error</type>
             </POSTNL-0047>
             <POSTNL-0048>
                 <message>Selected payment method %s is not available.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31158587</url>
+                <url>http://kb.tig.nl/topic/31158587</url>
                 <type>error</type>
             </POSTNL-0048>
             <POSTNL-0049>
                 <message>Unable to create an order for quote #%s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31215003</url>
+                <url>http://kb.tig.nl/topic/31215003</url>
                 <type>error</type>
             </POSTNL-0049>
             <POSTNL-0050>
                 <message>Invalid quote supplied.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31215543</url>
+                <url>http://kb.tig.nl/topic/31215543</url>
                 <type>error</type>
             </POSTNL-0050>
             <POSTNL-0051>
                 <message>Invalid data supplied.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31216003</url>
+                <url>http://kb.tig.nl/topic/31216003</url>
                 <type>error</type>
             </POSTNL-0051>
             <POSTNL-0052>
                 <message>No username or password set.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31216113</url>
+                <url>http://kb.tig.nl/topic/31216113</url>
                 <type>error</type>
             </POSTNL-0052>
             <POSTNL-0053>
                 <message>Chosen wsdl type is not supported: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31178198</url>
+                <url>http://kb.tig.nl/topic/31178198</url>
                 <type>error</type>
             </POSTNL-0053>
             <POSTNL-0054>
                 <message>Invalid barcode response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31664456</url>
+                <url>http://kb.tig.nl/topic/31664456</url>
                 <type>error</type>
             </POSTNL-0054>
             <POSTNL-0055>
                 <message>Invalid shippingStatus response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31664246</url>
+                <url>http://kb.tig.nl/topic/31664246</url>
                 <type>error</type>
             </POSTNL-0055>
             <POSTNL-0056>
                 <message>Invalid confirmShipment response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31923588</url>
+                <url>http://kb.tig.nl/topic/31923588</url>
                 <type>error</type>
             </POSTNL-0056>
             <POSTNL-0057>
                 <message>Invalid generateLabels response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31906367</url>
+                <url>http://kb.tig.nl/topic/31906367</url>
                 <type>error</type>
             </POSTNL-0057>
             <POSTNL-0058>
                 <message>Invalid generateLabelsWithoutConfirm response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31923208</url>
+                <url>http://kb.tig.nl/topic/31923208</url>
                 <type>error</type>
             </POSTNL-0058>
             <POSTNL-0059>
                 <message>Invalid housnumber supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32412636</url>
+                <url>http://kb.tig.nl/topic/32412636</url>
                 <type>error</type>
             </POSTNL-0059>
             <POSTNL-0060>
                 <message>Invalid full street supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31924308</url>
+                <url>http://kb.tig.nl/topic/31924308</url>
                 <type>error</type>
             </POSTNL-0060>
             <POSTNL-0061>
                 <message>Invalid barcodetype requested: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31924098</url>
+                <url>http://kb.tig.nl/topic/31924098</url>
                 <type>error</type>
             </POSTNL-0061>
             <POSTNL-0062>
                 <message>Invalid printer type requested: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32413996</url>
+                <url>http://kb.tig.nl/topic/32413996</url>
                 <type>error</type>
             </POSTNL-0062>
             <POSTNL-0063>
                 <message>Unable to match barcode to shippingStatus response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31910007</url>
+                <url>http://kb.tig.nl/topic/31910007</url>
                 <type>error</type>
             </POSTNL-0063>
             <POSTNL-0064>
                 <message>Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31925938</url>
+                <url>http://kb.tig.nl/topic/31925938</url>
                 <type>error</type>
             </POSTNL-0064>
             <POSTNL-0065>
                 <message>Invalid label type supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31910337</url>
+                <url>http://kb.tig.nl/topic/31910337</url>
                 <type>error</type>
             </POSTNL-0065>
             <POSTNL-0066>
                 <message>Temporary template file already exists: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32415756</url>
+                <url>http://kb.tig.nl/topic/32415756</url>
                 <type>error</type>
             </POSTNL-0066>
             <POSTNL-0067>
                 <message>Invalid counter: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31973693</url>
+                <url>http://kb.tig.nl/topic/31973693</url>
                 <type>error</type>
             </POSTNL-0067>
             <POSTNL-0068>
                 <message>Number of parcels not allowed. Amount requested: %s, maximum allowed: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31973693</url>
+                <url>http://kb.tig.nl/topic/31973693</url>
                 <type>error</type>
             </POSTNL-0068>
             <POSTNL-0069>
                 <message>The generateBarcodes action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32416446</url>
+                <url>http://kb.tig.nl/topic/32416446</url>
                 <type>error</type>
             </POSTNL-0069>
             <POSTNL-0070>
                 <message>Unable to generate barcode for this shipment: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31974103</url>
+                <url>http://kb.tig.nl/topic/31974103</url>
                 <type>error</type>
             </POSTNL-0070>
             <POSTNL-0071>
                 <message>The confirmAndPrintLabel action returned an invalid response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31928088</url>
+                <url>http://kb.tig.nl/topic/31928088</url>
                 <type>error</type>
             </POSTNL-0071>
             <POSTNL-0072>
                 <message>Invalid confirm response received: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31976783</url>
+                <url>http://kb.tig.nl/topic/31976783</url>
                 <type>error</type>
             </POSTNL-0072>
             <POSTNL-0073>
                 <message>The updateShippingStatus action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31930018</url>
+                <url>http://kb.tig.nl/topic/31930018</url>
                 <type>error</type>
             </POSTNL-0073>
             <POSTNL-0074>
                 <message>The updateCompleteShippingStatus action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31930488</url>
+                <url>http://kb.tig.nl/topic/31930488</url>
                 <type>error</type>
             </POSTNL-0074>
             <POSTNL-0075>
                 <message>Unable to add tracking info: no barcode or shipment available.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31977793</url>
+                <url>http://kb.tig.nl/topic/31977793</url>
                 <type>error</type>
             </POSTNL-0075>
             <POSTNL-0076>
                 <message>The sendTrackAndTraceEmail action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31930908</url>
+                <url>http://kb.tig.nl/topic/31930908</url>
                 <type>error</type>
             </POSTNL-0076>
             <POSTNL-0077>
                 <message>Unable to send track and trace email for shipment #%s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31977863</url>
+                <url>http://kb.tig.nl/topic/31977863</url>
                 <type>error</type>
             </POSTNL-0077>
             <POSTNL-0078>
                 <message>Product code %s is not allowed for this shipment.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31978843</url>
+                <url>http://kb.tig.nl/topic/31978843</url>
                 <type>error</type>
             </POSTNL-0078>
             <POSTNL-0079>
                 <message>Invalid activateWebshop response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31978413</url>
+                <url>http://kb.tig.nl/topic/31978413</url>
                 <type>error</type>
             </POSTNL-0079>
             <POSTNL-0080>
                 <message>Unable to update statistics. This feature has been disabled.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31978413</url>
+                <url>http://kb.tig.nl/topic/31978413</url>
                 <type>error</type>
             </POSTNL-0080>
             <POSTNL-0081>
                 <message>No private or unique key found. Unable to complete the request.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31979763</url>
+                <url>http://kb.tig.nl/topic/31979763</url>
                 <type>error</type>
             </POSTNL-0081>
             <POSTNL-0082>
                 <message>Invalid updateStatistics response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31918757</url>
+                <url>http://kb.tig.nl/topic/31918757</url>
                 <type>error</type>
             </POSTNL-0082>
             <POSTNL-0083>
                 <message>PostNL extension has been successfully updated to version %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31921907</url>
+                <url>http://kb.tig.nl/topic/31921907</url>
                 <type>notice</type>
             </POSTNL-0083>
             <POSTNL-0084>
                 <message>Unable to save shipping_status cron expression: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31940658</url>
+                <url>http://kb.tig.nl/topic/31940658</url>
                 <type>error</type>
             </POSTNL-0084>
             <POSTNL-0085>
                 <message>Unable to save update_statistics cron expression: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31925327</url>
+                <url>http://kb.tig.nl/topic/31925327</url>
                 <type>error</type>
             </POSTNL-0085>
             <POSTNL-0086>
                 <message>The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31925577</url>
+                <url>http://kb.tig.nl/topic/31925577</url>
                 <type>warning</type>
             </POSTNL-0086>
             <POSTNL-0087>
                 <message>Wrong message type</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31566016</url>
+                <url>http://kb.tig.nl/topic/31566016</url>
                 <type>error</type>
             </POSTNL-0087>
             <POSTNL-0088>
                 <message>Invalid session requested.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32430366</url>
+                <url>http://kb.tig.nl/topic/32430366</url>
                 <type>error</type>
             </POSTNL-0088>
             <POSTNL-0089>
                 <message>No message supplied.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31925967</url>
+                <url>http://kb.tig.nl/topic/31925967</url>
                 <type>error</type>
             </POSTNL-0089>
             <POSTNL-0090>
                 <message>No message type supplied.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31988933</url>
+                <url>http://kb.tig.nl/topic/31988933</url>
                 <type>error</type>
             </POSTNL-0090>
             <POSTNL-0091>
                 <message>Missing country of origin value for product #%s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31988983</url>
+                <url>http://kb.tig.nl/topic/31988983</url>
                 <type>error</type>
             </POSTNL-0091>
             <POSTNL-0092>
                 <message>Missing customs value for product #%s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32432746</url>
+                <url>http://kb.tig.nl/topic/32432746</url>
                 <type>error</type>
             </POSTNL-0092>
             <POSTNL-0093>
                 <message>Missing customs description for product #%s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31944008</url>
+                <url>http://kb.tig.nl/topic/31944008</url>
                 <type>error</type>
             </POSTNL-0093>
             <POSTNL-0094>
                 <message>Invalid message type requested: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/33566806</url>
+                <url>http://kb.tig.nl/topic/33566806</url>
                 <type>error</type>
             </POSTNL-0094>
             <POSTNL-0095>
                 <message>Config form fieldset clone model required to be able to clone fields</message>
-                <url>http://kb.totalinternetgroup.nl/topic/33059188</url>
+                <url>http://kb.tig.nl/topic/33059188</url>
                 <type>error</type>
             </POSTNL-0095>
             <POSTNL-0096>
                 <message>Unable to read directory: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/33063203</url>
+                <url>http://kb.tig.nl/topic/33063203</url>
                 <type>error</type>
             </POSTNL-0096>
             <POSTNL-0097>
                 <message>Invalid UpdateOrder response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
+                <url>http://kb.tig.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
             <POSTNL-0098>
                 <message>The PostNL Extension is currently configured in test mode.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/46536473</url>
+                <url>http://kb.tig.nl/topic/46536473</url>
                 <type>warning</type>
             </POSTNL-0098>
 
@@ -1490,307 +1693,307 @@
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->
                 <message>The user is not authorized for this barcode</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32435446</url>
+                <url>http://kb.tig.nl/topic/32435446</url>
                 <type>error</type>
             </POSTNL-0100>
             <POSTNL-0101>
                 <message>The quote's total weight is below the miniumum required to use PostNL Checkout.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32433656</url>
+                <url>http://kb.tig.nl/topic/32433656</url>
                 <type>notice</type>
             </POSTNL-0101>
             <POSTNL-0102>
-                <message>One or more items in the cart are out of stock.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31993743</url>
-                <type>notice</type>
+                <message>One or more items in the cart are backordered or out of stock.</message>
+                <url>http://kb.tig.nl/topic/31993743</url>
+                <type>error</type>
             </POSTNL-0102>
             <POSTNL-0103>
                 <message>PostNL Checkout has been disabled.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/31947888</url>
+                <url>http://kb.tig.nl/topic/31947888</url>
                 <type>notice</type>
             </POSTNL-0103>
             <POSTNL-0104>
                 <message>The quote is virtual.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32436016</url>
+                <url>http://kb.tig.nl/topic/32436016</url>
                 <type>notice</type>
             </POSTNL-0104>
             <POSTNL-0105>
                 <message>The quote's grand total is below the minimum amount required.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32759156</url>
+                <url>http://kb.tig.nl/topic/32759156</url>
                 <type>notice</type>
             </POSTNL-0105>
             <POSTNL-0106>
                 <message>No standard product options are enabled. At least 1 option must be active.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32288438</url>
+                <url>http://kb.tig.nl/topic/32288438</url>
                 <type>notice</type>
             </POSTNL-0106>
             <POSTNL-0107>
                 <message>You have not yet enabled the PostNL extension.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32266563</url>
+                <url>http://kb.tig.nl/topic/32266563</url>
                 <type>notice</type>
             </POSTNL-0107>
             <POSTNL-0108>
                 <message>Invalid address type supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32295088</url>
+                <url>http://kb.tig.nl/topic/32295088</url>
                 <type>error</type>
             </POSTNL-0108>
             <POSTNL-0109>
                 <message>The confirm action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32772946</url>
+                <url>http://kb.tig.nl/topic/32772946</url>
                 <type>error</type>
             </POSTNL-0109>
             <POSTNL-0110>
                 <message>The confirmAndGenerateLabel action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32279277</url>
+                <url>http://kb.tig.nl/topic/32279277</url>
                 <type>error</type>
             </POSTNL-0110>
             <POSTNL-0111>
                 <message>Unable to retrieve barcode data.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/38561927</url>
+                <url>http://kb.tig.nl/topic/38561927</url>
                 <type>error</type>
             </POSTNL-0111>
             <POSTNL-0112>
                 <message>Your shopping cart is empty. Please add a product and try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/38561597</url>
+                <url>http://kb.tig.nl/topic/38561597</url>
                 <type>error</type>
             </POSTNL-0112>
             <POSTNL-0113>
                 <message>An error occurred while updating the PostNL Checkout order.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/38931193</url>
+                <url>http://kb.tig.nl/topic/38931193</url>
                 <type>warning</type>
             </POSTNL-0113>
             <POSTNL-0114>
                 <message>Your PostNL account credentials could not be validated. Please enter valid PostNL account credentials before activating the postcode check functionality.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52364673</url>
+                <url>http://kb.tig.nl/topic/52364673</url>
                 <type>error</type>
             </POSTNL-0114>
             <POSTNL-0115>
                 <message>No data available for GetDeliveryDay request.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52364963</url>
+                <url>http://kb.tig.nl/topic/52364963</url>
                 <type>error</type>
             </POSTNL-0115>
             <POSTNL-0116>
                 <message>Invalid GetDeliveryDate response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52982498</url>
+                <url>http://kb.tig.nl/topic/52982498</url>
                 <type>error</type>
             </POSTNL-0116>
             <POSTNL-0117>
                 <message>No data available for request.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53527926</url>
+                <url>http://kb.tig.nl/topic/53527926</url>
                 <type>error</type>
             </POSTNL-0117>
             <POSTNL-0118>
                 <message>Invalid postcode supplied for getNearestLocations request: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53014647</url>
+                <url>http://kb.tig.nl/topic/53014647</url>
                 <type>error</type>
             </POSTNL-0118>
             <POSTNL-0119>
                 <message>Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53015967</url>
+                <url>http://kb.tig.nl/topic/53015967</url>
                 <type>error</type>
             </POSTNL-0119>
             <POSTNL-0120>
                 <message>Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52369463</url>
+                <url>http://kb.tig.nl/topic/52369463</url>
                 <type>error</type>
             </POSTNL-0120>
             <POSTNL-0121>
                 <message>Invalid delivery date supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52985978</url>
+                <url>http://kb.tig.nl/topic/52985978</url>
                 <type>error</type>
             </POSTNL-0121>
             <POSTNL-0122>
                 <message>Invalid response for GetDeliveryTimeframes request: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53017197</url>
+                <url>http://kb.tig.nl/topic/53017197</url>
                 <type>error</type>
             </POSTNL-0122>
             <POSTNL-0123>
                 <message>Invalid response for GetNearestLocations request: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52986878</url>
+                <url>http://kb.tig.nl/topic/52986878</url>
                 <type>error</type>
             </POSTNL-0123>
             <POSTNL-0124>
                 <message>Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53532186</url>
+                <url>http://kb.tig.nl/topic/53532186</url>
                 <type>error</type>
             </POSTNL-0124>
             <POSTNL-0125>
                 <message>Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52371803</url>
+                <url>http://kb.tig.nl/topic/52371803</url>
                 <type>error</type>
             </POSTNL-0125>
             <POSTNL-0126>
                 <message>Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52988088</url>
+                <url>http://kb.tig.nl/topic/52988088</url>
                 <type>error</type>
             </POSTNL-0126>
             <POSTNL-0127>
                 <message>Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52372583</url>
+                <url>http://kb.tig.nl/topic/52372583</url>
                 <type>error</type>
             </POSTNL-0127>
             <POSTNL-0128>
                 <message>Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53020717</url>
+                <url>http://kb.tig.nl/topic/53020717</url>
                 <type>error</type>
             </POSTNL-0128>
             <POSTNL-0129>
                 <message>Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53534856</url>
+                <url>http://kb.tig.nl/topic/53534856</url>
                 <type>error</type>
             </POSTNL-0129>
             <POSTNL-0130>
                 <message>Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53535436</url>
+                <url>http://kb.tig.nl/topic/53535436</url>
                 <type>error</type>
             </POSTNL-0130>
             <POSTNL-0131>
                 <message>Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53022657</url>
+                <url>http://kb.tig.nl/topic/53022657</url>
                 <type>error</type>
             </POSTNL-0131>
             <POSTNL-0132>
                 <message>PostNL delivery options are only available for Dutch shipping addresses.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52384143</url>
+                <url>http://kb.tig.nl/topic/52384143</url>
                 <type>error</type>
             </POSTNL-0132>
             <POSTNL-0133>
                 <message>You have not yet enabled PostNL delivery options.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53003058</url>
+                <url>http://kb.tig.nl/topic/53003058</url>
                 <type>error</type>
             </POSTNL-0133>
             <POSTNL-0134>
                 <message>The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52387393</url>
+                <url>http://kb.tig.nl/topic/52387393</url>
                 <type>error</type>
             </POSTNL-0134>
             <POSTNL-0135>
                 <message>The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52387703</url>
+                <url>http://kb.tig.nl/topic/52387703</url>
                 <type>error</type>
             </POSTNL-0135>
             <POSTNL-0136>
                 <message>The specified method "%s" is not callable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53034097</url>
+                <url>http://kb.tig.nl/topic/53034097</url>
                 <type>error</type>
             </POSTNL-0136>
             <POSTNL-0137>
                 <message>The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53550106</url>
+                <url>http://kb.tig.nl/topic/53550106</url>
                 <type>error</type>
             </POSTNL-0137>
             <POSTNL-0138>
                 <message>Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52389583</url>
+                <url>http://kb.tig.nl/topic/52389583</url>
                 <type>error</type>
             </POSTNL-0138>
             <POSTNL-0139>
                 <message>Invalid type supplied: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53035527</url>
+                <url>http://kb.tig.nl/topic/53035527</url>
                 <type>error</type>
             </POSTNL-0139>
             <POSTNL-0140>
                 <message>Invalid extra costs supplied: %s Extra costs must be supplied as a float.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53552216</url>
+                <url>http://kb.tig.nl/topic/53552216</url>
                 <type>error</type>
             </POSTNL-0140>
             <POSTNL-0141>
-                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53037577</url>
+                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.</message>
+                <url>http://kb.tig.nl/topic/53037577</url>
                 <type>error</type>
             </POSTNL-0141>
             <POSTNL-0142>
                 <message>Invalid arguments supplied. The 'costs' parameter is required.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53037947</url>
+                <url>http://kb.tig.nl/topic/53037947</url>
                 <type>error</type>
             </POSTNL-0142>
             <POSTNL-0143>
                 <message>Invalid country code supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53554796</url>
+                <url>http://kb.tig.nl/topic/53554796</url>
                 <type>error</type>
             </POSTNL-0143>
             <POSTNL-0144>
                 <message>Invalid street supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/52393003</url>
+                <url>http://kb.tig.nl/topic/52393003</url>
                 <type>error</type>
             </POSTNL-0144>
             <POSTNL-0145>
                 <message>Invalid housenumber supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53038967</url>
+                <url>http://kb.tig.nl/topic/53038967</url>
                 <type>error</type>
             </POSTNL-0145>
             <POSTNL-0146>
                 <message>Invalid postcode supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53039527</url>
+                <url>http://kb.tig.nl/topic/53039527</url>
                 <type>error</type>
             </POSTNL-0146>
             <POSTNL-0147>
                 <message>Invalid housenumber extension supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53009848</url>
+                <url>http://kb.tig.nl/topic/53009848</url>
                 <type>error</type>
             </POSTNL-0147>
             <POSTNL-0148>
                 <message>Invalid arguments supplied. The 'number' parameter is required.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53009968</url>
+                <url>http://kb.tig.nl/topic/53009968</url>
                 <type>error</type>
             </POSTNL-0148>
             <POSTNL-0149>
                 <message>Invalid mobile phone number supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53039917</url>
+                <url>http://kb.tig.nl/topic/53039917</url>
                 <type>error</type>
             </POSTNL-0149>
             <POSTNL-0150>
                 <message>The quote's total weight is below the miniumum required to use PostNL delivery options.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53040387</url>
+                <url>http://kb.tig.nl/topic/53040387</url>
                 <type>error</type>
             </POSTNL-0150>
             <POSTNL-0151>
                 <message>Invalid phone number supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58968276</url>
+                <url>http://kb.tig.nl/topic/58968276</url>
                 <type>error</type>
             </POSTNL-0151>
             <POSTNL-0152>
                 <message>Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/53557046</url>
+                <url>http://kb.tig.nl/topic/53557046</url>
                 <type>error</type>
             </POSTNL-0152>
             <POSTNL-0153>
                 <message>Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58943736</url>
+                <url>http://kb.tig.nl/topic/58943736</url>
                 <type>error</type>
             </POSTNL-0153>
             <POSTNL-0154>
                 <message>Invalid name supplied: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/57784943</url>
+                <url>http://kb.tig.nl/topic/57784943</url>
                 <type>error</type>
             </POSTNL-0154>
             <POSTNL-0155>
                 <message>The current user is not allowed to perform this action.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58415077</url>
+                <url>http://kb.tig.nl/topic/58415077</url>
                 <type>error</type>
             </POSTNL-0155>
             <POSTNL-0156>
                 <message>The PostNL extension v%s has been successfully installed.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58945996</url>
+                <url>http://kb.tig.nl/topic/58945996</url>
                 <type>notice</type>
             </POSTNL-0156>
             <POSTNL-0157>
                 <message>Invalid token specified: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58416207</url>
+                <url>http://kb.tig.nl/topic/58416207</url>
                 <type>error</type>
             </POSTNL-0157>
             <POSTNL-0158>
                 <message>Invalid GetProfileAccessToken response: %s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/58948686</url>
+                <url>http://kb.tig.nl/topic/58948686</url>
                 <type>error</type>
             </POSTNL-0158>
             <POSTNL-0159>
                 <message>You have chosen a default shipping option that is not supported. Please only select default options that you have selected in the 'Select supported option' field.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/57789373</url>
+                <url>http://kb.tig.nl/topic/57789373</url>
                 <type>warning</type>
             </POSTNL-0159>
             <POSTNL-0160>
                 <message>A required configuration value is missing: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/94860156</url>
+                <url>http://kb.tig.nl/topic/94860156</url>
                 <type>error</type>
             </POSTNL-0160>
             <POSTNL-0161>
@@ -1800,142 +2003,142 @@
             </POSTNL-0161>
             <POSTNL-0162>
                 <message>Cannot create an invoice without products.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/94861626</url>
+                <url>http://kb.tig.nl/topic/94861626</url>
                 <type>error</type>
             </POSTNL-0162>
             <POSTNL-0163>
                 <message>Order item #%s could not be invoiced.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93711773</url>
+                <url>http://kb.tig.nl/topic/93711773</url>
                 <type>error</type>
             </POSTNL-0163>
             <POSTNL-0164>
                 <message>Unable to create an invoice for this shipment due to the order missing.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93711923</url>
+                <url>http://kb.tig.nl/topic/93711923</url>
                 <type>error</type>
             </POSTNL-0164>
             <POSTNL-0165>
                 <message>Unable to create an invoice for this shipment because the order cannot be invoiced.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93712093</url>
+                <url>http://kb.tig.nl/topic/93712093</url>
                 <type>error</type>
             </POSTNL-0165>
             <POSTNL-0166>
                 <message>An error occurred while creating an invoice for this shipment.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93712203</url>
+                <url>http://kb.tig.nl/topic/93712203</url>
                 <type>error</type>
             </POSTNL-0166>
             <POSTNL-0167>
                 <message>No valid shipment type found for shipment #%s</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93727133</url>
+                <url>http://kb.tig.nl/topic/93727133</url>
                 <type>error</type>
             </POSTNL-0167>
             <POSTNL-0168>
                 <message>No valid order available for packing slip.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93727223</url>
+                <url>http://kb.tig.nl/topic/93727223</url>
                 <type>error</type>
             </POSTNL-0168>
             <POSTNL-0169>
                 <message>Invalid label type supplied for packing slip label pdf: %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93727383</url>
+                <url>http://kb.tig.nl/topic/93727383</url>
                 <type>error</type>
             </POSTNL-0169>
             <POSTNL-0170>
                 <message>Approaching memory limit for this operation. Please select fewer shipments and try again.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95141016</url>
+                <url>http://kb.tig.nl/topic/95141016</url>
                 <type>error</type>
             </POSTNL-0170>
             <POSTNL-0171>
                 <message>None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95141286</url>
+                <url>http://kb.tig.nl/topic/95141286</url>
                 <type>error</type>
             </POSTNL-0171>
             <POSTNL-0172>
                 <message>No valid log files were found.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95141546</url>
+                <url>http://kb.tig.nl/topic/95141546</url>
                 <type>error</type>
             </POSTNL-0172>
             <POSTNL-0173>
                 <message>Log %s is too large and was skipped.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93991283</url>
+                <url>http://kb.tig.nl/topic/93991283</url>
                 <type>warning</type>
             </POSTNL-0173>
             <POSTNL-0174>
                 <message>The total size of all log files exceeds the maximum size allowed.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93991313</url>
+                <url>http://kb.tig.nl/topic/93991313</url>
                 <type>error</type>
             </POSTNL-0174>
             <POSTNL-0175>
                 <message>The server's memory limit is less than %.0fMB. The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95141856</url>
+                <url>http://kb.tig.nl/topic/95141856</url>
                 <type>warning</type>
             </POSTNL-0175>
             <POSTNL-0176>
                 <message>No shipment found for PostNL shipment #%d.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95141986</url>
+                <url>http://kb.tig.nl/topic/95141986</url>
                 <type>error</type>
             </POSTNL-0176>
             <POSTNL-0177>
                 <message>No order found for PostNL shipment #%d.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142026</url>
+                <url>http://kb.tig.nl/topic/95142026</url>
                 <type>error</type>
             </POSTNL-0177>
             <POSTNL-0178>
                 <message>Maximum PostNL COD fee amount available to refunds is %s.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142066</url>
+                <url>http://kb.tig.nl/topic/95142066</url>
                 <type>error</type>
             </POSTNL-0178>
             <POSTNL-0179>
                 <message>It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93991833</url>
+                <url>http://kb.tig.nl/topic/93991833</url>
                 <type>error</type>
             </POSTNL-0179>
             <POSTNL-0180>
                 <message>The addTrackingCodeToShipment action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142106</url>
+                <url>http://kb.tig.nl/topic/95142106</url>
                 <type>error</type>
             </POSTNL-0180>
             <POSTNL-0181>
                 <message>It appears the PostNL username and/or password you have entered is incorrect.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142216</url>
+                <url>http://kb.tig.nl/topic/95142216</url>
                 <type>error</type>
             </POSTNL-0181>
             <POSTNL-0182>
                 <message>Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93992103</url>
+                <url>http://kb.tig.nl/topic/93992103</url>
                 <type>error</type>
             </POSTNL-0182>
             <POSTNL-0183>
                 <message>Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93992233</url>
+                <url>http://kb.tig.nl/topic/93992233</url>
                 <type>error</type>
             </POSTNL-0183>
             <POSTNL-0184>
                 <message>This PostNL service is currently disabled. Please contact PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93992253</url>
+                <url>http://kb.tig.nl/topic/93992253</url>
                 <type>error</type>
             </POSTNL-0184>
             <POSTNL-0185>
                 <message>There was a problem connecting to PostNL's services. This may be due to a timeout. Please wait a few minutes and try again. If this problem persists, please contact PostNL.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/93992303</url>
+                <url>http://kb.tig.nl/topic/93992303</url>
                 <type>error</type>
             </POSTNL-0185>
             <POSTNL-0186>
                 <message>Your PostNL customer code appears to be incorrect. Please make sure you have entered the correct code.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142616</url>
+                <url>http://kb.tig.nl/topic/95142616</url>
                 <type>error</type>
             </POSTNL-0186>
             <POSTNL-0187>
                 <message>The total size of all PostNL logs exceeds the maximum recommended size.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142626</url>
+                <url>http://kb.tig.nl/topic/95142626</url>
                 <type>warning</type>
             </POSTNL-0187>
             <POSTNL-0188>
                 <message>No default product options are available for this shipment. Please check that you have correctly configured the available product options in the PostNL extension's configuration.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142666</url>
+                <url>http://kb.tig.nl/topic/95142666</url>
                 <type>error</type>
             </POSTNL-0188>
             <POSTNL-0189>
                 <message>The default product option was not available for this shipment, so another product option was chosen. Please check if the default product options are configured correctly in the PostNL extension's configuration.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/95142726</url>
+                <url>http://kb.tig.nl/topic/95142726</url>
                 <type>warning</type>
             </POSTNL-0189>
             <POSTNL-0190>
@@ -1945,24 +2148,209 @@
             </POSTNL-0190>
             <POSTNL-0191>
                 <message>The convertToBuspakje action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/96044606</url>
+                <url>http://kb.tig.nl/topic/96044606</url>
                 <type>error</type>
             </POSTNL-0191>
             <POSTNL-0192>
                 <message>The convertToPackage action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/94895313</url>
+                <url>http://kb.tig.nl/topic/94895313</url>
                 <type>error</type>
             </POSTNL-0192>
             <POSTNL-0193>
                 <message>The changeProductCode action is currently unavailable.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/96045026</url>
+                <url>http://kb.tig.nl/topic/96045026</url>
                 <type>error</type>
             </POSTNL-0193>
+            <POSTNL-0194>
+                <message>Invalid PostNL Matrix Rates File Format</message>
+                <url>http://kb.tig.nl/topic/101211863</url>
+                <type>error</type>
+            </POSTNL-0194>
+            <POSTNL-0195>
+                <message>An error occurred while importing the matrix rates.</message>
+                <url>http://kb.tig.nl/topic/102370766</url>
+                <type>error</type>
+            </POSTNL-0195>
+            <POSTNL-0196>
+                <message>File has not been imported. See the following list of errors: %s</message>
+                <url>http://kb.tig.nl/topic/101212943</url>
+                <type>error</type>
+            </POSTNL-0196>
+            <POSTNL-0197>
+                <message>Unable to save update_product_attribute cron expression: %s</message>
+                <url>http://kb.tig.nl/topic/101214223</url>
+                <type>error</type>
+            </POSTNL-0197>
+            <POSTNL-0198>
+                <message>The PostNL extension is currently being upgraded.</message>
+                <url>http://kb.tig.nl/topic/102372846</url>
+                <type>error</type>
+            </POSTNL-0198>
+            <POSTNL-0199>
+                <message>Data has not been imported. See the following list of errors: %s</message>
+                <url>http://kb.tig.nl/topic/102373046</url>
+                <type>error</type>
+            </POSTNL-0199>
+            <POSTNL-0200>
+                <message><![CDATA[Unable to send track & trace email due to missing shipment parameters.]]></message>
+                <url>http://kb.tig.nl/topic/102373326</url>
+                <type>error</type>
+            </POSTNL-0200>
+            <POSTNL-0201>
+                <message>The generateReturnBarcode action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84684878</url>
+                <type>error</type>
+            </POSTNL-0201>
+            <POSTNL-0202>
+                <message>Unable to retrieve return labels for this shipment.</message>
+                <url>http://kb.tig.nl/topic/84685238</url>
+                <type>error</type>
+            </POSTNL-0202>
+            <POSTNL-0203>
+                <message>The changeParcelCount action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84693347</url>
+                <type>error</type>
+            </POSTNL-0203>
+            <POSTNL-0204>
+                <message>The updateReturnStatus action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84693727</url>
+                <type>error</type>
+            </POSTNL-0204>
+            <POSTNL-0205>
+                <message>Unable to save return_status cron expression: %s</message>
+                <url>http://kb.tig.nl/topic/84685838</url>
+                <type>error</type>
+            </POSTNL-0205>
+            <POSTNL-0206>
+                <message>Unable to save update_date_time_zone cron expression: %s</message>
+                <url>http://kb.tig.nl/topic/84685968</url>
+                <type>error</type>
+            </POSTNL-0206>
+            <POSTNL-0207>
+                <message>The sendReturnLabelEmail action is currently unavailable.</message>
+                <url>http://kb.tig.nl/topic/84694197</url>
+                <type>error</type>
+            </POSTNL-0207>
+            <POSTNL-0208>
+                <message>Unable to send return email for shipment #%s</message>
+                <url>http://kb.tig.nl/topic/84694457</url>
+                <type>error</type>
+            </POSTNL-0208>
+            <POSTNL-0209>
+                <message>Unable to send return label email due to missing shipment parameters.</message>
+                <url>http://kb.tig.nl/topic/84686268</url>
+                <type>error</type>
+            </POSTNL-0209>
+            <POSTNL-0210>
+                <message>The installed version of PHP is too low. The installed PHP version is %s, the minimum required PHP version is %s.</message>
+                <url>http://kb.tig.nl/topic/84694597</url>
+                <type>error</type>
+            </POSTNL-0210>
+            <POSTNL-0211>
+                <message>Invalid settings provided.</message>
+                <url>http://kb.tig.nl/topic/84694787</url>
+                <type>error</type>
+            </POSTNL-0211>
+            <POSTNL-0212>
+                <message>Invalid config value provided.</message>
+                <url>http://kb.tig.nl/topic/84694817</url>
+                <type>error</type>
+            </POSTNL-0212>
+            <POSTNL-0213>
+                <message>Invalid updateConfigSettings response: %s</message>
+                <url>http://kb.tig.nl/topic/84694847</url>
+                <type>error</type>
+            </POSTNL-0213>
+            <POSTNL-0214>
+                <message>Missing Magento order.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0214>
+            <POSTNL-0215>
+                <message>Missing Magento quote.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0215>
+            <POSTNL-0216>
+                <message>Missing Magento shipment.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0216>
+            <POSTNL-0217>
+                <message>Quote IDs do not match.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0217>
+            <POSTNL-0218>
+                <message>Order IDs do not match.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0218>
+            <POSTNL-0219>
+                <message>There appear to be problems with the integrity of the PostNL order and/or shipment data.</message>
+                <url>http://kb.tig.nl/topic/84695007</url>
+                <type>error</type>
+            </POSTNL-0219>
+            <POSTNL-0220>
+                <message>The shipping status of shipment #%s cannot be updated.</message>
+                <url>http://kb.tig.nl/topic/84686768</url>
+                <type>error</type>
+            </POSTNL-0220>
+            <POSTNL-0221>
+                <message>Delivery options are not allowed for one or more items in the cart based on the configured stock options.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0221>
+            <POSTNL-0222>
+                <message>Warning: possible PostNL and GoMage LightCheckout conflict.</message>
+                <url/>
+                <type>warning</type>
+            </POSTNL-0222>
+            <POSTNL-0223>
+                <message>The PostNL extension has been successfully uninstalled.</message>
+                <url/>
+                <type>notice</type>
+            </POSTNL-0223>
+            <POSTNL-0224>
+                <message>An error occurred while saving this step of the configuration wizard. Please use the regular "Save Config" button instead.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0224>
+            <POSTNL-0225>
+                <message>No PostNL Shipment found for shipment ID #%s.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0225>
+            <POSTNL-0226>
+                <message>Only A4 or A6 are valid values for the 'labelSize' parameter.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0226>
+            <POSTNL-0227>
+                <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0227>
+            <POSTNL-0228>
+                <message>The 'orderIds' parameter must contain a non-empty array of order IDs.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0228>
+            <POSTNL-0229>
+                <message>The 'shipmentIds' parameter must contain a non-empty array of shipment IDs.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0229>
+            <POSTNL-0230>
+                <message>Could not create or find a shipment for order #%s.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0230>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
-                <url>http://kb.totalinternetgroup.nl/topic/32432076</url>
+                <url>http://kb.tig.nl/topic/32432076</url>
                 <type>warning</type>
             </LIRS_0>
         </errors>

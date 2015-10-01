@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
@@ -66,13 +66,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
          */
         if (!$value) {
             $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
-            $confirmDate = new DateTime($confirmDate);
+            $confirmDate = new DateTime($confirmDate, new DateTimeZone('UTC'));
             $confirmDate->add(new DateInterval('P1D'));
 
-            $deliveryDate = $confirmDate->format('Y-m-d H:i:s');
-
-            $row->setData($this->getColumn()->getIndex(), $deliveryDate);
+            $deliveryDate = $confirmDate;
+        } else {
+            $deliveryDate = new DateTime($value, new DateTimeZone('UTC'));
         }
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $deliveryDate = $deliveryDate->setTimezone($timeZone)->format('Y-m-d H:i:s');
+
+        $row->setData($this->getColumn()->getIndex(), $deliveryDate);
 
         /**
          * Finally, simply render the date

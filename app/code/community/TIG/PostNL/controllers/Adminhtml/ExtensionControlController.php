@@ -25,18 +25,18 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Controller_Action
+class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Controller_Adminhtml_Config
 {
     /**
      * XML path to extensioncontrol email setting
@@ -65,6 +65,45 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
 
     /**
+     * @var string|null
+     */
+    protected $_fragment;
+
+    /**
+     * @return mixed
+     */
+    public function getFragment()
+    {
+        return $this->_fragment;
+    }
+
+    /**
+     * @param mixed $fragment
+     *
+     * @return $this
+     */
+    public function setFragment($fragment)
+    {
+        $this->_fragment = $fragment;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFragment()
+    {
+        $fragment = $this->getFragment();
+
+        if (is_null($fragment)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Activate the extension by registering it with the extension control service
      *
      * @return $this
@@ -82,7 +121,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
 
         Mage::app()->cleanCache();
 
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        $urlParams = array(
+            'section' => 'postnl'
+        );
+        if ($this->hasFragment()) {
+            $urlParams['_fragment'] = $this->getFragment();
+        }
+
+        $this->_redirect('adminhtml/system_config/edit', $urlParams);
         return $this;
     }
 
@@ -116,7 +162,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             /**
              * Activate the webshop
              */
-            $webservice->activateWebshop($email);
+            $result = $webservice->activateWebshop($email);
+
+            if (isset($result['settings']) && is_array($result['settings'])) {
+                Mage::getModel('postnl_extensioncontrol/config')->saveConfigSettings($result['settings']);
+            }
         } catch (SoapFault $e) {
             /**
              * If the webshop is already registered (email, hostname combo exists), continue the activation by sending a
@@ -146,7 +196,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $this->__(
                 'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress ' .
                 'you specified. Please read this email carefully as it contains instructions on how to finish the ' .
-                'extension activation procedure.'
+                'extension registration procedure.'
             )
         );
 
@@ -269,8 +319,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__('The extension has been successfully activated!')
+            $this->__('The extension has been successfully registered!')
         );
+
+        /**
+         * Proceed to the next step in the configuration wizard.
+         */
+        $this->_saveCurrentWizardStep('#wizard2');
+        $this->setFragment('wizard2');
 
         return $this;
     }
@@ -283,13 +339,56 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
      */
     public function showActivationFieldsAction()
     {
+        $this->_resetActivation();
+
+        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        return $this;
+    }
+
+    /**
+     * Reset the extension's activation state.
+     *
+     * @return $this
+     */
+    protected function _resetActivation()
+    {
         Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 0);
 
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
 
         Mage::app()->cleanCache();
 
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        /**
+         * Reset the wizard to the first step.
+         */
+        $this->_saveCurrentWizardStep('#wizard1');
+
         return $this;
+    }
+
+    /**
+     * Uninstall the PostNl extension.
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     *
+     * @return void
+     */
+    public function uninstallAction()
+    {
+        $setup = Mage::getResourceModel('postnl/setup', 'postnl_setup');
+        $setup->applyDataUninstall();
+
+        // Set session message that we've been successful
+        $title = $this->__('The PostNL extension has been successfully uninstalled.');
+        Mage::helper('postnl')->addSessionMessage('core/session', 'POSTNL-0223', 'success', $title);
+
+        $message = Mage::helper('postnl')->getSessionMessage('POSTNL-0223', 'success', $title);
+
+        $inbox = Mage::getModel('postnl_admin/inbox');
+        $inbox->addNotice($message, $title)
+              ->save();
+
+        $this->_redirect('adminhtml');
     }
 }

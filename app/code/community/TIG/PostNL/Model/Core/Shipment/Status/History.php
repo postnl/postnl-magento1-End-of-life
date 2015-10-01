@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Shipment_Status_History
@@ -74,7 +74,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Set the 'phase' attribute. The phase must be formatted as a 2 digit number (i.e. 01, 04, 12, 99 etc.)
      *
-     * @param string | int $phase
+     * @param string|int $phase
      *
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
      */
@@ -91,7 +91,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Load a history item based on a postnl shipment id and a status code.
      *
-     * @param int $shipmentId
+     * @param int    $shipmentId
      * @param string $code
      *
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
@@ -120,8 +120,8 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     /**
      * Check if a status history item exists for the given postnl shipment and status
      *
-     * @param int $shipmentId
-     * @param     $status
+     * @param int      $shipmentId
+     * @param StdClass $status
      *
      * @return boolean
      */
@@ -135,19 +135,19 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
                    ->addFieldToFilter('code', array('eq' => $status->Code));
 
-        if ($status->LocationCode !== '') {
+        if (!empty($status->LocationCode)) {
             $collection->addFieldToFilter('location_code', array('eq' => $status->LocationCode));
         }
 
-        if ($status->DestinationLocationCode !== '') {
+        if (!empty($status->DestinationLocationCode)) {
             $collection->addFieldToFilter('destination_location_code', array('eq' => $status->DestinationLocationCode));
         }
 
-        if ($status->RouteCode !== '') {
+        if (!empty($status->RouteCode)) {
             $collection->addFieldToFilter('route_code', array('eq' => $status->RouteCode));
         }
 
-        if ($status->RouteName !== '') {
+        if (!empty($status->RouteName)) {
             $collection->addFieldToFilter('route_name', array('eq' => $status->RouteName));
         }
 

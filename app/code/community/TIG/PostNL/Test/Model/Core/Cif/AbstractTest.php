@@ -196,9 +196,9 @@ class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framew
         $client = $instance->getSoapClient($wsdlType);
 
         $this->assertInstanceOf(
-            'Zend_Soap_Client',
+            'SoapClient',
             $client,
-            'Unable to get a Zend_Soap_Client instance for wsdl type: ' . $wsdlType
+            'Unable to get a SoapClient instance for wsdl type: ' . $wsdlType
         );
     }
 

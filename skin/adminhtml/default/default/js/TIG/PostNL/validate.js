@@ -24,15 +24,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 document.observe('dom:loaded', function() {
@@ -63,6 +63,49 @@ document.observe('dom:loaded', function() {
 
         checkEmptyGroup(element);
     });
+
+    var streetFields = $$('.postnl-street-field');
+    validateStreetFields = function() {
+        var postnlStreetFieldsUsed = [];
+
+        streetFields.each(function(streetField) {
+            var streetFieldOptions = streetField.select('option');
+            var fieldValue = streetField.getValue();
+            var valueMustChange = false;
+
+            streetFieldOptions.each(function(option) {
+                var optionValue = option.value;
+                if (postnlStreetFieldsUsed.indexOf(optionValue) > -1) {
+                    option.hide();
+
+                    if (optionValue == fieldValue) {
+                        valueMustChange = true;
+                    }
+                } else {
+                    option.show();
+                }
+            });
+
+            if (valueMustChange) {
+                streetFieldOptions.each(function(option) {
+                    if (!valueMustChange) {
+                        return;
+                    }
+
+                    if (option.getStyle('display') != 'none') {
+                        option.selected = true;
+                        valueMustChange = false;
+                        fieldValue = option.value;
+                    }
+                });
+            }
+
+            postnlStreetFieldsUsed.push(fieldValue);
+        });
+    };
+
+    streetFields.invoke('observe', 'change', validateStreetFields);
+    validateStreetFields();
 });
 
 function checkEmpty(eventElement) {
@@ -100,7 +143,6 @@ function checkEmptyGroup(eventElement) {
             }
 
             empty = element.value.empty();
-            console.log(empty);
         }
     );
 
@@ -117,4 +159,27 @@ function checkEmptyGroup(eventElement) {
             }
         );
     }
+}
+
+if (typeof indexOf == 'undefined') {
+    var indexOf = function(needle) {
+        if(typeof Array.prototype.indexOf === 'function') {
+            indexOf = Array.prototype.indexOf;
+        } else {
+            indexOf = function(needle) {
+                var i = -1, index = -1;
+
+                for(i = 0; i < this.length; i++) {
+                    if(this[i] === needle) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                return index;
+            };
+        }
+
+        return indexOf.call(this, needle);
+    };
 }

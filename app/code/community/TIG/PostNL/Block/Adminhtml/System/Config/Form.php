@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                       hasFieldsetParam()
@@ -382,9 +382,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             . '_' . $fieldPrefix
                             . $dependentFieldNameValue;
                         $shouldBeAddedDependence = true;
-                        $dependentValue = (string)(isset($dependent->value) ? $dependent->value : $dependent);
-                        if (isset($dependent['separator'])) {
-                            $dependentValue = explode((string)$dependent['separator'], $dependentValue);
+                        $dependentValue = (string) (isset($dependent->value) ? $dependent->value : $dependent);
+                        if (isset($dependent->separator)) {
+                            $dependentValue = explode((string) $dependent->separator, $dependentValue);
+                        }
+                        if (isset($dependent->eval)) {
+                            $dependentValue = array('eval' => (string) $dependent->eval);
                         }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
                         $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
@@ -492,5 +495,62 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         }
 
         return $this;
+    }
+
+    /**
+     * Add a new checkbox element type.
+     *
+     * @return array
+     */
+    protected function _getAdditionalElementTypes()
+    {
+        $elementTypes = parent::_getAdditionalElementTypes();
+        $elementTypes['checkbox'] = Mage::getConfig()
+                                        ->getBlockClassName('postnl_adminhtml/system_config_form_field_checkbox');
+
+        $elementTypes['wizard_save_button'] = Mage::getConfig()
+                                                  ->getBlockClassName(
+                                                      'postnl_adminhtml/system_config_form_field_wizardSaveButton'
+                                                  );
+
+        $elementTypes['postnl_radios'] = Mage::getConfig()
+                                             ->getBlockClassName('postnl_adminhtml/system_config_form_field_radios');
+
+        return $elementTypes;
+    }
+
+    /**
+     * Return dependency block object
+     *
+     * @return TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
+     */
+    protected function _getDependence()
+    {
+        if (!$this->getChild('element_dependense')){
+            $this->setChild('element_dependense',
+                $this->getLayout()->createBlock('postnl_adminhtml/widget_form_element_dependence'));
+        }
+        return $this->getChild('element_dependense');
+    }
+
+    /**
+     * Prepare additional comment for field like tooltip
+     *
+     * @param Mage_Core_Model_Config_Element $element
+     * @param string $helper
+     * @return string
+     */
+    protected function _prepareFieldTooltip($element, $helper)
+    {
+        if ($element->tooltip_block) {
+            return $this->getLayout()
+                        ->createBlock((string)$element->tooltip_block)
+                        ->setElement($element)
+                        ->toHtml();
+        } elseif ($element->tooltip) {
+            return Mage::helper($helper)->__((string)$element->tooltip);
+        }
+
+        return '';
     }
 }

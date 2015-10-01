@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -67,12 +67,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML path to weight per parcel config setting
      */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * XML paths to default product options settings
      */
-    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
@@ -118,6 +118,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'CZ',
         'SE',
         'GR',
+        'MT',
     );
 
     /**
@@ -207,6 +208,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4924' => '4954',
         '4946' => '4955',
         '4944' => '4952',
+    );
+
+    /**
+     * @var array
+     */
+    protected $_returnLabelTypes = array(
+        'Return Label'
     );
 
     /**
@@ -458,6 +466,14 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @return array
+     */
+    public function getReturnLabelTypes()
+    {
+        return $this->_returnLabelTypes;
+    }
+
+    /**
      * Checks if infinite label printing is enabled in the module configuration.
      *
      * @return boolean
@@ -532,7 +548,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isPakjeGemakShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isPakjeGemakShipment();
      */
     public function isPakjeGemakShipment($shipment)
     {
@@ -557,7 +573,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isPakketautomaatShipment();
      */
     public function isPakketautomaatShipment($shipment)
     {
@@ -576,13 +592,38 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Check if a given shipment is dutch
+     * Check if a given shipment is an evening delivery (avond) shipment.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return boolean
+     *
+     * @see TIG_PostNL_Model_Core_Shipment::isAvondShipment();
+     */
+    public function isAvondShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isAvondShipment();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isAvondShipment();
+    }
+
+    /**
+     * Check if a given shipment is dutch.
      *
      * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isDutchShipment();
      */
     public function isDutchShipment($shipment)
     {
@@ -607,7 +648,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isEuShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isEuShipment();
      */
     public function isEuShipment($shipment)
     {
@@ -632,7 +673,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isGlobalShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isGlobalShipment();
      */
     public function isGlobalShipment($shipment)
     {
@@ -657,7 +698,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isCod();
+     * @see TIG_PostNL_Model_Core_Shipment::isCod();
      */
     public function isCodShipment($shipment)
     {
@@ -706,6 +747,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptions()
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
@@ -766,6 +808,39 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         return $parcelCount;
+    }
+
+    /**
+     * Check if return labels may be printed.
+     *
+     * @param bool|int $storeId
+     *
+     * @return bool
+     */
+    public function isReturnsEnabled($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isEnabled($storeId)) {
+            return false;
+        }
+
+        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
+
+        if (!$canPrintLabels) {
+            return false;
+        }
+
+        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
+        $freePostNumber = trim($freePostNumber);
+
+        if (empty($freePostNumber)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -931,6 +1006,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @param Mage_Sales_Model_Order_Address $address
      *
      * @return array
+     *
+     * @todo make house number only required for countries that actually need it
      */
     protected function _getMultiLineStreetData($storeId, $address)
     {
@@ -1068,6 +1145,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Strips non-printable ASCII characters from a string.
+     *
+     * @param string &$string
+     */
+    public function stripNonPrintableCharacters(&$string)
+    {
+        /**
+         * Remove the first 32 ASCII characters.
+         */
+        $string = preg_replace('/[\x00-\x1f]/', '', $string);
+    }
+
+    /**
      * Parses a CIF exception. If the last error number is a known error, we replace the message and code with our own.
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception &$exception
@@ -1133,21 +1223,21 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * N.B.: if file logging is enabled, the log will be forced
      *
-     * @param Zend_Soap_Client $client
+     * @param SoapClient $client
      *
      * @return $this
      *
      * @see Mage::log()
      *
      */
-    public function logCifCall($client)
+    public function logCifCall(SoapClient $client)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
         }
 
-        $requestXml = $this->formatXml($client->getLastRequest());
-        $responseXML = $this->formatXml($client->getLastResponse());
+        $requestXml = $this->formatXml($client->__getLastRequest());
+        $responseXML = $this->formatXml($client->__getLastResponse());
 
         $logMessage = "<<< REQUEST SENT >>>"
                     . PHP_EOL

@@ -43,3 +43,10 @@ ul.mijnpakket-usp { list-style:disc inside; }
 
 .app-links:after { content:"."; display:block; width:0; height:0; line-height:0; overflow:hidden; clear:both; }
 /* ======================================================================================= */
+
+#postnl_mijnpakket {
+    margin-bottom: 1em;
+}
+#mijnpakket_buttons div {
+    cursor: pointer;
+}

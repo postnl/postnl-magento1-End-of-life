@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Service
@@ -66,6 +66,7 @@ class TIG_PostNL_Model_Core_Service
 
         $order = $invoice->getOrder();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setIsInProcess(true);
 
         /**
@@ -160,16 +161,27 @@ class TIG_PostNL_Model_Core_Service
 
         $convertor = Mage::getModel('sales/convert_order');
 
+        $dummyPaymentMethod = Mage::getModel('postnl_core/service_paymentMethodDummy');
+        $dummyPaymentMethod->setInfoInstance(Mage::getModel('payment/info'));
+
+        $dummyPayment = Mage::getModel('postnl_core/service_paymentDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $dummyPayment->setMethod('postnl_dummy')
+                     ->setMethodInstance($dummyPaymentMethod);
+
         $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
         $dummyOrder->setData($order->getData())
                    ->setSubtotalInvoiced(0)
                    ->setBaseSubtotalInvoiced(0)
                    ->setTaxInvoiced(0)
                    ->setHiddenTaxInvoiced(0)
                    ->setBaseTaxInvoiced(0)
-                   ->setBaseHiddenTaxInvoiced(0);
+                   ->setBaseHiddenTaxInvoiced(0)
+                   ->setPayment($dummyPayment);
 
         $invoice = Mage::getModel('postnl_core/service_invoiceDummy');
+        /** @noinspection PhpUndefinedMethodInspection */
         $invoice->setOrder($dummyOrder)
                 ->setStoreId($dummyOrder->getStoreId())
                 ->setCustomerId($dummyOrder->getCustomerId())
@@ -198,7 +210,13 @@ class TIG_PostNL_Model_Core_Service
 
             $orderItem->setQtyInvoiced(0)
                       ->setRowInvoiced(0)
-                      ->setBaseRowInvoiced(0);
+                      ->setBaseRowInvoiced(0)
+                      ->setTaxInvoiced(0)
+                      ->setBaseTaxInvoiced(0)
+                      ->setDiscountInvoiced(0)
+                      ->setBaseDiscountInvoiced(0)
+                      ->setHiddenTaxInvoiced(0)
+                      ->setBaseHiddenTaxInvoiced(0);
 
             $totalQty += $qty;
             $item->setData('qty', $qty);

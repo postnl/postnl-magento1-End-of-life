@@ -1,0 +1,39 @@
+In order to add a product option choice to the frontend you can look at the way the 'only_stated_address' option has
+been implemented.
+
+First add an interface element to select the option. You can add this easily enough to the
+TIG/PostNL/delivery_options/<checkout extension>/available.phtml file. Make sure the name of the element is
+s_method_<method code>[postnl][<option code>]. That way the existing PostNL observers will automatically save the option
+to the PostNL order table.
+
+If this option should only be available for certain orders (e.g. only orders to the Netherlands) make sure to add code
+here to only show the option if it meets the requirements.
+
+You may also need to edit the delivery options JS, depending on what option you are trying to add and how it should
+interact with delivery options. If you need to limit the option's availability to certain delivery option types, you can
+again follow the example of the 'only_stated_address' option. Look at the
+TIG/PostNL/delivery_options/<checkout extension>/deliveryoptions.phtml template to see how you can configure the
+DeliveryOptions JS object to automatically add these limitations.
+
+Next you need to edit the order grid to show the merchant that this option has been selected. To do this go to the
+TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract class and look for the _addOptionComments() method.
+In this method you will find a switch statement. Add the option code you used in your interface element and add the
+comment you wish to show the merchant.
+
+Finally you need to make sure the proper product option is selected when creating the shipment. To do this go to the
+TIG_PostNL_Model_Core_Shipment class and look for the _getDefaultProductCodeXpathByOptions() method. Again this method
+contains a switch statement that allows you to add your option code. This method should return a valid xpath to the
+product code to use for this option. If you do not wish to make this configurable, just add it as a default value to the
+extension's config.xml file.
+
+Please note that if the merchant chooses to manually select a product option, rather than use the default, your product
+code will not be used. It's the merchant's prerogative to ignore the customer's choice and instead use a different
+option.
+
+If you also want to charge an additional fee for using the option you just implemented, you need to go to the
+TIG_PostNL_Helper_DeliveryOptions class and look for the getOptionsFee() method. Once again this method contains a
+switch statement you can expand. This method already contains all the code needed to convert the currency and calculate
+applicable taxes. You can also expand the switch statement in the getOptionFee() method (note singular 'option') to
+allow for easy access to the configured fee amount.
+
+All done!

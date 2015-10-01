@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}">
+
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:{{var wsdl.name}}">
+            <xsd:complexType name="postnlError">
+                <xsd:sequence>
+                    <xsd:element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="code" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="description" type="xsd:string" minOccurs="1" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlErrorArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlError" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlWarning">
+                <xsd:sequence>
+                    <xsd:element name="entity_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="code" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="description" type="xsd:string" minOccurs="1" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlWarningArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlWarning" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlShipmentEntity">
+                <xsd:sequence>
+                    <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlShipmentEntityArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlShipmentEntity" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlPrintedLabelEntity">
+                <xsd:sequence>
+                    <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="label" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlPrintedLabelEntityArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlPrintedLabelEntity" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlBarcodesArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="shipment" type="typens:ArrayOfString" />
+                    <xsd:element minOccurs="0" maxOccurs="1" name="return" type="typens:ArrayOfString" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlTrackAndTraceUrlEntity">
+                <xsd:sequence>
+                    <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="track_and_trace_url" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="main_barcode" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="return_barcode" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="all_barcodes" type="typens:postnlBarcodesArray" minOccurs="1" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlTrackAndTraceUrlEntityArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlTrackAndTraceUrlEntity" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="postnlShippingStatusEntity">
+                <xsd:sequence>
+                    <xsd:element name="order_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="shipment_id" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="shipping_phase" type="xsd:string" minOccurs="1" />
+                    <xsd:element name="return_phase" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="warning" type="typens:postnlWarningArray" minOccurs="0" />
+                    <xsd:element name="error" type="typens:postnlErrorArray" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="postnlShippingStatusEntityArray">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="complexObjectArray" type="typens:postnlShippingStatusEntity" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="postnlCreateShipmentsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlCreateShipmentsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlShipmentEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlCreateShipmentsConfirmAndPrintLabelsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="orderIds" type="typens:ArrayOfString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlCreateShipmentsConfirmAndPrintLabelsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlPrintedLabelEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlConfirmShipmentsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlConfirmShipmentsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlShipmentEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlPrintShippingLabelsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelSize" type="xsd:string" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelStartPosition" type="xsd:int" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlPrintShippingLabelsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlPrintedLabelEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlConfirmAndPrintShippingLabelsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelSize" type="xsd:string" />
+                        <xsd:element minOccurs="0" maxOccurs="1" name="labelStartPosition" type="xsd:int" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlConfirmAndPrintShippingLabelsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlPrintedLabelEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlGetTrackAndTraceUrlsRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlGetTrackAndTraceUrlsResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlTrackAndTraceUrlEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="postnlGetStatusInfoRequestParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="sessionId" type="xsd:string" />
+                        <xsd:element minOccurs="1" maxOccurs="1" name="shipmentIds" type="typens:ArrayOfString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="postnlGetStatusInfoResponseParam">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="result" type="typens:postnlShippingStatusEntityArray" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="postnlCreateShipmentsRequest">
+        <wsdl:part name="parameters" element="typens:postnlCreateShipmentsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlCreateShipmentsResponse">
+        <wsdl:part name="parameters" element="typens:postnlCreateShipmentsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlCreateShipmentsConfirmAndPrintLabelsRequest">
+        <wsdl:part name="parameters" element="typens:postnlCreateShipmentsConfirmAndPrintLabelsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlCreateShipmentsConfirmAndPrintLabelsResponse">
+        <wsdl:part name="parameters" element="typens:postnlCreateShipmentsConfirmAndPrintLabelsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlConfirmShipmentsRequest">
+        <wsdl:part name="parameters" element="typens:postnlConfirmShipmentsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlConfirmShipmentsResponse">
+        <wsdl:part name="parameters" element="typens:postnlConfirmShipmentsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlPrintShippingLabelsRequest">
+        <wsdl:part name="parameters" element="typens:postnlPrintShippingLabelsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlPrintShippingLabelsResponse">
+        <wsdl:part name="parameters" element="typens:postnlPrintShippingLabelsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlConfirmAndPrintShippingLabelsRequest">
+        <wsdl:part name="parameters" element="typens:postnlConfirmAndPrintShippingLabelsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlConfirmAndPrintShippingLabelsResponse">
+        <wsdl:part name="parameters" element="typens:postnlConfirmAndPrintShippingLabelsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlGetTrackAndTraceUrlsRequest">
+        <wsdl:part name="parameters" element="typens:postnlGetTrackAndTraceUrlsRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlGetTrackAndTraceUrlsResponse">
+        <wsdl:part name="parameters" element="typens:postnlGetTrackAndTraceUrlsResponseParam" />
+    </wsdl:message>
+
+    <wsdl:message name="postnlGetStatusInfoRequest">
+        <wsdl:part name="parameters" element="typens:postnlGetStatusInfoRequestParam" />
+    </wsdl:message>
+    <wsdl:message name="postnlGetStatusInfoResponse">
+        <wsdl:part name="parameters" element="typens:postnlGetStatusInfoResponseParam" />
+    </wsdl:message>
+
+    <wsdl:portType name="{{var wsdl.handler}}PortType">
+        <wsdl:operation name="postnlCreateShipments">
+            <wsdl:documentation>Create PostNL Shipments</wsdl:documentation>
+            <wsdl:input message="typens:postnlCreateShipmentsRequest" />
+            <wsdl:output message="typens:postnlCreateShipmentsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlCreateShipmentsConfirmAndPrintLabels">
+            <wsdl:documentation>Create PostNL Shipments, Confirm and Print Shipping Labels</wsdl:documentation>
+            <wsdl:input message="typens:postnlCreateShipmentsConfirmAndPrintLabelsRequest" />
+            <wsdl:output message="typens:postnlCreateShipmentsConfirmAndPrintLabelsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlConfirmShipments">
+            <wsdl:documentation>Confirm PostNL Shipments</wsdl:documentation>
+            <wsdl:input message="typens:postnlConfirmShipmentsRequest" />
+            <wsdl:output message="typens:postnlConfirmShipmentsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlPrintShippingLabels">
+            <wsdl:documentation>Print PostNL Shipping Labels</wsdl:documentation>
+            <wsdl:input message="typens:postnlPrintShippingLabelsRequest" />
+            <wsdl:output message="typens:postnlPrintShippingLabelsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlConfirmAndPrintShippingLabels">
+            <wsdl:documentation>Confirm PostNL Shipments and Print Shipping Labels</wsdl:documentation>
+            <wsdl:input message="typens:postnlConfirmAndPrintShippingLabelsRequest" />
+            <wsdl:output message="typens:postnlConfirmAndPrintShippingLabelsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlGetTrackAndTraceUrls">
+            <wsdl:documentation>Get PostNL Shipments Track And Trace URLs</wsdl:documentation>
+            <wsdl:input message="typens:postnlGetTrackAndTraceUrlsRequest" />
+            <wsdl:output message="typens:postnlGetTrackAndTraceUrlsResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="postnlGetStatusInfo">
+            <wsdl:documentation>Get PostNL Shipments Shipping Status Info</wsdl:documentation>
+            <wsdl:input message="typens:postnlGetStatusInfoRequest" />
+            <wsdl:output message="typens:postnlGetStatusInfoResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="{{var wsdl.handler}}Binding" type="typens:{{var wsdl.handler}}PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="postnlCreateShipments">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlCreateShipmentsConfirmAndPrintLabels">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlConfirmShipments">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlPrintShippingLabels">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlConfirmAndPrintShippingLabels">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlGetTrackAndTraceUrls">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="postnlGetStatusInfo">
+            <soap:operation soapAction="" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="{{var wsdl.name}}Service">
+        <wsdl:port name="{{var wsdl.handler}}Port" binding="typens:{{var wsdl.handler}}Binding">
+            <soap:address location="{{var wsdl.url}}" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

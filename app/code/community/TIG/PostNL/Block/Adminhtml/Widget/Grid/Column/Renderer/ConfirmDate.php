@@ -25,22 +25,22 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Additional column name used
+     * Additional column name used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
 
@@ -53,26 +53,79 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
      */
     public function render(Varien_Object $row)
     {
+        /** @var Mage_Sales_Model_Order $row */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
-        $value    = $row->getData($this->getColumn()->getIndex());
-        $origDate = new DateTime($value);
-        $now      = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
-
-        $interval = $now->diff($origDate);
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $value  = $row->getData($this->getColumn()->getIndex());
 
         /**
-         * Check if the shipment should be confirmed somewhere in the future.
+         * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
+         * order could be shipped.
          */
-        if (
-            (($interval->days > 0 || $interval->h > 0) && !$interval->invert)
-            || ($interval->days == 0 && $interval->h < 24) && $interval->invert
-        ) {
-            $confirmDate = new DateTime($value);
-            $diff = $now->diff($confirmDate);
+        if (!$value) {
+            $shippingDuration = $helper->getOrderShippingDuration($row);
+            $deliveryDate = $helper->getDeliveryDate(
+                $row->getCreatedAt(),
+                $row->getStoreId(),
+                false,
+                true,
+                true,
+                $shippingDuration
+            );
+
+            $value = $helper->getValidDeliveryDate($deliveryDate)
+                            ->sub(new DateInterval('P1D'));
+        } else {
+            $value = new DateTime($value, new DateTimeZone('UTC'));
+        }
+
+        /**
+         * Check if the confirm date is valid.
+         */
+        $value = $helper->getValidConfirmDate($value);
+
+        /**
+         * Update the row's value for the decorator later.
+         */
+        $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
+
+        $adminTimeZone = $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true);
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now->setTimezone($adminTimeZone);
+
+        $valueCopy = clone $value;
+        $valueCopy->setTimezone($adminTimeZone);
+
+        /**
+         * Check if today is the same date as the confirm date. N.B. only the date is checked, not the time.
+         */
+        if ($now->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
+            return $helper->__('Today');
+        }
+
+        /**
+         * Check if the confirm date is tomorrow.
+         */
+        $tomorrow = clone $now;
+        $tomorrow->add(new DateInterval('P1D'));
+        if ($tomorrow->format('Y-m-d') == $valueCopy->format('Y-m-d')) {
+            return $helper->__('Tomorrow');
+        }
+
+        /**
+         * Set the time zone of the row to the same time zone as the admin for comparison.
+         */
+        $value->setTimezone($adminTimeZone);
+
+        /**
+         * Check if the confirm date is somewhere in the future.
+         */
+        if ($now < $value) {
+            $diff = $now->diff($valueCopy);
 
             /**
              * Get the number of days until the shipment should be confirmed.
@@ -86,33 +139,32 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
                 $diffDays++;
             }
 
-            /**
-             * Check if the shipment should be confirmed today.
-             */
-            if ($diffDays == 0) {
-                return Mage::helper('postnl')->__('Today');
-            }
-
-            /**
-             * Check if it should be confirmed tomorrow.
-             */
-            if ($diffDays == 1) {
-                $renderedValue = Mage::helper('postnl')->__('Tomorrow');
-
-                return $renderedValue;
-            }
-
-            /**
-             * Render the number of days before the shipment should be confirmed.
-             */
-            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diffDays);
-
-            return $renderedValue;
+            return $helper->__('%s days from now', $diffDays);
         }
 
         /**
-         * Finally, simply render the date.
+         * Finally, simply render the date
          */
-        return parent::render($row);
+        $format = $this->_getFormat();
+
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $value = $value->setTimezone($timeZone)->format('Y-m-d H:i:s');
+        try {
+            if($this->getColumn()->getGmtoffset()) {
+                $data = Mage::app()->getLocale()
+                            ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            } else {
+                $data = Mage::getSingleton('core/locale')
+                            ->date($value, Zend_Date::ISO_8601, null, false)->toString($format);
+            }
+        } catch (Exception $e) {
+            if($this->getColumn()->getTimezone()) {
+                $data = Mage::app()->getLocale()
+                            ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            } else {
+                $data = Mage::getSingleton('core/locale')->date($value, null, null, false)->toString($format);
+            }
+        }
+        return $data;
     }
 }

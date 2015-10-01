@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Object
@@ -41,7 +41,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     /**
      * Wsdl location
      */
-    const WEBSERVICE_WSDL_URL = 'http://api.tigpostnl.nl/soap?wsdl';
+    const WEBSERVICE_WSDL_URL_XPATH = 'postnl/general/webservice_wsdl_url';
 
     /**
      * Check if the required PHP extensions are installed.
@@ -83,18 +83,18 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     /**
      * Calls a webservice method
      *
-     * @param string $method     The method that will be called
-     * @param array  $soapParams An array of parameters to be sent
+     * @param string     $method     The method that will be called
+     * @param null|array $soapParams An array of parameters to be sent
      *
      * @throws Exception
      * @throws SoapFault
      *
-     * @return object
+     * @return mixed
      */
-    public function call($method, $soapParams)
+    public function call($method, $soapParams = null)
     {
         try {
-            $wsdl = self::WEBSERVICE_WSDL_URL;
+            $wsdl = Mage::getStoreConfig(self::WEBSERVICE_WSDL_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
 
             /**
              * Array of soap options used when connecting to CIF
@@ -105,11 +105,11 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             );
 
             /**
-             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. If it fails, try again without
+             * try to create a new SoapClient instance based on the supplied wsdl. If it fails, try again without
              * using the wsdl cache.
              */
             try {
-                $client  = new Zend_Soap_Client(
+                $client  = new SoapClient(
                     $wsdl,
                     $soapOptions
                 );
@@ -119,7 +119,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
                  */
                 $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
 
-                $client  = new Zend_Soap_Client(
+                $client  = new SoapClient(
                     $wsdl,
                     $soapOptions
                 );
@@ -128,7 +128,11 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             /**
              * Call the SOAP method.
              */
-            $response = $client->$method($soapParams);
+            if (null !== $soapParams) {
+                $response = $client->$method($soapParams);
+            } else {
+                $response = $client->$method();
+            }
 
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;

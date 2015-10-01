@@ -24,15 +24,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -280,8 +280,15 @@ MijnpakketLogin.prototype = {
 
             $('billing:use_for_shipping_yes').checked = true;
             if (this.isOsc) {
-                $('shipping_address').hide();
-                $('shipping_address_list').hide();
+                var shippingAddress = $('shipping_address');
+                var shippingAddressList = $('shipping_address_list');
+                if (shippingAddress) {
+                    shippingAddress.hide();
+                }
+
+                if (shippingAddressList) {
+                    shippingAddressList.hide();
+                }
             }
         }.bind(this));
 
@@ -551,14 +558,17 @@ MijnpakketLogin.prototype = {
         var virtualStreet1 = $('virtual:billing:street1');
         var virtualStreet2 = $('virtual:billing:street2');
         var virtualStreet3 = $('virtual:billing:street3');
-        if (virtualStreet1) {
-            $('virtual:shipping:street1').setValue(virtualStreet1.getValue());
+        var virtualShippingStreet1 = $('virtual:billing:street1');
+        var virtualShippingStreet2 = $('virtual:billing:street2');
+        var virtualShippingStreet3 = $('virtual:billing:street3');
+        if (virtualStreet1 && virtualShippingStreet1) {
+            virtualShippingStreet1.setValue(virtualStreet1.getValue());
         }
-        if (virtualStreet2) {
-            $('virtual:shipping:street2').setValue(virtualStreet2.getValue());
+        if (virtualStreet2 && virtualShippingStreet2) {
+            virtualShippingStreet2.setValue(virtualStreet2.getValue());
         }
-        if (virtualStreet3) {
-            $('virtual:shipping:street3').setValue(virtualStreet3.getValue());
+        if (virtualStreet3 && virtualShippingStreet3) {
+            virtualShippingStreet3.setValue(virtualStreet3.getValue());
         }
 
         /**

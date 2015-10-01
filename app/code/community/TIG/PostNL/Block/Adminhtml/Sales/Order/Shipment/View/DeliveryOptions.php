@@ -25,20 +25,22 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipment()
+ * @method boolean hasPostnlOrder()
  *
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setPostnlOrder(TIG_PostNL_Model_Core_Order $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setIsCod(boolean $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setSubType(string $value)
  *
@@ -65,19 +67,34 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
      */
     protected function _prepareLayout()
     {
-        $onclick = "changeProductCode('{$this->getChangeProductCodeUrl()}')";
+        $productCodeOnclick = "changeProductCode('{$this->getChangeProductCodeUrl()}')";
+        $parcelCountOnclick = "changeParcelCount('{$this->getChangeParcelCountUrl()}')";
 
-        $block = $this->getLayout()
-                      ->createBlock('adminhtml/widget_button')
-                      ->setData(
-                          array(
-                              'label'   => $this->__('Change'),
-                              'class'   => 'btn-reset',
-                              'onclick' => $onclick
-                          )
-                      );
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Button $changeProductCodeButton
+         * @var Mage_Adminhtml_Block_Widget_Button $changeParcelCountButton
+         */
+        $changeProductCodeButton = $this->getLayout()
+                                        ->createBlock('adminhtml/widget_button')
+                                        ->setData(
+                                            array(
+                                                'label'   => $this->__('Change'),
+                                                'class'   => 'btn-reset',
+                                                'onclick' => $productCodeOnclick
+                                            )
+                                        );
+        $changeParcelCountButton = $this->getLayout()
+                                        ->createBlock('adminhtml/widget_button')
+                                        ->setData(
+                                            array(
+                                                'label'   => $this->__('Change'),
+                                                'class'   => 'btn-reset',
+                                                'onclick' => $parcelCountOnclick
+                                            )
+                                        );
 
-        $this->setChild('change_product_code_button', $block);
+        $this->setChild('change_product_code_button', $changeProductCodeButton);
+        $this->setChild('change_parcel_count_button', $changeParcelCountButton);
 
         return parent::_prepareLayout();
     }
@@ -97,6 +114,23 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $this->setPostnlShipment($postnlShipment);
         return $postnlShipment;
+    }
+
+    /**
+     * @return TIG_PostNL_Model_Core_Order|false
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            return $this->_getData('postnl_order');
+        }
+
+        $postnlShipment = $this->getPostnlShipment();
+
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+
+        $this->setPostnlOrder($postnlOrder);
+        return $postnlOrder;
     }
 
     /**
@@ -138,11 +172,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND_COD:
                 $shipmentType = $this->__('Domestic');
-                $this->setSubType('Evening Delivery');
+                $this->setSubType($this->__('Evening Delivery'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
@@ -154,11 +188,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PGE_COD:
                 $shipmentType = $this->__('Post Office');
-                $this->setSubType('Early Pickup');
+                $this->setSubType($this->__('Early Pickup'));
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PA:
@@ -242,5 +276,147 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         );
 
         return $url;
+    }
+
+    /**
+     * Check if the customer chose any additional options during checkout.
+     *
+     * @return bool
+     */
+    public function hasExtraOptions()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder || !$postnlOrder->getId()) {
+            return false;
+        }
+
+        $hasOptions = $postnlOrder->hasOptions();
+        return $hasOptions;
+    }
+
+    /**
+     * Get additional options the customer chose during checkout.
+     *
+     * @return array
+     */
+    public function getFormattedExtraOptions()
+    {
+        $postnlOptions = $this->getPostnlOrder();
+
+        $options = $postnlOptions->getOptions();
+        if (!$options) {
+            return array();
+        }
+
+        $formattedOptions = array();
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    $formattedOptions[] = $this->__('deliver to stated address only');
+                    break;
+                //no default
+            }
+        }
+
+        return $formattedOptions;
+    }
+
+    /**
+     * Get whether the PostNL shipment's parcel count may be changed.
+     *
+     * @return boolean
+     */
+    public function canChangeParcelCount()
+    {
+        $postnlShipment = $this->getPostnlShipment();
+
+        /**
+         * Check if the current user is allowed to perform this action.
+         */
+        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
+            return false;
+        }
+
+        return $postnlShipment->canChangeParcelCount();
+    }
+
+    /**
+     * Get the changeParcelCountUrl for this shipment.
+     *
+     * @return string
+     */
+    public function getChangeParcelCountUrl()
+    {
+        $url = $this->getUrl(
+            'postnl_admin/adminhtml_shipment/changeParcelCount',
+            array(
+                'shipment_id' => $this->getShipment()->getId()
+            )
+        );
+
+        return $url;
+    }
+
+    /**
+     * Retrieve the change_parcel_count_button html.
+     *
+     * @return string
+     */
+    public function getChangeParcelCountButtonHtml()
+    {
+        return $this->getChildHtml('change_parcel_count_button');
+    }
+
+    /**
+     * Get delivery time information for this PostNL shipment.
+     *
+     * @return array|false
+     */
+    public function getDeliveryTimeInfo()
+    {
+        $postnlShipment = $this->getPostnlShipment();
+        if (!$postnlShipment->hasExpectedDeliveryTimeStart()) {
+            return false;
+        }
+
+        $info = array(
+            'delivery_time_start'       => '',
+            'delivery_time_end'         => '',
+            'store_delivery_time_start' => '',
+            'store_delivery_time_end'   => '',
+            'timezone_differ'           => false,
+        );
+
+        $dateModel = Mage::getSingleton('core/date');
+        $storeTimezone = Mage::getStoreConfig(
+            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+            $postnlShipment->getStoreId()
+        );
+        $storeTimezone = new DateTimeZone($storeTimezone);
+        $utcTimeZone = new DateTimeZone('UTC');
+
+        $storeStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart(), $utcTimeZone);
+        $storeStartTime->setTimezone($storeTimezone);
+        $info['delivery_time_start'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeStart());
+        $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+        if ($info['delivery_time_start'] != $info['store_delivery_time_start']) {
+            $info['timezone_differ'] = true;
+        }
+
+        if (!$postnlShipment->hasExpectedDeliveryTimeEnd()) {
+            return $info;
+        }
+
+        $storeEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd(), $utcTimeZone);
+        $storeEndTime->setTimezone($storeTimezone);
+        $info['delivery_time_end'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeEnd());
+        $info['store_delivery_time_end'] = $storeEndTime->format('H:i');
+
+        return $info;
     }
 }

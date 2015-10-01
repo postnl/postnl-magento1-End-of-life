@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Barcode
@@ -51,10 +51,12 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
+        $helper = Mage::helper('postnl/cif');
+
         /**
          * Check if the PostNL module is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -97,12 +99,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
 
         if ($postnlOrder->getId()) {
-            if ($postnlOrder->getConfirmDate()) {
-                $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+            if ($postnlOrder->hasConfirmDate()) {
+                $confirmDate = new DateTime($postnlOrder->getConfirmDate(), new DateTimeZone('UTC'));
+                $postnlShipment->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
             }
 
-            if ($postnlOrder->getDeliveryDate()) {
-                $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
+            if ($postnlOrder->hasDeliveryDate()) {
+                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate(), new DateTimeZone('UTC'));
+                $postnlShipment->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
             }
 
             if ($postnlOrder->getIsPakjeGemak()) {
@@ -112,6 +116,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlOrder->getIsPakketautomaat()) {
                 $postnlShipment->setIsPakketautomaat($postnlOrder->getIsPakketautomaat());
             }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+                $postnlShipment->setExpectedDeliveryTimeStart($postnlOrder->getExpectedDeliveryTimeStart());
+            }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+                $postnlShipment->setExpectedDeliveryTimeEnd($postnlOrder->getExpectedDeliveryTimeEnd());
+            }
         }
 
         /**
@@ -120,9 +132,9 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $postnlShipment->save();
 
         /**
-         * Barcode generation needs to be tried separately. This functionality may throw a valid exceptionin which case
-         * it needs to be tried again later without preventing the shipment from being created. This may happen when CIF
-         * is overburdened.
+         * Barcode generation needs to be tried separately. This functionality may throw a valid exception which case it
+         * needs to be tried again later without preventing the shipment from being created. This may happen when CIF is
+         * overburdened.
          */
         try {
             $postnlShipment->saveAdditionalShippingOptions();
@@ -130,8 +142,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlShipment->canGenerateBarcode()) {
                 $postnlShipment->generateBarcodes();
             }
+
+            $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
+            if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                $postnlShipment->generateReturnBarcode();
+            }
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            $helper->logException($e);
         }
 
         $postnlShipment->save();
