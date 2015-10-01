@@ -914,8 +914,7 @@
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
                 <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
                 <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
-                <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
-                <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+                <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
             </cif>
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
@@ -1126,13 +1125,14 @@
                     <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
                     <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
+                    <Picqer_PostNL>1.0</Picqer_PostNL>
                 </extensions>
             </postnl>
         </compatibility>
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>develop</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

@@ -1046,7 +1046,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
+        $lang = substr(Mage::getStoreConfig('general/locale/code', $this->getStoreId()), 0, 2);
+
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl, $lang);
 
         $this->setBarcodeUrl($barcodeUrl);
         return $barcodeUrl;
@@ -4051,10 +4053,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string  $barcode
      * @param boolean $forceNl
+     * @param string  $lang
      *
      * @return string
      */
-    protected function _getBarcodeUrl($barcode, $forceNl = false)
+    protected function _getBarcodeUrl($barcode, $forceNl = false, $lang)
     {
         /**
          * @var TIG_PostNL_Helper_Carrier $helper
@@ -4064,7 +4067,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $url = '';
         $shippingAddress = $this->getShippingAddress();
         if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
         }
 
         return $url;

@@ -199,31 +199,6 @@
                                 <active>1</active>
                             </depends>
                         </instructions>
-                        <allowspecific translate="label" module="postnl">
-                            <label>Payment from applicable countries</label>
-                            <frontend_type>allowspecific</frontend_type>
-                            <sort_order>70</sort_order>
-                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </allowspecific>
-                        <specificcountry translate="label" module="postnl">
-                            <label>Payment from specific countries</label>
-                            <frontend_type>multiselect</frontend_type>
-                            <sort_order>80</sort_order>
-                            <source_model>adminhtml/system_config_source_country</source_model>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </specificcountry>
                         <min_order_total translate="label" module="postnl">
                             <label>Minimum order total</label>
                             <frontend_type>text</frontend_type>
@@ -2706,7 +2681,7 @@
                 </returns>
                 <cod translate="label comment" module="postnl">
                     <label>PostNL COD</label>
-                    <comment><![CDATA[Activate an extra payment method with COD shipments.<br/>Please note: In order to offer COD shipments to your customers you will need to complete the fields below and activate an extra payment method <a href="%s" target="_blank">here</a>.]]></comment>
+                    <comment><![CDATA[Activate an extra payment method with COD shipments.<br/>Please note: In order to offer COD shipments to your customers you will need to complete the fields below and activate an extra payment method <a href="%s" target="_blank">here</a>.<br />PostNL COD is only available for Dutch orders.]]></comment>
                     <comment_url>
                         <base>adminhtml/system_config/edit</base>
                         <params>

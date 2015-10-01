@@ -1297,15 +1297,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Gets the shipping duration for the specified order.
      *
-     * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order || Mage_Sales_Model_Order_Shipment $entity
      *
      * @return int|false
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getOrderShippingDuration(Mage_Sales_Model_Order $order)
+    public function getOrderShippingDuration($entity)
     {
-        $storeId = $order->getStoreId();
+        if (!($entity instanceof Mage_Sales_Model_Order_Shipment || $entity instanceof Mage_Sales_Model_Order)) {
+            throw new TIG_PostNL_Exception(
+                $this->__('Parameter 1 needs to be an instance of Mage_Sales_Model_Order_Shipment or
+                Mage_Sales_Model_Order, ' . get_class($entity) . ' was given')
+            );
+        }
+
+        $storeId = $entity->getStoreId();
 
         /**
          * Get the default config duration.
@@ -1318,7 +1325,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * @var Mage_Sales_Model_Resource_Order_Item_Collection $items
          * @var Mage_Sales_Model_Order_Item $item
          */
-        $items = $order->getItemsCollection(array(), true);
+        $items = $entity->getItemsCollection(array(), true);
         $productIds = $items->getColumnValues('product_id');
 
         return $this->_getShippingDuration($configDuration, $productIds, $storeId);
@@ -2553,8 +2560,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /** @var Mage_Sales_Model_Quote_Item[] $quoteItems */
-        $quoteItems = $quote->getItemsCollection();
+        $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
+            /**
+             * The stock check only applies to simple products.
+             *
+             * @todo add stock check to physicial gift cards.
+             */
+            $productType = $item->getProductType();
+            if ($productType != 'simple') {
+                continue;
+            }
+
             $product = $item->getProduct();
 
             /** @var Mage_CatalogInventory_Model_Stock_item $stockItem */

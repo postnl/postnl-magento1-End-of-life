@@ -253,7 +253,7 @@ try {
      * Dump the result as well as the XML request and response for debugging purposes.
      */
     echo '<pre>';
-    var_dump($result, true);
+    var_dump($result);
     echo PHP_EOL
         . 'REQUEST:'
         . PHP_EOL
