@@ -1312,9 +1312,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             );
         }
 
-        echo 'passed';
-        exit;
-
         $storeId = $entity->getStoreId();
 
         /**
