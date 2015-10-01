@@ -516,7 +516,7 @@ PostnlDeliveryOptions.prototype = {
                 for (var i = 0; i < shippingMethods.length; i++) {
                     if (element.identify() == shippingMethods[i]) {
                         if (!this.getSelectedOption() && this.getParsedTimeframes()) {
-                            if (this.getLastSelectedType() == 'Evening' || this.getLastSelectedType() == 'Overdag') {
+                            if (this.getLastSelectedType() == 'Avond' || this.getLastSelectedType() == 'Overdag') {
                                 this.selectTimeframe(this.getLastSelectedOption().getElement());
                             } else if (this.getLastSelectedType()) {
                                 this.selectLocation(
@@ -1507,7 +1507,7 @@ PostnlDeliveryOptions.prototype = {
         if (inclTax) {
             if (selectedType == 'PGE') {
                 extraCosts = this.getOptions().expressFeeIncl;
-            } else if (selectedType == 'Evening') {
+            } else if (selectedType == 'Avond') {
                 extraCosts = this.getOptions().eveningFeeIncl;
             }
 
@@ -1520,7 +1520,7 @@ PostnlDeliveryOptions.prototype = {
 
         if (selectedType == 'PGE') {
             extraCosts = this.getOptions().expressFeeExcl;
-        } else if (selectedType == 'Evening') {
+        } else if (selectedType == 'Avond') {
             extraCosts = this.getOptions().eveningFeeExcl;
         }
 
@@ -5057,7 +5057,16 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.date = date;
         this.from = timeframe.From;
         this.to   = timeframe.To;
-        this.type = timeframe.Options.string[0];
+
+        var type =  timeframe.Options.string[0];
+        switch (type) {
+            case 'Evening' :
+                this.type = 'Avond';
+                break;
+            default :
+                this.type = 'Overdag';
+                break;
+        }
 
         this.timeframeIndex = timeframeIndex;
 
@@ -5230,7 +5239,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
      */
     getCommentHtml : function() {
         var comment = '';
-        if (this.type == 'Evening') {
+        if (this.type == 'Avond') {
             var extraCosts = this.getOptions().eveningFeeText;
             var extraCostHtml = '';
 
