@@ -1697,8 +1697,6 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $conn = $this->getConnection();
 
         try {
-
-            Mage::log('test3', null, 'test.log', true);
             /**
              * Update the config values
              */
@@ -1714,7 +1712,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             $conn->update(
                 $this->getTable('core/config_data'),
                 array(
-                    'value' => '1_10',
+                    'value' => '2_0',
                 ),
                 array(
                     'path = ?'     => 'postnl/advanced/cif_version_labelling',
