@@ -516,7 +516,7 @@ PostnlDeliveryOptions.prototype = {
                 for (var i = 0; i < shippingMethods.length; i++) {
                     if (element.identify() == shippingMethods[i]) {
                         if (!this.getSelectedOption() && this.getParsedTimeframes()) {
-                            if (this.getLastSelectedType() == 'Avond' || this.getLastSelectedType() == 'Overdag') {
+                            if (this.getLastSelectedType() == 'Evening' || this.getLastSelectedType() == 'Overdag') {
                                 this.selectTimeframe(this.getLastSelectedOption().getElement());
                             } else if (this.getLastSelectedType()) {
                                 this.selectLocation(
@@ -805,7 +805,7 @@ PostnlDeliveryOptions.prototype = {
             for (var i = 0, m = currentTimeframe.Timeframes.TimeframeTimeFrame.length; i < m ; i++, o++) {
                 var currentSubTimeframe = currentTimeframe.Timeframes.TimeframeTimeFrame[i];
                 if (this.isEveningTimeframesAllowed() === false
-                    && currentSubTimeframe.TimeframeType == 'Avond'
+                    && currentSubTimeframe.Options.string[0] == 'Evening'
                 ) {
                     continue;
                 }
@@ -1507,7 +1507,7 @@ PostnlDeliveryOptions.prototype = {
         if (inclTax) {
             if (selectedType == 'PGE') {
                 extraCosts = this.getOptions().expressFeeIncl;
-            } else if (selectedType == 'Avond') {
+            } else if (selectedType == 'Evening') {
                 extraCosts = this.getOptions().eveningFeeIncl;
             }
 
@@ -1520,7 +1520,7 @@ PostnlDeliveryOptions.prototype = {
 
         if (selectedType == 'PGE') {
             extraCosts = this.getOptions().expressFeeExcl;
-        } else if (selectedType == 'Avond') {
+        } else if (selectedType == 'Evening') {
             extraCosts = this.getOptions().eveningFeeExcl;
         }
 
@@ -5057,7 +5057,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.date = date;
         this.from = timeframe.From;
         this.to   = timeframe.To;
-        this.type = timeframe.TimeframeType;
+        this.type = timeframe.Options.string[0];
 
         this.timeframeIndex = timeframeIndex;
 
@@ -5230,7 +5230,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
      */
     getCommentHtml : function() {
         var comment = '';
-        if (this.type == 'Avond') {
+        if (this.type == 'Evening') {
             var extraCosts = this.getOptions().eveningFeeText;
             var extraCostHtml = '';
 
