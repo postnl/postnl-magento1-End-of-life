@@ -35,55 +35,20 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method boolean                             hasApiKey()
- * @method TIG_PostNL_Block_DeliveryOptions_Js setApiKey()
  */
-class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
-{
-    /**
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_deliveryoptions_js';
 
-    /**
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/delivery_options/js.phtml';
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-    /**
-     * Get the configured Google maps API key.
-     *
-     * @return string
-     */
-    public function getApiKey()
-    {
-        if ($this->hasApiKey()) {
-            return $this->_getData('api_key');
-        }
+/**
+ * Form an array of config values to be reset.
+ * The PostNL COD country config values are no longer available, and therefore need to be reset to default value.
+ */
+$codCountryConfig = array(
+    'payment/postnl_cod/allowspecific',
+    'payment/postnl_cod/specificcountry'
+);
 
-        $apiKey = Mage::getStoreConfig(
-            TIG_PostNL_Helper_DeliveryOptions::XPATH_GOOGLE_MAPS_API_KEY,
-            Mage::app()->getStore()->getId()
-        );
-
-        $this->setApiKey($apiKey);
-        return $apiKey;
-    }
-
-    /**
-     * Render the template if allowed.
-     *
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
-        $helper = Mage::helper('postnl/deliveryOptions');
-        if (!$helper->isDeliveryOptionsEnabled()) {
-            return '';
-        }
-
-        return parent::_toHtml();
-    }
-}
+$installer->resetConfig($codCountryConfig);

@@ -634,7 +634,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          *
          * @var Mage_Sales_Model_Order $lastOrder
          */
+        // @codingStandardsIgnoreStart
         $lastOrder = $orderCollection->getFirstItem();
+        // @codingStandardsIgnoreEnd
         $createdAt = $lastOrder->getCreatedAt();
         $createdAt = Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
 

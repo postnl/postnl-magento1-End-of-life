@@ -102,7 +102,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 $groups = (array)$groups;
                 usort($groups, array($this, '_sortForm'));
 
-                foreach ($groups as $group){
+                foreach ($groups as $key => $group) {
+                    if (isset($group->disabled)) {
+                        unset($groups[$key]);
+                        continue;
+                    }
+
                     /* @var $group Varien_Simplexml_Element */
                     if (!$this->_canShowField($group)) {
                         continue;
@@ -552,5 +557,36 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         }
 
         return '';
+    }
+
+    /**
+     * Checking field visibility
+     *
+     * @param   Varien_Simplexml_Element $field
+     * @return  bool
+     */
+    protected function _canShowField($field)
+    {
+        if (isset($field->disabled)) {
+            return false;
+        }
+
+        $ifModuleEnabled = trim((string)$field->if_module_enabled);
+        if ($ifModuleEnabled && !Mage::helper('Core')->isModuleEnabled($ifModuleEnabled)) {
+            return false;
+        }
+
+        switch ($this->getScope()) {
+            case self::SCOPE_DEFAULT:
+                return (int)$field->show_in_default;
+                break;
+            case self::SCOPE_WEBSITES:
+                return (int)$field->show_in_website;
+                break;
+            case self::SCOPE_STORES:
+                return (int)$field->show_in_store;
+                break;
+        }
+        return true;
     }
 }
