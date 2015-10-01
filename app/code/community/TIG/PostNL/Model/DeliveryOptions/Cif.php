@@ -97,14 +97,31 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $date = new DateTime('now', Mage::helper('postnl')->getStoreTimeZone($quote->getStoreId(), true));
         $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
+        /**
+         * Build CutOffTimes array
+         *
+         * Day 00 indicates weekdays and saturday, while day 07 indicates sunday
+         */
+        $CutOffTimes = array(
+            array(
+                'Day'   => '00',
+                'Time'  => $this->_getCutOffTime()
+            ),
+            array(
+                'Day'   => '07',
+                'Time'  => $this->_getSundaySortingCutOffTime()
+            )
+        );
+
         $soapParams = array(
             'GetDeliveryDate' => array(
-                'Postalcode'                 => $postcode,
+                'PostalCode'                 => $postcode,
                 'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
-                'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
-                'CutOffTimeForSundaySorting' => $this->_getSundaySortingCutOffTime(),
+                'CutOffTimes'                => $CutOffTimes,
+                'Options'                    => array('Daytime'),
+                'CountryCode'                => 'NL'
             ),
             'Message' => $this->_getMessage('')
         );
@@ -161,13 +178,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
+
         $soapParams = array(
             'Timeframe' => array(
                 'PostalCode'    => $data['postcode'],
-                'HouseNumber'   => $data['housenumber'],
+                'HouseNr'       => $data['housenumber'],
+                'CountryCode'   => 'NL',
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
                 'SundaySorting' => $this->_getSundaySortingAllowed(),
+                'Options'       => array('Daytime', 'Evening')
             ),
             'Message' => $this->_getMessage('')
         );
@@ -177,7 +197,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         $response = $this->call(
             'timeframe',
-            'GetDeliveryTimeframes',
+            'GetTimeframes',
             $soapParams
         );
 
@@ -219,7 +239,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             'Location'    => $location,
             'Message'     => $message,
             'Countrycode' => 'NL' // @todo make dynamic
-
         );
 
         /**
@@ -267,7 +286,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'Location'    => $location,
             'Message'     => $message,
-            'Countrycode' => 'NL' // @todo make dynamic
+            'Countrycode' => 'NL', // @todo make dynamic
+
         );
 
         /**
@@ -412,6 +432,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'Longitude' => $data['northEast']['long'],
             );
         }
+
+        /**
+         * Add Options specifying which location timeframes should be returned
+         */
+        $location['Options'] = array('Daytime', 'Morning');
+
+        /**
+         * Add flag to identify if Sunday Sorting is allowed
+         */
+        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed();
 
         return $location;
     }
