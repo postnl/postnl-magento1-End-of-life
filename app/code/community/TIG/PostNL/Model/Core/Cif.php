@@ -676,8 +676,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!isset($response->Labels)
-            || !is_object($response->Labels)
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $response->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels)
+            || !is_object($shipment->Labels)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
@@ -767,10 +773,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        Mage::log($response, null, 'texttest.log', true);
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $response->ResponseShipments->ResponseShipment[0];
 
-        if (!isset($response)
-            || !is_object($response)
+        if (!isset($shipment->Labels)
+            || !is_object($shipment->Labels)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(

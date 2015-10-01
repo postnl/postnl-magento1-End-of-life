@@ -3221,8 +3221,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $returnBarcode
             );
         }
+        
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $result->ResponseShipments->ResponseShipment[0];
 
-        if (!isset($result->Labels, $result->Labels->Label)) {
+        if (!isset($shipment->Labels, $shipment->Labels->Label)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'The confirmAndPrintLabel action returned an invalid response: %s',
@@ -3231,7 +3237,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0071'
             );
         }
-        $labels = $result->Labels->Label;
+        $labels = $shipment->Labels->Label;
 
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
