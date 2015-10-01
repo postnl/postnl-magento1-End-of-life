@@ -61,12 +61,18 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
         $i = 0;
         $feed = 20;
         $previousFeed = 0;
-        $nameFeed = 20;
+        $nameFeed = 30;
         foreach ($columns as $column) {
-            if ($i > 0) {
+            if ($i > 1) {
                 $align = 'right';
             } else {
                 $align = 'left';
+            }
+
+            if($i == 1){
+                $previousFeed -= 20;
+            }else if ($i == 2){
+                $previousFeed += 20;
             }
 
             $feed += $previousFeed;
@@ -140,7 +146,7 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
                 $value = Mage::helper('core/string')->str_split($item->getName(), 60, true, true);
                 break;
             case 'sku':
-                $value = Mage::helper('core/string')->str_split($this->getSku($item), 25);
+                $value = Mage::helper('core/string')->str_split($this->getSku($item), 20);
                 break;
             case 'price':
                 $value = $this->getOrder()->formatPriceTxt($item->getPrice());

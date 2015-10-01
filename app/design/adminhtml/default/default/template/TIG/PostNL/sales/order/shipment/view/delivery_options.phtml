@@ -157,7 +157,7 @@
                 open : function(url) {
 
                     html = '<form id="change_product_code_form" method="post" action="' + url + '">'
-                         + '<input type="hidden" name="form_key" value="<? echo Mage::getSingleton('core/session')->getFormKey(); ?>" />'
+                         + '<input type="hidden" name="form_key" value="<?php echo Mage::getSingleton('core/session')->getFormKey(); ?>" />'
                          + '<p id="postnl_product_option_container">'
                          + '<label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>'
                          + '<select id="postnl_product_option" class="select required-entry" name="product_option">';
