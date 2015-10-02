@@ -47,6 +47,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const PAKJEGEMAK_DELIVERY_OPTION         = 'PG';
     const PAKJEGEMAK_EXPRESS_DELIVERY_OPTION = 'PGE';
     const PAKKETAUTOMAAT_DELIVERY_OPTION     = 'PA';
+    const DOMESTIC_DELIVERY_OPTION           = 'Daytime';
+    const EVENING_DELIVERY_OPTION            = 'Evening';
+    const SUNDAY_DELIVERY_OPTION             = 'Sunday';
 
     /**
      * Config options used by the getDeliveryDate service.
@@ -178,6 +181,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
+        $options = $this->_getDeliveryTimeframesOptionsArray();
 
         $soapParams = array(
             'Timeframe' => array(
@@ -187,7 +191,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
                 'SundaySorting' => $this->_getSundaySortingAllowed(),
-                'Options'       => array('Daytime', 'Evening')
+                'Options'       => $options
             ),
             'Message' => $this->_getMessage('')
         );
@@ -470,4 +474,20 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         return $deliveryOptions;
     }
+
+    /**
+     * Builds array of time frame options, to be sent in the GetTimeframes request.
+     * These options determine which delivery timeframes should be requested.
+     */
+    protected function _getDeliveryTimeframesOptionsArray()
+    {
+        $options = array(self::DOMESTIC_DELIVERY_OPTION, self::EVENING_DELIVERY_OPTION);
+
+        if (Mage::getStoreConfig('postnl/delivery_options/enable_sunday_timeframes', Mage::app()->getStore()->getId())) {
+            $options[] = self::SUNDAY_DELIVERY_OPTION;
+        }
+
+        return $options;
+    }
+
 }
