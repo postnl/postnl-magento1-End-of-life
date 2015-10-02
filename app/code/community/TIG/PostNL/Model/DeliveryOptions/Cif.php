@@ -483,7 +483,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         $options = array(self::DOMESTIC_DELIVERY_OPTION, self::EVENING_DELIVERY_OPTION);
 
-        if (Mage::getStoreConfig('postnl/delivery_options/enable_sunday_timeframes', Mage::app()->getStore()->getId())) {
+        if (Mage::getStoreConfig('postnl/delivery_options/enable_sunday_delivery', Mage::app()->getStore()->getId())) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
