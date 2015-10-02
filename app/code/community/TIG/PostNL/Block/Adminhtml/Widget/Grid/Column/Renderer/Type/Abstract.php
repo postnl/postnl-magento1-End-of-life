@@ -322,7 +322,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     {
         $helper = Mage::helper('postnl');
 
-        $label = $helper->__('Sunday');
+        $label = $helper->__('Sunday Delivery');
         $type  = 'sunday';
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
