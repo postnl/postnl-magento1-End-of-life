@@ -872,6 +872,7 @@
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
+                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Disable sunday delivery -->
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
                 <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
                 <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
