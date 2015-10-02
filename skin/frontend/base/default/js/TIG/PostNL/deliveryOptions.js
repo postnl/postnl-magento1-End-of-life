@@ -5063,6 +5063,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Evening' :
                 this.type = 'Avond';
                 break;
+            case 'Sunday' :
+                this.type = 'Sunday';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
