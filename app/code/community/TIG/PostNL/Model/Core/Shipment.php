@@ -1661,20 +1661,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Checks if the order of this shipment is a Sunday order.
-     *
-     * @return bool
-     */
-    public function isSunday()
-    {
-        if ($this->getPostnlOrder()->getType() == 'Sunday') {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Gets the default extra cover amount for this shipment.
      *
      * @return float|int
@@ -2411,6 +2397,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setIsSundayShipment($isSunday);
         return $isSunday;
+    }
+
+    /**
+     * Checks if the order of this shipment is a Sunday order.
+     *
+     * @return bool
+     */
+    public function isSunday()
+    {
+        if ($this->getPostnlOrder()->getType() == 'Sunday') {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -54,11 +54,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Config options used by the getDeliveryDate service.
      */
-    const XPATH_SHIPPING_DURATION    = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME          = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
-    const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_DELIVERY_DAYS_NUMBER = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_SHIPPING_DURATION      = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME            = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING   = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
+    const XPATH_SUNDAY_CUTOFF_TIME     = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_DELIVERY_DAYS_NUMBER   = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_ENABLE_SUNDAY_DELIVERY = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
      * Check if the module is set to test mode
@@ -478,12 +479,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Builds array of time frame options, to be sent in the GetTimeframes request.
      * These options determine which delivery timeframes should be requested.
+     *
+     * @return array
      */
     protected function _getDeliveryTimeframesOptionsArray()
     {
         $options = array(self::DOMESTIC_DELIVERY_OPTION, self::EVENING_DELIVERY_OPTION);
 
-        if (Mage::getStoreConfig('postnl/delivery_options/enable_sunday_delivery', Mage::app()->getStore()->getId())) {
+        if (Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, Mage::app()->getStore()->getId())) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
