@@ -83,7 +83,7 @@
             var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
 
             if (postnlCodPaymentMethod && typeof deliveryOptions != 'undefined') {
-                if (deliveryOptions.selectedType == 'PA') {
+                if (deliveryOptions.selectedType == 'PA' || deliveryOptions.selectedType == 'Sunday') {
                     postnlCodPaymentMethod.disabled = true;
                     postnlCodPaymentMethod.up().hide();
 
