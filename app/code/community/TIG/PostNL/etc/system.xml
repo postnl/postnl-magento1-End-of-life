@@ -1552,13 +1552,34 @@
                                 </checkout_extension>
                             </depends>
                         </evening_timeframe_fee>
+                         <enable_sunday_delivery translate="label tooltip" module="postnl">
+                            <label>Enable sunday delivery</label>
+                            <tooltip>Activate sunday delivery for your customers. </tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_timeframes>1</enable_timeframes>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </enable_sunday_delivery>
                         <enable_pakjegemak translate="label tooltip" module="postnl">
                             <label>Enable post office locations</label>
                             <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1577,7 +1598,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1596,7 +1617,7 @@
                             <tooltip>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1618,7 +1639,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1637,7 +1658,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1656,7 +1677,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1677,7 +1698,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1698,7 +1719,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1722,7 +1743,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1746,7 +1767,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1767,7 +1788,7 @@
                         <stated_address_header translate="label" module="postnl">
                             <label>Only stated address</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1786,7 +1807,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1804,7 +1825,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1822,7 +1843,7 @@
                             <label>Stated address only fee</label>
                             <frontend_type>text</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1839,7 +1860,7 @@
                         <mijnpakket_header translate="label" module="postnl">
                             <label>MijnPakket</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1858,7 +1879,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1877,7 +1898,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1896,7 +1917,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1916,7 +1937,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>320</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1933,7 +1954,7 @@
                         <buspakje_header translate="label" module="postnl">
                             <label>Letter box parcels</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>330</sort_order>
+                            <sort_order>340</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1944,7 +1965,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>340</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1955,7 +1976,7 @@
                             <tooltip>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
-                            <sort_order>350</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1966,7 +1987,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>360</sort_order>
+                            <sort_order>370</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -4207,6 +4228,32 @@
                                 </enable_evening_timeframes>
                             </depends>
                         </default_evening_product_option>
+                        <default_sunday_product_option translate="label tooltip" module="postnl">
+                            <label>Default sunday delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manualy creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_sundayProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_timeframes>
+                                <enable_evening_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_evening_timeframes>
+                            </depends>
+                        </default_sunday_product_option>
                         <default_pakjegemak_product_option translate="label tooltip" module="postnl">
                             <label>Default 'deliver at the Post Office' option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</tooltip>
@@ -4214,7 +4261,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4226,7 +4273,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4252,7 +4299,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4270,7 +4317,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
