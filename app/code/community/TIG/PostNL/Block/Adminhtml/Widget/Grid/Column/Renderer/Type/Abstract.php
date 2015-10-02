@@ -115,6 +115,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                     $comment = $helper->__('Extra');
                 }
                 break;
+            case 'sunday':
+                $label = $helper->__('Sunday Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -184,6 +187,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getAvondRenderedValue($row);
         } elseif ($optionType == 'PGE') {
             return $this->_getPgeRenderedValue($row);
+        } elseif ($optionType == 'Sunday') {
+            return $this->_getSundayRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -305,6 +310,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
         }
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a sunday shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getSundayRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Sunday Delivery');
+        $type  = 'sunday';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
         return $renderedValue;
     }

@@ -117,6 +117,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PG',
         'PGE',
         'PA',
+        'Sunday'
     );
 
     /**

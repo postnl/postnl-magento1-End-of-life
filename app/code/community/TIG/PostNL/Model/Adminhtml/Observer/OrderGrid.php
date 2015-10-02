@@ -921,6 +921,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_sunday_options'])) {
+                $config['postnl_sunday_options'] = array(
+                    'name'   => 'product_options[sunday_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_sunday_options'],
+                );
+            }
+
             if (!empty($options['postnl_pg_options'])) {
                 $config['postnl_pg_options'] = array(
                     'name'   => 'product_options[pg_options]',
@@ -1123,6 +1132,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'postnl_buspakje_options' => $optionsModel->getOptions(
                 array(
                     'group' => 'buspakje_options',
+                ),
+                false,
+                true
+            ),
+            'postnl_sunday_options' => $optionsModel->getOptions(
+                array(
+                    'group'    => 'standard_options',
+                    'isSunday' => true,
                 ),
                 false,
                 true
