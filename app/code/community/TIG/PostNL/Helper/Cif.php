@@ -401,6 +401,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of sunday product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getSundayProductCodes($flat = true)
+    {
+        $sundayProductCodes = Mage::getSingleton('postnl_core/system_config_source_sundayProductOptions');
+        return $sundayProductCodes->getAvailableOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array

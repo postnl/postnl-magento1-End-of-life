@@ -115,6 +115,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                     $comment = $helper->__('Extra');
                 }
                 break;
+            case 'sunday':
+                $label = $helper->__('Sunday Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
