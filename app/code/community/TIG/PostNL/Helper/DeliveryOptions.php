@@ -117,6 +117,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PG',
         'PGE',
         'PA',
+        'Sunday'
     );
 
     /**
@@ -1311,9 +1312,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage_Sales_Model_Order, ' . get_class($entity) . ' was given')
             );
         }
-
-        echo 'passed';
-        exit;
 
         $storeId = $entity->getStoreId();
 

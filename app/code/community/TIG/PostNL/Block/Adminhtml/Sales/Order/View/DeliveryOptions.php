@@ -123,6 +123,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 $this->setSubType($this->__('Evening Delivery'));
                 $shipmentType = $this->__('Domestic');
                 break;
+            case 'Sunday':
+                $this->getSubType($this->__('Sunday Delivery'));
+                $shipmentType = $this->__('Sunday Delivery');
+                break;
             case 'Overdag':
                 $shipmentType = $this->__('Domestic');
                 break;

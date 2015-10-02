@@ -53,8 +53,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     /**
      * Localised track and trace base URL's.
      */
-    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_nl_base_url';
-    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH = 'postnl/cif/track_and_trace_int_base_url';
+    const POSTNL_TRACK_AND_TRACE_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_base_url';
 
     /**
      * XML path to rate type setting.
@@ -379,67 +378,75 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      * @param string              $barcode
      * @param array|Varien_Object $destination An array or object containing the shipment's destination data.
      * @param boolean|string      $lang        This parameter is no longer used as of v1.4.1.
-     * @param boolean             $forceNl
+     * @param boolean             $business
      *
      * @return string
      */
-    public function getBarcodeUrl($barcode, $destination, $lang = null, $forceNl = false)
+    public function getBarcodeUrl($barcode, $destination, $lang = null, $business = false)
     {
+        /**
+         * Set first L (language) parameter
+         */
+        $lang = strtoupper($lang);
+
+        $allowedLanguages = array (
+            'NL', 'DE', 'EN', 'FR', 'ED', 'IT', 'CN'
+        );
+        if (!in_array($lang, $allowedLanguages)) {
+            $lang = 'EN';
+        }
+        $langParameter = 'L=' . $lang;
+
+        /**
+         * Set second B (barcode) parameter
+         */
+        if (!empty($barcode)) {
+            $barcodeParameter = '&B=' . $barcode;
+        } else {
+            throw new InvalidArgumentException('Barcode can not be empty.');
+        }
+
+        /**
+         * Set third (postcode) and fourth (destination) parameter
+         */
         $countryCode = null;
         $postcode    = null;
         if (is_array($destination)) {
             if (!isset($destination['countryCode'])) {
-                throw new InvalidArgumentException("Destination must contain a country code.");
+                throw new InvalidArgumentException('Destination must contain a country code.');
             }
-
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         } elseif (is_object($destination) && $destination instanceof Varien_Object) {
             if (!$destination->getCountry()) {
                 throw new InvalidArgumentException('Destination must contain a country code.');
             }
-
             $countryCode = $destination->getCountry();
             $postcode    = str_replace(' ', '', $destination->getPostcode());
         } else {
             throw new InvalidArgumentException('Destination must be an array or an instance of Varien_Object.');
         }
 
-        /**
-         * Get the dutch track & trace URL for dutch shipments or for the admin.
-         */
-        if ($forceNl
-            || (!empty($countryCode)
-                && $countryCode == 'NL'
-            )
-        ) {
-            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH)
-                        . '&b=' . $barcode;
-            /**
-             * For dutch shipments add the postcode. For international shipments add an 'international' flag.
-             */
-            if (!empty($postcode)
-                && !empty($countryCode)
-                && $countryCode == 'NL'
-            ) {
-                $barcodeUrl .= '&p=' . $postcode;
-            } else {
-                $barcodeUrl .= '&i=true';
-            }
+        $postcodeParameter    = '&P=' . $postcode;
+        $destinationParameter = '&D=' . $countryCode;
 
-            return $barcodeUrl;
+        /**
+         * Set last and fifth (Consumer or Business) parameter
+         */
+        $businessParameter  = '&T=C';
+        if ($business) {
+            $businessParameter  = '&T=B';
         }
 
         /**
-         * Get a general track & trace URL for all other destinations.
+         * Get track & trace URL
          */
-        $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH)
-                    . '/' . $barcode
-                    . '/' . $countryCode;
-
-        if (!empty($postcode)) {
-            $barcodeUrl .= '/' . $postcode;
-        }
+        $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_BASE_URL_XPATH)
+            . $langParameter
+            . $barcodeParameter
+            . $postcodeParameter
+            . $destinationParameter
+            . $businessParameter;
 
         return $barcodeUrl;
     }

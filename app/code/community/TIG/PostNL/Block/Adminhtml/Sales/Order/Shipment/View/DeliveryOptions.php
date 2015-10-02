@@ -207,6 +207,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
                 $shipmentType = $this->__('Letter Box Parcel');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_SUNDAY:
+                $shipmentType = $this->__('Sunday Delivery');
+                break;
         }
 
         return $shipmentType;
