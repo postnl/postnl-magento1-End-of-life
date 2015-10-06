@@ -1630,13 +1630,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * @var TIG_PostNL_Helper_DeliveryOptions $helper
+         * @var TIG_PostNL_Helper_Date $helper
          */
-        $helper = $this->getHelper('deliveryOptions');
+        $helper = Mage::helper('postnl/date');
         $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
-        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
-
-        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)->format('Y-m-d H:i:s');
+        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId())->format('Y-m-d H:i:s');
 
         return $deliveryDate;
     }
@@ -1863,10 +1861,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $deliveryDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
 
-        $confirmDate = clone $deliveryDate;
-        $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
-
-        $this->getHelper('deliveryOptions')->getValidConfirmDate($confirmDate);
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
+        $storeId = $postnlOrder->getStoreId();
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $storeId);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;

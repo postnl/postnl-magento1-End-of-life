@@ -63,15 +63,15 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     protected $_postnlDeliveryDelay = 1;
 
     /**
-     *
+     * @param $storeId
      *
      * @return array
      */
-    public function getValidDeliveryDaysArray()
+    public function getValidDeliveryDaysArray($storeId = 0)
     {
-        $sundayDelivery          = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY);
-        $sundaySorting           = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING);
-        $shippingDays            = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS);
+        $sundayDelivery          = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        $sundaySorting           = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        $shippingDays            = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
 
         $shippingDays = explode(',', $shippingDays);
 
@@ -134,17 +134,16 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         $weekday = $orderDateObject->format('N');
         $shippingDuration = $this->getQuoteShippingDuration();
-        $validDeliveryDays = $this->getValidDeliveryDaysArray();
 
         /**
          * Check if the calculated day is a valid shipping day. If this is not the case, check the next weekday, and
          * add 1 day to the total shipping duration.
          */
         $checkValidDay = ((int) $weekday + $shippingDuration) % 7;
-        while (!$this->isValidDay($checkValidDay, $validDeliveryDays)) {
-            $checkValidDay = ($checkValidDay + 1) % 7;
-            $shippingDuration++;
-        }
+
+        $correction = $this->getDeliveryDateCorrection($checkValidDay);
+
+        $shippingDuration = $shippingDuration + $correction;
 
         /**
          * Add the calculated total shipping duration to the order date, to get the Delivery Date.
@@ -156,7 +155,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Calculates the date an order needs te be shipped, based on the order date.
      *
-     * @param DateTime $date
+     * @param mixed    $date
      * @param int      $storeId
      *
      * @return DateTime
@@ -188,7 +187,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     public function getShippingDateFromDeliveryDate($deliveryDate, $storeId)
     {
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
-        $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS);
+        $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
 
         $shippingDaysArray = explode(',', $shippingDays);
 
@@ -273,6 +272,25 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $cutoff = Mage::getStoreConfig($xpathToUse, $storeId);
         $correctedCutOff = $this->getUtcDateTime($cutoff, $storeId)->format('H:i:s');
         return $correctedCutOff;
+    }
+
+    /**
+     * @param DateTime|string $checkValidDay
+     *
+     * @return int
+     */
+    public function getDeliveryDateCorrection($checkValidDay)
+    {
+        $validDeliveryDayArray = $this->getValidDeliveryDaysArray();
+
+        $deliveryDurationCorrection = 0;
+
+        while (!$this->isValidDay($checkValidDay, $validDeliveryDayArray)) {
+            $checkValidDay = ($checkValidDay + 1) % 7;
+            $deliveryDurationCorrection++;
+        }
+
+        return $deliveryDurationCorrection;
     }
 
 
