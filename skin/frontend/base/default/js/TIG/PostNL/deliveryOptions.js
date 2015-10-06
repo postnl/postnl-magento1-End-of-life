@@ -72,6 +72,43 @@ if (typeof Element.triggerEvent == 'undefined') {
 }
 
 /**
+ * Add the 'trim' method to strings for browsers that do not natively support this method.
+ */
+if(typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    }
+}
+
+/**
+ * Add a 'indexOf' method to arrays.
+ */
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(obj, start) {
+        for (var i = (start || 0), j = this.length; i < j; i++) {
+            if (this[i] === obj) { return i; }
+        }
+        return -1;
+    }
+}
+
+/**
+ * Add a 'formatMoney' method to numbers.
+ */
+if (!Number.prototype.formatMoney) {
+    Number.prototype.formatMoney = function(c, d, t){
+        c = isNaN(c = Math.abs(c)) ? 2 : c;
+        d = d == undefined ? "." : d;
+        t = t == undefined ? "," : t;
+        var n = this,
+            s = n < 0 ? "-" : "",
+            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    }
+}
+
+/**
  * PostNL delivery options logic class.
  *
  * Uses AJAX to communicate with PostNL and retrieve possible delivery options. This class also manages all available
@@ -1479,9 +1516,9 @@ PostnlDeliveryOptions.prototype = {
                 document.fire('postnl:selectOptionSaveStart');
             },
             onSuccess  : function(response) {
-                var responseText = response.responseText;
+                var responseText = response.responseText.trim();
                 if (responseText != 'OK') {
-                    return;
+                    console.error('Invalid response received: ' + responseText);
                 }
 
                 document.fire('postnl:selectOptionSaved');
@@ -2736,7 +2773,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             method : 'post',
             parameters : {
                 lat          : center.lat(),
-                long         : center.lng(),
+                'long'         : center.lng(),
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
@@ -2782,7 +2819,7 @@ PostnlDeliveryOptions.Map = new Class.create({
     },
 
     /**
-     * Search for lolcations inside the maps' viewport. Results will contain up to 20 locations of varying types.
+     * Search for locations inside the maps' viewport. Results will contain up to 20 locations of varying types.
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
@@ -5319,25 +5356,3 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         return this;
     }
 });
-
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(obj, start) {
-         for (var i = (start || 0), j = this.length; i < j; i++) {
-             if (this[i] === obj) { return i; }
-         }
-         return -1;
-    }
-}
-
-if (!Number.prototype.formatMoney) {
-    Number.prototype.formatMoney = function(c, d, t){
-        c = isNaN(c = Math.abs(c)) ? 2 : c;
-        d = d == undefined ? "." : d;
-        t = t == undefined ? "," : t;
-        var n = this,
-            s = n < 0 ? "-" : "",
-            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
-            j = (j = i.length) > 3 ? j % 3 : 0;
-        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-    }
-}
