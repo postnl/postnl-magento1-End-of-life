@@ -174,6 +174,8 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
+
         /**
          * Calculate the earliest possible shipping date for comparison.
          */
