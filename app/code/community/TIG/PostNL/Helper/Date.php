@@ -69,6 +69,14 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      */
     public function getValidDeliveryDaysArray($storeId = 0)
     {
+        /**
+         * Check if the array is available in the cache.
+         */
+        $cache = $this->getCache();
+        if ($cache && $cache->hasValidDeliveryDaysArray()) {
+            return $cache->getValidDeliveryDaysArray();
+        }
+
         $sundayDelivery          = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         $sundaySorting           = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
         $shippingDays            = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
@@ -86,12 +94,33 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
             $this->_validDeliveryDays[self::SUNDAY] = 0;
         }
 
-        if ($sundaySorting) {
-            if (in_array(self::SATURDAY, $shippingDays)) {
-                $this->_validDeliveryDays[self::MONDAY] = 1;
-            }
+        if ($sundaySorting
+            && !$sundayDelivery
+            && in_array(self::SATURDAY, $shippingDays)
+        ) {
+            $this->_validDeliveryDays[self::MONDAY] = 1;
         } else {
             $this->_validDeliveryDays[self::MONDAY] = 0;
+        }
+
+        /**
+         * If no valid delivery day is found, throw an Exception
+         */
+        if (!in_array(1, $this->_validDeliveryDays)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    "No valid delivery day found."
+                ),
+                'POSTNL-0231'
+            );
+        }
+
+        /**
+         * Save this array in the cache
+         */
+        if ($cache) {
+            $cache->setValidDeliveryDaysArray($this->_validDeliveryDays)
+                  ->saveCache();
         }
 
         return $this->_validDeliveryDays;
@@ -281,6 +310,14 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      */
     public function getDeliveryDateCorrection($checkValidDay)
     {
+        if(!is_object($checkValidDay) && !is_int($checkValidDay)) {
+            return 0;
+        }
+
+        if (is_object($checkValidDay)) {
+            $checkValidDay = $checkValidDay->format('N');
+        }
+
         $validDeliveryDayArray = $this->getValidDeliveryDaysArray();
 
         $deliveryDurationCorrection = 0;
@@ -292,6 +329,4 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
 
         return $deliveryDurationCorrection;
     }
-
-
 }
