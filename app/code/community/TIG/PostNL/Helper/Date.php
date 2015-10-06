@@ -154,7 +154,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     }
 
     /**
-     * Calculates the date an order needs te be shipped, based on the order date
+     * Calculates the date an order needs te be shipped, based on the order date.
      *
      * @param DateTime $date
      * @param int      $storeId
@@ -163,12 +163,39 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      */
     public function getShippingDate($date, $storeId)
     {
-        $dateObject = $this->getTomDeliveryDate($date, $storeId);
+        $dateObject = $this->getDeliveryDate($date, $storeId);
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
 
         if($dateObject->format('N') == self::MONDAY) {
             $validDeliveryDays = $this->getValidDeliveryDaysArray();
             if($sundaySorting && $validDeliveryDays[self::SUNDAY] == 0) {
+                $dateObject->sub(new DateInterval("P1D"));
+            }
+        }
+
+        $dateObject->sub(new DateInterval("P{$this->_postnlDeliveryDelay}D"));
+        return $dateObject;
+    }
+
+    /**
+     * Gets the shipping date calculated from the supplied deliveryDate.
+     *
+     * @param $deliveryDate
+     * @param $storeId
+     *
+     * @return DateTime
+     */
+    public function getShippingDateFromDeliveryDate($deliveryDate, $storeId)
+    {
+        $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS);
+
+        $shippingDaysArray = explode(',', $shippingDays);
+
+        $dateObject = $this->getUtcDateTime($deliveryDate, $storeId);
+
+        if($dateObject->format('N') == self::MONDAY) {
+            if($sundaySorting && !in_array(self::SUNDAY, $shippingDaysArray)) {
                 $dateObject->sub(new DateInterval("P1D"));
             }
         }
@@ -204,9 +231,6 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
 
         return $date;
     }
-
-
-
 
     /**
      * Calculates if the orderDate is past the configured cutoff time.

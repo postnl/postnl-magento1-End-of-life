@@ -309,12 +309,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveDeliveryOption($data)
     {
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
+
         $quote = $this->getQuote();
 
-        $timeZone = Mage::app()->getLocale()->getTimezone();
-
         $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
-        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
+        $deliveryDateObject = new DateTime($deliveryDate, new DateTimeZone('UTC'));
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateObject, $quote->getStoreId());
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
