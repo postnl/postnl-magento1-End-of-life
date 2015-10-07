@@ -50,6 +50,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3087',
@@ -58,6 +59,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3094',
@@ -66,6 +68,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3189',
@@ -74,6 +77,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3089',
@@ -82,6 +86,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3389',
@@ -90,6 +95,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3096',
@@ -98,6 +104,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3090',
@@ -106,6 +113,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3385',
@@ -114,6 +122,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3390',
@@ -122,6 +131,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3086',
@@ -130,6 +140,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3091',
@@ -138,6 +149,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3093',
@@ -146,6 +158,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '3097',
@@ -154,6 +167,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
+            'isBelgiumOnly'     => false,
         ),
         array(
             'value'             => '4970',
@@ -208,6 +222,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'isBelgiumOnly'     => true,
+            'extraCover'        => 500,
         ),
         array(
             'value'             => '4976',
@@ -267,6 +282,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     }
 
     /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableNlOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => false), $flat, true);
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableBeOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => true), $flat, true);
+    }
+
+    /**
      * Alias for getAvailableOptions() with $cod = true.
      *
      * @param boolean $flat
@@ -276,6 +315,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     public function getAvailableCodOptions($flat = false)
     {
         return $this->getOptions(array('isCod' => true), $flat, true);
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $cod = true.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableNlCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => false), $flat, true);
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $cod = true.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableBeCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => true), $flat, true);
     }
 
     /**

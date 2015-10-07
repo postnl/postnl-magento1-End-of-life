@@ -2789,13 +2789,31 @@
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableCodOptions</source_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableNlCodOptions</source_model>
                             <multidimensional>true</multidimensional>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </default_cod_product_option>
+                        <default_be_cod_product_option translate="label tooltip" module="postnl">
+                            <label>Default Belgium COD shipping option</label>
+                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableBeCodOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                        </default_be_cod_product_option>
                         <default_evening_cod_product_option translate="label tooltip" module="postnl">
                             <label>Default evening COD delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
@@ -2803,7 +2821,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2829,7 +2847,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2841,7 +2859,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4174,7 +4192,7 @@
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableNlOptions</source_model>
                             <multidimensional>true</multidimensional>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
@@ -4220,6 +4238,24 @@
                                 <use_alternative_default>1</use_alternative_default>
                             </depends>
                         </alternative_default_option>
+                        <default_be_product_option translate="label tooltip" module="postnl">
+                            <label>Default Belgium shipping option</label>
+                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableBeOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                        </default_be_product_option>
                         <default_evening_product_option translate="label tooltip" module="postnl">
                             <label>Default evening delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
@@ -4227,7 +4263,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4253,7 +4289,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_sundayProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4279,7 +4315,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4291,7 +4327,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4317,7 +4353,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4335,7 +4371,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

@@ -292,17 +292,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @var array
      */
-    protected $_extraCoverProductCodes = array(
-        '3087',
-        '3094',
-        '3091',
-        '3097',
-        '3536',
-        '3546',
-        '3534',
-        '3544',
-        '4945',
-    );
+    protected $_extraCoverProductCodes;
 
     /**
      * Array of labels that need to be saved all at once.
@@ -582,7 +572,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets a PostNL helper object
+     * Gets a PostNL helper object.
      *
      * @param string $type
      *
@@ -603,7 +593,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the process used for locking and unlocking this shipment
+     * Gets the process used for locking and unlocking this shipment.
      *
      * @return TIG_PostNL_Model_Core_Shipment_Process
      */
@@ -624,7 +614,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get an array of labels that have to be saved together
+     * Get an array of labels that have to be saved together.
      *
      * @return array
      */
@@ -634,12 +624,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get all product codes that have extra cover
+     * Get all product codes that have extra cover.
      *
      * @return array
      */
     public function getExtraCoverProductCodes()
     {
+        if (!empty($this->_extraCoverProductCodes)) {
+            return $this->_extraCoverProductCodes;
+        }
+
+        $productCodes = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                            ->getOptions(array('isExtraCover' => true), true);
+
+        $this->_extraCoverProductCodes = array_keys($productCodes);
         return $this->_extraCoverProductCodes;
     }
 
