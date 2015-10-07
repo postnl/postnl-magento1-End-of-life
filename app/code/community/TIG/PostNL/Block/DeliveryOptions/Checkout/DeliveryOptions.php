@@ -290,6 +290,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         $quote    = $this->getQuote();
+        $storeId  = $quote->getStoreId();
         $postcode = $this->getPostcode();
 
         try {
@@ -297,7 +298,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(null, null, false, true)
+            $deliveryDate = Mage::helper('postnl/date')->getDeliveryDate('now' ,$storeId)
                                                                   ->format('d-m-Y');
         }
 
@@ -795,8 +796,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
                         ->getDeliveryDate($postcode, $quote);
 
-        $response = Mage::helper('postnl/deliveryOptions')->getValidDeliveryDate($response)->format('d-m-Y');
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
 
-        return $response;
+        $dateObject = new DateTime($response, new DateTimeZone('UTC'));
+        $correction = $helper->getDeliveryDateCorrection($dateObject);
+        $dateObject->add(new DateInterval("P{$correction}D"));
+
+        return $dateObject->format('d-m-Y');
     }
 }

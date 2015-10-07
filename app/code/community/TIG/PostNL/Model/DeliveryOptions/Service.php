@@ -122,37 +122,6 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
-     * Calculate the confirm date for a specified delivery date.
-     *
-     * @param string|DateTime $deliveryDate
-     * @param string|boolean  $timeZone
-     *
-     * @return DateTime
-     */
-    public function getConfirmDate($deliveryDate, $timeZone = false)
-    {
-        if ($this->hasConfirmDate()) {
-            return $this->_getData('confirm_date');
-        }
-
-        if (!is_string($timeZone)) {
-            $timeZone = 'UTC';
-        }
-        $timeZone = new DateTimeZone($timeZone);
-
-        if (is_string($deliveryDate)) {
-            $deliveryDate = new DateTime($deliveryDate, $timeZone);
-        }
-
-        $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
-
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
-
-        $this->setConfirmDate($confirmDate);
-        return $confirmDate;
-    }
-
-    /**
      * @param StdClass[] $timeframes
      *
      * @return StdClass[]|false
@@ -173,6 +142,8 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $shippingDays = explode(',', $shippingDays);
 
         $helper = Mage::helper('postnl/deliveryOptions');
+
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
 
         /**
          * Calculate the earliest possible shipping date for comparison.
@@ -307,12 +278,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveDeliveryOption($data)
     {
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
+
         $quote = $this->getQuote();
 
-        $timeZone = Mage::app()->getLocale()->getTimezone();
-
         $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
-        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
+        $deliveryDateObject = new DateTime($deliveryDate, new DateTimeZone('UTC'));
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateObject, $quote->getStoreId());
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder

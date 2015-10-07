@@ -410,23 +410,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      */
     protected function _setDates(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
     {
-        $helper = Mage::helper('postnl/deliveryOptions');
-        $shippingDuration = $helper->getOrderShippingDuration($order);
-        $deliveryDate = $helper->getDeliveryDate(
-            $order->getCreatedAt(),
-            $order->getStoreId(),
-            false,
-            true,
-            true,
-            $shippingDuration,
-            true
-        );
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
 
-        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate);
+        $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
 
-        $confirmDate = clone $deliveryDate;
-        $confirmDate->sub(new DateInterval('P1D'));
-        $confirmDate = $helper->getValidConfirmDate($confirmDate);
+        $deliveryDate = $helper->getDeliveryDate($dateObject, $order->getStoreId());
+        $confirmDate = $helper->getShippingDate($dateObject, $order->getStoreId());
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());

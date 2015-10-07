@@ -544,18 +544,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $now       = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
 
         if (!$origValue) {
-            $helper = Mage::helper('postnl/deliveryOptions');
-            $shippingDuration = $helper->getOrderShippingDuration($row);
-            $deliveryDate = $helper->getDeliveryDate(
+            /** @var TIG_PostNL_Helper_Date $helper */
+            $helper = Mage::helper('postnl/date');
+            $origDate = $helper->getShippingDate(
                 $row->getCreatedAt(),
-                $row->getStoreId(),
-                false,
-                true,
-                true,
-                $shippingDuration
+                $row->getStoreId()
             );
-            $origDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
-            $origDate = $origDate->sub(new DateInterval('P1D'));
         } else {
             $origDate = new DateTime($origValue, new DateTimeZone('UTC'));
         }
