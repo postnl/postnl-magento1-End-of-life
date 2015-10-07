@@ -60,33 +60,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
         }
 
         $helper = Mage::helper('postnl/deliveryOptions');
-        $value  = $row->getData($this->getColumn()->getIndex());
+        $value = $row->getData($this->getColumn()->getIndex());
 
-        /**
-         * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
-         * order could be shipped.
-         */
-        if (!$value) {
-            $shippingDuration = $helper->getOrderShippingDuration($row);
-            $deliveryDate = $helper->getDeliveryDate(
-                $row->getCreatedAt(),
-                $row->getStoreId(),
-                false,
-                true,
-                true,
-                $shippingDuration
-            );
-
-            $value = $helper->getValidDeliveryDate($deliveryDate)
-                            ->sub(new DateInterval('P1D'));
-        } else {
-            $value = new DateTime($value, new DateTimeZone('UTC'));
-        }
-
-        /**
-         * Check if the confirm date is valid.
-         */
-        $value = $helper->getValidConfirmDate($value);
+        $value = new DateTime($value, new DateTimeZone('UTC'));
 
         /**
          * Update the row's value for the decorator later.
