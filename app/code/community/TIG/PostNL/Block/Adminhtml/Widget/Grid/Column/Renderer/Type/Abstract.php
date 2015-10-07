@@ -55,10 +55,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      *
      * @param string        $type
      * @param Varien_Object $row
+     * @param string        $destination
      *
      * @return string
      */
-    public function getShipmentTypeRenderedValue($type, Varien_Object $row)
+    public function getShipmentTypeRenderedValue($type, Varien_Object $row, $destination = 'NL')
     {
         $helper = Mage::helper('postnl');
 
@@ -67,10 +68,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         switch ($type) {
             case 'domestic':
                 $label = $helper->__('Domestic');
+                $type .= '_' . strtolower($destination);
                 break;
             case 'domestic_cod':
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('COD');
+                $type .= '_' . strtolower($destination);
                 break;
             case 'avond':
                 $label   = $helper->__('Domestic');
@@ -198,8 +201,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Check if this order is domestic.
          */
-        if ($value == 'NL') {
-            return $this->_getDomesticRenderedValue($row);
+        $domesticCountries = $helper->getDomesticCountries();
+        if (in_array($value, $domesticCountries)) {
+            return $this->_getDomesticRenderedValue($row, $value);
         }
 
         /**
@@ -337,16 +341,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      * Render this column for a domestic shipment.
      *
      * @param Varien_Object $row
+     * @param string        $destination
      *
      * @return string
      */
-    protected function _getDomesticRenderedValue(Varien_Object $row)
+    protected function _getDomesticRenderedValue(Varien_Object $row, $destination)
     {
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
         $label = $helper->__('Domestic');
-        $type  = 'domestic';
+        $type  = 'domestic_' . strtolower($destination);
 
         $isCod = $this->_isCod($row);
 

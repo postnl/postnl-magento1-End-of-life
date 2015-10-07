@@ -133,6 +133,48 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4955' => array(
              'BE',
          ),
+        '4970' => array(
+            'BE',
+        ),
+        '4971' => array(
+            'BE',
+        ),
+        '4972' => array(
+            'BE',
+        ),
+        '4973' => array(
+            'BE',
+        ),
+        '4974' => array(
+            'BE',
+        ),
+        '4975' => array(
+            'BE',
+        ),
+        '4976' => array(
+            'BE',
+        ),
+        '4960' => array(
+            'BE',
+        ),
+        '4961' => array(
+            'BE',
+        ),
+        '4962' => array(
+            'BE',
+        ),
+        '4963' => array(
+            'BE',
+        ),
+        '4964' => array(
+            'BE',
+        ),
+        '4965' => array(
+            'BE',
+        ),
+        '4966' => array(
+            'BE',
+        ),
     );
 
     /**
@@ -208,6 +250,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4924' => '4954',
         '4946' => '4955',
         '4944' => '4952',
+        '4960' => '4970',
+        '4961' => '4971',
+        '4962' => '4972',
+        '4963' => '4973',
+        '4964' => '4974',
+        '4965' => '4975',
+        '4966' => '4976',
     );
 
     /**
@@ -514,7 +563,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getBarcodeTypeForShipment($shipment)
     {
-        if ($shipment->isDutchShipment() || $shipment->isPakjeGemakShipment()) {
+        if ($shipment->isDomesticShipment() || $shipment->isPakjeGemakShipment()) {
             $barcodeType = self::DUTCH_BARCODE_TYPE;
             return $barcodeType;
         }
@@ -636,22 +685,22 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment::isDutchShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isDomesticShipment();
      */
-    public function isDutchShipment($shipment)
+    public function isDomesticShipment($shipment)
     {
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
              * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
-            return $shipment->isDutchShipment();
+            return $shipment->isDomesticShipment();
         }
 
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
-        return $tempPostnlShipment->isDutchShipment();
+        return $tempPostnlShipment->isDomesticShipment();
     }
 
     /**
@@ -796,7 +845,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Only NL shipments support multi-colli shipments.
          */
-        if (!$postnlShipment->isDutchShipment()) {
+        if (!$postnlShipment->isDomesticShipment()) {
             return 1;
         }
 
@@ -1015,8 +1064,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * Retrieves street name, house number and housen umber extension from the shipping address in the multiple street
      * ines configuration.
      *
-     * @param int                            $storeId
-     * @param Mage_Sales_Model_Order_Address $address
+     * @param int                                  $storeId
+     * @param Mage_Customer_Model_Address_Abstract $address
      *
      * @return array
      *

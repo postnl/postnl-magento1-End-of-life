@@ -63,6 +63,7 @@
  * @method boolean                     hasCanUseResponsiveDeliveryOptions()
  * @method boolean                     hasStoreTimeZones()
  * @method boolean                     hasValidDeliveryDaysArray()
+ * @method boolean                     hasDomesticCountries()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -91,6 +92,7 @@
  * @method boolean                     getCanUseResponsiveDeliveryOptions()
  * @method array                       getStoreTimeZones()
  * @method array                       getValidDeliveryDaysArray()
+ * @method array                       getDomesticCountries()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -119,6 +121,7 @@
  * @method TIG_PostNL_Model_Core_Cache setCanUseResponsiveDeliveryOptions(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setStoreTimeZones(array $value)
  * @method TIG_PostNL_Model_Core_Cache setValidDeliveryDaysArray(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setDomesticCountries(array $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

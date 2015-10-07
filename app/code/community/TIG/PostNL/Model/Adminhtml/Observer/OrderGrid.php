@@ -897,12 +897,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
-            if (!empty($options['postnl_domestic_options'])) {
-                $config['postnl_domestic_options'] = array(
-                    'name'   => 'product_options[domestic_options]',
+            if (!empty($options['postnl_domestic_nl_options'])) {
+                $config['postnl_domestic_nl_options'] = array(
+                    'name'   => 'product_options[domestic_nl_options]',
                     'type'   => 'select',
                     'label'  => $optionLabel,
-                    'values' => $options['postnl_domestic_options'],
+                    'values' => $options['postnl_domestic_nl_options'],
+                );
+            }
+
+            if (!empty($options['postnl_domestic_be_options'])) {
+                $config['postnl_domestic_be_options'] = array(
+                    'name'   => 'product_options[domestic_be_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_domestic_be_options'],
                 );
             }
 
@@ -960,12 +969,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
-            if (!empty($options['postnl_domestic_cod_options'])) {
-                $config['postnl_domestic_cod_options'] = array(
-                    'name'   => 'product_options[domestic_cod_options]',
+            if (!empty($options['postnl_domestic_nl_cod_options'])) {
+                $config['postnl_domestic_nl_cod_options'] = array(
+                    'name'   => 'product_options[domestic_nl_cod_options]',
                     'type'   => 'select',
                     'label'  => $optionLabel,
-                    'values' => $options['postnl_domestic_cod_options'],
+                    'values' => $options['postnl_domestic_nl_cod_options'],
+                );
+            }
+
+            if (!empty($options['postnl_domestic_be_cod_options'])) {
+                $config['postnl_domestic_be_cod_options'] = array(
+                    'name'   => 'product_options[domestic_be_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_domestic_be_cod_options'],
                 );
             }
 
@@ -1034,10 +1052,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     {
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
         $options = array(
-            'postnl_domestic_options' => $optionsModel->getOptions(
+            'postnl_domestic_nl_options' => $optionsModel->getOptions(
                 array(
-                    'group' => 'standard_options',
-                    'isCod' => false,
+                    'group'         => 'standard_options',
+                    'isCod'         => false,
+                    'isBelgiumOnly' => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_domestic_be_options' => $optionsModel->getOptions(
+                array(
+                    'group'         => 'standard_options',
+                    'isCod'         => false,
+                    'isBelgiumOnly' => true,
                 ),
                 false,
                 true
@@ -1082,10 +1110,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 false,
                 true
             ),
-            'postnl_domestic_cod_options' => $optionsModel->getOptions(
+            'postnl_domestic_nl_cod_options' => $optionsModel->getOptions(
                 array(
-                    'group' => 'standard_options',
-                    'isCod' => true,
+                    'group'         => 'standard_options',
+                    'isCod'         => true,
+                    'isBelgiumOnly' => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_domestic_be_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group'         => 'standard_options',
+                    'isCod'         => true,
+                    'isBelgiumOnly' => true,
                 ),
                 false,
                 true
