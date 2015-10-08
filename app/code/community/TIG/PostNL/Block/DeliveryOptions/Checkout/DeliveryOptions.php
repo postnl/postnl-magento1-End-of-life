@@ -73,6 +73,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     const POSTNL_MATRIX_RATE_CODE = 'postnl_matrixrate';
 
     /**
+     * Default shipping address country.
+     */
+    const DEFAULT_SHIPPING_COUNTRY = 'NL';
+
+    /**
      * Currently selected shipping address.
      *
      * @var Mage_Sales_Model_Quote_Address|null
@@ -277,6 +282,22 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get the currently selected shipping address's country.
+     *
+     * @return string
+     */
+    public function getCountry()
+    {
+        $country = $this->getShippingAddress()->getCountryId();
+
+        if (!$country) {
+            $country = self::DEFAULT_SHIPPING_COUNTRY;
+        }
+
+        return $country;
+    }
+
+    /**
      * Get the earliest possible delivery date.
      *
      * @return null|string
@@ -292,9 +313,10 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $quote    = $this->getQuote();
         $storeId  = $quote->getStoreId();
         $postcode = $this->getPostcode();
+        $country  = $this->getCountry();
 
         try {
-            $deliveryDate = $this->_getDeliveryDate($postcode, $quote);
+            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
@@ -771,13 +793,14 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * get the first possible delivery date from PostNL.
      *
      * @param string                 $postcode
+     * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
      * @throws TIG_PostNL_Exception
      *
      * @return string
      */
-    protected function _getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote) {
+    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote) {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
@@ -792,9 +815,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             );
         }
 
+        if ($country != 'NL' && $country != 'BE') {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.',
+                    $postcode
+                ),
+                'POSTNL-0235'
+            );
+        }
+
         $cif = Mage::getModel('postnl_deliveryoptions/cif');
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
-                        ->getDeliveryDate($postcode, $quote);
+                        ->getDeliveryDate($postcode, $country, $quote);
 
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');

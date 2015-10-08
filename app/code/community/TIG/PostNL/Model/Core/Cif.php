@@ -247,6 +247,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Characteristic' => '118',
             'Option'         => '006',
         ),
+        'Sunday' => array(
+            'Characteristic' => '101',
+            'Option'         => '008',
+        ),
     );
 
     /**

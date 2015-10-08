@@ -107,6 +107,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             $this->setIsCod(true);
         }
 
+        $countryId = $order->getShippingAddress()->getCountryId();
+        $domesticCountries = Mage::helper('postnl')->getDomesticCountries();
+
         $shipmentType = false;
         switch ($postnlOrder->getType()) {
             case 'PA':
@@ -121,14 +124,18 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 break;
             case 'Avond':
                 $this->setSubType($this->__('Evening Delivery'));
-                $shipmentType = $this->__('Domestic');
+                $shipmentType  = $this->__('Domestic');
+                $shipmentType .= ' (' . $order->getShippingAddress()->getCountryId() . ')';
                 break;
             case 'Sunday':
-                $this->getSubType($this->__('Sunday Delivery'));
                 $shipmentType = $this->__('Sunday Delivery');
                 break;
             case 'Overdag':
-                $shipmentType = $this->__('Domestic');
+                if (!in_array($countryId, $domesticCountries)) {
+                    continue;
+                }
+                $shipmentType  = $this->__('Domestic');
+                $shipmentType .= ' (' . $order->getShippingAddress()->getCountryId() . ')';
                 break;
         }
 
@@ -136,9 +143,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             return $shipmentType;
         }
 
-        $countryId = $order->getShippingAddress()->getCountryId();
-
-        if ($countryId == 'NL') {
+        if (in_array($countryId, $domesticCountries)) {
             $shipmentType = $this->__('Domestic');
 
             return $shipmentType;

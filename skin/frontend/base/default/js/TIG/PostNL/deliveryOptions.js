@@ -129,6 +129,7 @@ PostnlDeliveryOptions.prototype = {
 
     postcode                 : null,
     housenumber              : null,
+    country                  : null,
     fullAddress              : null,
     deliveryDate             : null,
     imageBaseUrl             : null,
@@ -175,6 +176,7 @@ PostnlDeliveryOptions.prototype = {
             || !params.locationsInAreaUrl
             || !params.postcode
             || !params.housenumber
+            || !params.country
             || !params.deliveryDate
             || !params.imageBaseUrl
             || !params.fullAddress
@@ -190,6 +192,7 @@ PostnlDeliveryOptions.prototype = {
         this.locationsInAreaUrl = params.locationsInAreaUrl;
         this.postcode           = params.postcode;
         this.housenumber        = params.housenumber;
+        this.country            = params.country;
         this.deliveryDate       = params.deliveryDate;
         this.imageBaseUrl       = params.imageBaseUrl;
         this.fullAddress        = params.fullAddress;
@@ -292,6 +295,11 @@ PostnlDeliveryOptions.prototype = {
     getHousenumber : function() {
         return this.housenumber;
     },
+
+    getCountry : function() {
+        return this.country;
+    },
+
 
     getFullAddress : function() {
         return this.fullAddress;
@@ -700,7 +708,7 @@ PostnlDeliveryOptions.prototype = {
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.getFullAddress(), this, this.debug);
 
         if (this.isDeliveryDaysAllowed()) {
-            this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+            this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getCountry(), this.getDeliveryDate());
         } else {
             if (this.debug) {
                 console.info('Showing default timeframe.');
@@ -709,7 +717,7 @@ PostnlDeliveryOptions.prototype = {
                 .setParsedTimeframes(true)
                 .hideSpinner();
         }
-        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getCountry(), this.getDeliveryDate());
 
         return this;
     },
@@ -719,11 +727,12 @@ PostnlDeliveryOptions.prototype = {
      *
      * @param {string} postcode
      * @param {number} housenumber
+     * @param {string} country
      * @param {string} deliveryDate
      *
      * @returns {boolean|Array|PostnlDeliveryOptions}
      */
-    getTimeframes : function(postcode, housenumber, deliveryDate) {
+    getTimeframes : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available timeframes.');
         }
@@ -752,6 +761,10 @@ PostnlDeliveryOptions.prototype = {
             housenumber = this.getHousenumber();
         }
 
+        if (!country) {
+            country = this.getCountry();
+        }
+
         if (!deliveryDate) {
             deliveryDate = this.getDeliveryDate();
         }
@@ -762,6 +775,7 @@ PostnlDeliveryOptions.prototype = {
                 postcode     : postcode,
                 housenumber  : housenumber,
                 deliveryDate : deliveryDate,
+                country      : country,
                 isAjax       : true
             },
             onSuccess : this.processGetTimeframesSuccess.bind(this),
@@ -927,11 +941,12 @@ PostnlDeliveryOptions.prototype = {
      *
      * @param {string} postcode
      * @param {int}    housenumber
+     * @param {string} country
      * @param {string} deliveryDate
      *
      * @return {PostnlDeliveryOptions}
      */
-    getLocations : function(postcode, housenumber, deliveryDate) {
+    getLocations : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
         }
@@ -950,6 +965,7 @@ PostnlDeliveryOptions.prototype = {
                 postcode     : postcode,
                 housenumber  : housenumber,
                 deliveryDate : deliveryDate,
+                country      : country,
                 isAjax       : true
             },
             onSuccess : this.processGetLocationsSuccess.bind(this),
@@ -2537,12 +2553,13 @@ PostnlDeliveryOptions.Map = new Class.create({
      */
     geocode : function(address, successCallback, failureCallback) {
         var geocoder = new google.maps.Geocoder();
+        var country = this.getDeliveryOptions().getCountry();
         geocoder.geocode(
             {
                 address                : address,
                 bounds                 : this.map.getBounds(),
                 componentRestrictions  : {
-                    country : 'NL'
+                    country : country
                 }
             },
             function(results, status) {
@@ -2572,6 +2589,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.hideSearchErrorDiv();
         var selectedResult = false;
 
+        var country = this.getDeliveryOptions().getCountry();
+
         /**
          * Loop through all results and validate each to find a suitable result to use.
          */
@@ -2593,22 +2612,22 @@ PostnlDeliveryOptions.Map = new Class.create({
             /**
              * Make sure the result is located in the Netherlands.
              */
-            var resultIsNl = false;
+            var resultIsDomestic = false;
             var components = result.address_components;
             components.each(function(component) {
                 if (selectedResult !== false) {
                     return false;
                 }
 
-                if (component.short_name != 'NL') {
+                if (component.short_name != country) {
                     return false;
                 }
 
-                resultIsNl = true;
+                resultIsDomestic = true;
                 return true;
             });
 
-            if (!resultIsNl) {
+            if (!resultIsDomestic) {
                 return false;
             }
 
@@ -2766,6 +2785,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        var country = this.getDeliveryOptions().getCountry();
+
         /**
          * Send a new getNearestLocations request.
          */
@@ -2773,7 +2794,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             method : 'post',
             parameters : {
                 lat          : center.lat(),
-                'long'         : center.lng(),
+                'long'       : center.lng(),
+                country      : country,
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
@@ -2857,6 +2879,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        var country = this.getDeliveryOptions().getCountry();
+
         var locationsInAreaRequestObject = new Ajax.PostnlRequest(this.deliveryOptions.getLocationsInAreaUrl(), {
             method : 'post',
             parameters : {
@@ -2864,6 +2888,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 northEastLng : northEast.lng(),
                 southWestLat : southWest.lat(),
                 southWestLng : southWest.lng(),
+                country      : country,
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },

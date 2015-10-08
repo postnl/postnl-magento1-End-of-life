@@ -352,12 +352,14 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order is being shipped to the Netherlands.
+         * Check if this order is being shipped to a domestic country.
          */
+        $domesticCountries = Mage::helper('postnl')->getDomesticCountries();
         $shippingAddress = $order->getShippingAddress();
 
+
         if (!$shippingAddress
-            || $shippingAddress->getCountryId() != 'NL'
+            || !in_array($shippingAddress->getCountryId(), $domesticCountries)
         ) {
             return false;
         }

@@ -294,27 +294,47 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of standard product codes.
      *
-     * @param boolean $flat
+     * @param boolean      $flat
+     * @param string|false $destination
      *
      * @return array
      */
-    public function getStandardProductCodes($flat = true)
+    public function getStandardProductCodes($flat = true, $destination = false)
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableOptions($flat);
+
+        if (strcasecmp($destination, 'nl') === 0) {
+            $productCodes = $standardProductCodes->getAvailableNlOptions($flat);
+        } elseif (strcasecmp($destination, 'be') === 0) {
+            $productCodes = $standardProductCodes->getAvailableBeOptions($flat);
+        } else {
+            $productCodes = $standardProductCodes->getAvailableOptions($flat);
+        }
+
+        return $productCodes;
     }
 
     /**
      * Get an array of standard COD product codes.
      *
-     * @param boolean $flat
+     * @param boolean      $flat
+     * @param string|false $destination
      *
      * @return array
      */
-    public function getStandardCodProductCodes($flat = true)
+    public function getStandardCodProductCodes($flat = true, $destination = false)
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableCodOptions($flat);
+
+        if (strcasecmp($destination, 'nl') === 0) {
+            $productCodes = $standardProductCodes->getAvailableNlOptions($flat);
+        } elseif (strcasecmp($destination, 'be') === 0) {
+            $productCodes = $standardProductCodes->getAvailableBeOptions($flat);
+        } else {
+            $productCodes = $standardProductCodes->getAvailableOptions($flat);
+        }
+
+        return $productCodes;
     }
 
     /**

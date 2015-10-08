@@ -67,7 +67,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $comment       = false;
         switch ($type) {
             case 'domestic':
-                $label = $helper->__('Domestic');
+                $label = $helper->__('Domestic') . ' (' . $destination . ')';
                 $type .= '_' . strtolower($destination);
                 break;
             case 'domestic_cod':
@@ -350,7 +350,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
-        $label = $helper->__('Domestic');
+        $label = $helper->__('Domestic') . ' (' . $destination . ')';
         $type  = 'domestic_' . strtolower($destination);
 
         $isCod = $this->_isCod($row);

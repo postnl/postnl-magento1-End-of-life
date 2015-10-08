@@ -81,13 +81,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * Gets the delivery date based on the shop's cut-off time.
      *
      * @param string                 $postcode
+     * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
      * @return string
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote)
+    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote)
     {
         if (empty($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -125,7 +126,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
                 'CutOffTimes'                => $CutOffTimes,
                 'Options'                    => array('Daytime'),
-                'CountryCode'                => 'NL'
+                'Countrycode'                => $country,
             ),
             'Message' => $this->_getMessage('')
         );
@@ -188,7 +189,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             'Timeframe' => array(
                 'PostalCode'    => $data['postcode'],
                 'HouseNr'       => $data['housenumber'],
-                'CountryCode'   => 'NL',
+                'CountryCode'   => $data['country'],
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
                 'SundaySorting' => $this->_getSundaySortingAllowed(),
@@ -243,7 +244,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'Location'    => $location,
             'Message'     => $message,
-            'Countrycode' => 'NL' // @todo make dynamic
+            'Countrycode' => $data['country']
         );
 
         /**
@@ -291,7 +292,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'Location'    => $location,
             'Message'     => $message,
-            'Countrycode' => 'NL', // @todo make dynamic
+            'Countrycode' => $data['country']
 
         );
 

@@ -1554,24 +1554,35 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets allowed product options for the current shipment.
      *
-     * @param boolean $flat
-     * @param boolean $checkBuspakje
+     * @param boolean           $flat
+     * @param boolean           $checkBuspakje
+     * @param string|false|null $destination Optional destination of the shipment. If NULL, the country ID from the
+     *                                       shipment's shipping address will be used. If FALSE, all product options
+     *                                       will be retrieved. This parameter only applies to domestic shipments.
      *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductOptions($flat = true, $checkBuspakje = false)
+    public function getAllowedProductOptions($flat = true, $checkBuspakje = false, $destination = null)
     {
         $cifHelper = $this->getHelper('cif');
 
         $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
             case self::SHIPMENT_TYPE_DOMESTIC:
-                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
+                if ($destination === null) {
+                    $destination = $this->getShippingAddress()->getCountryId();
+                }
+
+                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat, $destination);
                 break;
             case self::SHIPMENT_TYPE_DOMESTIC_COD:
-                $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
+                if ($destination === null) {
+                    $destination = $this->getShippingAddress()->getCountryId();
+                }
+
+                $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat, $destination);
                 break;
             case self::SHIPMENT_TYPE_AVOND:
                 $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
