@@ -54,7 +54,7 @@
     <?php $_defaultProductOption  = $this->getDefaultProductOption(); ?>
     <?php $_isBelgium             = $this->isBelgium(); ?>
     <?php $_isGlobalPackShipment  = (bool) $_cifHelper->isGlobalShipment($_shipment); ?>
-    <?php $_isDutchShipment       = (bool) $_cifHelper->isDutchShipment($_shipment); ?>
+    <?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
     <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
     <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php endif; ?>

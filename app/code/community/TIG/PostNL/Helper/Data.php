@@ -150,6 +150,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS = 'postnl/returns/print_return_and_shipping_label';
 
     /**
+     * Xpath to the sender country setting.
+     */
+    const XPATH_SENDER_COUNTRY = 'postnl/cif_address/country';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -260,6 +265,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var string[]
      */
     protected $_storeTimeZones;
+
+    /**
+     * @var array
+     */
+    protected $_domesticCountries;
 
     /**
      * Get required fields array.
@@ -453,6 +463,69 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $this->_storeTimeZones;
+    }
+
+    /**
+     * Get an array of country codes considered to be 'domestic'.
+     *
+     * @return array
+     */
+    public function getDomesticCountries()
+    {
+        $domesticCountries = $this->_domesticCountries;
+
+        if (!empty($domesticCountries)) {
+            return $domesticCountries;
+        }
+
+        /**
+         * Try to tget the domestic country array from the cache.
+         */
+        $cache = $this->getCache();
+        if ($cache && $cache->hasDomesticCountries()) {
+            $domesticCountries = $cache->getDomesticCountries();
+
+            $this->setDomesticCountries($cache->getDomesticCountries());
+            return $domesticCountries;
+        }
+
+        /**
+         * The domestic country array contains the selected sender address country.
+         */
+        $domesticCountries = array(
+            Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID)
+        );
+
+        /**
+         * The array should also always contain 'NL'.
+         */
+        if (!in_array('NL', $domesticCountries)) {
+            $domesticCountries[] = 'NL';
+        }
+
+        $this->setDomesticCountries($domesticCountries);
+
+        /**
+         * Attempt to save the array to the PostNL cache.
+         */
+        if ($cache) {
+            $cache->setDomesticCountries($domesticCountries)
+                  ->saveCache();
+        }
+
+        return $domesticCountries;
+    }
+
+    /**
+     * @param array $domesticCountries
+     *
+     * @return $this
+     */
+    public function setDomesticCountries($domesticCountries)
+    {
+        $this->_domesticCountries = $domesticCountries;
+
+        return $this;
     }
 
     /**

@@ -2313,8 +2313,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         /**
          * Delivery options are only available when shipping to the Netherlands.
+         *
+         * Delivery options in Belgium are currently unstable and therefor not yet fully supported. Expect this to be
+         * added in a later release.
+         *
+         * @todo add Belgium as a valid country for PostNL delivery options.
          */
-        if ($shippingAddress->getCountry() != 'NL') {
+        if ($shippingAddress->getCountry() != 'NL' /*&& $shippingAddress->getCountry() != 'BE'*/) {
             Mage::register($registryKey, false);
             return false;
         }

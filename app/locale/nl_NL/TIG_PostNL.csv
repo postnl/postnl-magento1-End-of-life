@@ -289,7 +289,7 @@ TIG_PostNL::Signature on delivery,Handtekening bij ontvangst
 TIG_PostNL::Signature on delivery + Delivery to stated address only,Handtekening bij ontvangst + Lever alleen aan opgegeven adres
 TIG_PostNL::Signature on delivery + Return when not home,Handtekening bij ontvangst + Retour indien niet thuis
 TIG_PostNL::Signature on delivery + Deliver to stated address only + Return when not home,Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Retour indien niet thuis
-TIG_PostNL::Delivery to neighbour + Return when not home,Lever bij buren + kom terug indien niet thuis
+TIG_PostNL::Delivery to neighbour + Return when not home,Lever bij buren + Retour indien niet thuis
 TIG_PostNL::Deliver to stated address only,Lever alleen aan opgegeven adres
 TIG_PostNL::Deliver to stated address only + Return when not home,Lever alleen aan opgegeven adres + Retour indien niet thuis
 TIG_PostNL::Print shipping labels & confirm shipment,Print verzendlabels en zending voormelden
@@ -816,7 +816,7 @@ TIG_PostNL::Unable to create an invoice for this shipment due to the order missi
 TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Er kan geen factuur aangemaakt worden voor deze zending, omdat de bestelling niet gefactureerd kan worden."
 TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgestreden tijdens het aanmaken van een factuur voor deze zending.
 TIG_PostNL::PostNL COD,PostNL Rembours
-"TIG_PostNL::Activate an extra payment method with COD shipments.<br/>Please note: In order to offer COD shipments to your customers you will need to complete the fields below and activate an extra payment method <a href=""%s"" target=""_blank"">here</a>.","Met rembours activeert u voor uw klanten een extra betalingsmethode.<br/>Let op: als u gebruik wilt maken van rembours moet u naast de onderstaande velden de betaalmethode methode <a href=""%s"" target=""_blank"">hier</a> configureren."
+"TIG_PostNL::Activate an extra payment method with COD shipments.<br/>Please note: In order to offer COD shipments to your customers you will need to complete the fields below and activate an extra payment method <a href=""%s"" target=""_blank"">here</a>.<br />PostNL COD is only available for Dutch orders.","Met rembours activeert u voor uw klanten een extra betalingsmethode.<br/>Let op: als u gebruik wilt maken van rembours moet u naast de onderstaande velden de betaalmethode methode <a href=""%s"" target=""_blank"">hier</a> configureren.<br />PostNL Rembours is enkel beschikbaar voor Nederlandse bestellingen."
 TIG_PostNL::Bankaccount name,Bankrekening naam
 TIG_PostNL::Bankaccount IBAN,Bankrekening IBAN
 TIG_PostNL::Bankaccount BIC,Bankrekening BIC
@@ -945,7 +945,7 @@ TIG_PostNL::This shipment does not need to be confirmed.,Deze zending hoeft niet
 TIG_PostNL::Show letter box parcel option in order grid,Toon brievenbuspakje optie in het besteloverzicht
 TIG_PostNL::This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.,Dit voegt de optie toe om bestellingen te markeren als brievenbuspakjes wanneer u zendingen aanmaakt vanuit het besteloverzicht.
 TIG_PostNL::Calculation mode,Berekeningsmodus
-TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt. U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
+TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
 Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Brievenbuspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een brievenbuspakje is wanneer u handmatig een zending aanmaakt."
 TIG_PostNL::Use letter box parcels,Gebruik brievenbuspakjes
 TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen.<br/>Het is zeer belangrijk dat u alle producten correct geconfigureerd heeft als u gebruik wilt maken van brievenbuspakjes. Bestellingen die meer wegen dan <strong>2kg</strong> of groter zijn dan <strong>38 x 26,5 x 3,2 cm</strong> kunnen niet verstuurd worden als brievenbuspakjes."
@@ -1286,3 +1286,25 @@ TIG_PostNL::GoMage's Checkout version,GoMage's Checkout versie
 TIG_PostNL::Print the shipping label on the same page as the packing slip,Print het verzendlabel op dezelfde pagina als de pakbon
 TIG_PostNL::Print the shipping label on a separate page,Print het verzendlabel op een aparte pagina
 TIG_PostNL::Don't print the shipping label,Print het verzendlabel niet
+TIG_PostNL::Loading available delivery options for your shipping address...,De beschikbare bezorgopties voor uw verzendadres worden opgehaald...
+TIG_PostNL::Picqer's PostNL add-on version,Picqer's PostNL add-on versie
+TIG_PostNL::Default sunday delivery shipping option.,Standaard zondag bezorging verzendoptie.
+TIG_PostNL::Enable sunday delivery,Activeer zondag bezorging
+TIG_PostNL::This setting may be overwritten by manualy creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken.
+TIG_PostNL::Activate sunday delivery for your customers.,Activeer zondag bezorging voor uw klanten.
+TIG_PostNL::Sunday Delivery,Zondag Bezorging
+TIG_PostNL::Sunday,Zondag
+TIG_PostNL::The sender country setting is only available on the 'global' scope.,De afzenderland instelling is alleen beschikbaar in de 'global' scope.
+TIG_PostNL::Please note: the country you select here will be used to determine whether certain shipping options (such as Belgium domestic) are available to you.,N.B. het land dat je selecteert zal gebruikt worden om te bepalen of sommige verzendopties (zoals België domestic) beschikbaar zijn.
+TIG_PostNL::The Netherlands,Nederland
+TIG_PostNL::Belgium,België
+TIG_PostNL::Belgium Deliver to stated address only + Return when not home,België lever alleen aan opgegeven adres + Retour indien niet thuis
+TIG_PostNL::Belgium Return when not home,België Retour indien niet thuis
+TIG_PostNL::Belgium Signature on delivery + Deliver to stated address only + Return when not home,België Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Retour indien niet thuis
+TIG_PostNL::Belgium Signature on delivery + Return when not home,België Handtekening bij ontvangst + Retour indien niet thuis
+TIG_PostNL::Belgium COD + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
+TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische binnenlandse zendingen.
+TIG_PostNL::Default Belgium COD shipping option,Standaard België rembours verzendoptie

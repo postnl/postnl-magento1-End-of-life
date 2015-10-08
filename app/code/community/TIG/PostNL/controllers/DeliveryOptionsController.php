@@ -908,7 +908,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $countryCodeValidator = new Zend_Validate_InArray(array('haystack' => $countryCodes));
         $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
         $housenumberValidator = new Zend_Validate_Digits();
-        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
 
         if (!$cityValidator->isValid($city)) {
             throw new TIG_PostNL_Exception(
@@ -949,6 +948,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 'POSTNL-0145'
             );
         }
+
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_' . $countryCode);
 
         if (!$postcodeValidator->isValid($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -1039,6 +1040,17 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
+        $country = $params['country'];
+        if ($country != 'NL' && $country != 'BE') {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid country supplied for GetDeliveryTimeframes request: %s',
+                    $country
+                ),
+                'POSTNL-0233'
+            );
+        }
+
         $postcode    = $params['postcode'];
         $housenumber = $params['housenumber'];
 
@@ -1052,7 +1064,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         /**
          * Get validation classes for the postcode and housenumber values.
          */
-        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_' . $country);
         $housenumberValidator = new Zend_Validate_Digits();
 
         /**
@@ -1111,6 +1123,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $data = array(
             'postcode'     => $postcode,
             'housenumber'  => $housenumber,
+            'country'      => $country,
             'deliveryDate' => $deliveryDate,
         );
 
@@ -1168,6 +1181,17 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
+        $country = $postData['country'];
+        if ($country != 'NL' && $country != 'BE') {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid country supplied for getNearestLocations request: %s',
+                    $country
+                ),
+                'POSTNL-0232'
+            );
+        }
+
         /**
          * If a postcode was supplied, validate it and return it as an array.
          */
@@ -1175,7 +1199,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             $postcode = $postData['postcode'];
             $postcode = strtoupper(str_replace(' ', '', $postcode));
 
-            $validator = new Zend_Validate_PostCode('nl_NL');
+            $validator = new Zend_Validate_PostCode('nl_' . $country);
             if (!$validator->isValid($postcode)) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
@@ -1188,6 +1212,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
             $data = array(
                 'postcode'     => $postcode,
+                'country'      => $country,
                 'deliveryDate' => $deliveryDate,
             );
             return $data;
@@ -1215,6 +1240,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $data = array(
             'lat'          => $postData['lat'],
             'long'         => $postData['long'],
+            'country'      => $country,
             'deliveryDate' => $deliveryDate,
         );
 
@@ -1299,6 +1325,17 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
+        $country = $postData['country'];
+        if ($country != 'NL' && $country != 'BE') {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid country supplied for getLocationsInArea request: %s',
+                    $country
+                ),
+                'POSTNL-0234'
+            );
+        }
+
         $data = array(
             'northEast'    => array(
                 'lat'  => $northEastLat,
@@ -1308,6 +1345,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 'lat'  => $southWestLat,
                 'long' => $southWestLng,
             ),
+            'country'      => $country,
             'deliveryDate' => $deliveryDate,
         );
 
