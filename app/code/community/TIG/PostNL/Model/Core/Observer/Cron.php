@@ -177,20 +177,20 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('Attempting to read temp label files from %s.', $tempLabelsDirectory);
 
         /**
-         * Get all temporary label files in the directory
-         */
-        $files = glob($tempLabelsDirectory . DS . '*' . $tempLabelName);
-
-        /**
          * If the directory cannot be read, throw an exception.
          */
-        if ($files === false) {
+        if (!is_readable($tempLabelsDirectory)) {
             $helper->cronLog('Temporary label storage is unreadable. Exiting cron.');
             throw new TIG_PostNL_Exception(
                 $helper->__('Unable to read directory: %s', $tempLabelsDirectory),
                 'POSTNL-0096'
             );
         }
+
+        /**
+         * Get all temporary label files in the directory
+         */
+        $files = glob($tempLabelsDirectory . DS . '*' . $tempLabelName);
 
         $fileCount = count($files);
         if ($fileCount < 1) {
@@ -264,20 +264,20 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('Attempting to read lock files from %s.', $locksDirectory);
 
         /**
-         * Get all PostNL lock files in the directory
-         */
-        $files = glob($locksDirectory . DS . 'postnl_process_*');
-
-        /**
          * If the directory cannot be read, throw an exception.
          */
-        if ($files === false) {
+        if (!is_readable($locksDirectory)) {
             $helper->cronLog('Lock storage is unreadable. Exiting cron.');
             throw new TIG_PostNL_Exception(
                 $helper->__('Unable to read directory: %s', $locksDirectory),
                 'POSTNL-0096'
             );
         }
+
+        /**
+         * Get all PostNL lock files in the directory
+         */
+        $files = glob($locksDirectory . DS . 'postnl_process_*');
 
         $fileCount = count($files);
         if ($fileCount < 1) {
