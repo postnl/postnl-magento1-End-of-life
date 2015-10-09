@@ -988,7 +988,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If buspakje is turned off, return setting 'manual' to prevent extra checks while getting same functionality.
+         * If buspakje is turned off, return setting 'manual' to prevent extra checks while getting the same
+         * functionality.
          */
         $buspakjeActive = $this->canUseBuspakje();
         if(!$buspakjeActive){

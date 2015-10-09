@@ -2051,20 +2051,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * Check if the quote has a valid minimum amount
-         */
-        if (!$quote->validateMinimumAmount()) {
-            $errors = array(
-                array(
-                    'code'    => 'POSTNL-0105',
-                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
-                )
-            );
-            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-            return false;
-        }
-
-        /**
          * Check if the current quote is a letter box parcel order and if so, if delivery options are allowed for letter
          * box parcel orders.
          */
