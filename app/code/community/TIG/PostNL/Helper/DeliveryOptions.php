@@ -2091,6 +2091,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         foreach ($quote->getAllVisibleItems() as $item) {
             $productId = $item->getProductId();
+            $option    = $item->getOptionByCode('simple_product');
+            if ($option) {
+                $productId = $option->getProduct()->getId();
+            }
+            Mage::log($productId, null, 'logie.log', true);
             $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                 $productId,
                 'postnl_allow_delivery_options',
