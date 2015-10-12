@@ -219,6 +219,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpaths to default product options settings.
      */
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
+    const XPATH_DEFAULT_STANDARD_BE_PRODUCT_OPTION    = 'postnl/grid/default_be_product_option';
     const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cod/default_cod_product_option';
     const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/grid/default_evening_product_option';
     const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cod/default_evening_cod_product_option';
@@ -1229,7 +1230,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If we still don't have an xpath, the shipment is a regular domestic shipment.
          */
         if (!$xpath) {
-            $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
+            $destination = $this->getShippingAddress()->getCountryId();
+            if ($destination == 'BE') {
+                $xpath = self::XPATH_DEFAULT_STANDARD_BE_PRODUCT_OPTION;
+            } else {
+                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
+            }
         }
 
         /**

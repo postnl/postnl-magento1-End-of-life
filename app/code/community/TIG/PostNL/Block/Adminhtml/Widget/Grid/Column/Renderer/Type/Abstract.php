@@ -357,7 +357,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($isCod) {
             $type .= '_cod';
-        } elseif ($deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
+        } elseif ($destination == 'NL' && $deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
             /**
              * If the buspakje calculation mode is set to automatic and the order fits as a buspakje, we should render
              * the column as such.
@@ -375,7 +375,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
-        } else {
+        } elseif ($destination == 'NL') {
             /**
              * If the buspakje calculation mode is set to manual, we can only inform the merchant that this might be a
              * buspakje.

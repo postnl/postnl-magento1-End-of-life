@@ -104,7 +104,7 @@
         <label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>
         <select id="postnl_product_option" class="select required-entry" name="postnl[product_option]">
             <?php foreach($_productOptions as $_option): ?>
-                <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                <?php if (!empty($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
                     <?php continue; ?>
                 <?php endif; ?>
 

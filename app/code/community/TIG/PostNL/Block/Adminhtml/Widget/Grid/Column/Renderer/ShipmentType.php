@@ -40,6 +40,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     extends TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 {
     /**
+     * Additional column names used.
+     */
+    const COUNTRY_ID_COLUMN  = 'country_id';
+
+    /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
      *
      * @param Varien_Object $row
@@ -69,7 +74,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             return '';
         }
 
-        $renderedValue = $this->getShipmentTypeRenderedValue($value, $row);
+        $destination = $row->getData(self::COUNTRY_ID_COLUMN);
+
+        $renderedValue = $this->getShipmentTypeRenderedValue($value, $row, $destination);
 
         return $renderedValue;
     }

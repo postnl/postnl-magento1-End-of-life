@@ -2307,7 +2307,7 @@
             </POSTNL-0221>
             <POSTNL-0222>
                 <message>Warning: possible PostNL and GoMage LightCheckout conflict.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859018</url>
                 <type>warning</type>
             </POSTNL-0222>
             <POSTNL-0223>
@@ -2317,22 +2317,22 @@
             </POSTNL-0223>
             <POSTNL-0224>
                 <message>An error occurred while saving this step of the configuration wizard. Please use the regular "Save Config" button instead.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94858988</url>
                 <type>error</type>
             </POSTNL-0224>
             <POSTNL-0225>
                 <message>No PostNL Shipment found for shipment ID #%s.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859048</url>
                 <type>error</type>
             </POSTNL-0225>
             <POSTNL-0226>
                 <message>Only A4 or A6 are valid values for the 'labelSize' parameter.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94865547</url>
                 <type>error</type>
             </POSTNL-0226>
             <POSTNL-0227>
                 <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859068</url>
                 <type>error</type>
             </POSTNL-0227>
             <POSTNL-0228>
@@ -2347,7 +2347,7 @@
             </POSTNL-0229>
             <POSTNL-0230>
                 <message>Could not create or find a shipment for order #%s.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859078</url>
                 <type>error</type>
             </POSTNL-0230>
             <POSTNL-0231>

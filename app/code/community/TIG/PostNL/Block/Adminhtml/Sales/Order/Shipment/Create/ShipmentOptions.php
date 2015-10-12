@@ -183,7 +183,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     public function isBelgium()
     {
         $shipment = $this->getShipment();
-        if ($shipment->getShippingAddress()->getCountry() == 'BE') {
+        if ($shipment->getShippingAddress()->getCountryId() == 'BE') {
             return true;
         }
 

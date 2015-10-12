@@ -1349,6 +1349,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * PakjeGemak is only available when sending from the Netherlands.
+         */
+        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($senderCountry != 'NL') {
+            return false;
+        }
+
+        /**
          * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
          */
         $allowed = parent::canUsePakjeGemak($storeId);
@@ -1578,6 +1586,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
         if (!$enabled) {
+            return false;
+        }
+
+        /**
+         * Pakketautomaat is only available when sending from the Netherlands.
+         */
+        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($senderCountry != 'NL') {
             return false;
         }
 
