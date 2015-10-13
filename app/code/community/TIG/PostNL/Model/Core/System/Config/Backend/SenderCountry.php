@@ -44,6 +44,43 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
     const XPATH_ALTERNATIVE_SENDER_COUNTRY = 'postnl/cif_address/alternative_sender_country';
 
     /**
+     * @var array
+     */
+    protected $_validSenderCountries = array(
+        'NL',
+        'BE',
+    );
+
+    /**
+     * @return array
+     */
+    public function getValidSenderCountries()
+    {
+        return $this->_validSenderCountries;
+    }
+
+    /**
+     * Validate the value before saving.
+     *
+     * @return Mage_Core_Model_Abstract
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _beforeSave()
+    {
+        $value = $this->getValue();
+
+        if (!in_array($value, $this->getValidSenderCountries())) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__("Only 'NL' and 'BE' are allowed as sender country."),
+                'POSTNL-0236'
+            );
+        }
+
+        return parent::_beforeSave();
+    }
+
+    /**
      * When saving the sender coutry setting, copy it's value to the alternative sender country setting.
      *
      * @return Mage_Core_Model_Abstract

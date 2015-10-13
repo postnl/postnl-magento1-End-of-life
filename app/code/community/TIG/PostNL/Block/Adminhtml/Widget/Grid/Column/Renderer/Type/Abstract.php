@@ -55,11 +55,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      *
      * @param string        $type
      * @param Varien_Object $row
-     * @param string        $destination
      *
      * @return string
      */
-    public function getShipmentTypeRenderedValue($type, Varien_Object $row, $destination = 'NL')
+    public function getShipmentTypeRenderedValue($type, Varien_Object $row)
     {
         $helper = Mage::helper('postnl');
 
@@ -67,13 +66,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $comment       = false;
         switch ($type) {
             case 'domestic':
-                $label = $helper->__('Domestic') . ' (' . $destination . ')';
-                $type .= '_' . strtolower($destination);
+                $label = $helper->__('Domestic');
                 break;
             case 'domestic_cod':
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('COD');
-                $type .= '_' . strtolower($destination);
                 break;
             case 'avond':
                 $label   = $helper->__('Domestic');
@@ -201,8 +198,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Check if this order is domestic.
          */
-        $domesticCountries = $helper->getDomesticCountries();
-        if (in_array($value, $domesticCountries)) {
+        $domesticCountry = $helper->getDomesticCountry();
+        if ($value == $domesticCountry) {
             return $this->_getDomesticRenderedValue($row, $value);
         }
 
@@ -350,8 +347,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
-        $label = $helper->__('Domestic') . ' (' . $destination . ')';
-        $type  = 'domestic_' . strtolower($destination);
+        $label = $helper->__('Domestic');
+        $type  = 'domestic';
 
         $isCod = $this->_isCod($row);
 

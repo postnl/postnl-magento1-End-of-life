@@ -219,7 +219,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpaths to default product options settings.
      */
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
-    const XPATH_DEFAULT_STANDARD_BE_PRODUCT_OPTION    = 'postnl/grid/default_be_product_option';
     const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cod/default_cod_product_option';
     const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/grid/default_evening_product_option';
     const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cod/default_evening_cod_product_option';
@@ -1230,12 +1229,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If we still don't have an xpath, the shipment is a regular domestic shipment.
          */
         if (!$xpath) {
-            $destination = $this->getShippingAddress()->getCountryId();
-            if ($destination == 'BE') {
-                $xpath = self::XPATH_DEFAULT_STANDARD_BE_PRODUCT_OPTION;
-            } else {
-                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
-            }
+            $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
         }
 
         /**
@@ -1562,33 +1556,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param boolean           $flat
      * @param boolean           $checkBuspakje
-     * @param string|false|null $destination Optional destination of the shipment. If NULL, the country ID from the
-     *                                       shipment's shipping address will be used. If FALSE, all product options
-     *                                       will be retrieved. This parameter only applies to domestic shipments.
      *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductOptions($flat = true, $checkBuspakje = false, $destination = null)
+    public function getAllowedProductOptions($flat = true, $checkBuspakje = false)
     {
         $cifHelper = $this->getHelper('cif');
 
         $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
             case self::SHIPMENT_TYPE_DOMESTIC:
-                if ($destination === null) {
-                    $destination = $this->getShippingAddress()->getCountryId();
-                }
-
-                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat, $destination);
+                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
                 break;
             case self::SHIPMENT_TYPE_DOMESTIC_COD:
-                if ($destination === null) {
-                    $destination = $this->getShippingAddress()->getCountryId();
-                }
-
-                $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat, $destination);
+                $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
                 break;
             case self::SHIPMENT_TYPE_AVOND:
                 $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
@@ -2203,8 +2186,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $shippingDestination = $shippingAddress->getCountryId();
 
-        $domesticCountries = $this->getHelper()->getDomesticCountries();
-        if (in_array($shippingDestination, $domesticCountries)) {
+        $domesticCountry = $this->getHelper()->getDomesticCountry();
+        if ($shippingDestination == $domesticCountry) {
             return true;
         }
 
@@ -2220,6 +2203,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         if ($this->getIsEuShipment()) {
             return true;
+        }
+
+        /**
+         * It is possible for a shipment to be both domestic and EPS. In this case domestic takes priority.
+         */
+        if ($this->isDomesticShipment()) {
+            return false;
         }
 
         $shippingAddress = $this->getShippingAddress();
@@ -4665,19 +4655,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (isset($codes['use_default']) && $codes['use_default'] == '1') {
             return $this->getDefaultProductCode();
         }
-
-        /**
-         * For domestic shipments the destination needs to be added to the shipment type code.
-         */
-        if ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC || $shipmentType == self::SHIPMENT_TYPE_DOMESTIC_COD) {
-            $destination  = strtolower($this->getShippingAddress()->getCountryId());
-            $shipmentType = self::SHIPMENT_TYPE_DOMESTIC . '_' . $destination;
-
-            if ($this->isCod()) {
-                $shipmentType .= '_cod';
-            }
-        }
-
         /**
          * Get the selected product code for the current shipment's shipment type.
          */
