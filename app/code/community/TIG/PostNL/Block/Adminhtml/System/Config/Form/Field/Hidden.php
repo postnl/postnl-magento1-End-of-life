@@ -161,23 +161,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
      */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $value = $this->_getValue();
+        $value = $element->getValue();
 
         $html = '<input id="'.$element->getHtmlId().'" name="'.$element->getName()
             .'" value="' . $value . '" '.$this->serialize($element->getHtmlAttributes()).'/>'."\n";
         $html.= $element->getAfterElementHtml();
         return $html;
-    }
-
-    /**
-     * Value getter.
-     *
-     * This method should be overloaded in child methods.
-     *
-     * @return string
-     */
-    protected function _getValue()
-    {
-        return '';
     }
 }

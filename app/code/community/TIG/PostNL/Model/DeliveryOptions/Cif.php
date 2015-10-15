@@ -126,7 +126,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
                 'CutOffTimes'                => $CutOffTimes,
                 'Options'                    => array('Daytime'),
-                'Countrycode'                => $country,
+                'CountryCode'                => $country,
             ),
             'Message' => $this->_getMessage('')
         );

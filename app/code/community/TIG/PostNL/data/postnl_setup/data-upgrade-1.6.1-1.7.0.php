@@ -43,4 +43,15 @@
 $installer = $this;
 
 $installer->upgradeCifVersions()
+          ->addSupportedProductCode(
+              array(
+                  '4970',
+                  '4971',
+                  '4972',
+                  '4973',
+                  '4974',
+                  '4975',
+                  '4976',
+              )
+          )
           ->clearConfigCache();

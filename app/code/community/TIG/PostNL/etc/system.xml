@@ -666,7 +666,7 @@
                         <country translate="label tooltip" module="postnl">
                             <label>Country</label>
                             <tooltip>Please note: the country you select here will be used to determine whether certain shipping options (such as Belgium domestic) are available to you.</tooltip>
-                            <frontend_type>select</frontend_type>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hidden</frontend_model>
                             <source_model>postnl_core/system_config_source_senderCountry</source_model>
                             <backend_model>postnl_core/system_config_backend_senderCountry</backend_model>
                             <sort_order>30</sort_order>
@@ -1357,6 +1357,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </delivery_options_header>
                         <delivery_options_disabled_header translate="label" module="postnl">
@@ -1371,8 +1375,26 @@
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>other</value>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </delivery_options_disabled_header>
+                        <delivery_options_belgium_header translate="label" module="postnl">
+                            <label>PostNL delivery options are only available when shipping from the Netherlands.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                        </delivery_options_belgium_header>
                         <delivery_options_active translate="label" module="postnl">
                             <label>Enable PostNL delivery options</label>
                             <frontend_type>checkbox</frontend_type>
@@ -1388,6 +1410,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </delivery_options_active>
                         <gomage_delivery_date_conflict>
@@ -1397,6 +1423,10 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                         </gomage_delivery_date_conflict>
                         <delivery_options_gomage_conflict_warning translate="comment" module="postnl">
                             <label><![CDATA[[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href="http://kb.tig.nl/topic/" target="blank">Click here for more information from the TIG knowledgebase.</a>]]></label>
@@ -1413,6 +1443,10 @@
                                     <value>gomage_lightcheckout</value>
                                 </checkout_extension>
                                 <gomage_delivery_date_conflict>1</gomage_delivery_date_conflict>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </delivery_options_gomage_conflict_warning>
                         <theme translate="label comment" module="postnl">
@@ -1431,6 +1465,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </theme>
                         <responsive translate="label tooltip" module="postnl">
@@ -1450,6 +1488,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </responsive>
                         <stock_options translate="label tooltip" module="postnl">
@@ -1468,6 +1510,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </stock_options>
                         <enable_delivery_days translate="label tooltip" module="postnl">
@@ -1487,6 +1533,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_delivery_days>
                         <delivery_days_number translate="label tooltip" module="postnl">
@@ -1506,6 +1556,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </delivery_days_number>
                         <enable_timeframes translate="label tooltip" module="postnl">
@@ -1526,6 +1580,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_timeframes>
                         <enable_evening_timeframes translate="label tooltip" module="postnl">
@@ -1547,6 +1605,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_evening_timeframes>
                         <evening_timeframe_fee translate="label tooltip" module="postnl">
@@ -1569,6 +1631,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </evening_timeframe_fee>
                         <enable_sunday_delivery translate="label tooltip" module="postnl">
@@ -1613,6 +1679,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_pakjegemak>
                         <enable_pakjegemak_express translate="label tooltip" module="postnl">
@@ -1633,6 +1703,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_pakjegemak_express>
                         <pakjegemak_express_fee translate="label tooltip" module="postnl">
@@ -1654,6 +1728,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </pakjegemak_express_fee>
                         <enable_pakketautomaat_locations translate="label tooltip" module="postnl">
@@ -1673,6 +1751,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_pakketautomaat_locations>
                         <allow_streetview translate="label tooltip" module="postnl">
@@ -1692,6 +1774,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </allow_streetview>
                         <show_options_for_buspakje translate="label tooltip" module="postnl">
@@ -1713,6 +1799,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </show_options_for_buspakje>
                         <show_all_options_for_buspakje translate="label tooltip" module="postnl">
@@ -1735,6 +1825,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </show_all_options_for_buspakje>
                         <enable_delivery_days_for_buspakje translate="label" module="postnl">
@@ -1758,6 +1852,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_delivery_days_for_buspakje>
                         <enable_pakjegemak_for_buspakje translate="label tooltip" module="postnl">
@@ -1782,6 +1880,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_pakjegemak_for_buspakje>
                         <enable_pakketautomaat_for_buspakje translate="label tooltip" module="postnl">
@@ -1806,6 +1908,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </enable_pakketautomaat_for_buspakje>
                         <stated_address_header translate="label" module="postnl">
@@ -1822,6 +1928,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </stated_address_header>
                         <stated_address_only_option translate="label tooltip" module="postnl">
@@ -1841,6 +1951,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </stated_address_only_option>
                         <stated_address_only_checked>
@@ -1860,6 +1974,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </stated_address_only_checked>
                         <stated_address_only_fee>
@@ -1878,6 +1996,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </stated_address_only_fee>
                         <mijnpakket_header translate="label" module="postnl">
@@ -1894,6 +2016,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </mijnpakket_header>
                         <mijnpakket_login_active translate="label tooltip" module="postnl">
@@ -1913,6 +2039,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </mijnpakket_login_active>
                         <mijnpakket_notification translate="label tooltip" module="postnl">
@@ -1932,6 +2062,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </mijnpakket_notification>
                         <show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
@@ -1952,6 +2086,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </show_create_mijnpakket_account_link>
                         <show_mijnpakket_app_link translate="label tooltip" module="postnl">
@@ -1972,6 +2110,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </show_mijnpakket_app_link>
                         <buspakje_header translate="label" module="postnl">
@@ -1981,6 +2123,12 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
                         </buspakje_header>
                         <use_buspakje translate="label tooltip" module="postnl">
                             <label>Use letter box parcels</label>
@@ -1992,6 +2140,12 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
                         </use_buspakje>
                         <buspakje_calculation_mode translate="label comment tooltip" module="postnl">
                             <label>Calculation mode</label>
@@ -2005,6 +2159,10 @@
                             <show_in_store>0</show_in_store>
                             <depends>
                                 <use_buspakje>1</use_buspakje>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </buspakje_calculation_mode>
                         <save_and_continue translate="label" module="postnl">
@@ -2801,24 +2959,6 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </default_cod_product_option>
-                        <default_be_cod_product_option translate="label tooltip" module="postnl">
-                            <label>Default Belgium COD shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableBeCodOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>BE</value>
-                                </country>
-                            </depends>
-                        </default_be_cod_product_option>
                         <default_evening_cod_product_option translate="label tooltip" module="postnl">
                             <label>Default evening COD delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
@@ -2826,7 +2966,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2852,7 +2992,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2864,7 +3004,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>110</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4197,7 +4337,7 @@
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableNlOptions</source_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
@@ -4243,24 +4383,6 @@
                                 <use_alternative_default>1</use_alternative_default>
                             </depends>
                         </alternative_default_option>
-                        <default_be_product_option translate="label tooltip" module="postnl">
-                            <label>Default Belgium shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableBeOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>BE</value>
-                                </country>
-                            </depends>
-                        </default_be_product_option>
                         <default_evening_product_option translate="label tooltip" module="postnl">
                             <label>Default evening delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
@@ -4285,6 +4407,10 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </enable_evening_timeframes>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_evening_product_option>
                         <default_sunday_product_option translate="label tooltip" module="postnl">
@@ -4307,10 +4433,14 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </enable_timeframes>
-                                <enable_evening_timeframes>
+                                <enable_sunday_delivery>
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
-                                </enable_evening_timeframes>
+                                </enable_sunday_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_sunday_product_option>
                         <default_pakjegemak_product_option translate="label tooltip" module="postnl">
@@ -4324,6 +4454,12 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
                         </default_pakjegemak_product_option>
                         <default_pge_product_option translate="label tooltip" module="postnl">
                             <label>Default early post office pickup option</label>
@@ -4349,6 +4485,10 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </enable_pakjegemak_express>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_pge_product_option>
                         <default_buspakje_product_option translate="label tooltip" module="postnl">
@@ -4367,6 +4507,10 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </use_buspakje>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_buspakje_product_option>
                         <default_stated_address_only_product_option translate="label tooltip" module="postnl">
@@ -4385,6 +4529,10 @@
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
                                 </stated_address_only_option>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_stated_address_only_product_option>
                     </fields>

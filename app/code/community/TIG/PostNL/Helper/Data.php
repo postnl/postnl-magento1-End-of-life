@@ -267,9 +267,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_storeTimeZones;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $_domesticCountries;
+    protected $_domesticCountry;
 
     /**
      * Get required fields array.
@@ -468,52 +468,43 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Get an array of country codes considered to be 'domestic'.
      *
-     * @return array
+     * @return string
      */
-    public function getDomesticCountries()
+    public function getDomesticCountry()
     {
-        $domesticCountries = $this->_domesticCountries;
+        $domesticCountry = $this->_domesticCountry;
 
-        if (!empty($domesticCountries)) {
-            return $domesticCountries;
+        if (!empty($domesticCountry)) {
+            return $domesticCountry;
         }
 
         /**
          * Try to tget the domestic country array from the cache.
          */
         $cache = $this->getCache();
-        if ($cache && $cache->hasDomesticCountries()) {
-            $domesticCountries = $cache->getDomesticCountries();
+        if ($cache && $cache->hasDomesticCountry()) {
+            $domesticCountry = $cache->getDomesticCountry();
 
-            $this->setDomesticCountries($cache->getDomesticCountries());
-            return $domesticCountries;
+            $this->setDomesticCountry($cache->getDomesticCountry());
+            return $domesticCountry;
         }
 
         /**
          * The domestic country array contains the selected sender address country.
          */
-        $domesticCountries = array(
-            Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID)
-        );
+        $domesticCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        /**
-         * The array should also always contain 'NL'.
-         */
-        if (!in_array('NL', $domesticCountries)) {
-            $domesticCountries[] = 'NL';
-        }
-
-        $this->setDomesticCountries($domesticCountries);
+        $this->setDomesticCountry($domesticCountry);
 
         /**
          * Attempt to save the array to the PostNL cache.
          */
         if ($cache) {
-            $cache->setDomesticCountries($domesticCountries)
+            $cache->setDomesticCountry($domesticCountry)
                   ->saveCache();
         }
 
-        return $domesticCountries;
+        return $domesticCountry;
     }
 
     /**
@@ -521,9 +512,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return $this
      */
-    public function setDomesticCountries($domesticCountries)
+    public function setDomesticCountry($domesticCountries)
     {
-        $this->_domesticCountries = $domesticCountries;
+        $this->_domesticCountry = $domesticCountries;
 
         return $this;
     }

@@ -55,11 +55,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      *
      * @param string        $type
      * @param Varien_Object $row
-     * @param string        $destination
      *
      * @return string
      */
-    public function getShipmentTypeRenderedValue($type, Varien_Object $row, $destination = 'NL')
+    public function getShipmentTypeRenderedValue($type, Varien_Object $row)
     {
         $helper = Mage::helper('postnl');
 
@@ -67,13 +66,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $comment       = false;
         switch ($type) {
             case 'domestic':
-                $label = $helper->__('Domestic') . ' (' . $destination . ')';
-                $type .= '_' . strtolower($destination);
+                $label = $helper->__('Domestic');
                 break;
             case 'domestic_cod':
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('COD');
-                $type .= '_' . strtolower($destination);
                 break;
             case 'avond':
                 $label   = $helper->__('Domestic');
@@ -201,8 +198,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Check if this order is domestic.
          */
-        $domesticCountries = $helper->getDomesticCountries();
-        if (in_array($value, $domesticCountries)) {
+        $domesticCountry = $helper->getDomesticCountry();
+        if ($value == $domesticCountry) {
             return $this->_getDomesticRenderedValue($row, $value);
         }
 
@@ -350,14 +347,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
-        $label = $helper->__('Domestic') . ' (' . $destination . ')';
-        $type  = 'domestic_' . strtolower($destination);
+        $label = $helper->__('Domestic');
+        $type  = 'domestic';
 
         $isCod = $this->_isCod($row);
 
         if ($isCod) {
             $type .= '_cod';
-        } elseif ($deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
+        } elseif ($destination == 'NL' && $deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
             /**
              * If the buspakje calculation mode is set to automatic and the order fits as a buspakje, we should render
              * the column as such.
@@ -375,7 +372,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
-        } else {
+        } elseif ($destination == 'NL') {
             /**
              * If the buspakje calculation mode is set to manual, we can only inform the merchant that this might be a
              * buspakje.

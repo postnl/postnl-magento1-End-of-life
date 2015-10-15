@@ -86,7 +86,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
                     )
                 );
 
-                $renderedValue = $this->getShipmentTypeRenderedValue($type, $rowDummy, $value);
+                $renderedValue = $this->getShipmentTypeRenderedValue($type, $rowDummy);
                 $renderedValue = $this->_addOptionComments($renderedValue, $row);
 
                 $renderedValues[] = $renderedValue;

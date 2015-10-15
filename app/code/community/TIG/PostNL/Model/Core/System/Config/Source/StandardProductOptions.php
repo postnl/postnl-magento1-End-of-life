@@ -50,7 +50,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3087',
@@ -59,7 +59,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3094',
@@ -68,7 +68,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3189',
@@ -77,7 +77,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3089',
@@ -86,7 +86,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3389',
@@ -95,7 +95,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3096',
@@ -104,7 +104,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3090',
@@ -113,7 +113,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3385',
@@ -122,7 +122,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3390',
@@ -131,7 +131,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3086',
@@ -140,7 +140,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3091',
@@ -149,7 +149,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3093',
@@ -158,7 +158,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '3097',
@@ -167,7 +167,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => true,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
         ),
         array(
             'value'             => '4970',
@@ -176,7 +176,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
         array(
             'value'             => '4971',
@@ -185,7 +185,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
         array(
             'value'             => '4972',
@@ -194,7 +194,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
         array(
             'value'             => '4973',
@@ -203,7 +203,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
         array(
             'value'             => '4974',
@@ -212,7 +212,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
         array(
             'value'             => '4975',
@@ -221,7 +221,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => true,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
             'extraCover'        => 500,
         ),
         array(
@@ -231,7 +231,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => true,
             'statedAddressOnly' => false,
-            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
     );
 
@@ -272,13 +272,26 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean $flat
+     * @param boolean           $flat
+     * @param string|null|false $country
      *
      * @return array
      */
-    public function getAvailableOptions($flat = false)
+    public function getAvailableOptions($flat = false, $country = null)
     {
-        return $this->getOptions(array('isCod' => false), $flat, true);
+        $flags = array(
+            'isCod' => false,
+        );
+
+        if ($country === null) {
+            $country = Mage::helper('postnl')->getDomesticCountry();
+        }
+
+        if ($country) {
+            $flags['countryLimitation'] = $country;
+        }
+
+        return $this->getOptions($flags, $flat, true);
     }
 
     /**
@@ -290,7 +303,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableNlOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => false), $flat, true);
+        return $this->getAvailableOptions($flat, 'NL');
     }
 
     /**
@@ -302,19 +315,33 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableBeOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => true), $flat, true);
+        return $this->getAvailableOptions($flat, 'BE');
     }
 
     /**
      * Alias for getAvailableOptions() with $cod = true.
      *
-     * @param boolean $flat
+     * @param boolean     $flat
+     * @param string|null $country
      *
      * @return array
      */
-    public function getAvailableCodOptions($flat = false)
+    public function getAvailableCodOptions($flat = false, $country = null)
     {
-        return $this->getOptions(array('isCod' => true), $flat, true);
+        $flags = array(
+            'isCod' => true,
+        );
+
+        switch ($country) {
+            case 'NL':
+                $flags['isBelgiumOnly'] = false;
+                break;
+            case 'BE':
+                $flags['isBelgiumOnly'] = true;
+                break;
+        }
+
+        return $this->getOptions($flags, $flat, true);
     }
 
     /**

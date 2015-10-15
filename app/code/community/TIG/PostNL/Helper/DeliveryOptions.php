@@ -922,7 +922,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Gets the shipping duration for the specified order.
      *
-     * @param Mage_Sales_Model_Order || Mage_Sales_Model_Order_Shipment $entity
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Order_Shipment $entity
      *
      * @return int|false
      *
@@ -1350,6 +1350,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * PakjeGemak is only available when sending from the Netherlands.
+         */
+        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($senderCountry != 'NL') {
+            return false;
+        }
+
+        /**
          * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
          */
         $allowed = parent::canUsePakjeGemak($storeId);
@@ -1583,6 +1591,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * Pakketautomaat is only available when sending from the Netherlands.
+         */
+        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($senderCountry != 'NL') {
+            return false;
+        }
+
+        /**
          * Check if any pakketautomaat product options are available.
          */
         $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
@@ -1647,9 +1663,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        $storeId = Mage::app()->getStore()->getId();
+        if ($this->getDomesticCountry() != 'NL') {
+            $allowed = false;
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
 
-        $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_DELIVERY_DAYS, $storeId);
+            $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_DELIVERY_DAYS, $storeId);
+        }
 
         if ($cache) {
             /**
@@ -1947,7 +1967,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        if ($this->getDomesticCountry() != 'NL') {
+            $allowed = false;
+        } else {
+            $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        }
 
         if ($cache) {
             /**
@@ -1988,8 +2012,26 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         Mage::unregister($registryKey);
         Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
+        /**
+         * Delivery options are only available when shipping from the Netherlands.
+         */
+        if ($this->getDomesticCountry() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
         $deliveryOptionsEnabled = $this->isDeliveryOptionsEnabled();
         if (!$deliveryOptionsEnabled) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0237',
+                    'message' => $this->__(
+                        'Delivery options are only available when shipping from the Netherlands.'
+                    ),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+
             Mage::register($registryKey, false);
             return false;
         }

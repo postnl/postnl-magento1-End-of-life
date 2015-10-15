@@ -165,11 +165,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         switch ($shipmentType) {
             case $postnlShipment::SHIPMENT_TYPE_DOMESTIC:
                 $shipmentType  = $this->__('Domestic');
-                $shipmentType .= ' (' . $postnlShipment->getShippingAddress()->getCountryId() . ')';
                 break;
             case $postnlShipment::SHIPMENT_TYPE_DOMESTIC_COD:
                 $shipmentType  = $this->__('Domestic');
-                $shipmentType .= ' (' . $postnlShipment->getShippingAddress()->getCountryId() . ')';
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND:

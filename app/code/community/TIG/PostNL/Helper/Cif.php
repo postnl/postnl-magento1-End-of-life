@@ -119,6 +119,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'SE',
         'GR',
         'MT',
+        'NL',
     );
 
     /**
@@ -303,13 +304,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
 
-        if (strcasecmp($destination, 'nl') === 0) {
-            $productCodes = $standardProductCodes->getAvailableNlOptions($flat);
-        } elseif (strcasecmp($destination, 'be') === 0) {
-            $productCodes = $standardProductCodes->getAvailableBeOptions($flat);
-        } else {
-            $productCodes = $standardProductCodes->getAvailableOptions($flat);
-        }
+        $productCodes = $standardProductCodes->getAvailableOptions($flat, $destination);
 
         return $productCodes;
     }
@@ -326,13 +321,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
 
-        if (strcasecmp($destination, 'nl') === 0) {
-            $productCodes = $standardProductCodes->getAvailableNlOptions($flat);
-        } elseif (strcasecmp($destination, 'be') === 0) {
-            $productCodes = $standardProductCodes->getAvailableBeOptions($flat);
-        } else {
-            $productCodes = $standardProductCodes->getAvailableOptions($flat);
-        }
+        $productCodes = $standardProductCodes->getAvailableCodOptions($flat, $destination);
 
         return $productCodes;
     }
