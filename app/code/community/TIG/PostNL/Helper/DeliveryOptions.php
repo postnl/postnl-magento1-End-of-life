@@ -760,6 +760,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * $helper TIG_PostNL_Helper_Date
      *
+     * @param $storeId
      * @param StdClass[] $timeframes
      *
      * @return StdClass[]|false
@@ -768,7 +769,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
-        $deliveryDateArray = $helper->getValidDeliveryDaysArray();
+        $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
 
         foreach($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
@@ -2129,6 +2130,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         foreach ($quote->getAllVisibleItems() as $item) {
             $productId = $item->getProductId();
+            $option    = $item->getOptionByCode('simple_product');
+            if ($option) {
+                $productId = $option->getProduct()->getId();
+            }
             $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                 $productId,
                 'postnl_allow_delivery_options',

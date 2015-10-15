@@ -415,9 +415,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $helper = Mage::helper('postnl/date');
 
         $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
+        $deliveryDate = clone $dateObject;
+        $confirmDate  = clone $dateObject;
 
-        $deliveryDate = $helper->getDeliveryDate($dateObject, $order->getStoreId());
-        $confirmDate = $helper->getShippingDate($dateObject, $order->getStoreId());
+        $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
+        $helper->getShippingDate($confirmDate, $order->getStoreId());
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());
