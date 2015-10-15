@@ -2011,7 +2011,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         Mage::unregister($registryKey);
         Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
-        if (!$this->getDomesticCountry() != 'NL') {
+        if ($this->getDomesticCountry() != 'NL') {
             Mage::register($registryKey, false);
             return false;
         }
