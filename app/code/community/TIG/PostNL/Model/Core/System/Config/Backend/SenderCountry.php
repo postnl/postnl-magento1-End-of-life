@@ -81,7 +81,7 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
     }
 
     /**
-     * When saving the sender coutry setting, copy it's value to the alternative sender country setting.
+     * When saving the sender country setting, copy it's value to the alternative sender country setting.
      *
      * @return Mage_Core_Model_Abstract
      */

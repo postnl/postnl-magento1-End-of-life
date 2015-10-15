@@ -666,7 +666,7 @@
                         <country translate="label tooltip" module="postnl">
                             <label>Country</label>
                             <tooltip>Please note: the country you select here will be used to determine whether certain shipping options (such as Belgium domestic) are available to you.</tooltip>
-                            <frontend_type>select</frontend_type>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hidden</frontend_model>
                             <source_model>postnl_core/system_config_source_senderCountry</source_model>
                             <backend_model>postnl_core/system_config_backend_senderCountry</backend_model>
                             <sort_order>30</sort_order>
