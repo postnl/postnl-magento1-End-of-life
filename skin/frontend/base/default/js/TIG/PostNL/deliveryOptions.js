@@ -1013,8 +1013,12 @@ PostnlDeliveryOptions.prototype = {
         /**
          * Parse and render the result.
          */
-        this.parseLocations(locations)
-            .renderLocations();
+        this.parseLocations(locations);
+        try {
+            this.renderLocations();
+        } catch (e) {
+            console.log(ed)
+        }
 
         this.setParsedLocations(true)
             .hideSpinner();
@@ -4344,41 +4348,53 @@ PostnlDeliveryOptions.Location = new Class.create({
         if (typeof n == 'undefined') {
             n = 0;
         }
-
+        console.log(1);
         /**
          * If over 7 attempts have been made, return the current date (it should be 1 week after the first attempt).
          */
         if (n > 7) {
             return date;
         }
-
         var openingDays = this.getOpeningHours();
-
         /**
          * Check if the location is open on the specified day of the week.
          */
         var openingHours = false;
         switch (date.getDay()) {
             case 0:
-                openingHours = openingDays.Sunday.string;
+                if (openingDays.Sunday) {
+                    openingHours = openingDays.Sunday.string;
+                }
                 break;
             case 1:
-                openingHours = openingDays.Monday.string;
+                if (openingDays.Monday) {
+                    openingHours = openingDays.Monday.string;
+                }
                 break;
             case 2:
-                openingHours = openingDays.Tuesday.string;
+                if (openingDays.Tuesday) {
+                    openingHours = openingDays.Tuesday.string;
+                }
                 break;
             case 3:
-                openingHours = openingDays.Wednesday.string;
+                if (openingDays.Wednesday) {
+                    openingHours = openingDays.Wednesday.string;
+                }
                 break;
             case 4:
-                openingHours = openingDays.Thursday.string;
+                if (openingDays.Thursday) {
+                    openingHours = openingDays.Thursday.string;
+                }
                 break;
             case 5:
-                openingHours = openingDays.Friday.string;
+                if (openingDays.Friday) {
+                    openingHours = openingDays.Friday.string;
+                }
                 break;
             case 6:
-                openingHours = openingDays.Saturday.string;
+                if (openingDays.Saturday) {
+                    openingHours = openingDays.Saturday.string;
+                }
                 break;
         }
 
