@@ -4348,7 +4348,6 @@ PostnlDeliveryOptions.Location = new Class.create({
         if (typeof n == 'undefined') {
             n = 0;
         }
-        console.log(1);
         /**
          * If over 7 attempts have been made, return the current date (it should be 1 week after the first attempt).
          */
