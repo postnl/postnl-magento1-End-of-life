@@ -4648,7 +4648,7 @@
                             <show_in_store>0</show_in_store>
                         </cif_versions_header>
                         <cif_versions_infobox translate="comment" module="postnl">
-                            <label>ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP</label>
+                            <label>ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TIG</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>

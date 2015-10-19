@@ -439,12 +439,12 @@ TIG_PostNL::Configure the PostNL sending method under system > config > shipping
 "TIG_PostNL::PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. To do so, you need to enable the postcode validation or configure the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",Als u gebruik maakt van de postcode check zal de extensie het afrekenproces goed voor u instellen. Als u daar geen gebruik van maakt moet PostNL uit het afrekenproces een correct opgemaakt adres kunnen lezen om een juiste verzending te kunnen garanderen. Om hier zeker van te zijn moet u het goede aantal straat regels aanzetten en deze voorzien van duidelijke labels en validatie. U kunt hier meer lezen over hoe u dit kunt configureren.
 "TIG_PostNL::We highly recommend you place several 'test' shipments, before you use the extension for real shipments.",Maak altijd enkele testzendingen aan voordat u de extensie voor echte bestellingen gebruikt.
 TIG_PostNL::We cannot guarantee compatibility with non supported extensions and versions of Magento.,De compatibiliteit met niet ondersteunde extensies en versies van Magento wordt niet gegarandeerd.
-"TIG_PostNL::The extension is developed by Total Internet Group, commissioned by PostNL.",De extensie is ontwikkeld door Total Internet Group in opdracht van PostNL.
+"TIG_PostNL::The extension is developed by TIG, commissioned by PostNL.",De extensie is ontwikkeld door TIG in opdracht van PostNL.
 TIG_PostNL::PostNL account information and PostNL services,PostNL account informatie en PostNL diensten
 "TIG_PostNL::For questions related to your PostNL account and PostNL delivery options, please contact PostNL.","Voor vragen met betrekking tot uw PostNL account en PostNL bezorgopties, neem a.u.b. contact op met PostNL."
 TIG_PostNL::Phone:,Telefoon:
 TIG_PostNL::Extension support and configuration questions,Extensie ondersteuning en vragen over de configuratie
-"TIG_PostNL::For configuration problems, extension conflicts and bugs, contact Total Internet Group.","Voor vragen met betrekking tot configuratie problemen, extensie conflicten en bugs kunt u contact opnemen met de Total Internet Group."
+"TIG_PostNL::For configuration problems, extension conflicts and bugs, contact TIG.","Voor vragen met betrekking tot configuratie problemen, extensie conflicten en bugs kunt u contact opnemen met TIG."
 TIG_PostNL::Online knowledgebase:,Online knowledgebase:
 TIG_PostNL::Website:,Website:
 TIG_PostNL::Request help directly:,Direct assistentie vragen:
@@ -487,7 +487,7 @@ TIG_PostNL::Invalid UpdateOrder response: %s,Ongeldige UpdateOrder ontvangen: %s
 href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties' target='_blank'
 title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen. Indien u de e-mail die deze gegevens bevat niet meer kunt vinden, neem dan contact op met uw PostNL account manager.</p><p>Indien u de extensie wilt testen, maar geen test modus account gegevens heeft, kunt u de account gegevens gebruiken die <a href=""http://kb.tig.nl/topic/55404467"" title=""Test modus account gegevens"" target=""_blank"">hier</a> genoemd worden."
 "TIG_PostNL::You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Deze gegevens vindt u in uw <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>Checkout instellingen</a> bij PostNL.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
-TIG_PostNL::ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP,PAS DEZE INSTELLINGEN ENKEL AAN MET DIRECTE INSTRUCTIES VAN POSTNL OF TOTAL INTERNET GROUP
+TIG_PostNL::ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TIG,PAS DEZE INSTELLINGEN ENKEL AAN MET DIRECTE INSTRUCTIES VAN POSTNL OF TIG
 TIG_PostNL::Offer customers the possibility to subscribe to your store's newsletter. Please note: This feature might conflict with other extensions that also use Magento's newsletter functionality.,Biedt de mogelijkheid om klanten zich te laten aanmelden voor de nieuwsbrief van uw webshop. Let op: Deze functie kan conflicteren met andere extensies die de nieuwsbrief functionaliteit aanpassen.
 TIG_PostNL::Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Deurcodes worden veelal gebruikt in buitenlandse addressen zoals addressen uit Frankrijk en Singapore.
 "TIG_PostNL::PostNL Checkout is a method alongside your own order process that allows your customers to choose where, when and how to receive their order. Please note: Use the Delivery Options to configure the PostNL settings in your own checkout. Use the settings below to configure the settings for the PostNL Checkout.<br/><br/>Does the PostNL Checkout button stay gray? Click <a href=""http://kb.tig.nl/topic/39102986"" target=""_blank"">here</a> for possible causes and solutions.","De PostNL Checkout is een methode naast uw eigen bestelproces waarmee uw klanten snel en gemakkelijk kunnen kiezen waar, wanneer en hoe ze een bestelling willen ontvangen. Let op: Met de bezorgopties configureert u de PostNL instellingen in uw eigen bestelproces, met de onderstaande instellingen configureert u de instellingen in de PostNL checkout.<br/><br/>Blijft de PostNL Checkout knop grijs? Klik <a href=""http://kb.tig.nl/topic/39102986"" target=""_blank"">hier</a> om de mogelijke oorzaken en oplossingen te bekijken."
@@ -1288,11 +1288,11 @@ TIG_PostNL::Print the shipping label on a separate page,Print het verzendlabel o
 TIG_PostNL::Don't print the shipping label,Print het verzendlabel niet
 TIG_PostNL::Loading available delivery options for your shipping address...,De beschikbare bezorgopties voor uw verzendadres worden opgehaald...
 TIG_PostNL::Picqer's PostNL add-on version,Picqer's PostNL add-on versie
-TIG_PostNL::Default sunday delivery shipping option.,Standaard zondag bezorging verzendoptie.
-TIG_PostNL::Enable sunday delivery,Activeer zondag bezorging
+TIG_PostNL::Default sunday delivery shipping option,Standaard zondagbezorging verzendoptie
+TIG_PostNL::Enable sunday delivery,Activeer zondagbezorging
 TIG_PostNL::This setting may be overwritten by manualy creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken.
-TIG_PostNL::Activate sunday delivery for your customers.,Activeer zondag bezorging voor uw klanten.
-TIG_PostNL::Sunday Delivery,Zondag Bezorging
+TIG_PostNL::Activate sunday delivery for your customers.,Activeer zondagbezorging voor uw klanten.
+TIG_PostNL::Sunday Delivery,Zondagbezorging
 TIG_PostNL::Sunday,Zondag
 TIG_PostNL::The sender country setting is only available on the 'global' scope.,De afzenderland instelling is alleen beschikbaar in de 'global' scope.
 TIG_PostNL::Please note: the country you select here will be used to determine whether certain shipping options (such as Belgium domestic) are available to you.,N.B. het land dat je selecteert zal gebruikt worden om te bepalen of sommige verzendopties (zoals België domestic) beschikbaar zijn.
@@ -1308,3 +1308,5 @@ TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België E
 TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische binnenlandse zendingen.
 TIG_PostNL::Default Belgium COD shipping option,Standaard België rembours verzendoptie
+TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL bezorgopties zijn alleen beschikbaar wanneer ur verstuurd vanuit Nederland.
+TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
