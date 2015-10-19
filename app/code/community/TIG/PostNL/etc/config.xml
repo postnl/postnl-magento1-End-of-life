@@ -1134,7 +1134,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>develop</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -2350,27 +2350,27 @@
             </POSTNL-0230>
             <POSTNL-0231>
                 <message>No valid delivery day found.</message>
-                <url/>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803448</url>
                 <type>error</type>
             </POSTNL-0231>
             <POSTNL-0232>
                 <message>Invalid country supplied for getNearestLocations request: %s</message>
-                <url/>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803468</url>
                 <type>error</type>
             </POSTNL-0232>
             <POSTNL-0233>
                 <message>Invalid country supplied for GetDeliveryTimeframes request: %s</message>
-                <url/>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803478</url>
                 <type>error</type>
             </POSTNL-0233>
             <POSTNL-0234>
                 <message>Invalid country supplied for getLocationsInArea request: %s</message>
-                <url/>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803488</url>
                 <type>error</type>
             </POSTNL-0234>
             <POSTNL-0235>
                 <message>Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.</message>
-                <url/>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803498</url>
                 <type>error</type>
             </POSTNL-0235>
             <POSTNL-0236>

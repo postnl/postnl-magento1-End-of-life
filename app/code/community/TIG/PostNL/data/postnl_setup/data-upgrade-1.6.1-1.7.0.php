@@ -42,7 +42,17 @@
  */
 $installer = $this;
 
-$installer->upgradeCifVersions()
+/**
+ * These CIF webservices have been updated.
+ */
+$updatedWebservices = array(
+    'cif_version_labelling',
+    'cif_version_timeframe',
+    'cif_version_location',
+    'cif_version_deliverydate',
+);
+
+$installer->resetWebserviceVersions($updatedWebservices)
           ->addSupportedProductCode(
               array(
                   '4970',
