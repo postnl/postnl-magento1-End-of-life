@@ -406,6 +406,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'global'              => $helper->__('GlobalPack'),
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                 'avond'               => $helper->__('Evening Delivery'),
+                'sunday'              => $helper->__('Sunday Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
@@ -1335,6 +1336,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'avond') {
             $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Avond'));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is sunday delivery, filter out all other orders
+         */
+        if ($filterCond == 'sunday') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Sunday'));
 
             return $this;
         }

@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_SundayProductOptions
     protected $_options = array(
         array(
             'value'             => '3087',
-            'label'             => 'Extra cover',
+            'label'             => 'Extra Cover',
             'isExtraCover'      => true,
             'isSunday'          => true,
             'statedAddressOnly' => false,

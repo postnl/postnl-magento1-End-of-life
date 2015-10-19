@@ -42,7 +42,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_AddressLines
     /**
      * @return int|string
      */
-    protected function _getValue()
+    protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
         $value = Mage::helper('postnl/addressValidation')->getAddressLineCount();
 
