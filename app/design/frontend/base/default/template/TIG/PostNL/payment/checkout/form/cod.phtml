@@ -68,7 +68,9 @@
                     method = elements[i].value;
                 }
             } else {
-                elements[i].disabled = true;
+                if ($$('body')[0].className.indexOf('gomage') != -1) {
+                    //elements[i].disabled = true;
+                }
             }
             elements[i].setAttribute('autocomplete','off');
         }
