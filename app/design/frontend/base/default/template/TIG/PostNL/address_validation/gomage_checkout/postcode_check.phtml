@@ -124,6 +124,41 @@
 </div>
 
 <script type="text/javascript">
+
+    <?php
+
+$observe_billing_items	= array('#buy_without_vat');
+$observe_shipping_items	= array();
+
+if($this->helper('gomage_checkout')->getConfigData('ajax/country')){
+    $observe_billing_items[] = '#gcheckout-onepage-address #billing_country_id';
+    $observe_shipping_items[] = '#gcheckout-onepage-address .shipping_country_id';
+}
+
+if($this->helper('gomage_checkout')->getConfigData('ajax/region')){
+    $observe_billing_items[] = '#gcheckout-onepage-address .billing-region select, #gcheckout-onepage-address .billing-region input';
+    $observe_shipping_items[] = '#gcheckout-onepage-address .shipping-region input, #gcheckout-onepage-address .shipping-region select';
+}
+
+if($this->helper('gomage_checkout')->getConfigData('ajax/postcode')){
+    $observe_billing_items[] = '#gcheckout-onepage-address .billing_postcode input';
+    $observe_shipping_items[] = '#gcheckout-onepage-address .shipping_postcode input';
+}
+
+if($this->helper('gomage_checkout')->getConfigData('ajax/city')){
+    $observe_billing_items[] = '#gcheckout-onepage-address .billing_city input';
+    $observe_shipping_items[] = '#gcheckout-onepage-address .shipping_city input';
+}
+
+if($this->helper('gomage_checkout')->getConfigData('ajax/email')){
+    $observe_billing_items[] = '#billing_email';
+}
+
+?>
+
+    var observe_billing_items	= '<?php echo implode(',', $observe_billing_items);?>';
+    var observe_shipping_items	= '<?php echo implode(',', $observe_shipping_items);?>';
+
     //<![CDATA[
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
         $('virtual_<?php echo $_addressType; ?>_street<?php echo $_i; ?>').observe('change', function(event) {

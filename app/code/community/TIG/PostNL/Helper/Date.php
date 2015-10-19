@@ -186,7 +186,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         }
 
         /**
-         * Get the current weekday, configured shipping duration, and array of valid delivery days.
+         * Get the current weekday and configured shipping duration.
          */
         $weekday = $orderDateObject->format('N');
         $shippingDuration = $this->getQuoteShippingDuration();
