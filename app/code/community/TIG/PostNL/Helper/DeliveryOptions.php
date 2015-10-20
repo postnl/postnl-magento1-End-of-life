@@ -2250,7 +2250,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return true;
         }
 
-        /** @var Mage_Sales_Model_Quote_Item[] $quoteItems */
+        /** @var Mage_Sales_Model_Quote_Item $item */
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
             /**
@@ -2985,6 +2985,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * By default, the delivery options can be shown for the quote, unless a product states otherwise.
          */
         $allow = true;
+        /** @var Mage_Sales_Model_Quote_Item_Option $bundleItem */
         foreach ($bundleItems as $bundleItem) {
             $productId = $bundleItem->getProductId();
             $allowDeliveryOptionsForBundleItem = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
