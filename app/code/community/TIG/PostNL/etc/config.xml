@@ -840,7 +840,6 @@
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
-                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
                 <sunday_cutoff_time/>
                 <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
                 <checkout_extension>magento_onepagecheckout</checkout_extension> <!-- Use Magento's One Page CHeckout as the default checkout extension -->
@@ -872,7 +871,6 @@
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
-                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Disable sunday delivery -->
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
                 <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
                 <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
@@ -886,6 +884,8 @@
                 <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
                 <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
                 <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
+                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Disable sunday delivery -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->

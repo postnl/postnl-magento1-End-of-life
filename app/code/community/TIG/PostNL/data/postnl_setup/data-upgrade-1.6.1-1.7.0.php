@@ -64,4 +64,8 @@ $installer->resetWebserviceVersions($updatedWebservices)
                   '4976',
               )
           )
+          ->moveConfigSettingInDb(
+              'postnl/cif_labels_and_confirming/allow_sunday_sorting',
+              'postnl/delivery_options/allow_sunday_sorting'
+          )
           ->clearConfigCache();
