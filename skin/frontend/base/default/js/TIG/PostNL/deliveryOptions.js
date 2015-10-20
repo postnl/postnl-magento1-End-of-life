@@ -208,6 +208,7 @@ PostnlDeliveryOptions.prototype = {
             allowPg                   : true,
             allowPge                  : false,
             allowPa                   : true,
+            allowSundaySorting        : false,
             isBuspakje                : false,
             taxDisplayType            : 1,
             eveningFeeIncl            : 0,
@@ -4407,6 +4408,12 @@ PostnlDeliveryOptions.Location = new Class.create({
             var nextDay = new Date(date);
             nextDay.setDate(date.getDate() + 1);
 
+            /**
+             * If the next day is Monday, and Monday Delivery is not allowed, get Tuesday as next day.
+             */
+            if (nextDay.getDay() == 1 && this.getOptions().allowSundaySorting == 0) {
+                nextDay.setDate(date.getDate() + 2);
+            }
             return this.getDeliveryDate(nextDay, n + 1);
         }
 

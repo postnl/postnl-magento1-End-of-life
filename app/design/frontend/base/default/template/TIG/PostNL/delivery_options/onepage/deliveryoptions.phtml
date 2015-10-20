@@ -205,6 +205,7 @@
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+        allowSundaySorting     : <?php echo Mage::getStoreConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', Mage::app()->getStore()->getId()) ?>,
         allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
