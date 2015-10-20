@@ -115,19 +115,26 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         if (!$sundayDelivery) {
             $this->_validDeliveryDays[self::SUNDAY] = 0;
-        }
 
-        /**
-         * If sunday sorting is active, but sundaydelivery isn't, and saturday is a valid shipping day, monday is a
-         * valid delivery day.
-         */
-        if ($sundaySorting
-            && !$sundayDelivery
-            && in_array(self::SATURDAY, $shippingDays)
-        ) {
-            $this->_validDeliveryDays[self::MONDAY] = 1;
-        } else {
-            $this->_validDeliveryDays[self::MONDAY] = 0;
+            /**
+             * If sunday sorting is active, but sundaydelivery isn't, and saturday is a valid shipping day, monday is a
+             * valid delivery day.
+             */
+            if ($sundaySorting
+                && in_array(self::SATURDAY, $shippingDays)
+            ) {
+                $this->_validDeliveryDays[self::MONDAY] = 1;
+            }
+            /**
+             * If sunday sorting is not active, and sunday delivery isn't either, tuesday should be a valid delivery day.
+             */
+            elseif (!$sundaySorting
+                    && in_array(self::SATURDAY, $shippingDays)
+            ) {
+                $this->_validDeliveryDays[self::TUESDAY] = 1;
+            } else {
+                $this->_validDeliveryDays[self::MONDAY] = 0;
+            }
         }
 
         /**
