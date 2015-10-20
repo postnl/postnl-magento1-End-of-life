@@ -1316,11 +1316,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
-            $poLocationsAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
-                $item->getProductId(),
-                'postnl_allow_pakje_gemak',
-                $item->getStoreId()
-            );
+            if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                $poLocationsAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_pakje_gemak');
+            } else {
+                $poLocationsAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    $item->getProductId(),
+                    'postnl_allow_pakje_gemak',
+                    $item->getStoreId()
+                );
+            }
 
             if (!is_null($poLocationsAllowed) && !$poLocationsAllowed) {
                 Mage::register($registryKey, false);
@@ -1560,11 +1564,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
-            $pakketautomaatAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
-                $item->getProductId(),
-                'postnl_allow_pakketautomaat',
-                $item->getStoreId()
-            );
+            if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                $pakketautomaatAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_pakketautomaat');
+            } else {
+                $pakketautomaatAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    $item->getProductId(),
+                    'postnl_allow_pakketautomaat',
+                    $item->getStoreId()
+                );
+            }
 
             if (!is_null($pakketautomaatAllowed) && !$pakketautomaatAllowed) {
                 Mage::register($registryKey, false);
@@ -1724,11 +1732,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
-            $deliveryDaysAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
-                $item->getProductId(),
-                'postnl_allow_delivery_days',
-                $item->getStoreId()
-            );
+            /**
+             * If the product is a bundled product, check if the delivey options are allowed for all underlying
+             * simple products. Else just check the given product, since this will point correctly to the simple product.
+             */
+            if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                $deliveryDaysAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_delivery_days');
+            } else {
+                $deliveryDaysAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    $item->getProductId(),
+                    'postnl_allow_delivery_days',
+                    $item->getStoreId()
+                );
+            }
 
             if (!is_null($deliveryDaysAllowed) && !$deliveryDaysAllowed) {
                 Mage::register($registryKey, false);
@@ -1855,11 +1871,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
-            $timeframesAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
-                $item->getProductId(),
-                'postnl_allow_timeframes',
-                $item->getStoreId()
-            );
+
+            /**
+             * If the product is a bundled product, check if the delivey options are allowed for all underlying
+             * simple products. Else just check the given product, since this will point correctly to the simple product.
+             */
+            if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                $timeframesAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_timeframes');
+            } else {
+                $timeframesAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    $item->getProductId(),
+                    'postnl_allow_timeframes',
+                    $item->getStoreId()
+                );
+            }
 
             if (!is_null($timeframesAllowed) && !$timeframesAllowed) {
                 Mage::register($registryKey, false);
@@ -2137,11 +2162,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             if ($option) {
                 $productId = $option->getProduct()->getId();
             }
-            $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
-                $productId,
-                'postnl_allow_delivery_options',
-                $item->getStoreId()
-            );
+
+            /**
+             * If the product is a bundled product, check if the delivey options are allowed for all underlying
+             * simple products. Else just check the given product, since this will point correctly to the simple product.
+             */
+            if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                $allowDeliveryOptions = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_delivery_options');
+            } else {
+                $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    $productId,
+                    'postnl_allow_delivery_options',
+                    $item->getStoreId()
+                );
+            }
 
             if (!is_null($allowDeliveryOptions) && !$allowDeliveryOptions) {
                 $errors = array(
@@ -2935,5 +2969,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return true;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote_Item $item
+     * @param string $attribute
+     *
+     * @return bool
+     */
+    public function bundleCheckAllowedForSimpleProducts($item, $attribute)
+    {
+        $bundleItems = $item->getQtyOptions();
+
+        /**
+         * By default, the delivery options can be shown for the quote, unless a product states otherwise.
+         */
+        $allow = true;
+        foreach ($bundleItems as $bundleItem) {
+            $productId = $bundleItem->getProductId();
+            $allowDeliveryOptionsForBundleItem = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $productId,
+                $attribute,
+                $item->getStoreId()
+            );
+            if ($allowDeliveryOptionsForBundleItem == 0) {
+                $allow = false;
+            }
+        }
+
+        return $allow;
+
     }
 }
