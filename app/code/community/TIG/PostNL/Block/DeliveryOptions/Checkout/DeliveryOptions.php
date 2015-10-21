@@ -737,6 +737,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if the sunday sorting (AKA monday delivery) is allowed.
+     *
+     * @return bool
+     */
+    public function canUseSundaySorting()
+    {
+        $canUseSundaySorting = Mage::helper('postnl/deliveryOptions')->canUseSundaySorting();
+        return $canUseSundaySorting;
+    }
+
+    /**
      * Get whether this order is a buspakje order.
      *
      * @return bool
