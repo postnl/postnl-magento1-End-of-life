@@ -190,6 +190,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      */
     public function saveOptionCostsAction()
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         /**
          * This action may only be called using AJAX requests
          */
