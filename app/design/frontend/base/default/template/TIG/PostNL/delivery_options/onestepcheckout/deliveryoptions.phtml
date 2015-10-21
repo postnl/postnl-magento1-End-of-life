@@ -55,7 +55,7 @@
 
 <?php $_canShowSeparateRates = $this->canShowSeparateRates(); ?>
 
-
+<?php $_canUseSundaySorting = $this->canUseSundaySorting(); ?>
 <?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 <?php $_canUsePakjeGemakExpress = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
@@ -342,7 +342,7 @@
             allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
             allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
             allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
-            allowSundaySorting     : <?php echo Mage::getStoreConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', Mage::app()->getStore()->getId()) ?>,
+            allowSundaySorting     : <?php echo $_canUseSundaySorting            ? 'true' : 'false'; ?>,
             allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
