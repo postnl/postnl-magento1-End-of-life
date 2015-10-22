@@ -377,13 +377,13 @@
 
     <admin>
         <routers>
-            <postnl_admin>
-                <use>admin</use>
+            <adminhtml>
                 <args>
-                    <module>TIG_PostNL</module>
-                    <frontName>postnl_admin</frontName>
+                    <modules>
+                        <postnl_admin before="Mage_Adminhtml">TIG_PostNL</postnl_admin>
+                    </modules>
                 </args>
-            </postnl_admin>
+            </adminhtml>
         </routers>
     </admin>
 

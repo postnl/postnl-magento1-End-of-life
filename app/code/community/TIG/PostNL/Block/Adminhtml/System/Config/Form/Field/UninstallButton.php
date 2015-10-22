@@ -72,7 +72,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
 
         $confirmText = implode($warningMessage);
         $confirmTitle = $this->__($warningTitle);
-        $uninstallUrl = $this->getUrl('postnl_admin/adminhtml_extensionControl/uninstall');
+        $uninstallUrl = $this->getUrl('adminhtml/postnlAdminhtml_extensionControl/uninstall');
 
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                      ->setId($element->getHtmlId())
