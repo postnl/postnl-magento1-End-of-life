@@ -161,7 +161,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
         /**
          * Build the URL.
          */
-        $url = $this->getUrl('postnl_admin/adminhtml_config/saveWizardStep', $urlParams);
+        $url = $this->getUrl('adminhtml/postnlAdminhtml_config/saveWizardStep', $urlParams);
 
         return $url;
     }
@@ -173,7 +173,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
      */
     public function getHideNotificationUrl()
     {
-        $url = $this->getUrl('postnl_admin/adminhtml_config/hideNotification');
+        $url = $this->getUrl('adminhtml/postnlAdminhtml_config/hideNotification');
 
         return $url;
     }

@@ -854,7 +854,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massCreateShipments'),
         );
 
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
@@ -1159,7 +1159,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print labels and confirm'),
-            'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massFullPostnlFlow'),
+            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massFullPostnlFlow'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1189,7 +1189,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print packing slips and confirm'),
             'url'   => Mage::helper('adminhtml')->getUrl(
-                'postnl_admin/adminhtml_shipment/massFullPostnlFlowWithPackingSlip'
+                'adminhtml/postnlAdminhtml_shipment/massFullPostnlFlowWithPackingSlip'
             ),
         );
 
@@ -1219,7 +1219,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Print packing slips'),
-            'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingslips'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1450,8 +1450,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
-        $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
-               . "`postnl_order`.`confirm_date`)";
+        $field = $collection->getConnection()
+                            ->getCheckSql(
+                                'postnl_shipment.confirm_date',
+                                'postnl_shipment.confirm_date',
+                                'postnl_order.confirm_date'
+                            );
 
         $collection->addFieldToFilter($field , $cond);
 

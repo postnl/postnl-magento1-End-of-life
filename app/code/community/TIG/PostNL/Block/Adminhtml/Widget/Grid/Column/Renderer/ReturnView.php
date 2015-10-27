@@ -63,7 +63,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ReturnView
                         $action['url'] = $this->getUrl('adminhtml/sales_shipment/view',
                             array(
                                 'shipment_id' => $row->getId(),
-                                'come_from_postnl'   => Mage::helper('core')->urlEncode('postnl_admin/adminhtml_returns')
+                                'come_from_postnl'   => Mage::helper('core')->urlEncode('adminhtml/postnlAdminhtml_returns')
                             )
                         );
                     }

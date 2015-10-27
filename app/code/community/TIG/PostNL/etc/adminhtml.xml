@@ -44,7 +44,7 @@
             <children>
                 <postnl_returns translate="title" module="postnl">
                     <title>PostNL Returns</title>
-                    <action>postnl_admin/adminhtml_returns</action>
+                    <action>adminhtml/postnlAdminhtml_returns</action>
                     <sort_order>35</sort_order>
                     <depends>
                         <config>postnl/returns/return_labels_active</config>

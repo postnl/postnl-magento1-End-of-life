@@ -272,7 +272,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     public function getChangeProductCodeUrl()
     {
         $url = $this->getUrl(
-            'postnl_admin/adminhtml_shipment/changeProductCode',
+            'adminhtml/postnlAdminhtml_shipment/changeProductCode',
             array(
                 'shipment_id' => $this->getShipment()->getId()
             )
@@ -355,7 +355,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     public function getChangeParcelCountUrl()
     {
         $url = $this->getUrl(
-            'postnl_admin/adminhtml_shipment/changeParcelCount',
+            'adminhtml/postnlAdminhtml_shipment/changeParcelCount',
             array(
                 'shipment_id' => $this->getShipment()->getId()
             )

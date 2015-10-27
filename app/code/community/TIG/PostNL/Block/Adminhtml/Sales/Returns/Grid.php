@@ -331,7 +331,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         return $this->getUrl('adminhtml/sales_shipment/view',
             array(
                 'shipment_id' => $row->getId(),
-                'come_from_postnl'   => Mage::helper('core')->urlEncode('postnl_admin/adminhtml_returns')
+                'come_from_postnl'   => Mage::helper('core')->urlEncode('adminhtml/postnlAdminhtml_returns')
             )
         );
     }
