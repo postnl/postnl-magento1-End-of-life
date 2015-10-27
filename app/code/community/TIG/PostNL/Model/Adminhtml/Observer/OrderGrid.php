@@ -1427,8 +1427,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
-        $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
-               . "`postnl_order`.`confirm_date`)";
+        $field = $collection->getConnection()
+                            ->getCheckSql(
+                                'postnl_shipment.confirm_date',
+                                'postnl_shipment.confirm_date',
+                                'postnl_order.confirm_date'
+                            );
 
         $collection->addFieldToFilter($field , $cond);
 

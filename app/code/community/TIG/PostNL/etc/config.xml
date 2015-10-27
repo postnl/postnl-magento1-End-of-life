@@ -380,7 +380,7 @@
             <adminhtml>
                 <args>
                     <modules>
-                        <postnl_admin before="Mage_Adminhtml">TIG_PostNL</postnl_admin>
+                        <postnl_admin after="Mage_Adminhtml">TIG_PostNL</postnl_admin>
                     </modules>
                 </args>
             </adminhtml>
