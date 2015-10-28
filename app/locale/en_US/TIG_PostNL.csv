@@ -606,8 +606,8 @@ TIG_PostNL::Evening pickup available,Evening pickup available
 TIG_PostNL::Or pick your own delivery moment,Or pick your own delivery moment
 TIG_PostNL::Connection timeout duration,Connection timeout duration
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.
-TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Show PostNL Checkout exclusively to MijnPakket users
-TIG_PostNL::Activate the PostNL Checkout only for customers with a MijnPakket account. Please note: The Delivery Options must be activated.,Activate the PostNL Checkout only for customers with a MijnPakket account. Please note: The Delivery Options must be activated.
+TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Show PostNL Checkout exclusively to users with a PostNL account
+TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.
 TIG_PostNL::Delivery Options,Delivery Options
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning."
 TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
@@ -757,23 +757,23 @@ TIG_PostNL::Delivery options theme,Delivery options theme
 "TIG_PostNL::You can view an example of the different themes <a href=""http://kb.tig.nl/topic/58787233"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","You can view an example of the different themes <a href=""http://kb.tig.nl/topic/58787233"" target=""_blank"" title=""PostNL delivery option themes"">here</a>."
 TIG_PostNL::Default PostNL theme,Default PostNL theme
 TIG_PostNL::Neutral theme,Neutral theme
-TIG_PostNL::MijnPakket,MijnPakket
-TIG_PostNL::Show MijnPakket notification on the order success page,Show MijnPakket notification on the order success page
-TIG_PostNL::This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.,This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.
-TIG_PostNL::Show create MijnPakket account link,Show create MijnPakket account link
-"TIG_PostNL::If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.","If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form."
-TIG_PostNL::Show MijnPakket app link,Show MijnPakket app link
-"TIG_PostNL::If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.","If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order."
-TIG_PostNL::Loading MijnPakket data...,Loading MijnPakket data...
+TIG_PostNL::PostNL account,PostNL account
+TIG_PostNL::Show PostNL account notification on the order success page,Show PostNL account notification on the order success page
+TIG_PostNL::This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.,This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.
+TIG_PostNL::Show create PostNL account link,Show create PostNL account link
+"TIG_PostNL::If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form.","If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form."
+TIG_PostNL::Show PostNL app link,Show PostNL app link
+"TIG_PostNL::If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order.","If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order."
+TIG_PostNL::Loading PostNL data...,Loading PostNL data...
 TIG_PostNL::Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.,Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.
-TIG_PostNL::Checkout using MijnPakket,Checkout using MijnPakket
-TIG_PostNL::Log in with your MijnPakket account to automatically use your preferred address.,Log in with your MijnPakket account to automatically use your preferred address.
-TIG_PostNL::If you have a MijnPakket account you can use the button below to log in to your account. When you log in to your MijnPakket account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.,If you have a MijnPakket account you can use the button below to log in to your account. When you log in to your MijnPakket account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.
-TIG_PostNL::MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.,MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.
+TIG_PostNL::Checkout using PostNL,Checkout using PostNL
+TIG_PostNL::Log in with your PostNL account to automatically use your preferred address.,Log in with your PostNL account to automatically use your preferred address.
+TIG_PostNL::If you have a PostNL account you can use the button below to log in to your account. When you log in to your PostNL account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.,If you have a PostNL account you can use the button below to log in to your account. When you log in to your PostNL account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.
+TIG_PostNL::PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.,PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.
 TIG_PostNL::Create a new MijnPakket account.,Create a new MijnPakket account.
 TIG_PostNL::Download the PostNL MijnPakket app,Download the PostNL MijnPakket app
 TIG_PostNL::Unfortunately MijnPakket login is currently not available. Please use a different checkout method.,Unfortunately MijnPakket login is currently not available. Please use a different checkout method.
-TIG_PostNL::Enable MijnPakket login,Enable MijnPakket login
+TIG_PostNL::Enable PostNL account login,Enable PostNL account login
 "TIG_PostNL::You can use this button to validate your account settings without saving the configuration. This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. <br />Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked.","You can use this button to validate your account settings without saving the configuration. This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. <br />Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked."
 TIG_PostNL::Maximum number of delivery days,Maximum number of delivery days
 TIG_PostNL::Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.,Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.
@@ -788,11 +788,11 @@ TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout version
 TIG_PostNL::choose a different shipping address,choose a different shipping address
 TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party version compatibility
 TIG_PostNL::PostNL - Confirm Shipment,PostNL - Confirm Shipment
-TIG_PostNL::Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.,Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.
+TIG_PostNL::Always stay informed? Click %shere%s to create a PostNL account based on your order details.,Always stay informed? Click %shere%s to create a PostNL account based on your order details.
 TIG_PostNL::Track your shipment's current status and whereabouts,Track your shipment's current status and whereabouts
 TIG_PostNL::Change the delivery time and place if you are not at home,Change the delivery time and place if you are not at home
 TIG_PostNL::All your shipments available in a single overview,All your shipments available in a single overview
-TIG_PostNL::Always stay informed? Download the MijnPakket app.,Always stay informed? Download the MijnPakket app.
+TIG_PostNL::Always stay informed? Download the PostNL app.,Always stay informed? Download the PostNL app.
 TIG_PostNL::The customer was redirected to the cart because the quote was empty.,The customer was redirected to the cart because the quote was empty.
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,The customer was redirected to the cart because the quote had the following error(s): %s.
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,The customer was redirected to the cart because the quote is multishipping.
@@ -1307,3 +1307,9 @@ TIG_PostNL::This setting may be overwritten by manualy creating shipments. This 
 TIG_PostNL::Default Belgium COD shipping option,Default Belgium COD shipping option
 TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL delivery options are only available when shipping from the Netherlands.
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Delivery options are only available when shipping from the Netherlands.
+TIG_PostNL::Delivery options based on contractual agreements,Delivery options based on contractual agreements
+TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.,Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.
+TIG_PostNL::Enable monday delivery,Enable monday delivery
+TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers.,Activate monday delivery (also known as sunday sorting) for your customers.
+"TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>."
+"TIG_PostNL::You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>.","You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>."

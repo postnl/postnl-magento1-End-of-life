@@ -227,6 +227,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             )
         );
 
+        /**
+         * If the order has any PostNl shipments, we can use their delivery_date. Otherwise we can check the
+         * delivery_date stored by the tig_postnl_order table.
+         */
+        $collection->addExpressionFieldToSelect(
+            'delivery_date',
+            'IF({{shipment_delivery_date}}, {{shipment_delivery_date}}, {{order_delivery_date}})',
+            array(
+                'shipment_delivery_date' => '`postnl_shipment`.`delivery_date`',
+                'order_delivery_date'    => '`postnl_order`.`delivery_date`',
+            )
+        );
+
         $select = $collection->getSelect();
 
         /**

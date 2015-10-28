@@ -40,15 +40,16 @@
 class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
 {
     /**
-     * Constants to define the indeces for shipping/delivery day arrays.
+     * Constants to define the indices for shipping/delivery day arrays.
      */
-    const SUNDAY    = 0;
-    const MONDAY    = 1;
-    const TUESDAY   = 2;
-    const WEDNESDAY = 3;
-    const THURSDAY  = 4;
-    const FRIDAY    = 5;
-    const SATURDAY  = 6;
+    const SUNDAY             = 0;
+    const MONDAY             = 1;
+    const TUESDAY            = 2;
+    const WEDNESDAY          = 3;
+    const THURSDAY           = 4;
+    const FRIDAY             = 5;
+    const SATURDAY           = 6;
+    const ALTERNATIVE_SUNDAY = 7; // In certain instances sunday is considered the 7th day, rather than the 0th.
 
     /**
      * Defines which delivery days are available, used for further calculating shipping and delivery dates.
@@ -104,10 +105,8 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          * If a day is configured as shipping day, this day + the PostNL shipping delay is available as delivery day.
          */
         foreach($shippingDays as $shippingDay) {
-            if (in_array($shippingDay, $shippingDays)) {
-                $dayToEnable = ($shippingDay + $this->_postnlDeliveryDelay) % 7;
-                $this->_validDeliveryDays[$dayToEnable] = 1;
-            }
+            $dayToEnable = ($shippingDay + $this->_postnlDeliveryDelay) % 7;
+            $this->_validDeliveryDays[$dayToEnable] = 1;
         }
 
         /**
@@ -266,7 +265,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          * allowed, and sundaysorting is active.
          */
         if($dateObject->format('N') == self::MONDAY) {
-            if($sundaySorting && !in_array(self::SUNDAY, $shippingDaysArray)) {
+            if($sundaySorting && !in_array(self::ALTERNATIVE_SUNDAY, $shippingDaysArray)) {
                 $dateObject->sub(new DateInterval("P1D"));
             }
         }
@@ -319,7 +318,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          * If the weekday == 7, we need to check for sunday cutoff time instead.
          */
         $forSunday = false;
-        if ($weekDay == 7) {
+        if ($weekDay == self::ALTERNATIVE_SUNDAY) {
             $forSunday = true;
         }
 
@@ -357,7 +356,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     }
 
     /**
-     * Checks if the found delivery day is valid. If this is not te case, add a day to the deliverydaycorrection,
+     * Checks if the found delivery day is valid. If this is not the case, add a day to the deliverydaycorrection,
      * point to the next found day, and repeat this.
      *
      * @param DateTime|int $checkValidDay
@@ -376,6 +375,8 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         if (is_object($checkValidDay)) {
             $checkValidDay = $checkValidDay->format('N');
         }
+
+        $checkValidDay = (int) $checkValidDay;
 
         /**
          * If the checkValidDay is not found in the valid delivery day array, we will not find what we are looking for.

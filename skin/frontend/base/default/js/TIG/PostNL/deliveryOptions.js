@@ -4362,14 +4362,10 @@ PostnlDeliveryOptions.Location = new Class.create({
         var openingHours = false;
         switch (date.getDay()) {
             case 0:
-                if (openingDays.Sunday) {
-                    openingHours = openingDays.Sunday.string;
-                }
+                openingHours = false;
                 break;
             case 1:
-                if (openingDays.Monday) {
-                    openingHours = openingDays.Monday.string;
-                }
+                openingHours = false;
                 break;
             case 2:
                 if (openingDays.Tuesday) {
@@ -4409,9 +4405,9 @@ PostnlDeliveryOptions.Location = new Class.create({
             nextDay.setDate(date.getDate() + 1);
 
             /**
-             * If the next day is Monday, and Monday Delivery is not allowed, get Tuesday as next day.
+             * If the next day is Monday, get Tuesday as next day.
              */
-            if (nextDay.getDay() == 1 && this.getOptions().allowSundaySorting == 0) {
+            if (nextDay.getDay() == 1) {
                 nextDay.setDate(date.getDate() + 2);
             }
             return this.getDeliveryDate(nextDay, n + 1);
