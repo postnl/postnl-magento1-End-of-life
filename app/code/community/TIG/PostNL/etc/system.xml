@@ -1981,7 +1981,7 @@
                             </depends>
                         </stated_address_only_fee>
                         <premium_delivery_options_header translate="label" module="postnl">
-                            <label>Premium delivery options</label>
+                            <label>Delivery options based on contractual agreements</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2001,7 +2001,7 @@
                             </depends>
                         </premium_delivery_options_header>
                         <premium_delivery_options_info translate="comment" module="postnl">
-                            <comment>Premium delivery options require special conditions in your PostNL contract. Please note that if your PostNL contract does not allow the use of these options and you use them anyway, you may incur fines.</comment>
+                            <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2073,7 +2073,7 @@
                             </depends>
                         </enable_sunday_delivery>
                         <mijnpakket_header translate="label" module="postnl">
-                            <label>MijnPakket</label>
+                            <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2093,8 +2093,8 @@
                             </depends>
                         </mijnpakket_header>
                         <mijnpakket_login_active translate="label tooltip" module="postnl">
-                            <label>Enable MijnPakket login</label>
-                            <tooltip>MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.</tooltip>
+                            <label>Enable PostNL account login</label>
+                            <tooltip>PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -2116,8 +2116,8 @@
                             </depends>
                         </mijnpakket_login_active>
                         <mijnpakket_notification translate="label tooltip" module="postnl">
-                            <label>Show MijnPakket notification on the order success page</label>
-                            <tooltip>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</tooltip>
+                            <label>Show PostNL account notification on the order success page</label>
+                            <tooltip>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -2139,8 +2139,8 @@
                             </depends>
                         </mijnpakket_notification>
                         <show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
-                            <label>Show create MijnPakket account link</label>
-                            <tooltip>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</tooltip>
+                            <label>Show create PostNL account link</label>
+                            <tooltip>If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -2163,8 +2163,8 @@
                             </depends>
                         </show_create_mijnpakket_account_link>
                         <show_mijnpakket_app_link translate="label tooltip" module="postnl">
-                            <label>Show MijnPakket app link</label>
-                            <tooltip>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</tooltip>
+                            <label>Show PostNL app link</label>
+                            <tooltip>If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -3333,8 +3333,8 @@
                             <show_in_store>1</show_in_store>
                         </active>
                         <show_exclusively_for_mijnpakket_users translate="label tooltip" module="postnl">
-                            <label>Show PostNL Checkout exclusively to MijnPakket users</label>
-                            <tooltip>Activate the PostNL Checkout only for customers with a MijnPakket account. Please note: The Delivery Options must be activated.</tooltip>
+                            <label>Show PostNL Checkout exclusively to users with a PostNL account</label>
+                            <tooltip>Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
