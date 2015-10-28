@@ -4571,6 +4571,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        /**
+         * Buspakje shipments can't be delivered on a monday or tuesday.
+         */
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $this->getDeliveryDate(), new DateTimeZone('UTC'));
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
+            return false;
+        }
+
         return true;
     }
 

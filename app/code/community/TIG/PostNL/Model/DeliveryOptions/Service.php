@@ -135,65 +135,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return false;
         }
 
-        /**
-         * Get the configured shipping days.
-         */
-        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
-        $shippingDays = explode(',', $shippingDays);
-
         $helper = Mage::helper('postnl/deliveryOptions');
 
         return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
-
-        /**
-         * Calculate the earliest possible shipping date for comparison.
-         */
-        $earliestShippingDate = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-        $earliestShippingDate->add(new DateInterval("P{$helper->getQuoteShippingDuration()}D"));
-
-        foreach ($timeframes as $key => $timeframe) {
-            /**
-             * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
-             * the delivery date, but may not be a sunday.
-             */
-            $timeframeDate = new DateTime($timeframe->Date, new DateTimeZone('UTC'));
-            $deliveryDay   = (int) $timeframeDate->format('N');
-
-            $shippingDate = clone $timeframeDate;
-            $shippingDay  = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
-
-            if (in_array($shippingDay, $shippingDays)) {
-                continue;
-            }
-
-            /**
-             * If the delivery day is tuesday and sunday sorting is not available, shipping the order on saturday will
-             * also result in a tuesday delivery so we need to validate saturday as a valid shipping date.
-             *
-             * If the delivery day is monday and sunday sorting is available, shipping the order on saturday will also
-             * result in a monday delivery so we need to validate saturday as a valid shipping date.
-             */
-            $valid = false;
-            if (
-                ($deliveryDay === 2
-                    && !$helper->canUseSundaySorting()
-                )
-                || ($deliveryDay === 1
-                    && $helper->canUseSundaySorting()
-                )
-            ) {
-                $valid = $this->_validateSaturdayShipping($shippingDays, $shippingDate, $earliestShippingDate);
-            }
-
-            if (false === $valid) {
-                unset($timeframes[$key]);
-            }
-        }
-
-        /**
-         * Only return the values, as otherwise the array will be JSON encoded as an object.
-         */
-        return array_values($timeframes);
     }
 
     /**

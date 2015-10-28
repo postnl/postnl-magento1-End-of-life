@@ -765,11 +765,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return StdClass[]|false
      */
-    public function filterTimeFrames($timeframes, $storeId) {
+    public function filterTimeFrames($timeframes, $storeId, $isBuspakje = false) {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
-        $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
+        $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId, $isBuspakje);
 
         foreach($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));

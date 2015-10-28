@@ -96,10 +96,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * Retrieves required config values.
          */
-        $sundayDelivery          = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        $sundaySorting           = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
-        $shippingDays            = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
-        $shippingDays = explode(',', $shippingDays);
+        $sundayDelivery = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        $shippingDays   = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
+        $shippingDays   = explode(',', $shippingDays);
+
+        /**
+         * Sunday delivery and sunday sorting are not available for letter box parcels.
+         */
+        if ($this->quoteIsBuspakje(null)) {
+            $sundayDelivery = false;
+            $sundaySorting  = false;
+        }
 
         /**
          * If a day is configured as shipping day, this day + the PostNL shipping delay is available as delivery day.
