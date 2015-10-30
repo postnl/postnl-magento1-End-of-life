@@ -131,13 +131,14 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                 && in_array(self::SATURDAY, $shippingDays)
             ) {
                 $this->_validDeliveryDays[self::MONDAY] = 1;
-            }
-            /**
-             * If sunday sorting is not active, and sunday delivery isn't either, tuesday should be a valid delivery day.
-             */
-            elseif (!$sundaySorting
-                    && in_array(self::SATURDAY, $shippingDays)
+            } elseif (!$sundaySorting
+                && in_array(self::SATURDAY, $shippingDays)
             ) {
+                /**
+                 * If sunday sorting is not active, and sunday delivery isn't either, tuesday should be a valid delivery
+                 * day and monday shouldn't.
+                 */
+                $this->_validDeliveryDays[self::MONDAY] = 0;
                 $this->_validDeliveryDays[self::TUESDAY] = 1;
             } else {
                 $this->_validDeliveryDays[self::MONDAY] = 0;
@@ -149,9 +150,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         if (!in_array(1, $this->_validDeliveryDays)) {
             throw new TIG_PostNL_Exception(
-                $this->__(
-                    "No valid delivery day found."
-                ),
+                $this->__('No valid delivery day found.'),
                 'POSTNL-0231'
             );
         }

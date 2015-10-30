@@ -765,11 +765,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return StdClass[]|false
      */
-    public function filterTimeFrames($timeframes, $storeId, $isBuspakje = false) {
+    public function filterTimeFrames($timeframes, $storeId) {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
-        $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId, $isBuspakje);
+        $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
 
         foreach($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
@@ -1364,7 +1364,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
          */
-        $allowed = parent::canUsePakjeGemak($storeId);
+        $allowed = parent::canUsePakjeGemak();
 
         return $allowed;
     }

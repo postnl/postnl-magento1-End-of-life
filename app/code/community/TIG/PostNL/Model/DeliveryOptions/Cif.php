@@ -118,6 +118,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
+        $options = $this->_getDeliveryDateOptionsArray();
+
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'PostalCode'                 => $postcode,
@@ -125,7 +127,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'ShippingDuration'           => $shippingDuration,
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
                 'CutOffTimes'                => $CutOffTimes,
-                'Options'                    => array('Daytime'),
+                'Options'                    => $options,
                 'CountryCode'                => $country,
             ),
             'Message' => $this->_getMessage('')
@@ -487,13 +489,43 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         $storeId = $this->getStoreId();
 
-        $options = array(self::DOMESTIC_DELIVERY_OPTION, self::EVENING_DELIVERY_OPTION);
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
-        if (Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId)) {
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUseEveningTimeframes()) {
+            $options[] = self::EVENING_DELIVERY_OPTION;
+        }
+
+        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        if ($sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
         return $options;
     }
 
+    /**
+     * Get the best fitting delivery option for the GetDeliveryDate request. In contract to the
+     * _getDeliveryTimeframesOptionsArray method, this method always returns an array with just 1 item.
+     *
+     * @return array
+     */
+    protected function _getDeliveryDateOptionsArray()
+    {
+        $storeId = $this->getStoreId();
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        if ($sundayDelivery) {
+            return array(self::SUNDAY_DELIVERY_OPTION);
+        }
+
+        if ($helper->canUseEveningTimeframes()) {
+            return array(self::EVENING_DELIVERY_OPTION);
+        }
+
+        return array(self::DOMESTIC_DELIVERY_OPTION);
+    }
 }
