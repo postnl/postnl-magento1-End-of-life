@@ -213,9 +213,12 @@ PostnlDeliveryOptions.prototype = {
             taxDisplayType            : 1,
             eveningFeeIncl            : 0,
             eveningFeeExcl            : 0,
+            sundayFeeIncl             : 0,
+            sundayFeeExcl             : 0,
             expressFeeIncl            : 0,
             expressFeeExcl            : 0,
             eveningFeeText            : '',
+            sundayFeeText             : '',
             expressFeeText            : '',
             allowStreetview           : true,
             scrollbarContainer        : 'scrollbar_content',
@@ -5331,6 +5334,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
 
             comment = '<span class="option-comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
+        }
+
+        if (this.type == 'Sunday') {
+            var sundayCosts = this.getOptions().sundayFeeText;
+            var sundayCostHtml = '';
+
+            if (this.getOptions().sundayFeeIncl) {
+                sundayCostHtml += ' + ' + sundayCosts;
+            }
+
+            comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
 
         return comment;

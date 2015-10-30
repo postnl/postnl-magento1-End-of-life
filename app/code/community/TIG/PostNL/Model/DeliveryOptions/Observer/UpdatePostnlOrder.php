@@ -149,6 +149,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             } elseif ($type == $postnlOrder::TYPE_AVOND) {
                 $fee = Mage::helper('postnl/deliveryOptions')
                            ->getEveningFee(false, $includingTax, false);
+            } elseif ($type == $postnlOrder::TYPE_SUNDAY) {
+                $fee = Mage::helper('postnl/deliveryOptions_fee')
+                    ->getSundayFee(false, $includingTax, false);
             }
         }
 
