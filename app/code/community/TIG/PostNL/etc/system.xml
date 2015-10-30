@@ -2072,6 +2072,31 @@
                                 </country>
                             </depends>
                         </enable_sunday_delivery>
+                        <sunday_delivery_fee translate="label tooltip" module="postnl">
+                            <label>Sunday delivery fee</label>
+                            <tooltip>Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>postnl_deliveryoptions/system_config_backend_validateFee_sundayDeliveryFee</backend_model>
+                            <sort_order>315</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number validate-not-negative-number</validate>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_sunday_delivery>1</enable_sunday_delivery>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </sunday_delivery_fee>
                         <mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
