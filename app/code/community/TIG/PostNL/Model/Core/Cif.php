@@ -1190,7 +1190,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'HouseNr'          => $streetData['housenumber'],
             'HouseNrExt'       => $streetData['housenumberExtension'],
             'StreetHouseNrExt' => $streetData['fullStreet'],
-            'Zipcode'          => str_replace(' ', '', $address->getPostcode()),
+            'Zipcode'          => strtoupper(str_replace(' ', '', $address->getPostcode())),
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
             'Countrycode'      => $address->getCountry(),
@@ -1413,11 +1413,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * address attributes.
      *
      * @param Mage_Sales_Model_Order_Address $address
-     * @param boolean                        $allowFullStreet
      *
      * @return array
      */
-    protected function _getStreetData($address, $allowFullStreet = true)
+    protected function _getStreetData($address)
     {
         $helper = Mage::helper('postnl/cif');
         $storeId = $this->getStoreId();
@@ -1731,6 +1730,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($customsValue)) {
             $productId = $shipmentItem->getProductId();
+            /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs value for product <a href="%s" target="_blank">#%s</a>.',
@@ -1768,6 +1768,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($description)) {
             $productId = $shipmentItem->getProductId();
+            /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs description for product <a href="%s" target="_blank">#%s</a>.',
