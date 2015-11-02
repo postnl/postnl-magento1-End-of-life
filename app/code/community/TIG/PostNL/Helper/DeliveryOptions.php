@@ -71,10 +71,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
     /**
      * Xpaths to extra fee config settings.
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
-    const XPATH_EVENING_TIMEFRAME_FEE   = 'postnl/delivery_options/evening_timeframe_fee';
-    const XPATH_PAKJEGEMAK_EXPRESS_FEE  = 'postnl/delivery_options/pakjegemak_express_fee';
-    const XPATH_ONLY_STATED_ADDRESS_FEE = 'postnl/delivery_options/stated_address_only_fee';
+    const XPATH_EVENING_TIMEFRAME_FEE   = TIG_PostNL_Helper_DeliveryOptions_Fee::XPATH_EVENING_TIMEFRAME_FEE;
+    /**
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
+     */
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE  = TIG_PostNL_Helper_DeliveryOptions_Fee::XPATH_PAKJEGEMAK_EXPRESS_FEE;
+    /**
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
+     */
+    const XPATH_ONLY_STATED_ADDRESS_FEE = TIG_PostNL_Helper_DeliveryOptions_Fee::XPATH_ONLY_STATED_ADDRESS_FEE;
 
     /**
      * Xpath for shipping duration setting.
@@ -106,6 +117,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
     /**
      * The maximum fee amount allowed for evening and early delivery options.
+     * @deprecated deprecated since version 1.7.0
      */
     const MAX_FEE = 2;
 
@@ -236,43 +248,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean $convert
      *
      * @return float
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        $registryKey = 'postnl_evening_fee';
-
-        if ($includingTax) {
-            $registryKey .= '_incl';
-        }
-
-        if (Mage::registry($registryKey) !== null) {
-            $price = Mage::registry($registryKey);
-        } else {
-            $storeId = Mage::app()->getStore()->getId();
-
-            $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
-
-            $price = $this->getPriceWithTax($eveningFee, $includingTax, false, false);
-
-            if ($price > self::MAX_FEE) {
-                $price = 0;
-            }
-
-            Mage::register($registryKey, $price);
-        }
-
-        if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
-
-            $price = $store->convertPrice($price, false, false);
-        }
-
-        if ($formatted) {
-            $price = Mage::app()->getStore()->formatPrice($price, false);
-        }
-
-        return $price;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getEveningFee($formatted, $includingTax, $convert);
     }
 
     /**
@@ -283,43 +266,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean $convert
      *
      * @return float
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
-        $registryKey = 'postnl_express_fee';
-
-        if ($includingTax) {
-            $registryKey .= '_incl';
-        }
-
-        if (Mage::registry($registryKey) !== null) {
-            $price = Mage::registry($registryKey);
-        } else {
-            $storeId = Mage::app()->getStore()->getId();
-
-            $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
-
-            $price = $this->getPriceWithTax($expressFee, $includingTax, false, false);
-
-            if ($price > self::MAX_FEE) {
-                $price = 0;
-            }
-
-            Mage::register($registryKey, $price);
-        }
-
-        if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
-
-            $price = $store->convertPrice($price, false, false);
-        }
-
-        if ($formatted) {
-            $price = Mage::app()->getStore()->formatPrice($price, false);
-        }
-
-        return $price;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getExpressFee($formatted, $includingTax, $convert);
     }
 
     /**
@@ -331,56 +285,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean $convert
      *
      * @return float|int
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
     public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
     {
-        $registryKey = 'postnl_pakje_gemak_fee';
-
-        if ($includingTax) {
-            $registryKey .= '_incl';
-        }
-
-        /**
-         * If the current order is not a buspakje order, the fee is 0.
-         */
-        if (!$this->isBuspakjeConfigApplicableToQuote()) {
-            Mage::register($registryKey, 0);
-
-            return 0;
-        }
-
-        if (Mage::registry($registryKey) !== null) {
-            $price = Mage::registry($registryKey);
-        } else {
-            $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
-            if (!$pakjeGemakShippingRates) {
-                return 0;
-            }
-
-            $pakjeGemakShippingRate = $pakjeGemakShippingRates->getCheapestRate();
-            /** @noinspection PhpUndefinedMethodInspection */
-            $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
-
-            $difference = $pakjeGemakShippingRate - $currentRate;
-
-            $price = $this->getPriceWithTax($difference, $includingTax, false, false);
-
-            Mage::register($registryKey, $price);
-        }
-
-        if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
-
-            $price = $store->convertPrice($price, false, false);
-        }
-
-
-        if ($formatted) {
-            $price = Mage::app()->getStore()->formatPrice($price, false);
-        }
-
-        return $price;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -392,52 +304,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param bool                        $convert
      *
      * @return float|int
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
-    public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true,
-                                  $convert = true)
+    public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true, $convert = true)
     {
-        if (!$postnlOrder->hasOptions()) {
-            return 0;
-        }
-
-        $options = $postnlOrder->getOptions();
-        if (empty($options)) {
-            return 0;
-        }
-
-        $storeId = Mage::app()->getStore()->getId();
-
-        /**
-         * For upgradability reasons this is a switch, rather than an if statement.
-         */
-        $fee = 0;
-        foreach ($options as $option => $value) {
-            if (!$value) {
-                continue;
-            }
-
-            switch ($option) {
-                case 'only_stated_address':
-                    $fee += (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
-                    break;
-                //no default
-            }
-        }
-
-        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
-
-        if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
-
-            $price = $store->convertPrice($price, false, false);
-        }
-
-        if ($formatted) {
-            $price = Mage::app()->getStore()->formatPrice($price, false);
-        }
-
-        return $price;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -449,40 +323,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param bool  $convert
      *
      * @return float|int
+     *
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        /**
-         * For upgradability reasons this is a switch, rather than an if statement.
-         */
-        $fee = 0;
-        switch ($option) {
-            case 'only_stated_address':
-                $fee = (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
-                break;
-            //no default
-        }
-
-        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
-
-        if ($price > 2) {
-            $price = 0;
-        }
-
-        if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
-
-            $price = $store->convertPrice($price, false, false);
-        }
-
-        if ($formatted) {
-            $price = Mage::app()->getStore()->formatPrice($price, false);
-        }
-
-        return $price;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getOptionFee($option, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -1079,20 +927,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return float
      *
-     * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
+     * @deprecated deprecated since version 1.7.0
+     * @see TIG_PostNL_Helper_DeliveryOptions_Fee
      */
     public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
-        $quote = $this->getQuote();
-        $store = $quote->getStore();
-
-        $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
-
-        if ($convert) {
-            $shippingPrice = $store->convertPrice($shippingPrice, $formatted, false);
-        }
-
-        return $shippingPrice;
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        return Mage::helper('postnl/deliveryOptions_fee')->getPriceWithTax($price, $includingTax, $formatted, $convert);
     }
 
     /**

@@ -209,6 +209,8 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                 $fee = Mage::helper('postnl/deliveryOptions')->getExpressFee(false, $includingTax, false);
             } elseif ($type == 'Avond' ) {
                 $fee = Mage::helper('postnl/deliveryOptions')->getEveningFee(false, $includingTax, false);
+            } elseif ($type == TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_TYPE_SUNDAY ) {
+                $fee = Mage::helper('postnl/deliveryOptions_fee')->getSundayFee(false, $includingTax, false);
             }
 
             $fee += Mage::helper('postnl/deliveryOptions')->getOptionsFee($postnlOrder, false, $includingTax, false);
