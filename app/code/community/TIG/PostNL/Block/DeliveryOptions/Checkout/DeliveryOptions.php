@@ -396,6 +396,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'evening':
                 $fee = $this->getEveningFee(false, $includingTax);
                 break;
+            case 'sunday':
+                $fee = $this->getSundayFee(false, $includingTax);
+                break;
             case 'express':
                 $fee = $this->getExpressFee(false, $includingTax);
                 break;
@@ -423,6 +426,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'evening':
                 $feeText = $this->getEveningFee(true, $includingTax);
                 break;
+            case 'sunday':
+                $feeText = $this->getSundayFee(true, $includingTax);
+                break;
             case 'express':
                 $feeText = $this->getExpressFee(true, $includingTax);
                 break;
@@ -447,6 +453,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     public function getEveningFee($formatted = false, $includingTax = true)
     {
         return Mage::helper('postnl/deliveryOptions')->getEveningFee($formatted, $includingTax);
+    }
+
+    /**
+     * Get the fee charged for sunday delivery.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getSundayFee($formatted = false, $includingTax = true)
+    {
+        return Mage::helper('postnl/deliveryOptions_fee')->getSundayFee($formatted, $includingTax);
     }
 
     /**
