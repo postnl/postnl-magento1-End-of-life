@@ -885,7 +885,8 @@
                 <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
                 <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
-                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Disable sunday delivery -->
+                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Sunday Delivery cost 0 {base currency} extra -->
+                <sunday_delivery_fee>0</sunday_delivery_fee> <!-- Disable sunday delivery -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
