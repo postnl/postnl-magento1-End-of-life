@@ -507,7 +507,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
     /**
      * Get the best fitting delivery option for the GetDeliveryDate request. In contract to the
-     * _getDeliveryTimeframesOptionsArray method, this method always returns an array with just 1 item.
+     * _getDeliveryTimeframesOptionsArray method, this method will return the options in a different order. This is
+     * important to prevent certain dates from being unavailable. The order used in this method is (depending on the
+     * extension's config): sunday > daytime > evening.
      *
      * @return array
      */
@@ -517,15 +519,18 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        $options = array();
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         if ($sundayDelivery) {
-            return array(self::SUNDAY_DELIVERY_OPTION);
+            $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
+
+        $options[] = array(self::DOMESTIC_DELIVERY_OPTION);
 
         if ($helper->canUseEveningTimeframes()) {
-            return array(self::EVENING_DELIVERY_OPTION);
+            $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
-        return array(self::DOMESTIC_DELIVERY_OPTION);
+        return $options;
     }
 }
