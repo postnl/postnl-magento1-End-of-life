@@ -202,7 +202,7 @@
                         <min_order_total translate="label" module="postnl">
                             <label>Minimum order total</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -213,7 +213,7 @@
                         <max_order_total translate="label" module="postnl">
                             <label>Maximum order total</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -226,7 +226,7 @@
                             <tooltip>Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -240,7 +240,7 @@
                             <tooltip>Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -251,7 +251,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -527,7 +527,7 @@
                     <show_in_store>1</show_in_store>
                     <fields>
                         <support>
-                            <sort_order>0</sort_order>
+                            <sort_order>10</sort_order>
                             <frontend_model>postnl_adminhtml/system_config_form_field_supportTab</frontend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -630,7 +630,7 @@
                         <only_default_header translate="label" module="postnl">
                             <label><![CDATA[Extension registration is only available on the 'global' scope.]]></label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1025,7 +1025,7 @@
                         <postcode_nl_extension_active>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_postcodeNlExtensionActive</frontend_model>
-                            <sort_order>105</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1033,7 +1033,7 @@
                         <postcode_nl_extension_conflict_info translate="comment" module="postnl">
                             <comment><![CDATA[You are currently using the Postcode.nl extension. This extension conflicts with the PostNL extension's built-in postcode validator. We recommend you disable the Postcode.nl extension if you wish to use the PostNL extensions' postcode validator.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>106</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1048,7 +1048,7 @@
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <backend_model>postnl_addressvalidation/system_config_backend_validateAccount</backend_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1065,7 +1065,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1083,7 +1083,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1100,7 +1100,7 @@
                             <label>Maximum number of attempts</label>
                             <tooltip>After this number of attempts your customer will be prompted to fill in his address manually. Leave this field empty to allow an infinite number of attempts. Please note however that in rare cases a correct address might not be validated, leaving your customer unable to complete the order process. We therefore recommend always filling in a maximum number of attempts.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1118,7 +1118,7 @@
                             <label>Connection timeout duration</label>
                             <tooltip>After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1135,7 +1135,7 @@
                         <gomage_postcode_check_info translate="comment" module="postnl">
                             <comment><![CDATA[If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href="##MUST_BE_REPLACED##" target="_blank">here</a>]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1147,7 +1147,7 @@
                         <address_lines>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_addressLines</frontend_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1155,7 +1155,7 @@
                         <split_street_unavailable_info translate="comment" module="postnl">
                             <comment><![CDATA[You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href="http://kb.tig.nl/topic/55961916" target="_blank">here</a>.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1173,7 +1173,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1190,7 +1190,7 @@
                             <label>Streetname field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1209,7 +1209,7 @@
                             <label>Housenr. field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1229,7 +1229,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1247,7 +1247,7 @@
                             <label>Housenr. extension field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1266,7 +1266,7 @@
                         <optional_street_fields_header translate="label" module="postnl">
                             <label>Optional address fields</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1275,7 +1275,7 @@
                             <label>Area field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1284,7 +1284,7 @@
                             <label>Building name field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1293,7 +1293,7 @@
                             <label>Department field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1303,7 +1303,7 @@
                             <tooltip>Doorcodes are often used in foreign addresses such as those used in France and Singapore.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1312,7 +1312,7 @@
                             <label>Floor field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1321,7 +1321,7 @@
                             <label>Remark field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1329,7 +1329,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1387,7 +1387,7 @@
                         <delivery_options_belgium_header translate="label" module="postnl">
                             <label>PostNL delivery options are only available when shipping from the Netherlands.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>25</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1403,7 +1403,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1422,7 +1422,7 @@
                         <gomage_delivery_date_conflict>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_goMageDeliveryDateConflicts</frontend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1435,7 +1435,7 @@
                             <label><![CDATA[[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href="http://kb.tig.nl/topic/" target="blank">Click here for more information from the TIG knowledgebase.</a>]]></label>
                             <comment>You have enabled PostNL delivery options and GoMage LightCheckout's Delivery Date functionality for the same shipping methods. Unfortunately these two functionalities conflict. Please disable one of these features.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1457,7 +1457,7 @@
                             <comment><![CDATA[You can view an example of the different themes <a href="http://kb.tig.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_themes</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1480,7 +1480,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1502,7 +1502,7 @@
                             <tooltip>Select for which products PostNL delivery options should be available.</tooltip>
                             <frontend_type>postnl_radios</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_stockOptions</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1525,7 +1525,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1547,7 +1547,7 @@
                             <tooltip>Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1571,7 +1571,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1595,7 +1595,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1619,7 +1619,7 @@
                             <tooltip>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1646,7 +1646,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1669,7 +1669,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1692,7 +1692,7 @@
                             <tooltip>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1718,7 +1718,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1741,7 +1741,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1764,7 +1764,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1789,7 +1789,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1814,7 +1814,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1842,7 +1842,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1870,7 +1870,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1895,7 +1895,7 @@
                         <stated_address_header translate="label" module="postnl">
                             <label>Only stated address</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1918,7 +1918,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1940,7 +1940,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1962,7 +1962,7 @@
                             <label>Stated address only fee</label>
                             <frontend_type>text</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1983,7 +1983,7 @@
                         <premium_delivery_options_header translate="label" module="postnl">
                             <label>Delivery options based on contractual agreements</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2003,7 +2003,7 @@
                         <premium_delivery_options_info translate="comment" module="postnl">
                             <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2027,7 +2027,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2053,7 +2053,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2077,7 +2077,7 @@
                             <tooltip>Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee_sundayDeliveryFee</backend_model>
-                            <sort_order>315</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2100,7 +2100,7 @@
                         <mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>320</sort_order>
+                            <sort_order>340</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2123,7 +2123,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>330</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2146,7 +2146,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>340</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2169,7 +2169,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>350</sort_order>
+                            <sort_order>370</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2193,7 +2193,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>360</sort_order>
+                            <sort_order>380</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2214,7 +2214,7 @@
                         <buspakje_header translate="label" module="postnl">
                             <label>Letter box parcels</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>370</sort_order>
+                            <sort_order>390</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2231,7 +2231,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>380</sort_order>
+                            <sort_order>400</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2248,7 +2248,7 @@
                             <tooltip>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
-                            <sort_order>390</sort_order>
+                            <sort_order>410</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2263,7 +2263,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>400</sort_order>
+                            <sort_order>420</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2736,7 +2736,7 @@
                         </send_track_and_trace_email>
                         <track_and_trace_email_template translate="label tooltip" module="postnl">
                             <label>Track &amp; trace email template</label>
-                            <tooltip>You can customize the track &amp; trace email in system > transactional emails.</tooltip>
+                            <tooltip>You can customize the track &amp; trace email in system &gt; transactional emails.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
                             <sort_order>30</sort_order>
@@ -4485,7 +4485,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>160</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4515,7 +4515,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_sundayProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>170</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4545,7 +4545,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>180</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4563,7 +4563,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>190</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4593,7 +4593,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>200</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -4615,7 +4615,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>210</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
