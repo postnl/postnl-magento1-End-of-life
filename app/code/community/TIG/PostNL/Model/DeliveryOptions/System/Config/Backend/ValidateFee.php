@@ -111,7 +111,7 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f EUR incl. '
                     . 'VAT.',
                     $fee
                 ),
