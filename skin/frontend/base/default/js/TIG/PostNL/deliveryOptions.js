@@ -1570,6 +1570,8 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().expressFeeIncl;
             } else if (selectedType == 'Avond') {
                 extraCosts = this.getOptions().eveningFeeIncl;
+            } else if (selectedType == 'Sunday') {
+                extraCosts = this.getOptions().sundayFeeIncl;
             }
 
             if (this.debug) {
@@ -1583,6 +1585,8 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().expressFeeExcl;
         } else if (selectedType == 'Avond') {
             extraCosts = this.getOptions().eveningFeeExcl;
+        } else if (selectedType == 'Sunday') {
+            extraCosts = this.getOptions().sundayFeeExcl;
         }
 
         if (this.debug) {
