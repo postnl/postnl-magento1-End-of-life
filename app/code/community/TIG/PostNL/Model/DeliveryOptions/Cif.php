@@ -525,7 +525,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
-        $options[] = array(self::DOMESTIC_DELIVERY_OPTION);
+        $options[] = self::DOMESTIC_DELIVERY_OPTION;
 
         if ($helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
