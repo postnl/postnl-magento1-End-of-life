@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminhtml_Config
+class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_Adminhtml_Config
 {
     /**
      * Base XML path of config settings that will be checked.

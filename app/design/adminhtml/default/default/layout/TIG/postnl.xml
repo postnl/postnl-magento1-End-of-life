@@ -288,14 +288,14 @@
         </reference>
     </adminhtml_sales_order_create_index>
 
-    <postnl_admin_adminhtml_shipment_statushistory>
+    <adminhtml_postnladminhtml_shipment_statushistory>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" template="TIG/PostNL/sales/order/shipment/view/tab/status_history.phtml"/>
         </block>
-    </postnl_admin_adminhtml_shipment_statushistory>
+    </adminhtml_postnladminhtml_shipment_statushistory>
 
-    <postnl_admin_adminhtml_shipment_statushistorygrid>
+    <adminhtml_postnladminhtml_shipment_statushistorygrid>
         <update handle="formkey"/>
         <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" output="toHtml"/>
-    </postnl_admin_adminhtml_shipment_statushistorygrid>
+    </adminhtml_postnladminhtml_shipment_statushistorygrid>
 </layout>

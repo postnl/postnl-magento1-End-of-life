@@ -135,65 +135,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return false;
         }
 
-        /**
-         * Get the configured shipping days.
-         */
-        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
-        $shippingDays = explode(',', $shippingDays);
-
         $helper = Mage::helper('postnl/deliveryOptions');
 
         return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
-
-        /**
-         * Calculate the earliest possible shipping date for comparison.
-         */
-        $earliestShippingDate = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-        $earliestShippingDate->add(new DateInterval("P{$helper->getQuoteShippingDuration()}D"));
-
-        foreach ($timeframes as $key => $timeframe) {
-            /**
-             * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
-             * the delivery date, but may not be a sunday.
-             */
-            $timeframeDate = new DateTime($timeframe->Date, new DateTimeZone('UTC'));
-            $deliveryDay   = (int) $timeframeDate->format('N');
-
-            $shippingDate = clone $timeframeDate;
-            $shippingDay  = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
-
-            if (in_array($shippingDay, $shippingDays)) {
-                continue;
-            }
-
-            /**
-             * If the delivery day is tuesday and sunday sorting is not available, shipping the order on saturday will
-             * also result in a tuesday delivery so we need to validate saturday as a valid shipping date.
-             *
-             * If the delivery day is monday and sunday sorting is available, shipping the order on saturday will also
-             * result in a monday delivery so we need to validate saturday as a valid shipping date.
-             */
-            $valid = false;
-            if (
-                ($deliveryDay === 2
-                    && !$helper->canUseSundaySorting()
-                )
-                || ($deliveryDay === 1
-                    && $helper->canUseSundaySorting()
-                )
-            ) {
-                $valid = $this->_validateSaturdayShipping($shippingDays, $shippingDate, $earliestShippingDate);
-            }
-
-            if (false === $valid) {
-                unset($timeframes[$key]);
-            }
-        }
-
-        /**
-         * Only return the values, as otherwise the array will be JSON encoded as an object.
-         */
-        return array_values($timeframes);
     }
 
     /**
@@ -283,9 +227,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $quote = $this->getQuote();
 
-        $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
-        $deliveryDateObject = new DateTime($deliveryDate, new DateTimeZone('UTC'));
-        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateObject, $quote->getStoreId());
+        $amsterdamTimeZone = new DateTimeZone('Europe/Amsterdam');
+        $utcTimeZone = new DateTimeZone('UTC');
+
+        $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
+        $deliveryDate->setTimezone($utcTimeZone);
+
+        $deliveryDateClone = clone $deliveryDate;
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -300,7 +249,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
-                    ->setDeliveryDate($deliveryDate)
+                    ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'))
                     ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
                     ->setExpectedDeliveryTimeStart(false)
                     ->setExpectedDeliveryTimeEnd(false);
@@ -317,12 +266,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
          * Set the expected delivery timeframe if available.
          */
         if (isset($data['from'])) {
-            $from = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['from']);
-            $postnlOrder->setExpectedDeliveryTimeStart($from);
+            $from = DateTime::createFromFormat('H:i:s', $data['from'], $amsterdamTimeZone);
+            $from->setTimezone($utcTimeZone);
+            $postnlOrder->setExpectedDeliveryTimeStart($from->format('H:i:s'));
         }
         if (isset($data['to'])) {
-            $to = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['to']);
-            $postnlOrder->setExpectedDeliveryTimeEnd($to);
+            $to = DateTime::createFromFormat('H:i:s', $data['to'], $amsterdamTimeZone);
+            $to->setTimezone($utcTimeZone);
+            $postnlOrder->setExpectedDeliveryTimeEnd($to->format('H:i:s'));
         }
 
         /**

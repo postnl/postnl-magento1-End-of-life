@@ -36,21 +36,11 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ReturnsController extends Mage_Adminhtml_Controller_Sales_Shipment
+class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee_SundayDeliveryFee
+    extends TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee
 {
     /**
-     * Returns grid.
-     *
-     * @return $this
+     * @var string
      */
-    public function indexAction()
-    {
-        $this->_title($this->__('Sales'))->_title($this->__('PostNL Returns'));
-
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('postnl_adminhtml/sales_returns'))
-             ->renderLayout();
-
-        return $this;
-    }
+    protected $_feeType = TIG_PostNL_Helper_DeliveryOptions_fee::FEE_TYPE_SUNDAY;
 }

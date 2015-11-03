@@ -576,9 +576,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return TIG_PosTNL_Helper_Data|TIG_PosTNL_Helper_Cif|TIG_PosTNL_Helper_Carrier|TIG_PosTNL_Helper_DeliveryOptions
-     *         |TIG_PosTNL_Helper_AddressValidation|TIG_PosTNL_Helper_Checkout|TIG_PosTNL_Helper_Mijnpakket
-     *         |TIG_PosTNL_Helper_Parcelware|TIG_PosTNL_Helper_Payment|TIG_PosTNL_Helper_Webservices
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_DeliveryOptions
+     *         |TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_Checkout|TIG_PostNL_Helper_Mijnpakket
+     *         |TIG_PostNL_Helper_Parcelware|TIG_PostNL_Helper_Payment|TIG_PostNL_Helper_Webservices
+     *         |TIG_PostNL_Helper_Date
      */
     public function getHelper($type = 'data')
     {
@@ -4570,7 +4571,60 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        /**
+         * Buspakje shipments can't be delivered on a monday or tuesday.
+         */
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $this->getDeliveryDate(), new DateTimeZone('UTC'));
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Check if the current confirm and delivery dates are valid for letter box parcel shipments. If not, modify these
+     * dates accordingly.
+     *
+     * @return $this
+     */
+    protected function _checkBuspakjeDates()
+    {
+        /**
+         * Get the current delivery date.
+         */
+        $deliveryDate = $this->getDeliveryDate();
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
+
+        /**
+         * Letter box parcels cannot be delivered on mondays or tuesdays.
+         */
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') == '1') {
+            /** @var TIG_PostNL_Helper_Date $helper */
+            $helper = $this->getHelper('date');
+
+            /**
+             * Modify the delivery date to the next tuesday.
+             */
+            $deliveryDate->modify('next tuesday ' . $deliveryDate->format('H:i:s'));
+
+            $this->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
+
+            /**
+             * Also modify the confirm date accordingly.
+             */
+            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $this->getStoreId());
+
+            $this->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
+        }
+
+        /**
+         * Letter box parcels have no expected delivery times.
+         */
+        $this->setExpectedDeliveryTimeStart(null)
+             ->setExpectedDeliveryTimeEnd(null);
+
+        return $this;
     }
 
     /*******************************************************************************************************************
@@ -4647,6 +4701,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($isBuspakje) {
             $shipmentType = self::SHIPMENT_TYPE_BUSPAKJE;
             $this->setShipmentType($shipmentType);
+
+            $this->_checkBuspakjeDates();
         }
 
         /**

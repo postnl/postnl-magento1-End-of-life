@@ -208,13 +208,17 @@ PostnlDeliveryOptions.prototype = {
             allowPg                   : true,
             allowPge                  : false,
             allowPa                   : true,
+            allowSundaySorting        : false,
             isBuspakje                : false,
             taxDisplayType            : 1,
             eveningFeeIncl            : 0,
             eveningFeeExcl            : 0,
+            sundayFeeIncl             : 0,
+            sundayFeeExcl             : 0,
             expressFeeIncl            : 0,
             expressFeeExcl            : 0,
             eveningFeeText            : '',
+            sundayFeeText             : '',
             expressFeeText            : '',
             allowStreetview           : true,
             scrollbarContainer        : 'scrollbar_content',
@@ -1566,6 +1570,8 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().expressFeeIncl;
             } else if (selectedType == 'Avond') {
                 extraCosts = this.getOptions().eveningFeeIncl;
+            } else if (selectedType == 'Sunday') {
+                extraCosts = this.getOptions().sundayFeeIncl;
             }
 
             if (this.debug) {
@@ -1579,6 +1585,8 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().expressFeeExcl;
         } else if (selectedType == 'Avond') {
             extraCosts = this.getOptions().eveningFeeExcl;
+        } else if (selectedType == 'Sunday') {
+            extraCosts = this.getOptions().sundayFeeExcl;
         }
 
         if (this.debug) {
@@ -4361,14 +4369,10 @@ PostnlDeliveryOptions.Location = new Class.create({
         var openingHours = false;
         switch (date.getDay()) {
             case 0:
-                if (openingDays.Sunday) {
-                    openingHours = openingDays.Sunday.string;
-                }
+                openingHours = false;
                 break;
             case 1:
-                if (openingDays.Monday) {
-                    openingHours = openingDays.Monday.string;
-                }
+                openingHours = false;
                 break;
             case 2:
                 if (openingDays.Tuesday) {
@@ -4407,6 +4411,12 @@ PostnlDeliveryOptions.Location = new Class.create({
             var nextDay = new Date(date);
             nextDay.setDate(date.getDate() + 1);
 
+            /**
+             * If the next day is Monday, get Tuesday as next day.
+             */
+            if (nextDay.getDay() == 1) {
+                nextDay.setDate(date.getDate() + 2);
+            }
             return this.getDeliveryDate(nextDay, n + 1);
         }
 
@@ -5328,6 +5338,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
 
             comment = '<span class="option-comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
+        }
+
+        if (this.type == 'Sunday') {
+            var sundayCosts = this.getOptions().sundayFeeText;
+            var sundayCostHtml = '';
+
+            if (this.getOptions().sundayFeeIncl) {
+                sundayCostHtml += ' + ' + sundayCosts;
+            }
+
+            comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
 
         return comment;

@@ -97,11 +97,17 @@ if (file_exists($xmlLocation)) {
     if ($writable) {
         // Load the XML
         $xml = simplexml_load_file($xmlLocation);
-        $xml->modules->TIG_PostNL->active = 'false';
-        // Suppress errors in case of the file not being writable after all (which should not happen)
-        $writable = @file_put_contents($xmlLocation, $xml->asXML());
+        if ($xml) {
+            $xml->modules->TIG_PostNL->active = 'false';
+            // Suppress errors in case of the file not being writable after all (which should not happen)
+            $writable = @file_put_contents($xmlLocation, $xml->asXML());
+        } else {
+            // simplexml_load_file returned false
+            $writable = false;
+        }
     }
-    // If either $writable is false due to is_writable or because file_put_contents failed, we're going to log a message
+    // If either $writable is false due to is_writable, or because file_put_contents or simplexml_load_file failed,
+    // we're going to log a message
     if ($writable === false) {
         // Log that we really couldn't write the file
         $message = $helper->__('PostNL uninstall found but could not write to XML file: %s', $xmlLocation);

@@ -49,6 +49,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
     const PAYMENT_METHOD_COLUMN       = 'payment_method';
     const OPTIONS_COLUMN              = 'options';
+    const DELIVERY_DATE_COLUMN        = 'delivery_date';
 
     /**
      * Renders a type column for a shipment type.
@@ -361,10 +362,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
              */
             $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
             if ($deliveryOptionsHelper->fitsAsBuspakje($orderItems)) {
-                $label = $helper->__('Letter Box Parcel');
-                $type  = 'buspakje';
+                $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
+                $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
-                return "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                    $label = $helper->__('Letter Box Parcel');
+                    $type  = 'buspakje';
+
+                    return "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+                }
             }
         }
 
@@ -379,7 +385,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
              */
             $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
             if (Mage::helper('postnl/deliveryOptions')->fitsAsBuspakje($orderItems)) {
-                $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
+                $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
+
+                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                    $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                }
             }
         }
 

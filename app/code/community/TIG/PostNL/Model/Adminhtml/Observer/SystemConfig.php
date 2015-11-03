@@ -79,7 +79,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
             return false;
         }
 
-        $onClickUrl = $configEditBlock->getUrl('postnl_admin/adminhtml_config/downloadLogs');
+        $onClickUrl = $configEditBlock->getUrl('adminhtml/postnlAdminhtml_config/downloadLogs');
         $onClick = "setLocation('{$onClickUrl}')";
 
         /**

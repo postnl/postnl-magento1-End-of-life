@@ -353,7 +353,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     protected function _getAddressData($shipment)
     {
         $address = $shipment->getShippingAddress();
-        $streetData = $this->_getStreetData($address, false);
+        $streetData = $this->_getStreetData($address);
 
         $data = array(
             'CompanyName'   => $address->getCompany(),
@@ -399,7 +399,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             return $data;
         }
 
-        $streetData = $this->_getStreetData($pakjeGemakAddress, false);
+        $streetData = $this->_getStreetData($pakjeGemakAddress);
 
         $companyName = $pakjeGemakAddress->getCompany();
         if (!$companyName) { //PostNL Checkout stores the company name in the lastname field
