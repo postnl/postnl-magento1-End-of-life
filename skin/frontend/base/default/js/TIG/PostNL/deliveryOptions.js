@@ -826,6 +826,9 @@ PostnlDeliveryOptions.prototype = {
 
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
+        } else if (this.getOptions().isOsc) {
+            checkbox.checked = true;
+            selectPostnlShippingMethod = true;
         }
 
         /**
@@ -907,6 +910,10 @@ PostnlDeliveryOptions.prototype = {
 
         if (this.getOptions().isOsc) {
             this.timeframes[0].renderAsOsc();
+
+            if (selectTimeframe) {
+                this.saveSelectedOption();
+            }
         }
 
         if (this.debug) {
@@ -924,7 +931,10 @@ PostnlDeliveryOptions.prototype = {
         var fakeTimeframe = {
             From          : '09:00:00',
             To            : '18:00:00',
-            TimeframeType : 'Overdag'
+            TimeframeType : 'Overdag',
+            Options       : {
+                string : []
+            }
         };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
