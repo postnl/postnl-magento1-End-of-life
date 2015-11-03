@@ -3303,7 +3303,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
-        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
+        if ($this->isEuShipment() && !$this->_isCombiLabelShipment()) {
             $this->setProductCode($shipment->ProductCodeDelivery);
         }
 
@@ -4180,7 +4180,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $labelType = $label->Labeltype;
 
-        if ($this->_isCombiLabel()) {
+        if ($this->_isCombiLabelShipment()) {
             $labelType = 'Label-combi';
         }
 
@@ -4267,7 +4267,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return boolean
      */
-    protected function _isCombiLabel()
+    protected function _isCombiLabelShipment()
     {
         if (!$this->isEuShipment()) {
             return false;
