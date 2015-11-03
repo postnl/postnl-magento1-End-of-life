@@ -2001,6 +2001,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $productId = $item->getProductId();
             $option    = $item->getOptionByCode('simple_product');
             if ($option) {
+                $parentProductId = $productId;
                 $productId = $option->getProduct()->getId();
             }
 
@@ -2016,6 +2017,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     'postnl_allow_delivery_options',
                     $item->getStoreId()
                 );
+
+                if ($option) {
+                    $allowParentDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                        $parentProductId,
+                        'postnl_allow_delivery_options',
+                        $item->getStoreId()
+                    );
+
+                    if (!is_null($allowParentDeliveryOptions) && !$allowParentDeliveryOptions) {
+                        $allowDeliveryOptions = $allowParentDeliveryOptions;
+                    }
+                }
             }
 
             if (!is_null($allowDeliveryOptions) && !$allowDeliveryOptions) {
