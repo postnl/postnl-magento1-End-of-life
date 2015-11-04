@@ -649,13 +649,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getCustomBarcodes()
     {
-        if ($this->_customBarcodes) {
+        if ( $this->_customBarcodes ) {
             return $this->_customBarcodes;
         }
 
         $customBarcodes = $this->getHelper()->getCustomBarcodes();
 
         $this->_customBarcodes = $customBarcodes;
+
         return $customBarcodes;
     }
 
