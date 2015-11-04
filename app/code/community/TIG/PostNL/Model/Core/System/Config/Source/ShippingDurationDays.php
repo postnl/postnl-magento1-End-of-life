@@ -36,46 +36,47 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConflicts
-    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
+class TIG_PostNL_Model_Core_System_Config_Source_ShippingDurationDays
 {
     /**
-     * Get whether the GoMage LightCheckout delivery date functionality is conflicting with PostNL delivery options.
+     * Returns an option array for possible shipping duration days.
      *
-     * @param Varien_Data_Form_Element_Abstract $element
-     *
-     * @return int
+     * @return array
      */
-    protected function _getValue(Varien_Data_Form_Element_Abstract $element)
+    public function toOptionArray()
     {
-        $storeId = $this->_getStoreId();
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $labelSizes = array(
+            array(
+                'value' => '1',
+                'label' => $helper->__('Monday')
+            ),
+            array(
+                'value' => '2',
+                'label' => $helper->__('Tuesday')
+            ),
+            array(
+                'value' => '3',
+                'label' => $helper->__('Wednesday')
+            ),
+            array(
+                'value' => '4',
+                'label' => $helper->__('Thursday')
+            ),
+            array(
+                'value' => '5',
+                'label' => $helper->__('Friday')
+            ),
+            array(
+                'value' => '6',
+                'label' => $helper->__('Saturday')
+            ),
+            array(
+                'value' => '7',
+                'label' => $helper->__('Sunday'),
+            ),
+        );
 
-        $goMageDeliveryDateConflicts = Mage::helper('postnl/deliveryOptions')
-                                           ->checkGoMageDeliveryDateConflicts($storeId);
-
-        return (int) $goMageDeliveryDateConflicts;
-    }
-
-    /**
-     * Get the current store ID based on the request parameters.
-     *
-     * @return int
-     */
-    protected function _getStoreId()
-    {
-        $request = Mage::app()->getRequest();
-
-        if ($request->getParam('store')) {
-            $store = $request->getparam('store');
-            $storeId = Mage::app()->getStore($store)->getId();
-        } elseif ($request->getParam('website')) {
-            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
-            $store = $website->getDefaultStore();
-            $storeId = $store->getId();
-        } else {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        return $storeId;
+        return $labelSizes;
     }
 }

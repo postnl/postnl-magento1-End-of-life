@@ -254,7 +254,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getEveningFee($formatted, $includingTax, $convert);
     }
 
@@ -272,7 +272,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getExpressFee($formatted, $includingTax, $convert);
     }
 
@@ -291,7 +291,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
     }
 
@@ -310,7 +310,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
     }
 
@@ -329,7 +329,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getOptionFee($option, $formatted, $includingTax, $convert);
     }
 
@@ -716,7 +716,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return $this->getQuoteShippingDuration($quote);
     }
 
@@ -932,7 +932,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         return Mage::helper('postnl/deliveryOptions_fee')->getPriceWithTax($price, $includingTax, $formatted, $convert);
     }
 
