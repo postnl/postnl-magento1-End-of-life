@@ -1319,3 +1319,6 @@ TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your cus
 TIG_PostNL::sunday,zondag
 TIG_PostNL::Sunday delivery fee, Zondagbezorging toeslag
 "TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.","Additionele kosten voor het gebruik van zondagbezorgin in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zondagbezorging."
+TIG_PostNL::monday,maandag
+TIG_PostNL::Monday delivery,Maandagbezorging
+TIG_PostNL::Monday Delivery,Maandagbezorging
