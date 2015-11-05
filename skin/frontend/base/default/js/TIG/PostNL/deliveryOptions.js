@@ -5161,6 +5161,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Sunday' :
                 this.type = 'Sunday';
                 break;
+            case 'Monday' :
+                this.type = 'Monday';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
@@ -5357,6 +5360,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
 
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
+        }
+
+        if (this.type == 'Monday') {
+            comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
         }
 
         return comment;

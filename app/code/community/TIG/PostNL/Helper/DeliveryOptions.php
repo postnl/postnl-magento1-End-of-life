@@ -130,7 +130,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PG',
         'PGE',
         'PA',
-        'Sunday'
+        'Sunday',
+        'Monday',
     );
 
     /**
@@ -623,8 +624,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
+
             if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
                 unset($timeframes[$key]);
+            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe) {
+                    if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
+                        $timeframes[$key]->Timeframes
+                                         ->TimeframeTimeFrame[$timeframeTimeframeKey]
+                                         ->Options
+                                         ->string[0] = 'Monday';
+                    }
+                }
             }
         }
 

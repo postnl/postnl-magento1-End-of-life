@@ -119,6 +119,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case 'sunday':
                 $label = $helper->__('Sunday Delivery');
                 break;
+            case 'monday':
+                $label = $helper->__('Monday Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -190,6 +193,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getPgeRenderedValue($row);
         } elseif ($optionType == 'Sunday') {
             return $this->_getSundayRenderedValue($row);
+        } elseif ($optionType == 'Monday') {
+            return $this->_getMondayRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -336,19 +341,38 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     }
 
     /**
+     * Render this column for monday shipments.
+     *
+     * @param Varien_Object $row
+     * @param               $destination
+     *
+     * @return string
+     */
+    protected function _getMondayRenderedValue(Varien_Object $row, $destination)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Monday delivery');
+        return $this->_getDomesticRenderedValue($row, $destination, $label);
+    }
+
+    /**
      * Render this column for a domestic shipment.
      *
      * @param Varien_Object $row
      * @param string        $destination
+     * @param null|string   $label
      *
      * @return string
      */
-    protected function _getDomesticRenderedValue(Varien_Object $row, $destination)
+    protected function _getDomesticRenderedValue(Varien_Object $row, $destination, $label = null)
     {
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
-        $label = $helper->__('Domestic');
+        if (!$label) {
+            $label = $helper->__('Domestic');
+        }
         $type  = 'domestic';
 
         $isCod = $this->_isCod($row);
