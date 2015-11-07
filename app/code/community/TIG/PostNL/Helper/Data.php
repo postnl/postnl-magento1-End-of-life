@@ -150,6 +150,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS = 'postnl/returns/print_return_and_shipping_label';
 
     /**
+     * Xpath to the sender country setting.
+     */
+    const XPATH_SENDER_COUNTRY = 'postnl/cif_address/country';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -260,6 +265,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var string[]
      */
     protected $_storeTimeZones;
+
+    /**
+     * @var string
+     */
+    protected $_domesticCountry;
 
     /**
      * Get required fields array.
@@ -453,6 +463,60 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $this->_storeTimeZones;
+    }
+
+    /**
+     * Get an array of country codes considered to be 'domestic'.
+     *
+     * @return string
+     */
+    public function getDomesticCountry()
+    {
+        $domesticCountry = $this->_domesticCountry;
+
+        if (!empty($domesticCountry)) {
+            return $domesticCountry;
+        }
+
+        /**
+         * Try to tget the domestic country array from the cache.
+         */
+        $cache = $this->getCache();
+        if ($cache && $cache->hasDomesticCountry()) {
+            $domesticCountry = $cache->getDomesticCountry();
+
+            $this->setDomesticCountry($cache->getDomesticCountry());
+            return $domesticCountry;
+        }
+
+        /**
+         * The domestic country array contains the selected sender address country.
+         */
+        $domesticCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->setDomesticCountry($domesticCountry);
+
+        /**
+         * Attempt to save the array to the PostNL cache.
+         */
+        if ($cache) {
+            $cache->setDomesticCountry($domesticCountry)
+                  ->saveCache();
+        }
+
+        return $domesticCountry;
+    }
+
+    /**
+     * @param array $domesticCountries
+     *
+     * @return $this
+     */
+    public function setDomesticCountry($domesticCountries)
+    {
+        $this->_domesticCountry = $domesticCountries;
+
+        return $this;
     }
 
     /**
@@ -737,7 +801,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseBuspakje();
         }
 
-        $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE);
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE, $storeId);
 
         if (!$isBuspakjeActive) {
             if ($cache) {
@@ -910,6 +976,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if ($storeId === null) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        /**
+         * If buspakje is turned off, return setting 'manual' to prevent extra checks while getting the same
+         * functionality.
+         */
+        $buspakjeActive = $this->canUseBuspakje();
+        if(!$buspakjeActive){
+            return self::BUSPAKJE_CALCULATION_MODE_MANUAL;
         }
 
         $calculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, $storeId);

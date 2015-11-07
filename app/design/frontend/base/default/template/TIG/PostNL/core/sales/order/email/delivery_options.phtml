@@ -44,10 +44,10 @@
 <?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
 <?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
     <br />
-    <?php echo $this->formatDate($_deliveryOptions['store_delivery_date']); ?>
+    <?php echo $_deliveryOptions['store_delivery_date']; ?>
     <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $this->formatTime($_deliveryOptions['store_delivery_time_start']); ?> - <?php echo $this->formatTime($_deliveryOptions['store_delivery_time_end']); ?>)
+        &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php $_deliveryOptions['store_delivery_time_end']; ?>)
     <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $this->formatTime($_deliveryOptions['store_delivery_time_start']); ?>)
+        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $_deliveryOptions['store_delivery_time_start']; ?>)
     <?php endif; ?>
 <?php endif; ?>

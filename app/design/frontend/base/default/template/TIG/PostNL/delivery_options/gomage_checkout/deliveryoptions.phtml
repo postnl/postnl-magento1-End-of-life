@@ -46,6 +46,7 @@
 <?php $_store         = Mage::app()->getStore(); ?>
 <?php $_address       = $this->getShippingAddress(); ?>
 <?php $_postcode      = $this->getPostcode(); ?>
+<?php $_country       = $this->getCountry(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
@@ -54,7 +55,7 @@
 
 <?php $_canShowSeparateRates = $this->canShowSeparateRates(); ?>
 
-
+<?php $_canUseSundaySorting = $this->canUseSundaySorting(); ?>
 <?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 <?php $_canUsePakjeGemakExpress = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
@@ -72,6 +73,8 @@
 
 <?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
 <?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
+<?php $_sundayFeeIncl     = $this->getFee('sunday', true); ?>
+<?php $_sundayFeeExcl     = $this->getFee('sunday', false); ?>
 <?php $_expressFeeIncl    = $this->getFee('express', true); ?>
 <?php $_expressFeeExcl    = $this->getFee('express', false); ?>
 <?php $_pakjeGemakFeeIncl = $this->getFee('pakje_gemak', true); ?>
@@ -310,6 +313,7 @@
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
             postcode           : postcode,
             housenumber        : housenumber,
+            country            : '<?php echo $this->escapeHtml($_country); ?>',
             deliveryDate       : '<?php echo $_deliveryDate; ?>',
             imageBaseUrl       : baseUrl,
             fullAddress        : fullAddress
@@ -322,16 +326,20 @@
             taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
             eveningFeeIncl         : <?php echo $_eveningFeeIncl; ?>,
             eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
+            sundayFeeIncl          : <?php echo $_sundayFeeIncl; ?>,
+            sundayFeeExcl          : <?php echo $_sundayFeeExcl; ?>,
             expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
             expressFeeExcl         : <?php echo $_expressFeeExcl; ?>,
             pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
             pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+            sundayFeeText          : '<?php echo $this->getFeeText('sunday', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             pakjeGemakFeeText      : '<?php echo $this->getFeeText('pakje_gemak', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
             allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
             allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+            allowSundaySorting     : <?php echo $_canUseSundaySorting            ? 'true' : 'false'; ?>,
             allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,

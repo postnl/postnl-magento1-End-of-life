@@ -1681,4 +1681,22 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
         return $this;
     }
+
+    /**
+     * Prepare attribute values to save.
+     *
+     * @param array $attr
+     *
+     * @return array
+     */
+    protected function _prepareValues($attr)
+    {
+        $data = parent::_prepareValues($attr);
+        $data = array_merge($data, array(
+                'apply_to' => $this->_getValue($attr, 'apply_to'),
+            )
+        );
+
+        return $data;
+    }
 }

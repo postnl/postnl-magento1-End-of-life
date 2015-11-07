@@ -54,7 +54,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateExport
         );
 
         $onClick = 'setLocation(\''
-                 . Mage::helper('adminhtml')->getUrl("postnl_admin/adminhtml_config/exportTablerates", $params)
+                 . Mage::helper('adminhtml')->getUrl("adminhtml/postnlAdminhtml_config/exportTablerates", $params)
                  . 'conditionName/\' + $(\'carriers_postnl_condition_name\').value + \'/tablerates.csv\' )';
 
         $data = array(

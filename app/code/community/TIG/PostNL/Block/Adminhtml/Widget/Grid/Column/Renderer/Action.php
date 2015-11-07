@@ -85,7 +85,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
              */
             if (isset($action['code']) && $action['code'] == 'postnl_print_label') {
                 $printLabelUrl = $this->getUrl(
-                    'postnl_admin/adminhtml_shipment/printLabel',
+                    'adminhtml/postnlAdminhtml_shipment/printLabel',
                     array('shipment_id' => $row->getId())
                 );
 

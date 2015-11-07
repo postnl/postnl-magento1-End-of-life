@@ -36,18 +36,59 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
+ */
+
+/**
+ * Class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee
+ *
+ * Default class used for Fee limit validation, Evening fee limits are default
+ *
  * @method boolean                                                            hasIsIncludingTax()
  * @method TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee setIsIncludingTax(boolean $value)
  * @method boolean                                                            hasMockShippingAddress()
  * @method TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee setMockShippingAddress(Mage_Customer_Model_Address $value)
+ *
  */
 class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends Mage_Core_Model_Config_Data
 {
     /**
      * Min and max values for the fee.
      */
+    /** @deprecated deprecated since version 1.7.0 */
     const FEE_MIN_AMOUNT = 0;
+    /** @deprecated deprecated since version 1.7.0 */
     const FEE_MAX_AMOUNT = 2;
+
+    /**
+     * @var string
+     */
+    protected $_feeType = TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_TYPE_EVENING;
+
+    /**
+     * @return int
+     */
+    protected function _getMinFeeAmount()
+    {
+        $feeLimit = Mage::helper('postnl/deliveryOptions_fee')->getFeeLimit(
+            $this->_feeType,
+            TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_LIMIT_MIN
+        );
+
+        return $feeLimit;
+    }
+
+    /**
+     * @return int
+     */
+    protected function _getMaxFeeAmount()
+    {
+        $feeLimit = Mage::helper('postnl/deliveryOptions_fee')->getFeeLimit(
+            $this->_feeType,
+            TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_LIMIT_MAX
+        );
+
+        return $feeLimit;
+    }
 
     /**
      * @return boolean
@@ -102,18 +143,24 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
             return true;
         }
 
+        $minFeeAmount = $this->_getMinFeeAmount();
+        $maxFeeAmount = $this->_getMaxFeeAmount();
+
         /**
          * If the fee is including tax, make sure it falls within the specified parameters.
          */
         $isIncludingTax = $this->getIsIncludingTax();
         if ($isIncludingTax
-            && ($fee > self::FEE_MAX_AMOUNT || $fee < self::FEE_MIN_AMOUNT)
+            && ($fee > $maxFeeAmount || $fee < $minFeeAmount)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. '
                     . 'VAT.',
-                    $fee
+                    $fee,
+                    $minFeeAmount,
+                    $maxFeeAmount,
+                    strtoupper(Mage::app()->getBaseCurrencyCode())
                 ),
                 'POSTNL-0153'
             );
@@ -127,12 +174,15 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
         $shippingAddress = $this->getMockShippingAddress();
 
         $feeIncludingTax = Mage::helper('tax')->getShippingPrice($fee, true, $shippingAddress, null, 0);
-        if ($feeIncludingTax > self::FEE_MAX_AMOUNT || $feeIncludingTax < self::FEE_MIN_AMOUNT) {
+        if ($feeIncludingTax > $maxFeeAmount || $feeIncludingTax < $minFeeAmount) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. '
                     . 'VAT.',
-                    $feeIncludingTax
+                    $feeIncludingTax,
+                    $minFeeAmount,
+                    $maxFeeAmount,
+                    strtoupper(Mage::app()->getBaseCurrencyCode())
                 ),
                 'POSTNL-0153'
             );

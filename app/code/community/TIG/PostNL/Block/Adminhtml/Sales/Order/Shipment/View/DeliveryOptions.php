@@ -164,10 +164,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         switch ($shipmentType) {
             case $postnlShipment::SHIPMENT_TYPE_DOMESTIC:
-                $shipmentType = $this->__('Domestic');
+                $shipmentType  = $this->__('Domestic');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_DOMESTIC_COD:
-                $shipmentType = $this->__('Domestic');
+                $shipmentType  = $this->__('Domestic');
                 $this->setIsCod(true);
                 break;
             case $postnlShipment::SHIPMENT_TYPE_AVOND:
@@ -206,6 +206,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
                 $shipmentType = $this->__('Letter Box Parcel');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_SUNDAY:
+                $shipmentType = $this->__('Sunday Delivery');
                 break;
         }
 
@@ -269,7 +272,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     public function getChangeProductCodeUrl()
     {
         $url = $this->getUrl(
-            'postnl_admin/adminhtml_shipment/changeProductCode',
+            'adminhtml/postnlAdminhtml_shipment/changeProductCode',
             array(
                 'shipment_id' => $this->getShipment()->getId()
             )
@@ -352,7 +355,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     public function getChangeParcelCountUrl()
     {
         $url = $this->getUrl(
-            'postnl_admin/adminhtml_shipment/changeParcelCount',
+            'adminhtml/postnlAdminhtml_shipment/changeParcelCount',
             array(
                 'shipment_id' => $this->getShipment()->getId()
             )
@@ -392,17 +395,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         );
 
         $dateModel = Mage::getSingleton('core/date');
-        $storeTimezone = Mage::getStoreConfig(
-            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
-            $postnlShipment->getStoreId()
-        );
-        $storeTimezone = new DateTimeZone($storeTimezone);
         $utcTimeZone = new DateTimeZone('UTC');
 
-        $storeStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart(), $utcTimeZone);
-        $storeStartTime->setTimezone($storeTimezone);
+        $amsterdamStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart(), $utcTimeZone);
+        $amsterdamStartTime->setTimezone(new DateTimeZone('Europe/Amsterdam'));
         $info['delivery_time_start'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeStart());
-        $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
+        $info['store_delivery_time_start'] = $amsterdamStartTime->format('H:i');
 
         if ($info['delivery_time_start'] != $info['store_delivery_time_start']) {
             $info['timezone_differ'] = true;
@@ -412,10 +410,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             return $info;
         }
 
-        $storeEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd(), $utcTimeZone);
-        $storeEndTime->setTimezone($storeTimezone);
+        $amsterdamEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd(), $utcTimeZone);
+        $amsterdamEndTime->setTimezone(new DateTimeZone('Europe/Amsterdam'));
         $info['delivery_time_end'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeEnd());
-        $info['store_delivery_time_end'] = $storeEndTime->format('H:i');
+        $info['store_delivery_time_end'] = $amsterdamEndTime->format('H:i');
 
         return $info;
     }

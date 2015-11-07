@@ -36,21 +36,27 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ReturnsController extends Mage_Adminhtml_Controller_Sales_Shipment
+class TIG_PostNL_Model_Core_System_Config_Source_SenderCountry
 {
     /**
-     * Returns grid.
+     * Returns an option array for sender country options
      *
-     * @return $this
+     * @return array
      */
-    public function indexAction()
+    public function toOptionArray()
     {
-        $this->_title($this->__('Sales'))->_title($this->__('PostNL Returns'));
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'NL',
+                'label' => $helper->__('The Netherlands'),
+            ),
+            array(
+                'value' => 'BE',
+                'label' => $helper->__('Belgium'),
+            ),
+        );
 
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('postnl_adminhtml/sales_returns'))
-             ->renderLayout();
-
-        return $this;
+        return $options;
     }
 }

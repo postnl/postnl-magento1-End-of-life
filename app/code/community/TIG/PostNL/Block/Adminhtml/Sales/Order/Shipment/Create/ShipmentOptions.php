@@ -37,14 +37,18 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasShipment()
+ * @method boolean hasPostnlOrder()
  * @method boolean hasProductOptions()
  * @method boolean hasBuspakjeProductOptions()
  * @method boolean hasDefaultProductOption()
+ * @method boolean hasDefaultBuspakjeOption()
  *
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setShipment(Mage_Sales_Model_Order_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setPostnlOrder(TIG_PostNL_Model_Core_Order $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setProductOptions(array $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setDefaultProductOption(string $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setBuspakjeProductOptions(array $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setDefaultBuspakjeOption(array $value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
@@ -73,6 +77,25 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $this->setShipment($shipment);
         return $shipment;
+    }
+
+    /**
+     * Get current shipment
+     *
+     * @return TIG_PostNL_Model_Core_Order.
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            return $this->_getData('postnl_order');
+        }
+
+        $shipment = $this->getShipment();
+
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
+
+        $this->setPostnlOrder($postnlOrder);
+        return $postnlOrder;
     }
 
     /**
@@ -183,7 +206,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     public function isBelgium()
     {
         $shipment = $this->getShipment();
-        if ($shipment->getShippingAddress()->getCountry() == 'BE') {
+        if ($shipment->getShippingAddress()->getCountryId() == 'BE') {
             return true;
         }
 
@@ -227,7 +250,28 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems, true);
 
-        return $fits;
+        if (!$fits) {
+            return $fits;
+        }
+
+        $postnlOrder = $this->getPostnlOrder();
+
+        if (!$postnlOrder || !$postnlOrder->getId()) {
+            return true;
+        }
+
+        $deliveryDate = DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $postnlOrder->getDeliveryDate(),
+            new DateTimeZone('UTC')
+        );
+        $deliveryDate->setTimezone(new DateTimeZone('Europe/Amsterdam'));
+
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
+            return false;
+        }
+
+        return true;
     }
 
     /**

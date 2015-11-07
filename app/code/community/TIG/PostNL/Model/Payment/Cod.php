@@ -256,6 +256,17 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         /**
+         * Check if the delivery type is not a Sunday Delivery, since COD is not available for Sunday delivery
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        if ($postnlOrder->getType() == 'Sunday') {
+            $helper->log(
+                $helper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
+            );
+            return false;
+        }
+
+        /**
          * Finally, perform Magento's own checks.
          */
         $parentIsAvailable = parent::isAvailable($quote);

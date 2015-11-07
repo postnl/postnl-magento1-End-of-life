@@ -227,6 +227,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             )
         );
 
+        /**
+         * If the order has any PostNl shipments, we can use their delivery_date. Otherwise we can check the
+         * delivery_date stored by the tig_postnl_order table.
+         */
+        $collection->addExpressionFieldToSelect(
+            'delivery_date',
+            'IF({{shipment_delivery_date}}, {{shipment_delivery_date}}, {{order_delivery_date}})',
+            array(
+                'shipment_delivery_date' => '`postnl_shipment`.`delivery_date`',
+                'order_delivery_date'    => '`postnl_order`.`delivery_date`',
+            )
+        );
+
         $select = $collection->getSelect();
 
         /**
@@ -406,6 +419,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'global'              => $helper->__('GlobalPack'),
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                 'avond'               => $helper->__('Evening Delivery'),
+                'sunday'              => $helper->__('Sunday Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
@@ -544,18 +558,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $now       = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
 
         if (!$origValue) {
-            $helper = Mage::helper('postnl/deliveryOptions');
-            $shippingDuration = $helper->getOrderShippingDuration($row);
-            $deliveryDate = $helper->getDeliveryDate(
+            /** @var TIG_PostNL_Helper_Date $helper */
+            $helper = Mage::helper('postnl/date');
+            $origDate = $helper->getShippingDate(
                 $row->getCreatedAt(),
-                $row->getStoreId(),
-                false,
-                true,
-                true,
-                $shippingDuration
+                $row->getStoreId()
             );
-            $origDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
-            $origDate = $origDate->sub(new DateInterval('P1D'));
         } else {
             $origDate = new DateTime($origValue, new DateTimeZone('UTC'));
         }
@@ -859,7 +867,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massCreateShipments'),
         );
 
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
@@ -918,6 +926,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_avond_options'],
+                );
+            }
+
+            if (!empty($options['postnl_sunday_options'])) {
+                $config['postnl_sunday_options'] = array(
+                    'name'   => 'product_options[sunday_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_sunday_options'],
                 );
             }
 
@@ -1033,8 +1050,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $options = array(
             'postnl_domestic_options' => $optionsModel->getOptions(
                 array(
-                    'group' => 'standard_options',
-                    'isCod' => false,
+                    'group'         => 'standard_options',
+                    'isCod'         => false,
                 ),
                 false,
                 true
@@ -1081,8 +1098,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             ),
             'postnl_domestic_cod_options' => $optionsModel->getOptions(
                 array(
-                    'group' => 'standard_options',
-                    'isCod' => true,
+                    'group'         => 'standard_options',
+                    'isCod'         => true,
+                    'isBelgiumOnly' => false,
                 ),
                 false,
                 true
@@ -1126,6 +1144,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 ),
                 false,
                 true
+            ),
+            'postnl_sunday_options' => $optionsModel->getOptions(
+                array(
+                    'group'    => 'standard_options',
+                    'isSunday' => true,
+                ),
+                false,
+                true
             )
         );
 
@@ -1146,7 +1172,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print labels and confirm'),
-            'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massFullPostnlFlow'),
+            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massFullPostnlFlow'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1176,7 +1202,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print packing slips and confirm'),
             'url'   => Mage::helper('adminhtml')->getUrl(
-                'postnl_admin/adminhtml_shipment/massFullPostnlFlowWithPackingSlip'
+                'adminhtml/postnlAdminhtml_shipment/massFullPostnlFlowWithPackingSlip'
             ),
         );
 
@@ -1206,7 +1232,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Print packing slips'),
-            'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingslips'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1328,6 +1354,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * If the filter condition is sunday delivery, filter out all other orders
+         */
+        if ($filterCond == 'sunday') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Sunday'));
+
+            return $this;
+        }
+
+        /**
          * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
          */
         if ($filterCond == 'pakje_gemak') {
@@ -1358,7 +1393,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
          * need to explicitly filter those as well.
          */
-        if ($filterCond == 'nl') {
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        if ($filterCond == $domesticCountry) {
             $collection->addFieldToFilter('country_id', $cond);
             $collection->addFieldToFilter(
                        'postnl_order.type',
@@ -1427,8 +1463,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
-        $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
-               . "`postnl_order`.`confirm_date`)";
+        $field = $collection->getConnection()
+                            ->getCheckSql(
+                                'postnl_shipment.confirm_date',
+                                'postnl_shipment.confirm_date',
+                                'postnl_order.confirm_date'
+                            );
 
         $collection->addFieldToFilter($field , $cond);
 

@@ -73,6 +73,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     const POSTNL_MATRIX_RATE_CODE = 'postnl_matrixrate';
 
     /**
+     * Default shipping address country.
+     */
+    const DEFAULT_SHIPPING_COUNTRY = 'NL';
+
+    /**
      * Currently selected shipping address.
      *
      * @var Mage_Sales_Model_Quote_Address|null
@@ -277,6 +282,30 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get the currently selected shipping address's country.
+     *
+     * @return string
+     */
+    public function getCountry()
+    {
+        /**
+         * @todo make dynamic for BE support.
+         *
+         * Delivery options in Belgium are currently unstable and therefor not yet fully supported. Expect this to be
+         * added in a later release.
+         */
+        return 'NL';
+
+//        $country = $this->getShippingAddress()->getCountryId();
+//
+//        if (!$country) {
+//            $country = self::DEFAULT_SHIPPING_COUNTRY;
+//        }
+//
+//        return $country;
+    }
+
+    /**
      * Get the earliest possible delivery date.
      *
      * @return null|string
@@ -290,14 +319,16 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         $quote    = $this->getQuote();
+        $storeId  = $quote->getStoreId();
         $postcode = $this->getPostcode();
+        $country  = $this->getCountry();
 
         try {
-            $deliveryDate = $this->_getDeliveryDate($postcode, $quote);
+            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(null, null, false, true)
+            $deliveryDate = Mage::helper('postnl/date')->getDeliveryDate('now' ,$storeId)
                                                                   ->format('d-m-Y');
         }
 
@@ -365,6 +396,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'evening':
                 $fee = $this->getEveningFee(false, $includingTax);
                 break;
+            case 'sunday':
+                $fee = $this->getSundayFee(false, $includingTax);
+                break;
             case 'express':
                 $fee = $this->getExpressFee(false, $includingTax);
                 break;
@@ -392,6 +426,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'evening':
                 $feeText = $this->getEveningFee(true, $includingTax);
                 break;
+            case 'sunday':
+                $feeText = $this->getSundayFee(true, $includingTax);
+                break;
             case 'express':
                 $feeText = $this->getExpressFee(true, $includingTax);
                 break;
@@ -416,6 +453,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     public function getEveningFee($formatted = false, $includingTax = true)
     {
         return Mage::helper('postnl/deliveryOptions')->getEveningFee($formatted, $includingTax);
+    }
+
+    /**
+     * Get the fee charged for sunday delivery.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getSundayFee($formatted = false, $includingTax = true)
+    {
+        return Mage::helper('postnl/deliveryOptions_fee')->getSundayFee($formatted, $includingTax);
     }
 
     /**
@@ -706,6 +756,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if the sunday sorting (AKA monday delivery) is allowed.
+     *
+     * @return bool
+     */
+    public function canUseSundaySorting()
+    {
+        $canUseSundaySorting = Mage::helper('postnl/deliveryOptions')->canUseSundaySorting();
+        return $canUseSundaySorting;
+    }
+
+    /**
      * Get whether this order is a buspakje order.
      *
      * @return bool
@@ -770,13 +831,14 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * get the first possible delivery date from PostNL.
      *
      * @param string                 $postcode
+     * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
      * @throws TIG_PostNL_Exception
      *
      * @return string
      */
-    protected function _getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote) {
+    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote) {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
@@ -791,12 +853,27 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             );
         }
 
+        if ($country != 'NL' && $country != 'BE') {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.',
+                    $postcode
+                ),
+                'POSTNL-0235'
+            );
+        }
+
         $cif = Mage::getModel('postnl_deliveryoptions/cif');
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
-                        ->getDeliveryDate($postcode, $quote);
+                        ->getDeliveryDate($postcode, $country, $quote);
 
-        $response = Mage::helper('postnl/deliveryOptions')->getValidDeliveryDate($response)->format('d-m-Y');
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
 
-        return $response;
+        $dateObject = new DateTime($response, new DateTimeZone('UTC'));
+        $correction = $helper->getDeliveryDateCorrection($dateObject);
+        $dateObject->add(new DateInterval("P{$correction}D"));
+
+        return $dateObject->format('d-m-Y');
     }
 }

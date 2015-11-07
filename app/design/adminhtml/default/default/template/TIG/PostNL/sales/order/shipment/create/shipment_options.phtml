@@ -49,13 +49,13 @@
 <?php $_defaultBuspakjeOption = $this->getDefaultBuspakjeOption(); ?>
 <?php $_isBelgium             = $this->isBelgium(); ?>
 <?php $_isGlobalPackShipment  = (bool) $_cifHelper->isGlobalShipment($_shipment); ?>
-<?php $_isDutchShipment       = (bool) $_cifHelper->isDutchShipment($_shipment); ?>
+<?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
 <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php $_isAvond               = (bool) $_cifHelper->isAvondShipment($_shipment); ?>
 <?php $_parcelCount           = $this->getParcelCount(); ?>
 <div id="postnl_product_options">
-    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDutchShipment && !$_isCod && !$_isPakjeGemak && !$_isAvond): ?>
+    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDomesticShipment && !$_isCod && !$_isPakjeGemak && !$_isAvond && !$_isBelgium): ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
         <?php $_buspakjeCalcMode = $this->getBuspakjeCalcMode(); ?>
         <div id="postnl_is_buspakje_container" <?php if ($_buspakjeCalcMode == 'automatic'): ?>style="display:none;"<?php endif; ?>>
@@ -104,7 +104,7 @@
         <label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>
         <select id="postnl_product_option" class="select required-entry" name="postnl[product_option]">
             <?php foreach($_productOptions as $_option): ?>
-                <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                <?php if (!empty($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
                     <?php continue; ?>
                 <?php endif; ?>
 
@@ -133,7 +133,7 @@
             <input type="text" name="postnl[extra_cover_amount]" class="input-text validate-increment-500 validate-not-negative-number" id="postnl_extra_cover" value="500"/>
         </p>
     <?php endif; ?>
-    <?php if ($_isDutchShipment && !$_isCod): ?>
+    <?php if ($_isDomesticShipment && !$_isCod): ?>
         <p id="postnl_parcel_count_container" style="display:none;">
             <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
             <input type="text" name="postnl[parcel_count]" class="input-text validate-digits validate-not-negative-number required-entry" id="postnl_parcel_count" value="<?php echo $_parcelCount; ?>"/>

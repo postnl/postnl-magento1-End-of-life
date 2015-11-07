@@ -54,7 +54,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_MatrixrateExport
         );
 
         $onClick = 'setLocation(\''
-                 . Mage::helper('adminhtml')->getUrl("postnl_admin/adminhtml_config/exportMatrixrates", $params)
+                 . Mage::helper('adminhtml')->getUrl("adminhtml/postnlAdminhtml_config/exportMatrixrates", $params)
                  . '\')';
 
         $data = array(

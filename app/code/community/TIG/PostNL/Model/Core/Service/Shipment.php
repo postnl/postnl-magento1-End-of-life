@@ -219,7 +219,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $shipments = Mage::getResourceModel('postnl_core/shipment_collection')
                              ->addFieldToFilter('shipment_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
-                                 '`order`.`shipping_method`',
+                                 'order.shipping_method',
                                  array(
                                      'regexp' => $postnlShippingMethodsRegex
                                  )
@@ -238,7 +238,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $shipments = Mage::getResourceModel('sales/order_shipment_collection')
                              ->addFieldToFilter('main_table.entity_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
-                                 '`order`.`shipping_method`',
+                                 'order.shipping_method',
                                  array(
                                      'regexp' => $postnlShippingMethodsRegex
                                  )

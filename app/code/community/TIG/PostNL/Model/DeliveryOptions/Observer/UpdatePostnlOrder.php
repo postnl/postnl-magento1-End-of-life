@@ -149,6 +149,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             } elseif ($type == $postnlOrder::TYPE_AVOND) {
                 $fee = Mage::helper('postnl/deliveryOptions')
                            ->getEveningFee(false, $includingTax, false);
+            } elseif ($type == $postnlOrder::TYPE_SUNDAY) {
+                $fee = Mage::helper('postnl/deliveryOptions_fee')
+                    ->getSundayFee(false, $includingTax, false);
             }
         }
 
@@ -352,12 +355,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order is being shipped to the Netherlands.
+         * Check if this order is being shipped to a domestic country.
          */
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
         if (!$shippingAddress
-            || $shippingAddress->getCountryId() != 'NL'
+            || $shippingAddress->getCountryId() != $domesticCountry
         ) {
             return false;
         }
@@ -410,23 +414,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      */
     protected function _setDates(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
     {
-        $helper = Mage::helper('postnl/deliveryOptions');
-        $shippingDuration = $helper->getOrderShippingDuration($order);
-        $deliveryDate = $helper->getDeliveryDate(
-            $order->getCreatedAt(),
-            $order->getStoreId(),
-            false,
-            true,
-            true,
-            $shippingDuration,
-            true
-        );
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
 
-        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate);
+        $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
+        $deliveryDate = clone $dateObject;
+        $confirmDate  = clone $dateObject;
 
-        $confirmDate = clone $deliveryDate;
-        $confirmDate->sub(new DateInterval('P1D'));
-        $confirmDate = $helper->getValidConfirmDate($confirmDate);
+        $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
+        $helper->getShippingDate($confirmDate, $order->getStoreId());
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());

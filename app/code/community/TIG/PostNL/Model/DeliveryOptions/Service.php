@@ -122,37 +122,6 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
-     * Calculate the confirm date for a specified delivery date.
-     *
-     * @param string|DateTime $deliveryDate
-     * @param string|boolean  $timeZone
-     *
-     * @return DateTime
-     */
-    public function getConfirmDate($deliveryDate, $timeZone = false)
-    {
-        if ($this->hasConfirmDate()) {
-            return $this->_getData('confirm_date');
-        }
-
-        if (!is_string($timeZone)) {
-            $timeZone = 'UTC';
-        }
-        $timeZone = new DateTimeZone($timeZone);
-
-        if (is_string($deliveryDate)) {
-            $deliveryDate = new DateTime($deliveryDate, $timeZone);
-        }
-
-        $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
-
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate, $timeZone);
-
-        $this->setConfirmDate($confirmDate);
-        return $confirmDate;
-    }
-
-    /**
      * @param StdClass[] $timeframes
      *
      * @return StdClass[]|false
@@ -166,63 +135,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return false;
         }
 
-        /**
-         * Get the configured shipping days.
-         */
-        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
-        $shippingDays = explode(',', $shippingDays);
-
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        /**
-         * Calculate the earliest possible shipping date for comparison.
-         */
-        $earliestShippingDate = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-        $earliestShippingDate->add(new DateInterval("P{$helper->getQuoteShippingDuration()}D"));
-
-        foreach ($timeframes as $key => $timeframe) {
-            /**
-             * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
-             * the delivery date, but may not be a sunday.
-             */
-            $timeframeDate = new DateTime($timeframe->Date, new DateTimeZone('UTC'));
-            $deliveryDay   = (int) $timeframeDate->format('N');
-
-            $shippingDate = clone $timeframeDate;
-            $shippingDay  = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
-
-            if (in_array($shippingDay, $shippingDays)) {
-                continue;
-            }
-
-            /**
-             * If the delivery day is tuesday and sunday sorting is not available, shipping the order on saturday will
-             * also result in a tuesday delivery so we need to validate saturday as a valid shipping date.
-             *
-             * If the delivery day is monday and sunday sorting is available, shipping the order on saturday will also
-             * result in a monday delivery so we need to validate saturday as a valid shipping date.
-             */
-            $valid = false;
-            if (
-                ($deliveryDay === 2
-                    && !$helper->canUseSundaySorting()
-                )
-                || ($deliveryDay === 1
-                    && $helper->canUseSundaySorting()
-                )
-            ) {
-                $valid = $this->_validateSaturdayShipping($shippingDays, $shippingDate, $earliestShippingDate);
-            }
-
-            if (false === $valid) {
-                unset($timeframes[$key]);
-            }
-        }
-
-        /**
-         * Only return the values, as otherwise the array will be JSON encoded as an object.
-         */
-        return array_values($timeframes);
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
     }
 
     /**
@@ -307,12 +222,19 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveDeliveryOption($data)
     {
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
+
         $quote = $this->getQuote();
 
-        $timeZone = Mage::app()->getLocale()->getTimezone();
+        $amsterdamTimeZone = new DateTimeZone('Europe/Amsterdam');
+        $utcTimeZone = new DateTimeZone('UTC');
 
-        $deliveryDate = Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s', $data['date']);
-        $confirmDate = $this->getConfirmDate($deliveryDate, $timeZone);
+        $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
+        $deliveryDate->setTimezone($utcTimeZone);
+
+        $deliveryDateClone = clone $deliveryDate;
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -327,7 +249,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
-                    ->setDeliveryDate($deliveryDate)
+                    ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'))
                     ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
                     ->setExpectedDeliveryTimeStart(false)
                     ->setExpectedDeliveryTimeEnd(false);
@@ -344,12 +266,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
          * Set the expected delivery timeframe if available.
          */
         if (isset($data['from'])) {
-            $from = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['from']);
-            $postnlOrder->setExpectedDeliveryTimeStart($from);
+            $from = DateTime::createFromFormat('H:i:s', $data['from'], $amsterdamTimeZone);
+            $from->setTimezone($utcTimeZone);
+            $postnlOrder->setExpectedDeliveryTimeStart($from->format('H:i:s'));
         }
         if (isset($data['to'])) {
-            $to = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['to']);
-            $postnlOrder->setExpectedDeliveryTimeEnd($to);
+            $to = DateTime::createFromFormat('H:i:s', $data['to'], $amsterdamTimeZone);
+            $to->setTimezone($utcTimeZone);
+            $postnlOrder->setExpectedDeliveryTimeEnd($to->format('H:i:s'));
         }
 
         /**

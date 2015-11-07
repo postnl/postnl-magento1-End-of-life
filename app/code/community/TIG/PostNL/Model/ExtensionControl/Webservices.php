@@ -555,20 +555,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
 
         $postnlShippingMethodsRegex .= '$';
         $shipmentCollection->addFieldToFilter(
-                               '`order`.`shipping_method`',
+                               'order.shipping_method',
                                array(
                                    'regexp' => $postnlShippingMethodsRegex
                                )
                            )
                            ->addFieldToFilter(
-                               '`main_table`.`store_id`',
+                               'main_table.store_id',
                                array(
                                    'in' => $storeIds
                                )
                            );
 
         if ($shipmentTypes) {
-            $shipmentCollection->addFieldToFilter('`shipment_type`', array('in', $shipmentTypes));
+            $shipmentCollection->addFieldToFilter('shipment_type', array('in', $shipmentTypes));
         }
 
         return $shipmentCollection;
@@ -616,7 +616,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $orderCollection = Mage::getResourceModel('sales/order_collection');
         $orderCollection->addFieldToSelect('created_at')
-                        ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
+                        ->addFieldToFilter('main_table.store_id', array('in' => $storeIds));
 
         $orderCollection->getSelect()
                         ->order('created_at DESC')
@@ -634,7 +634,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          *
          * @var Mage_Sales_Model_Order $lastOrder
          */
+        // @codingStandardsIgnoreStart
         $lastOrder = $orderCollection->getFirstItem();
+        // @codingStandardsIgnoreEnd
         $createdAt = $lastOrder->getCreatedAt();
         $createdAt = Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
 

@@ -247,6 +247,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Characteristic' => '118',
             'Option'         => '006',
         ),
+        'Sunday' => array(
+            'Characteristic' => '101',
+            'Option'         => '008',
+        ),
     );
 
     /**
@@ -667,7 +671,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $soapParams =  array(
             'Message'  => $message,
             'Customer' => $customer,
-            'Shipment' => $cifShipment,
+            'Shipments' => array('Shipment' => $cifShipment),
         );
 
         $response = $this->call(
@@ -676,8 +680,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!isset($response->Labels)
-            || !is_object($response->Labels)
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $response->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels)
+            || !is_object($shipment->Labels)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
@@ -758,7 +768,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $soapParams =  array(
             'Message'  => $message,
             'Customer' => $customer,
-            'Shipment' => $cifShipment,
+            'Shipments' => array('Shipment' => $cifShipment),
         );
 
         $response = $this->call(
@@ -767,8 +777,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
 
-        if (!isset($response->Labels)
-            || !is_object($response->Labels)
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $response->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels)
+            || !is_object($shipment->Labels)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
@@ -1174,7 +1190,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'HouseNr'          => $streetData['housenumber'],
             'HouseNrExt'       => $streetData['housenumberExtension'],
             'StreetHouseNrExt' => $streetData['fullStreet'],
-            'Zipcode'          => str_replace(' ', '', $address->getPostcode()),
+            'Zipcode'          => strtoupper(str_replace(' ', '', $address->getPostcode())),
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
             'Countrycode'      => $address->getCountry(),
@@ -1397,16 +1413,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * address attributes.
      *
      * @param Mage_Sales_Model_Order_Address $address
-     * @param boolean                        $allowFullStreet
      *
      * @return array
      */
-    protected function _getStreetData($address, $allowFullStreet = true)
+    protected function _getStreetData($address)
     {
         $helper = Mage::helper('postnl/cif');
         $storeId = $this->getStoreId();
 
-        $streetData = $helper->getStreetData($storeId, $address, $allowFullStreet);
+        $streetData = $helper->getStreetData($storeId, $address, false);
 
         return $streetData;
     }
@@ -1715,6 +1730,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($customsValue)) {
             $productId = $shipmentItem->getProductId();
+            /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs value for product <a href="%s" target="_blank">#%s</a>.',
@@ -1752,6 +1768,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($description)) {
             $productId = $shipmentItem->getProductId();
+            /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs description for product <a href="%s" target="_blank">#%s</a>.',

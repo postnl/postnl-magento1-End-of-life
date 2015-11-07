@@ -403,6 +403,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         'global'              => $helper->__('GlobalPack'),
                         'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                         'avond'               => $helper->__('Evening Delivery'),
+                        'sunday'              => $helper->__('Sunday Delivery'),
                         'pakje_gemak_express' => $helper->__('Early Pickup'),
                         'buspakje'            => $helper->__('Letter Box Parcel'),
                     ),
@@ -640,7 +641,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             if ($helper->checkIsPostnlActionAllowed('confirm')) {
                 $actions[] = array(
                     'caption'   => $helper->__('Confirm'),
-                    'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
+                    'url'       => array('base' => 'adminhtml/postnlAdminhtml_shipment/confirm'),
                     'field'     => 'shipment_id',
                     'is_postnl' => true, //custom flag for renderer
                     'code'      => 'postnl_confirm',
@@ -891,37 +892,37 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          */
         $printAndConfirmOptions = array(
             'label' => $helper->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
         $printPackingSlipsAndConfirmOptions = array(
             'label' => $helper->__('PostNL - Print packing slips & confirm shipment'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingSlipsAndConfirm'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingSlipsAndConfirm'),
         );
 
         $printOptions = array(
             'label' => $helper->__('PostNL - Print shipping labels'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintLabels'),
         );
 
         $packingSlipOptions = array(
             'label' => $helper->__('PostNL - Print packing slips'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingslips'),
         );
 
         $confirmOptions = array(
             'label' => $helper->__('PostNL - Confirm shipments'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massConfirm'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massConfirm'),
         );
 
         $parcelWareOptions = array(
             'label' => $helper->__('PostNL - Create Parcelware export'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massCreateParcelwareExport')
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massCreateParcelwareExport')
         );
 
         $updateShippingStatusOptions = array(
             'label' => $helper->__('PostNL - Update shipping status'),
-            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massUpdateShippingStatus')
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massUpdateShippingStatus')
         );
 
         /**

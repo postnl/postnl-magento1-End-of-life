@@ -72,6 +72,43 @@ if (typeof Element.triggerEvent == 'undefined') {
 }
 
 /**
+ * Add the 'trim' method to strings for browsers that do not natively support this method.
+ */
+if(typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    }
+}
+
+/**
+ * Add a 'indexOf' method to arrays.
+ */
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(obj, start) {
+        for (var i = (start || 0), j = this.length; i < j; i++) {
+            if (this[i] === obj) { return i; }
+        }
+        return -1;
+    }
+}
+
+/**
+ * Add a 'formatMoney' method to numbers.
+ */
+if (!Number.prototype.formatMoney) {
+    Number.prototype.formatMoney = function(c, d, t){
+        c = isNaN(c = Math.abs(c)) ? 2 : c;
+        d = d == undefined ? "." : d;
+        t = t == undefined ? "," : t;
+        var n = this,
+            s = n < 0 ? "-" : "",
+            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    }
+}
+
+/**
  * PostNL delivery options logic class.
  *
  * Uses AJAX to communicate with PostNL and retrieve possible delivery options. This class also manages all available
@@ -92,6 +129,7 @@ PostnlDeliveryOptions.prototype = {
 
     postcode                 : null,
     housenumber              : null,
+    country                  : null,
     fullAddress              : null,
     deliveryDate             : null,
     imageBaseUrl             : null,
@@ -138,6 +176,7 @@ PostnlDeliveryOptions.prototype = {
             || !params.locationsInAreaUrl
             || !params.postcode
             || !params.housenumber
+            || !params.country
             || !params.deliveryDate
             || !params.imageBaseUrl
             || !params.fullAddress
@@ -153,6 +192,7 @@ PostnlDeliveryOptions.prototype = {
         this.locationsInAreaUrl = params.locationsInAreaUrl;
         this.postcode           = params.postcode;
         this.housenumber        = params.housenumber;
+        this.country            = params.country;
         this.deliveryDate       = params.deliveryDate;
         this.imageBaseUrl       = params.imageBaseUrl;
         this.fullAddress        = params.fullAddress;
@@ -168,13 +208,17 @@ PostnlDeliveryOptions.prototype = {
             allowPg                   : true,
             allowPge                  : false,
             allowPa                   : true,
+            allowSundaySorting        : false,
             isBuspakje                : false,
             taxDisplayType            : 1,
             eveningFeeIncl            : 0,
             eveningFeeExcl            : 0,
+            sundayFeeIncl             : 0,
+            sundayFeeExcl             : 0,
             expressFeeIncl            : 0,
             expressFeeExcl            : 0,
             eveningFeeText            : '',
+            sundayFeeText             : '',
             expressFeeText            : '',
             allowStreetview           : true,
             scrollbarContainer        : 'scrollbar_content',
@@ -255,6 +299,11 @@ PostnlDeliveryOptions.prototype = {
     getHousenumber : function() {
         return this.housenumber;
     },
+
+    getCountry : function() {
+        return this.country;
+    },
+
 
     getFullAddress : function() {
         return this.fullAddress;
@@ -663,7 +712,7 @@ PostnlDeliveryOptions.prototype = {
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.getFullAddress(), this, this.debug);
 
         if (this.isDeliveryDaysAllowed()) {
-            this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+            this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getCountry(), this.getDeliveryDate());
         } else {
             if (this.debug) {
                 console.info('Showing default timeframe.');
@@ -672,7 +721,7 @@ PostnlDeliveryOptions.prototype = {
                 .setParsedTimeframes(true)
                 .hideSpinner();
         }
-        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getCountry(), this.getDeliveryDate());
 
         return this;
     },
@@ -682,11 +731,12 @@ PostnlDeliveryOptions.prototype = {
      *
      * @param {string} postcode
      * @param {number} housenumber
+     * @param {string} country
      * @param {string} deliveryDate
      *
      * @returns {boolean|Array|PostnlDeliveryOptions}
      */
-    getTimeframes : function(postcode, housenumber, deliveryDate) {
+    getTimeframes : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available timeframes.');
         }
@@ -715,6 +765,10 @@ PostnlDeliveryOptions.prototype = {
             housenumber = this.getHousenumber();
         }
 
+        if (!country) {
+            country = this.getCountry();
+        }
+
         if (!deliveryDate) {
             deliveryDate = this.getDeliveryDate();
         }
@@ -725,6 +779,7 @@ PostnlDeliveryOptions.prototype = {
                 postcode     : postcode,
                 housenumber  : housenumber,
                 deliveryDate : deliveryDate,
+                country      : country,
                 isAjax       : true
             },
             onSuccess : this.processGetTimeframesSuccess.bind(this),
@@ -771,6 +826,9 @@ PostnlDeliveryOptions.prototype = {
 
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
+        } else if (this.getOptions().isOsc) {
+            checkbox.checked = true;
+            selectPostnlShippingMethod = true;
         }
 
         /**
@@ -805,7 +863,7 @@ PostnlDeliveryOptions.prototype = {
             for (var i = 0, m = currentTimeframe.Timeframes.TimeframeTimeFrame.length; i < m ; i++, o++) {
                 var currentSubTimeframe = currentTimeframe.Timeframes.TimeframeTimeFrame[i];
                 if (this.isEveningTimeframesAllowed() === false
-                    && currentSubTimeframe.TimeframeType == 'Avond'
+                    && currentSubTimeframe.Options.string[0] == 'Evening'
                 ) {
                     continue;
                 }
@@ -852,6 +910,10 @@ PostnlDeliveryOptions.prototype = {
 
         if (this.getOptions().isOsc) {
             this.timeframes[0].renderAsOsc();
+
+            if (selectTimeframe) {
+                this.saveSelectedOption();
+            }
         }
 
         if (this.debug) {
@@ -869,7 +931,10 @@ PostnlDeliveryOptions.prototype = {
         var fakeTimeframe = {
             From          : '09:00:00',
             To            : '18:00:00',
-            TimeframeType : 'Overdag'
+            TimeframeType : 'Overdag',
+            Options       : {
+                string : []
+            }
         };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
@@ -890,11 +955,12 @@ PostnlDeliveryOptions.prototype = {
      *
      * @param {string} postcode
      * @param {int}    housenumber
+     * @param {string} country
      * @param {string} deliveryDate
      *
      * @return {PostnlDeliveryOptions}
      */
-    getLocations : function(postcode, housenumber, deliveryDate) {
+    getLocations : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
         }
@@ -913,6 +979,7 @@ PostnlDeliveryOptions.prototype = {
                 postcode     : postcode,
                 housenumber  : housenumber,
                 deliveryDate : deliveryDate,
+                country      : country,
                 isAjax       : true
             },
             onSuccess : this.processGetLocationsSuccess.bind(this),
@@ -960,8 +1027,12 @@ PostnlDeliveryOptions.prototype = {
         /**
          * Parse and render the result.
          */
-        this.parseLocations(locations)
-            .renderLocations();
+        this.parseLocations(locations);
+        try {
+            this.renderLocations();
+        } catch (e) {
+            console.log(ed)
+        }
 
         this.setParsedLocations(true)
             .hideSpinner();
@@ -1479,9 +1550,9 @@ PostnlDeliveryOptions.prototype = {
                 document.fire('postnl:selectOptionSaveStart');
             },
             onSuccess  : function(response) {
-                var responseText = response.responseText;
+                var responseText = response.responseText.trim();
                 if (responseText != 'OK') {
-                    return;
+                    console.error('Invalid response received: ' + responseText);
                 }
 
                 document.fire('postnl:selectOptionSaved');
@@ -1509,6 +1580,8 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().expressFeeIncl;
             } else if (selectedType == 'Avond') {
                 extraCosts = this.getOptions().eveningFeeIncl;
+            } else if (selectedType == 'Sunday') {
+                extraCosts = this.getOptions().sundayFeeIncl;
             }
 
             if (this.debug) {
@@ -1522,6 +1595,8 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().expressFeeExcl;
         } else if (selectedType == 'Avond') {
             extraCosts = this.getOptions().eveningFeeExcl;
+        } else if (selectedType == 'Sunday') {
+            extraCosts = this.getOptions().sundayFeeExcl;
         }
 
         if (this.debug) {
@@ -2500,12 +2575,13 @@ PostnlDeliveryOptions.Map = new Class.create({
      */
     geocode : function(address, successCallback, failureCallback) {
         var geocoder = new google.maps.Geocoder();
+        var country = this.getDeliveryOptions().getCountry();
         geocoder.geocode(
             {
                 address                : address,
                 bounds                 : this.map.getBounds(),
                 componentRestrictions  : {
-                    country : 'NL'
+                    country : country
                 }
             },
             function(results, status) {
@@ -2535,6 +2611,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.hideSearchErrorDiv();
         var selectedResult = false;
 
+        var country = this.getDeliveryOptions().getCountry();
+
         /**
          * Loop through all results and validate each to find a suitable result to use.
          */
@@ -2556,22 +2634,22 @@ PostnlDeliveryOptions.Map = new Class.create({
             /**
              * Make sure the result is located in the Netherlands.
              */
-            var resultIsNl = false;
+            var resultIsDomestic = false;
             var components = result.address_components;
             components.each(function(component) {
                 if (selectedResult !== false) {
                     return false;
                 }
 
-                if (component.short_name != 'NL') {
+                if (component.short_name != country) {
                     return false;
                 }
 
-                resultIsNl = true;
+                resultIsDomestic = true;
                 return true;
             });
 
-            if (!resultIsNl) {
+            if (!resultIsDomestic) {
                 return false;
             }
 
@@ -2729,6 +2807,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        var country = this.getDeliveryOptions().getCountry();
+
         /**
          * Send a new getNearestLocations request.
          */
@@ -2736,7 +2816,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             method : 'post',
             parameters : {
                 lat          : center.lat(),
-                long         : center.lng(),
+                'long'       : center.lng(),
+                country      : country,
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
@@ -2782,7 +2863,7 @@ PostnlDeliveryOptions.Map = new Class.create({
     },
 
     /**
-     * Search for lolcations inside the maps' viewport. Results will contain up to 20 locations of varying types.
+     * Search for locations inside the maps' viewport. Results will contain up to 20 locations of varying types.
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
@@ -2820,6 +2901,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        var country = this.getDeliveryOptions().getCountry();
+
         var locationsInAreaRequestObject = new Ajax.PostnlRequest(this.deliveryOptions.getLocationsInAreaUrl(), {
             method : 'post',
             parameters : {
@@ -2827,6 +2910,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 northEastLng : northEast.lng(),
                 southWestLat : southWest.lat(),
                 southWestLng : southWest.lng(),
+                country      : country,
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
@@ -4282,41 +4366,48 @@ PostnlDeliveryOptions.Location = new Class.create({
         if (typeof n == 'undefined') {
             n = 0;
         }
-
         /**
          * If over 7 attempts have been made, return the current date (it should be 1 week after the first attempt).
          */
         if (n > 7) {
             return date;
         }
-
         var openingDays = this.getOpeningHours();
-
         /**
          * Check if the location is open on the specified day of the week.
          */
         var openingHours = false;
         switch (date.getDay()) {
             case 0:
-                openingHours = openingDays.Sunday.string;
+                openingHours = false;
                 break;
             case 1:
-                openingHours = openingDays.Monday.string;
+                openingHours = false;
                 break;
             case 2:
-                openingHours = openingDays.Tuesday.string;
+                if (openingDays.Tuesday) {
+                    openingHours = openingDays.Tuesday.string;
+                }
                 break;
             case 3:
-                openingHours = openingDays.Wednesday.string;
+                if (openingDays.Wednesday) {
+                    openingHours = openingDays.Wednesday.string;
+                }
                 break;
             case 4:
-                openingHours = openingDays.Thursday.string;
+                if (openingDays.Thursday) {
+                    openingHours = openingDays.Thursday.string;
+                }
                 break;
             case 5:
-                openingHours = openingDays.Friday.string;
+                if (openingDays.Friday) {
+                    openingHours = openingDays.Friday.string;
+                }
                 break;
             case 6:
-                openingHours = openingDays.Saturday.string;
+                if (openingDays.Saturday) {
+                    openingHours = openingDays.Saturday.string;
+                }
                 break;
         }
 
@@ -4330,6 +4421,12 @@ PostnlDeliveryOptions.Location = new Class.create({
             var nextDay = new Date(date);
             nextDay.setDate(date.getDate() + 1);
 
+            /**
+             * If the next day is Monday, get Tuesday as next day.
+             */
+            if (nextDay.getDay() == 1) {
+                nextDay.setDate(date.getDate() + 2);
+            }
             return this.getDeliveryDate(nextDay, n + 1);
         }
 
@@ -5057,7 +5154,19 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.date = date;
         this.from = timeframe.From;
         this.to   = timeframe.To;
-        this.type = timeframe.TimeframeType;
+
+        var type =  timeframe.Options.string[0];
+        switch (type) {
+            case 'Evening' :
+                this.type = 'Avond';
+                break;
+            case 'Sunday' :
+                this.type = 'Sunday';
+                break;
+            default :
+                this.type = 'Overdag';
+                break;
+        }
 
         this.timeframeIndex = timeframeIndex;
 
@@ -5241,6 +5350,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
         }
 
+        if (this.type == 'Sunday') {
+            var sundayCosts = this.getOptions().sundayFeeText;
+            var sundayCostHtml = '';
+
+            if (this.getOptions().sundayFeeIncl) {
+                sundayCostHtml += ' + ' + sundayCosts;
+            }
+
+            comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
+        }
+
         return comment;
     },
 
@@ -5307,25 +5427,3 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         return this;
     }
 });
-
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(obj, start) {
-         for (var i = (start || 0), j = this.length; i < j; i++) {
-             if (this[i] === obj) { return i; }
-         }
-         return -1;
-    }
-}
-
-if (!Number.prototype.formatMoney) {
-    Number.prototype.formatMoney = function(c, d, t){
-        c = isNaN(c = Math.abs(c)) ? 2 : c;
-        d = d == undefined ? "." : d;
-        t = t == undefined ? "," : t;
-        var n = this,
-            s = n < 0 ? "-" : "",
-            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
-            j = (j = i.length) > 3 ? j % 3 : 0;
-        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-    }
-}

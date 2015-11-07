@@ -49,6 +49,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
     const PAYMENT_METHOD_COLUMN       = 'payment_method';
     const OPTIONS_COLUMN              = 'options';
+    const DELIVERY_DATE_COLUMN        = 'delivery_date';
 
     /**
      * Renders a type column for a shipment type.
@@ -114,6 +115,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 if ($row->getData(self::PRODUCT_CODE_COLUMN) == '2928') {
                     $comment = $helper->__('Extra');
                 }
+                break;
+            case 'sunday':
+                $label = $helper->__('Sunday Delivery');
                 break;
         }
 
@@ -184,6 +188,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getAvondRenderedValue($row);
         } elseif ($optionType == 'PGE') {
             return $this->_getPgeRenderedValue($row);
+        } elseif ($optionType == 'Sunday') {
+            return $this->_getSundayRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -193,8 +199,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Check if this order is domestic.
          */
-        if ($value == 'NL') {
-            return $this->_getDomesticRenderedValue($row);
+        $domesticCountry = $helper->getDomesticCountry();
+        if ($value == $domesticCountry) {
+            return $this->_getDomesticRenderedValue($row, $value);
         }
 
         /**
@@ -310,13 +317,33 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     }
 
     /**
-     * Render this column for a domestic shipment.
+     * Render this column for a sunday shipment.
      *
      * @param Varien_Object $row
      *
      * @return string
      */
-    protected function _getDomesticRenderedValue(Varien_Object $row)
+    protected function _getSundayRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Sunday Delivery');
+        $type  = 'sunday';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a domestic shipment.
+     *
+     * @param Varien_Object $row
+     * @param string        $destination
+     *
+     * @return string
+     */
+    protected function _getDomesticRenderedValue(Varien_Object $row, $destination)
     {
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
@@ -328,17 +355,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($isCod) {
             $type .= '_cod';
-        } elseif ($deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
+        } elseif ($destination == 'NL' && $deliveryOptionsHelper->getBuspakjeCalculationMode() == 'automatic') {
             /**
              * If the buspakje calculation mode is set to automatic and the order fits as a buspakje, we should render
              * the column as such.
              */
             $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
             if ($deliveryOptionsHelper->fitsAsBuspakje($orderItems)) {
-                $label = $helper->__('Letter Box Parcel');
-                $type  = 'buspakje';
+                $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
+                $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
-                return "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                    $label = $helper->__('Letter Box Parcel');
+                    $type  = 'buspakje';
+
+                    return "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+                }
             }
         }
 
@@ -346,14 +378,19 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
-        } else {
+        } elseif ($destination == 'NL') {
             /**
              * If the buspakje calculation mode is set to manual, we can only inform the merchant that this might be a
              * buspakje.
              */
             $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
             if (Mage::helper('postnl/deliveryOptions')->fitsAsBuspakje($orderItems)) {
-                $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
+                $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
+
+                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                    $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                }
             }
         }
 

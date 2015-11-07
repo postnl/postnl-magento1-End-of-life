@@ -83,7 +83,7 @@ foreach($deleteAttributes as $attribute){
     } catch (Mage_Core_Exception $e) {
         // Log that we couldn't remove the attribute, but do continue
         $message = $helper->__('PostNL uninstall failed on removing product attribute: %s', $attribute);
-        $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
+        $helper->log($message, Zend_Log::ERR, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log', null, true);
     }
 }
 
@@ -97,21 +97,27 @@ if (file_exists($xmlLocation)) {
     if ($writable) {
         // Load the XML
         $xml = simplexml_load_file($xmlLocation);
-        $xml->modules->TIG_PostNL->active = 'false';
-        // Suppress errors in case of the file not being writable after all (which should not happen)
-        $writable = @file_put_contents($xmlLocation, $xml->asXML());
+        if ($xml) {
+            $xml->modules->TIG_PostNL->active = 'false';
+            // Suppress errors in case of the file not being writable after all (which should not happen)
+            $writable = @file_put_contents($xmlLocation, $xml->asXML());
+        } else {
+            // simplexml_load_file returned false
+            $writable = false;
+        }
     }
-    // If either $writable is false due to is_writable or because file_put_contents failed, we're going to log a message
+    // If either $writable is false due to is_writable, or because file_put_contents or simplexml_load_file failed,
+    // we're going to log a message
     if ($writable === false) {
         // Log that we really couldn't write the file
         $message = $helper->__('PostNL uninstall found but could not write to XML file: %s', $xmlLocation);
-        $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
+        $helper->log($message, Zend_Log::ERR, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log', null, true);
     } else {
         $message = $helper->__('PostNL has been uninstalled successfully.');
-        $helper->log($message, Zend_Log::NOTICE, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
+        $helper->log($message, Zend_Log::ERR, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log', null, true);
     }
 } else {
     // Log that the file doesn't exist or isn't writable
     $message = $helper->__('PostNL uninstall could not find or XML file: %s', $xmlLocation);
-    $helper->log($message, Zend_Log::ERR, null, true, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log');
+    $helper->log($message, Zend_Log::ERR, 'TIG_PostNL' . DS . 'TIG_Uninstall_Log.log', null, true);
 }

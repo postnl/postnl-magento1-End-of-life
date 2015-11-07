@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.6.0</version>
+            <version>1.7.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -377,13 +377,13 @@
 
     <admin>
         <routers>
-            <postnl_admin>
-                <use>admin</use>
+            <adminhtml>
                 <args>
-                    <module>TIG_PostNL</module>
-                    <frontName>postnl_admin</frontName>
+                    <modules>
+                        <postnl_admin after="Mage_Adminhtml">TIG_PostNL</postnl_admin>
+                    </modules>
                 </args>
-            </postnl_admin>
+            </adminhtml>
         </routers>
     </admin>
 
@@ -840,7 +840,6 @@
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
-                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
                 <sunday_cutoff_time/>
                 <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
                 <checkout_extension>magento_onepagecheckout</checkout_extension> <!-- Use Magento's One Page CHeckout as the default checkout extension -->
@@ -885,6 +884,9 @@
                 <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
                 <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
                 <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
+                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Sunday Delivery cost 0 {base currency} extra -->
+                <sunday_delivery_fee>0</sunday_delivery_fee> <!-- Disable sunday delivery -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
@@ -914,8 +916,7 @@
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
                 <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
                 <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
-                <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
-                <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+                <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
             </cif>
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
@@ -1056,7 +1057,7 @@
                 <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
-                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
+                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828,4970,4971,4972,4973,4974,4975,4976</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <default_product_option>3085</default_product_option> <!-- standard shipment -->
                 <use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
                 <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
@@ -1066,6 +1067,7 @@
                 <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
+                <default_sunday_product_option>3385</default_sunday_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
             </grid>
@@ -1087,12 +1089,12 @@
                 <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
                 <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
                 <cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
-                <cif_version_labelling>1_6</cif_version_labelling> <!-- v1.6 -->
+                <cif_version_labelling>2_0</cif_version_labelling> <!-- v2.0 -->
                 <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
-                <cif_version_deliverydate>1_2</cif_version_deliverydate> <!-- v1.2 -->
-                <cif_version_timeframe>1_2</cif_version_timeframe> <!-- v1.2 -->
-                <cif_version_location>1_1</cif_version_location> <!-- v1.1 -->
+                <cif_version_deliverydate>2_0</cif_version_deliverydate> <!-- v2.0 -->
+                <cif_version_timeframe>2_0</cif_version_timeframe> <!-- v2.0 -->
+                <cif_version_location>2_0</cif_version_location> <!-- v2.0 -->
             </advanced>
 
             <!-- Login data for the postcode check functionality. -->
@@ -1118,14 +1120,15 @@
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
             <postnl>
-                <enterprise>1.11,1.12,1.13,1.14</enterprise>
-                <community>1.6,1.7,1.8,1.9</community>
+                <enterprise>1.12,1.13,1.14</enterprise>
+                <community>1.7,1.8,1.9</community>
                 <php>5.3,5.4</php>
                 <!-- Compatibility with other extensions -->
                 <extensions>
                     <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
                     <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
+                    <Picqer_PostNL>1.0</Picqer_PostNL>
                 </extensions>
             </postnl>
         </compatibility>
@@ -2303,7 +2306,7 @@
             </POSTNL-0221>
             <POSTNL-0222>
                 <message>Warning: possible PostNL and GoMage LightCheckout conflict.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859018</url>
                 <type>warning</type>
             </POSTNL-0222>
             <POSTNL-0223>
@@ -2313,22 +2316,22 @@
             </POSTNL-0223>
             <POSTNL-0224>
                 <message>An error occurred while saving this step of the configuration wizard. Please use the regular "Save Config" button instead.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94858988</url>
                 <type>error</type>
             </POSTNL-0224>
             <POSTNL-0225>
                 <message>No PostNL Shipment found for shipment ID #%s.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859048</url>
                 <type>error</type>
             </POSTNL-0225>
             <POSTNL-0226>
                 <message>Only A4 or A6 are valid values for the 'labelSize' parameter.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94865547</url>
                 <type>error</type>
             </POSTNL-0226>
             <POSTNL-0227>
                 <message>The 'labelStartPosition' parameter must contain an integer value between 1 and 4.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859068</url>
                 <type>error</type>
             </POSTNL-0227>
             <POSTNL-0228>
@@ -2343,9 +2346,44 @@
             </POSTNL-0229>
             <POSTNL-0230>
                 <message>Could not create or find a shipment for order #%s.</message>
-                <url/>
+                <url>https://kb.tig.nl/topic/94859078</url>
                 <type>error</type>
             </POSTNL-0230>
+            <POSTNL-0231>
+                <message>No valid delivery day found.</message>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803448</url>
+                <type>error</type>
+            </POSTNL-0231>
+            <POSTNL-0232>
+                <message>Invalid country supplied for getNearestLocations request: %s</message>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803468</url>
+                <type>error</type>
+            </POSTNL-0232>
+            <POSTNL-0233>
+                <message>Invalid country supplied for GetDeliveryTimeframes request: %s</message>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803478</url>
+                <type>error</type>
+            </POSTNL-0233>
+            <POSTNL-0234>
+                <message>Invalid country supplied for getLocationsInArea request: %s</message>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803488</url>
+                <type>error</type>
+            </POSTNL-0234>
+            <POSTNL-0235>
+                <message>Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.</message>
+                <url>http://servicedesk.tig.nl/hc/nl/articles/211803498</url>
+                <type>error</type>
+            </POSTNL-0235>
+            <POSTNL-0236>
+                <message>Only 'NL' and 'BE' are allowed as sender country.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0236>
+            <POSTNL-0237>
+                <message>Delivery options are only available when shipping from the Netherlands.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0237>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

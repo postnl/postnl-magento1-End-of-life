@@ -76,7 +76,7 @@
  *  - postnl_shipment_send_return_label_email_before
  *  - postnl_shipment_send_return_label_email_after
  *
- * @method boolean                        getIsDutchShipment()
+ * @method boolean                        getIsDomesticShipment()
  * @method boolean                        getIsEuShipment()
  * @method boolean                        getIsGlobalShipment()
  * @method int                            getParcelCount()
@@ -97,6 +97,7 @@
  * @method int                            getLabelsPrinted()
  * @method bool|int                       getIsPakketautomaat()
  * @method boolean                        getIsBuspakjeShipment()
+ * @method boolean                        getIsSundayShipment()
  * @method int                            getReturnLabelsPrinted()
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
@@ -132,6 +133,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsSundayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -162,6 +164,7 @@
  * @method boolean                        hasMainBarcode()
  * @method boolean                        hasShipmentIncrementId()
  * @method boolean                        hasIsBuspakjeShipment()
+ * @method boolean                        hasIsSundayShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -210,6 +213,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_EPS          = 'eps';
     const SHIPMENT_TYPE_GLOBALPACK   = 'globalpack';
     const SHIPMENT_TYPE_BUSPAKJE     = 'buspakje';
+    const SHIPMENT_TYPE_SUNDAY       = 'sunday';
 
     /**
      * Xpaths to default product options settings.
@@ -231,6 +235,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/grid/alternative_default_max_amount';
     const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/grid/alternative_default_option';
     const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION    = 'postnl/grid/default_stated_address_only_product_option';
+    const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION         = 'postnl/grid/default_sunday_product_option';
 
     /**
      * Xpath to weight per parcel config setting.
@@ -287,17 +292,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @var array
      */
-    protected $_extraCoverProductCodes = array(
-        '3087',
-        '3094',
-        '3091',
-        '3097',
-        '3536',
-        '3546',
-        '3534',
-        '3544',
-        '4945',
-    );
+    protected $_extraCoverProductCodes;
 
     /**
      * Array of labels that need to be saved all at once.
@@ -577,13 +572,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets a PostNL helper object
+     * Gets a PostNL helper object.
      *
      * @param string $type
      *
-     * @return TIG_PosTNL_Helper_Data|TIG_PosTNL_Helper_Cif|TIG_PosTNL_Helper_Carrier|TIG_PosTNL_Helper_DeliveryOptions
-     *         |TIG_PosTNL_Helper_AddressValidation|TIG_PosTNL_Helper_Checkout|TIG_PosTNL_Helper_Mijnpakket
-     *         |TIG_PosTNL_Helper_Parcelware|TIG_PosTNL_Helper_Payment|TIG_PosTNL_Helper_Webservices
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_DeliveryOptions
+     *         |TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_Checkout|TIG_PostNL_Helper_Mijnpakket
+     *         |TIG_PostNL_Helper_Parcelware|TIG_PostNL_Helper_Payment|TIG_PostNL_Helper_Webservices
+     *         |TIG_PostNL_Helper_Date
      */
     public function getHelper($type = 'data')
     {
@@ -598,7 +594,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the process used for locking and unlocking this shipment
+     * Gets the process used for locking and unlocking this shipment.
      *
      * @return TIG_PostNL_Model_Core_Shipment_Process
      */
@@ -619,7 +615,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get an array of labels that have to be saved together
+     * Get an array of labels that have to be saved together.
      *
      * @return array
      */
@@ -629,12 +625,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get all product codes that have extra cover
+     * Get all product codes that have extra cover.
      *
      * @return array
      */
     public function getExtraCoverProductCodes()
     {
+        if (!empty($this->_extraCoverProductCodes)) {
+            return $this->_extraCoverProductCodes;
+        }
+
+        $productCodes = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                            ->getOptions(array('isExtraCover' => true), true);
+
+        $this->_extraCoverProductCodes = array_keys($productCodes);
         return $this->_extraCoverProductCodes;
     }
 
@@ -689,6 +693,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getProductCode();
         if (!$productCode) {
             return null;
+        }
+
+        /**
+         * If the product code was switched from a combi-label product code to a regular one, switch it back so we can
+         * find the product code that was chosen by the merchant.
+         */
+        $combiLabelProductCodes = Mage::helper('postnl/cif')->getCombiLabelProductCodes();
+        if (isset($combiLabelProductCodes[$productCode])) {
+            $productCode = $combiLabelProductCodes[$productCode];
         }
 
         /**
@@ -755,7 +768,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 return self::SHIPMENT_TYPE_PG_COD;
             }
 
-            if ($this->isDutchShipment()) {
+            if ($this->isDomesticShipment()) {
                 return self::SHIPMENT_TYPE_DOMESTIC_COD;
             }
         }
@@ -780,7 +793,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_BUSPAKJE;
         }
 
-        if ($this->isDutchShipment()) {
+        if ($this->isSundayShipment()) {
+            return self::SHIPMENT_TYPE_SUNDAY;
+        }
+
+        if ($this->isDomesticShipment()) {
             return self::SHIPMENT_TYPE_DOMESTIC;
         }
 
@@ -1046,7 +1063,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl);
+        $lang = substr(Mage::getStoreConfig('general/locale/code', $this->getStoreId()), 0, 2);
+
+        $barcodeUrl = $this->_getBarcodeUrl($barcode, $forceNl, $lang);
 
         $this->setBarcodeUrl($barcodeUrl);
         return $barcodeUrl;
@@ -1175,6 +1194,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_BUSPAKJE:
                 $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_SUNDAY:
+                $xpath = self::XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION;
                 break;
             //no default
         }
@@ -1533,8 +1555,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets allowed product options for the current shipment.
      *
-     * @param boolean $flat
-     * @param boolean $checkBuspakje
+     * @param boolean           $flat
+     * @param boolean           $checkBuspakje
      *
      * @return array
      *
@@ -1582,6 +1604,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case self::SHIPMENT_TYPE_BUSPAKJE:
                 $allowedProductCodes = $cifHelper->getBuspakjeProductCodes($flat);
                 break;
+            case self::SHIPMENT_TYPE_SUNDAY:
+                $allowedProductCodes = $cifHelper->getSundayProductCodes($flat);
+                break;
             default:
                 $allowedProductCodes = array();
                 break;
@@ -1613,13 +1638,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * @var TIG_PostNL_Helper_DeliveryOptions $helper
+         * @var TIG_PostNL_Helper_Date $helper
          */
-        $helper = $this->getHelper('deliveryOptions');
+        $helper = Mage::helper('postnl/date');
         $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
-        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
-
-        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)->format('Y-m-d H:i:s');
+        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId())->format('Y-m-d H:i:s');
 
         return $deliveryDate;
     }
@@ -1846,10 +1869,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $deliveryDate = new DateTime($deliveryDate, new DateTimeZone('UTC'));
 
-        $confirmDate = clone $deliveryDate;
-        $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
-
-        $this->getHelper('deliveryOptions')->getValidConfirmDate($confirmDate);
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = Mage::helper('postnl/date');
+        $storeId = $postnlOrder->getStoreId();
+        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $storeId);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;
@@ -2035,7 +2058,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $readConn = $coreResource->getConnection('core/read');
 
         $select = $readConn->select();
-        $select->from($coreResource->getTableName('postnl_core/shipment_label', array('label_id')))
+        $select->from($coreResource->getTableName('postnl_core/shipment_label'))
                ->where('`label_type` = ?', $labelType)
                ->where('`parent_id` = ?', $this->getId());
 
@@ -2147,13 +2170,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the shipping destination of this shipment is NL
+     * Check if the shipping destination of this shipment is Domestic.
      *
      * @return boolean
      */
-    public function isDutchShipment()
+    public function isDomesticShipment()
     {
-        if ($this->getIsDutchShipment()) {
+        if ($this->getIsDomesticShipment()) {
             return true;
         }
 
@@ -2164,7 +2187,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $shippingDestination = $shippingAddress->getCountryId();
 
-        if ($shippingDestination == 'NL') {
+        $domesticCountry = $this->getHelper()->getDomesticCountry();
+        if ($shippingDestination == $domesticCountry) {
             return true;
         }
 
@@ -2180,6 +2204,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         if ($this->getIsEuShipment()) {
             return true;
+        }
+
+        /**
+         * It is possible for a shipment to be both domestic and EPS. In this case domestic takes priority.
+         */
+        if ($this->isDomesticShipment()) {
+            return false;
         }
 
         $shippingAddress = $this->getShippingAddress();
@@ -2213,7 +2244,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
-        if (!$this->isDutchShipment() && !$this->isEuShipment()) {
+        if (!$this->isDomesticShipment() && !$this->isEuShipment()) {
             return true;
         }
 
@@ -2366,6 +2397,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a Sunday shipment.
+     *
+     * @return boolean
+     */
+    public function isSundayShipment()
+    {
+        if ($this->hasIsSundayShipment()) {
+            return $this->getIsSundayShipment();
+        }
+
+        $isSunday = $this->isSunday();
+
+        $this->setIsSundayShipment($isSunday);
+        return $isSunday;
+    }
+
+    /**
+     * Checks if the order of this shipment is a Sunday order.
+     *
+     * @return bool
+     */
+    public function isSunday()
+    {
+        if ($this->getPostnlOrder()->getType() == 'Sunday') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if this shipment is a COD shipment.
      *
      * @return boolean
@@ -2474,7 +2536,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Return barcodes are only available for Dutch parcel shipments.
          */
-        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment()) {
             return false;
         }
 
@@ -2866,7 +2928,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canPrintReturnLabels()
     {
-        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment()) {
             return false;
         }
 
@@ -2908,7 +2970,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        if (!$this->isDutchShipment()) {
+        if (!$this->isDomesticShipment()) {
             return false;
         }
 
@@ -3222,7 +3284,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
-        if (!isset($result->Labels, $result->Labels->Label)) {
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $result->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels, $shipment->Labels->Label)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'The confirmAndPrintLabel action returned an invalid response: %s',
@@ -3231,13 +3299,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0071'
             );
         }
-        $labels = $result->Labels->Label;
+        $labels = $shipment->Labels->Label;
 
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
         if ($this->isEuShipment() && !$this->_isCombiLabel()) {
-            $this->setProductCode($result->ProductCodeDelivery);
+            $this->setProductCode($shipment->ProductCodeDelivery);
         }
 
         return $labels;
@@ -4051,10 +4119,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string  $barcode
      * @param boolean $forceNl
+     * @param string  $lang
      *
      * @return string
      */
-    protected function _getBarcodeUrl($barcode, $forceNl = false)
+    protected function _getBarcodeUrl($barcode, $forceNl = false, $lang)
     {
         /**
          * @var TIG_PostNL_Helper_Carrier $helper
@@ -4064,7 +4133,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $url = '';
         $shippingAddress = $this->getShippingAddress();
         if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
         }
 
         return $url;
@@ -4468,7 +4537,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getIsBuspakje()
     {
-        if (!$this->isDutchShipment()
+        if (!$this->isDomesticShipment()
             || $this->isPakketautomaatShipment()
             || $this->isPakjeGemakShipment()
             || $this->isCod()
@@ -4502,7 +4571,60 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        /**
+         * Buspakje shipments can't be delivered on a monday or tuesday.
+         */
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $this->getDeliveryDate(), new DateTimeZone('UTC'));
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Check if the current confirm and delivery dates are valid for letter box parcel shipments. If not, modify these
+     * dates accordingly.
+     *
+     * @return $this
+     */
+    protected function _checkBuspakjeDates()
+    {
+        /**
+         * Get the current delivery date.
+         */
+        $deliveryDate = $this->getDeliveryDate();
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
+
+        /**
+         * Letter box parcels cannot be delivered on mondays or tuesdays.
+         */
+        if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') == '1') {
+            /** @var TIG_PostNL_Helper_Date $helper */
+            $helper = $this->getHelper('date');
+
+            /**
+             * Modify the delivery date to the next tuesday.
+             */
+            $deliveryDate->modify('next tuesday ' . $deliveryDate->format('H:i:s'));
+
+            $this->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
+
+            /**
+             * Also modify the confirm date accordingly.
+             */
+            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $this->getStoreId());
+
+            $this->setConfirmDate($confirmDate->format('Y-m-d H:i:s'));
+        }
+
+        /**
+         * Letter box parcels have no expected delivery times.
+         */
+        $this->setExpectedDeliveryTimeStart(null)
+             ->setExpectedDeliveryTimeEnd(null);
+
+        return $this;
     }
 
     /*******************************************************************************************************************
@@ -4565,6 +4687,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             && (!isset($codes['is_buspakje'])
                 || $codes['is_buspakje'] == '-1'
             )
+            && false
         ) {
             $isBuspakje = $this->_getIsBuspakje();
         } else {
@@ -4578,15 +4701,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($isBuspakje) {
             $shipmentType = self::SHIPMENT_TYPE_BUSPAKJE;
             $this->setShipmentType($shipmentType);
+
+            $this->_checkBuspakjeDates();
         }
 
         /**
          * The merchant may choose to use the default product code for this shipment.
          */
-        if (array_key_exists('use_default', $codes) && $codes['use_default'] == '1') {
+        if (isset($codes['use_default']) && $codes['use_default'] == '1') {
             return $this->getDefaultProductCode();
         }
-
         /**
          * Get the selected product code for the current shipment's shipment type.
          */
@@ -4748,7 +4872,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Only Dutch shipments that are not COD support multi-colli shipments.
          */
-        if (!$this->isDutchShipment() || $this->isCod()) {
+        if (!$this->isDomesticShipment() || $this->isCod()) {
             return 1;
         }
 

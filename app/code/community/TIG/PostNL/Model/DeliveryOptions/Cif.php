@@ -47,15 +47,19 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const PAKJEGEMAK_DELIVERY_OPTION         = 'PG';
     const PAKJEGEMAK_EXPRESS_DELIVERY_OPTION = 'PGE';
     const PAKKETAUTOMAAT_DELIVERY_OPTION     = 'PA';
+    const DOMESTIC_DELIVERY_OPTION           = 'Daytime';
+    const EVENING_DELIVERY_OPTION            = 'Evening';
+    const SUNDAY_DELIVERY_OPTION             = 'Sunday';
 
     /**
      * Config options used by the getDeliveryDate service.
      */
-    const XPATH_SHIPPING_DURATION    = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME          = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
-    const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_DELIVERY_DAYS_NUMBER = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_SHIPPING_DURATION      = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME            = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING   = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_SUNDAY_CUTOFF_TIME     = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_DELIVERY_DAYS_NUMBER   = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_ENABLE_SUNDAY_DELIVERY = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
      * Check if the module is set to test mode
@@ -77,13 +81,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * Gets the delivery date based on the shop's cut-off time.
      *
      * @param string                 $postcode
+     * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
      * @return string
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote)
+    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote)
     {
         if (empty($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -97,14 +102,33 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $date = new DateTime('now', Mage::helper('postnl')->getStoreTimeZone($quote->getStoreId(), true));
         $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
+        /**
+         * Build CutOffTimes array
+         *
+         * Day 00 indicates weekdays and saturday, while day 07 indicates sunday
+         */
+        $CutOffTimes = array(
+            array(
+                'Day'   => '00',
+                'Time'  => $this->_getCutOffTime()
+            ),
+            array(
+                'Day'   => '07',
+                'Time'  => $this->_getSundaySortingCutOffTime()
+            )
+        );
+
+        $options = $this->_getDeliveryDateOptionsArray();
+
         $soapParams = array(
             'GetDeliveryDate' => array(
-                'Postalcode'                 => $postcode,
+                'PostalCode'                 => $postcode,
                 'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
-                'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
-                'CutOffTimeForSundaySorting' => $this->_getSundaySortingCutOffTime(),
+                'CutOffTimes'                => $CutOffTimes,
+                'Options'                    => $options,
+                'CountryCode'                => $country,
             ),
             'Message' => $this->_getMessage('')
         );
@@ -161,13 +185,17 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
+        $options = $this->_getDeliveryTimeframesOptionsArray();
+
         $soapParams = array(
             'Timeframe' => array(
                 'PostalCode'    => $data['postcode'],
-                'HouseNumber'   => $data['housenumber'],
+                'HouseNr'       => $data['housenumber'],
+                'CountryCode'   => $data['country'],
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
                 'SundaySorting' => $this->_getSundaySortingAllowed(),
+                'Options'       => $options
             ),
             'Message' => $this->_getMessage('')
         );
@@ -177,7 +205,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         $response = $this->call(
             'timeframe',
-            'GetDeliveryTimeframes',
+            'GetTimeframes',
             $soapParams
         );
 
@@ -218,8 +246,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'Location'    => $location,
             'Message'     => $message,
-            'Countrycode' => 'NL' // @todo make dynamic
-
+            'Countrycode' => $data['country']
         );
 
         /**
@@ -267,7 +294,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'Location'    => $location,
             'Message'     => $message,
-            'Countrycode' => 'NL' // @todo make dynamic
+            'Countrycode' => $data['country']
+
         );
 
         /**
@@ -413,6 +441,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
+        /**
+         * Add Options specifying which location timeframes should be returned
+         */
+        $location['Options'] = array('Daytime', 'Morning');
+
+        /**
+         * Add flag to identify if Sunday Sorting is allowed
+         */
+        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed();
+
         return $location;
     }
 
@@ -439,5 +477,60 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return $deliveryOptions;
+    }
+
+    /**
+     * Builds array of time frame options, to be sent in the GetTimeframes request.
+     * These options determine which delivery timeframes should be requested.
+     *
+     * @return array
+     */
+    protected function _getDeliveryTimeframesOptionsArray()
+    {
+        $storeId = $this->getStoreId();
+
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUseEveningTimeframes()) {
+            $options[] = self::EVENING_DELIVERY_OPTION;
+        }
+
+        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        if ($sundayDelivery) {
+            $options[] = self::SUNDAY_DELIVERY_OPTION;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get the best fitting delivery option for the GetDeliveryDate request. In contract to the
+     * _getDeliveryTimeframesOptionsArray method, this method will return the options in a different order. This is
+     * important to prevent certain dates from being unavailable. The order used in this method is (depending on the
+     * extension's config): sunday > daytime > evening.
+     *
+     * @return array
+     */
+    protected function _getDeliveryDateOptionsArray()
+    {
+        $storeId = $this->getStoreId();
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        $options = array();
+        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        if ($sundayDelivery) {
+            $options[] = self::SUNDAY_DELIVERY_OPTION;
+        }
+
+        $options[] = self::DOMESTIC_DELIVERY_OPTION;
+
+        if ($helper->canUseEveningTimeframes()) {
+            $options[] = self::EVENING_DELIVERY_OPTION;
+        }
+
+        return $options;
     }
 }
