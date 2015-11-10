@@ -1881,7 +1881,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
-        $storeId = $postnlOrder->getStoreId();
+        $storeId = $this->getStoreId();
         $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $storeId);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
@@ -2447,7 +2447,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isSunday()
     {
-        if ($this->getPostnlOrder()->getType() == 'Sunday') {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Sunday') {
             return true;
         }
 
@@ -2461,7 +2462,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isMonday()
     {
-        if ($this->getPostnlOrder()->getType() == 'Monday') {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Monday') {
             return true;
         }
 
