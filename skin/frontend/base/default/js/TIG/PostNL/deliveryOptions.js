@@ -239,7 +239,9 @@ PostnlDeliveryOptions.prototype = {
             postnlShippingMethods     : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
             ],
-            extraOptions              : {}
+            extraOptions              : {},
+            getLocationsTimeout       : 5,
+            getTimeframesTimeout      : 5
         }, options || {});
 
         this.debug = debug;
@@ -773,6 +775,7 @@ PostnlDeliveryOptions.prototype = {
             deliveryDate = this.getDeliveryDate();
         }
 
+        var options = this.getOptions();
         this.timeframeRequest = new Ajax.PostnlRequest(this.getTimeframesUrl(), {
             method : 'post',
             parameters : {
@@ -786,7 +789,9 @@ PostnlDeliveryOptions.prototype = {
             onFailure : this.showDefaultTimeframe.bind(this),
             onComplete : function() {
                 this.timeframeRequest = false;
-            }.bind(this)
+            }.bind(this),
+            onTimeout : this.showDefaultTimeframe.bind(this),
+            timeoutDelay: options.getTimeframesTimeout
         });
 
         return this;
@@ -973,6 +978,7 @@ PostnlDeliveryOptions.prototype = {
             }
         }
 
+        var options = this.getOptions();
         this.locationsRequest = new Ajax.PostnlRequest(this.getLocationsUrl(),{
             method : 'post',
             parameters : {
@@ -986,7 +992,9 @@ PostnlDeliveryOptions.prototype = {
             onFailure : this.hideLocations.bind(this),
             onComplete : function() {
                 this.locationsRequest = false;
-            }.bind(this)
+            }.bind(this),
+            onTimeout : this.hideLocations.bind(this),
+            timeoutDelay: options.getLocationsTimeout
         });
 
         return this;
@@ -5163,6 +5171,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Sunday' :
                 this.type = 'Sunday';
                 break;
+            case 'Monday' :
+                this.type = 'Monday';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
@@ -5359,6 +5370,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
 
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
+        }
+
+        if (this.type == 'Monday') {
+            comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
         }
 
         return comment;

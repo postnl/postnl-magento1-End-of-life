@@ -98,6 +98,7 @@
  * @method bool|int                       getIsPakketautomaat()
  * @method boolean                        getIsBuspakjeShipment()
  * @method boolean                        getIsSundayShipment()
+ * @method boolean                        getIsMondayShipment()
  * @method int                            getReturnLabelsPrinted()
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
@@ -134,6 +135,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsSundayShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsMondayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -165,6 +167,7 @@
  * @method boolean                        hasShipmentIncrementId()
  * @method boolean                        hasIsBuspakjeShipment()
  * @method boolean                        hasIsSundayShipment()
+ * @method boolean                        hasIsMondayShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -214,6 +217,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_GLOBALPACK   = 'globalpack';
     const SHIPMENT_TYPE_BUSPAKJE     = 'buspakje';
     const SHIPMENT_TYPE_SUNDAY       = 'sunday';
+    const SHIPMENT_TYPE_MONDAY       = 'monday';
 
     /**
      * Xpaths to default product options settings.
@@ -649,13 +653,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getCustomBarcodes()
     {
-        if ($this->_customBarcodes) {
+        if ( $this->_customBarcodes ) {
             return $this->_customBarcodes;
         }
 
         $customBarcodes = $this->getHelper()->getCustomBarcodes();
 
         $this->_customBarcodes = $customBarcodes;
+
         return $customBarcodes;
     }
 
@@ -795,6 +800,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->isSundayShipment()) {
             return self::SHIPMENT_TYPE_SUNDAY;
+        }
+
+        if ($this->isMondayShipment()) {
+            return self::SHIPMENT_TYPE_MONDAY;
         }
 
         if ($this->isDomesticShipment()) {
@@ -1569,6 +1578,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
             case self::SHIPMENT_TYPE_DOMESTIC:
+            case self::SHIPMENT_TYPE_MONDAY:
                 $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
                 break;
             case self::SHIPMENT_TYPE_DOMESTIC_COD:
@@ -1871,7 +1881,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
-        $storeId = $postnlOrder->getStoreId();
+        $storeId = $this->getStoreId();
         $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDate, $storeId);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
@@ -2414,13 +2424,46 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a monday shipment.
+     *
+     * @return boolean
+     */
+    public function isMondayShipment()
+    {
+        if ($this->hasIsMondayShipment()) {
+            return $this->getIsMondayShipment();
+        }
+
+        $isMonday = $this->isMonday();
+
+        $this->setIsMondayShipment($isMonday);
+        return $isMonday;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
      */
     public function isSunday()
     {
-        if ($this->getPostnlOrder()->getType() == 'Sunday') {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Sunday') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a Monday order.
+     *
+     * @return bool
+     */
+    public function isMonday()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Monday') {
             return true;
         }
 
@@ -3304,7 +3347,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
-        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
+        if ($this->isEuShipment() && !$this->_isCombiLabelShipment()) {
             $this->setProductCode($shipment->ProductCodeDelivery);
         }
 
@@ -4181,7 +4224,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $labelType = $label->Labeltype;
 
-        if ($this->_isCombiLabel()) {
+        if ($this->_isCombiLabelShipment()) {
             $labelType = 'Label-combi';
         }
 
@@ -4268,7 +4311,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return boolean
      */
-    protected function _isCombiLabel()
+    protected function _isCombiLabelShipment()
     {
         if (!$this->isEuShipment()) {
             return false;
@@ -4672,6 +4715,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _extractProductCodeForType($codes)
     {
         $shipmentType = $this->getShipmentType(false);
+
+        /**
+         * For extracting the product code, monday shipments are considered domestic.
+         */
+        if ($shipmentType == self::SHIPMENT_TYPE_MONDAY) {
+            $shipmentType = self::SHIPMENT_TYPE_DOMESTIC;
+        }
 
         /**
          * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type. If

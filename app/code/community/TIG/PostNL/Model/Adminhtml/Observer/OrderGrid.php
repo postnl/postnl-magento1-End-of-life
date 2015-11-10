@@ -389,6 +389,30 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $storeIdColumn->setFilterIndex('main_table.store_id');
         }
 
+        $this->_modifyExtensionColumns($block);
+
+        return $this;
+    }
+
+    /**
+     * Modify columns added by other extensions for compatibility reasons.
+     *
+     * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
+     *
+     * @return $this
+     */
+    protected function _modifyExtensionColumns($block)
+    {
+        /**
+         * Fix for conflict with Adyen_Payment extension.
+         *
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $adyenEventCodeColumn
+         */
+        $adyenEventCodeColumn = $block->getColumn('adyen_event_code');
+        if ($adyenEventCodeColumn) {
+            $adyenEventCodeColumn->setFilterIndex('main_table.adyen_event_code');
+        }
+
         return $this;
     }
 
@@ -420,6 +444,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                 'avond'               => $helper->__('Evening Delivery'),
                 'sunday'              => $helper->__('Sunday Delivery'),
+                'monday'              => $helper->__('Monday Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
@@ -1358,6 +1383,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'sunday') {
             $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Sunday'));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is monday delivery, filter out all other orders
+         */
+        if ($filterCond == 'monday') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Monday'));
 
             return $this;
         }

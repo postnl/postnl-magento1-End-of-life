@@ -129,6 +129,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'Sunday':
                 $shipmentType = $this->__('Sunday Delivery');
                 break;
+            case 'Monday':
+                $shipmentType = $this->__('Monday Delivery');
+                break;
             case 'Overdag':
                 if ($countryId != $domesticCountry) {
                     continue;
@@ -141,7 +144,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             return $shipmentType;
         }
 
-        if (in_array($countryId, $domesticCountries)) {
+        if ($countryId == $domesticCountry) {
             $shipmentType = $this->__('Domestic');
 
             return $shipmentType;

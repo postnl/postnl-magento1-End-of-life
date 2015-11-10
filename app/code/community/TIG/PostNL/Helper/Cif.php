@@ -120,6 +120,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'GR',
         'MT',
         'NL',
+        'CY',
+        'ML',
     );
 
     /**
@@ -818,7 +820,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptions()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);

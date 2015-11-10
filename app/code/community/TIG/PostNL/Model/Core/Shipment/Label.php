@@ -49,6 +49,24 @@
 class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 {
     /**
+     * Supported label types.
+     */
+    const LABEL_TYPE_LABEL             = 'Label';
+    const LABEL_TYPE_RETURN_LABEL      = 'Return label';
+    const LABEL_TYPE_BUSPAKJE          = 'Buspakje';
+    const LABEL_TYPE_BUSPAKJEEXTRA     = 'BusPakjeExtra';
+    const LABEL_TYPE_LABEL_COMBI       = 'Label-combi';
+    const LABEL_TYPE_CODCARD           = 'CODcard';
+    const LABEL_TYPE_CN23              = 'CN23';
+    const LABEL_TYPE_COMMERCIALINVOICE = 'CommercialInvoice';
+    const LABEL_TYPE_CP71              = 'CP71';
+
+    /**
+     * Regex to determine whether a label is actually a combi-label.
+     */
+    const COMBI_LABEL_REGEX = '#/MediaBox \[0 0 ([\d]+) ([\d]+) \]#';
+
+    /**
      * Prefix of model events names
      *
      * @var string
@@ -102,5 +120,39 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Determine whether this label is a combi-label or not.
+     *
+     * @return bool
+     */
+    public function isCombiLabel()
+    {
+        $labelType = $this->getLabelType();
+
+        if ($labelType != self::LABEL_TYPE_LABEL && $labelType != self::LABEL_TYPE_LABEL_COMBI) {
+            return false;
+        }
+
+        $labelContent = $this->getLabel(true);
+        preg_match(self::COMBI_LABEL_REGEX, $labelContent, $matches);
+        if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function _beforeSave()
+    {
+        if ($this->getLabelType() == self::LABEL_TYPE_LABEL_COMBI && !$this->isCombiLabel()) {
+            $this->setLabelType(self::LABEL_TYPE_LABEL);
+        }
+
+        return parent::_beforeSave();
     }
 }

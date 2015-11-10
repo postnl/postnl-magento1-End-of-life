@@ -81,6 +81,8 @@
 <?php $_methodRate = $this->getMethodRate(); ?>
 
 <?php $_pakjeGemakRate = $_methodRate + $this->getFee('pakje_gemak', $this->helper('tax')->shippingPriceIncludesTax()); ?>
+
+<?php $_deliveryOptionsAjaxTimeout = $this->getDeliveryOptionsAjaxTimeout(); ?>
 <div id="initial_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -230,7 +232,9 @@
                 }
             },
         <?php endif; ?>
-        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency($_store->getCurrentCurrencyCode())->getSymbol(); ?>'
+        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency($_store->getCurrentCurrencyCode())->getSymbol(); ?>',
+        getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
+        getTimeframesTimeout   : <?php echo $_deliveryOptionsAjaxTimeout; ?>
     };
 
     try {
