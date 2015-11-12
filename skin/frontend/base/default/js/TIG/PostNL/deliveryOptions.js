@@ -919,6 +919,21 @@ PostnlDeliveryOptions.prototype = {
             if (selectTimeframe) {
                 this.saveSelectedOption();
             }
+
+            var fullAddressArray = this.fullAddress.split(',');
+            var useBillingForShipping = $('billing:use_for_shipping_yes').getValue();
+
+            if (fullAddressArray[0] == '') {
+                if(useBillingForShipping == 1) {
+                    var street  = $('virtual:billing:street1').getValue();
+                    var houseNr = $('virtual:billing:street2').getValue();
+                } else {
+                    var street  = $('virtual:shipping:street1').getValue();
+                    var houseNr = $('virtual:shipping:street2').getValue();
+                }
+
+                $$('.postnl-container #postnl_add_moment .location-name')[0].update(street + ' ' + houseNr);
+            }
         }
 
         if (this.debug) {
