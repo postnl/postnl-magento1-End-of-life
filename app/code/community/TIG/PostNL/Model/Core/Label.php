@@ -60,6 +60,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     const MAX_LABEL_COUNT = 200;
 
     /**
+     * Regex to determine whether a label is actually a combi-label.
+     */
+    const COMBI_LABEL_REGEX = '#/MediaBox \[0 0 ([\d]+) ([\d]+) \]#';
+
+    /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.
      *
      * @var array
@@ -642,6 +647,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * First we need to add pages to the pdf for certain label types under certain conditions.
          */
         $labelType = $label->getLabelType();
+
+        $contents = file_get_contents($tempFilename);
+        preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
+
+        if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+            $labelType = 'Label-combi';
+        }
+
         if ($labelType == 'Label'
             || $labelType == 'Label-combi'
             || $labelType == 'BusPakje'
