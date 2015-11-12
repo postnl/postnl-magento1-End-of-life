@@ -380,7 +380,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
-        return Mage::helper('postnl/deliveryOptions')->getOptionFee($option, $formatted, $includingTax, $convert);
+        return Mage::helper('postnl/deliveryOptions_fee')->getOptionFee($option, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -452,7 +452,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getEveningFee($formatted = false, $includingTax = true)
     {
-        return Mage::helper('postnl/deliveryOptions')->getEveningFee($formatted, $includingTax);
+        return Mage::helper('postnl/deliveryOptions_fee')->getEveningFee($formatted, $includingTax);
     }
 
     /**
@@ -478,7 +478,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getExpressFee($formatted = false, $includingTax = true)
     {
-        return Mage::helper('postnl/deliveryOptions')->getExpressFee($formatted, $includingTax);
+        return Mage::helper('postnl/deliveryOptions_fee')->getExpressFee($formatted, $includingTax);
     }
 
     /**
@@ -512,7 +512,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
 
         $currentRate = $this->getMethodRate();
 
-        return Mage::helper('postnl/deliveryOptions')->getPakjeGemakFee($currentRate, $formatted, $includingTax);
+        return Mage::helper('postnl/deliveryOptions_fee')->getPakjeGemakFee($currentRate, $formatted, $includingTax);
     }
 
     /**
