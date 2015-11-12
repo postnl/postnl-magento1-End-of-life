@@ -181,6 +181,7 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
             return $this;
         }
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($address->getQuoteId(), 'quote_id');
 
@@ -204,16 +205,19 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                 $includingTax = true;
             }
 
+            /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+            $helper = Mage::helper('postnl/deliveryOptions_fee');
+
             $fee = 0;
             if ($type == 'PGE') {
-                $fee = Mage::helper('postnl/deliveryOptions')->getExpressFee(false, $includingTax, false);
+                $fee = $helper->getExpressFee(false, $includingTax, false);
             } elseif ($type == 'Avond' ) {
-                $fee = Mage::helper('postnl/deliveryOptions')->getEveningFee(false, $includingTax, false);
+                $fee = $helper->getEveningFee(false, $includingTax, false);
             } elseif ($type == TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_TYPE_SUNDAY ) {
-                $fee = Mage::helper('postnl/deliveryOptions_fee')->getSundayFee(false, $includingTax, false);
+                $fee = $helper->getSundayFee(false, $includingTax, false);
             }
 
-            $fee += Mage::helper('postnl/deliveryOptions')->getOptionsFee($postnlOrder, false, $includingTax, false);
+            $fee += $helper->getOptionsFee($postnlOrder, false, $includingTax, false);
 
             $price += $fee;
 

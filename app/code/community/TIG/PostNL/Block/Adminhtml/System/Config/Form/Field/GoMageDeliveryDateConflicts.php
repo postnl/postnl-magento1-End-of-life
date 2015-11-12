@@ -42,9 +42,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConf
     /**
      * Get whether the GoMage LightCheckout delivery date functionality is conflicting with PostNL delivery options.
      *
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return int
      */
-    protected function _getValue()
+    protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
         $storeId = $this->_getStoreId();
 
