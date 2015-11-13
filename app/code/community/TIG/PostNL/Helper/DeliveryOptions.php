@@ -132,6 +132,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PA',
         'Sunday',
         'Monday',
+        'Sameday',
     );
 
     /**
@@ -619,9 +620,30 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $helper = Mage::helper('postnl/date');
 
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
+        $today = new DateTime('now', new DateTimeZone('UTC'));
 
         foreach($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
+            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d')) {
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    $sameDay = false;
+
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $sameDay = true;
+                        }
+                    }
+
+                    if (!$sameDay) {
+                        unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                    }
+                }
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
+            }
+
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
 
@@ -900,7 +922,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @return array
      * @throws Mage_Core_Exception
      */
-    protected function _getProductsShippingDuration(array $productIds, $configDuration = 1, $storeId = null)
+    protected function _getProductsShippingDuration(array $productIds, $configDuration = 0, $storeId = null)
     {
         /**
          * Get all products.
@@ -917,7 +939,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
-                && (int) $product->getData('postnl_shipping_duration') > 0
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {
@@ -2017,11 +2038,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
 
             /**
-             * If the product is a bundled product, check if the delivey options are allowed for all underlying
-             * simple products. Else just check the given product, since this will point correctly to the simple product.
+             * If the product is a bundled product, check if the delivery options are allowed for all underlying
+             * simple products. Else just check the given product, since this will point correctly to the simple
+             * product.
              */
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-                $allowDeliveryOptions = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_delivery_options');
+                $allowDeliveryOptions = $this->bundleCheckAllowedForSimpleProducts(
+                    $item,
+                    'postnl_allow_delivery_options'
+                );
             } else {
                 $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $productId,
@@ -2030,7 +2055,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 );
 
                 if ($option) {
-                    $allowParentDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    /** @noinspection PhpUndefinedVariableInspection */
+                    $allowParentDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')
+                        ->getAttributeRawValue(
                         $parentProductId,
                         'postnl_allow_delivery_options',
                         $item->getStoreId()

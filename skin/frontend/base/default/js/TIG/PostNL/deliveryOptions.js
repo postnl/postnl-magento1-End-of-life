@@ -5163,7 +5163,18 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.from = timeframe.From;
         this.to   = timeframe.To;
 
-        var type =  timeframe.Options.string[0];
+        var today = new Date();
+        var formattedToday = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+
+        var type = '';
+        timeframe.Options.string.each(function(value) {
+            if (value == 'Sameday' && date == formattedToday) {
+                type = value;
+            } else if (value != 'Sameday' && !type) {
+                type = value;
+            }
+        });
+
         switch (type) {
             case 'Evening' :
                 this.type = 'Avond';
@@ -5173,6 +5184,8 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
                 break;
             case 'Monday' :
                 this.type = 'Monday';
+            case 'Sameday' :
+                this.type = 'Sameday';
                 break;
             default :
                 this.type = 'Overdag';
@@ -5372,8 +5385,13 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
 
+<<<<<<< Updated upstream
         if (this.type == 'Monday') {
             comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
+=======
+        if (this.type == 'Sameday') {
+            comment = '<span class="option-comment">' + Translator.translate('same day') + '</span>';
+>>>>>>> Stashed changes
         }
 
         return comment;

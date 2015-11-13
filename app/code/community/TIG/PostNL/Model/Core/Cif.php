@@ -251,6 +251,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Characteristic' => '101',
             'Option'         => '008',
         ),
+        'Sameday' => array(
+            array (
+                'Characteristic' => '118',
+                'Option'         => '015',
+            ),
+            array (
+                'Characteristic' => '118',
+                'Option'         => '006',
+            ),
+        ),
     );
 
     /**
@@ -1043,13 +1053,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $type = $postnlOrder->getType();
         $availableProductOptions = $this->getAvailableProductOptions();
-        if (!array_key_exists($type, $availableProductOptions)) {
+        if (!isset($availableProductOptions[$type])) {
             return false;
         }
 
         $productOptions = array(
             'ProductOption' => $availableProductOptions[$type]
         );
+
         return $productOptions;
     }
 

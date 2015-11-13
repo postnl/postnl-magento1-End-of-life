@@ -489,7 +489,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         $storeId = $this->getStoreId();
 
-        $options = array(self::DOMESTIC_DELIVERY_OPTION);
+        $options = array(self::DOMESTIC_DELIVERY_OPTION, 'Sameday');
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
@@ -519,7 +519,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        $options = array();
+        $options = array('Sameday');
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         if ($sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
