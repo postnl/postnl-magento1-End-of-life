@@ -657,11 +657,19 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * First we need to add pages to the pdf for certain label types under certain conditions.
          */
         $labelType = $label->getLabelType();
-        if ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
-            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI
-            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
-            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
-            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
+
+        $contents = file_get_contents($tempFilename);
+        preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
+
+        if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+            $labelType = 'Label-combi';
+        }
+
+        if ($labelType == 'Label'
+            || $labelType == 'Label-combi'
+            || $labelType == 'BusPakje'
+            || $labelType == 'BusPakjeExtra'
+            || $labelType == 'Return Label'
         ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
