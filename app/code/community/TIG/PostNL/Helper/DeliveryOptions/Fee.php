@@ -43,6 +43,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      */
     const XPATH_EVENING_TIMEFRAME_FEE   = 'postnl/delivery_options/evening_timeframe_fee';
     const XPATH_SUNDAY_DELIVERY_FEE     = 'postnl/delivery_options/sunday_delivery_fee';
+    const XPATH_SAMEDAY_DELIVERY_FEE    = 'postnl/delivery_options/sameday_delivery_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE  = 'postnl/delivery_options/pakjegemak_express_fee';
     const XPATH_ONLY_STATED_ADDRESS_FEE = 'postnl/delivery_options/stated_address_only_fee';
 
@@ -57,6 +58,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      */
     const FEE_TYPE_EVENING  = 'Evening';
     const FEE_TYPE_SUNDAY   = 'Sunday';
+    const FEE_TYPE_SAMEDAY  = 'Sameday';
     const FEE_TYPE_EXPRESS  = 'Express';
 
     /**
@@ -76,6 +78,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      */
     const SUNDAY_FEE_MIN = 0;
     const SUNDAY_FEE_MAX = 10;
+
+    /**
+     * Same day delivery fee limits
+     */
+    const SAMEDAY_FEE_MIN = 0;
+    const SAMEDAY_FEE_MAX = 50;
 
     /**
      * Get the fee limit, min or max, for the supplied fee type
@@ -117,6 +125,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_SUNDAY:
                 $fee = self::SUNDAY_FEE_MIN;
                 break;
+            case self::FEE_TYPE_SAMEDAY:
+                $fee = self::SAMEDAY_FEE_MIN;
+                break;
             case self::FEE_TYPE_EXPRESS:
                 $fee = self::EXPRESS_FEE_MIN;
                 break;
@@ -142,6 +153,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 break;
             case self::FEE_TYPE_SUNDAY:
                 $fee = self::SUNDAY_FEE_MAX;
+                break;
+            case self::FEE_TYPE_SAMEDAY:
+                $fee = self::SAMEDAY_FEE_MAX;
                 break;
             case self::FEE_TYPE_EXPRESS:
                 $fee = self::EXPRESS_FEE_MAX;
@@ -181,6 +195,22 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     public function getSundayFee($formatted = false, $includingTax = true, $convert = true)
     {
         $feeType = self::FEE_TYPE_SUNDAY;
+
+        return $this->_getFee($feeType, $formatted, $includingTax, $convert);
+    }
+
+    /**
+     * Get the fee charged for same day delivery.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     * @param boolean $convert
+     *
+     * @return float
+     */
+    public function getSameDayFee($formatted = false, $includingTax = true, $convert = true)
+    {
+        $feeType = self::FEE_TYPE_SAMEDAY;
 
         return $this->_getFee($feeType, $formatted, $includingTax, $convert);
     }
@@ -264,6 +294,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_SUNDAY:
                 $registryKey = 'postnl_sunday_fee';
                 break;
+            case self::FEE_TYPE_SAMEDAY:
+                $registryKey = 'postnl_sameday_fee';
+                break;
             case self::FEE_TYPE_EXPRESS:
                 $registryKey = 'postnl_express_fee';
                 break;
@@ -286,6 +319,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 break;
             case self::FEE_TYPE_SUNDAY:
                 $xpath = self::XPATH_SUNDAY_DELIVERY_FEE;
+                break;
+            case self::FEE_TYPE_SAMEDAY:
+                $xpath = self::XPATH_SAMEDAY_DELIVERY_FEE;
                 break;
             case self::FEE_TYPE_EXPRESS:
                 $xpath = self::XPATH_PAKJEGEMAK_EXPRESS_FEE;
