@@ -957,6 +957,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
+                && $product->getData('postnl_shipping_duration') !== 'config'
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {

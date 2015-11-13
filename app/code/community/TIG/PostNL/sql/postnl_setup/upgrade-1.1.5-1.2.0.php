@@ -291,7 +291,7 @@ if (!$installer->getAttribute('catalog_product', 'postnl_shipping_duration')) {
             'sort_order'                 => 100,
             'frontend'                   => '',
             'class'                      => '',
-            'default'                    => '',
+            'default'                    => 'config',
             'label'                      => 'PostNL Shipping Duration',
             'input'                      => 'select',
             'type'                       => 'int',
