@@ -215,10 +215,13 @@ PostnlDeliveryOptions.prototype = {
             eveningFeeExcl            : 0,
             sundayFeeIncl             : 0,
             sundayFeeExcl             : 0,
+            sameDayFeeIncl            : 0,
+            sameDayFeeExcl            : 0,
             expressFeeIncl            : 0,
             expressFeeExcl            : 0,
             eveningFeeText            : '',
             sundayFeeText             : '',
+            sameDayFeeText            : '',
             expressFeeText            : '',
             allowStreetview           : true,
             scrollbarContainer        : 'scrollbar_content',
@@ -1590,6 +1593,8 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().eveningFeeIncl;
             } else if (selectedType == 'Sunday') {
                 extraCosts = this.getOptions().sundayFeeIncl;
+            } else if (selectedType == 'Sameday') {
+                extraCosts = this.getOptions().sameDayFeeIncl;
             }
 
             if (this.debug) {
@@ -1605,6 +1610,8 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().eveningFeeExcl;
         } else if (selectedType == 'Sunday') {
             extraCosts = this.getOptions().sundayFeeExcl;
+        } else if (selectedType == 'Sameday') {
+            extraCosts = this.getOptions().sameDayFeeExcl;
         }
 
         if (this.debug) {
@@ -5390,7 +5397,14 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         }
 
         if (this.type == 'Sameday') {
-            comment = '<span class="option-comment">' + Translator.translate('same day') + '</span>';
+            var sameDayCosts = this.getOptions().sameDayFeeText;
+            var sameDayCostHtml = '';
+
+            if (this.getOptions().sameDayFeeIncl) {
+                sameDayCostHtml += ' + ' + sameDayCosts;
+            }
+
+            comment = '<span class="option-comment">' + Translator.translate('same day') + sameDayCostHtml + '</span>';
         }
 
         return comment;

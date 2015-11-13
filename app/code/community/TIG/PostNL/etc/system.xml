@@ -2097,6 +2097,57 @@
                                 </country>
                             </depends>
                         </sunday_delivery_fee>
+                        <enable_sameday_delivery translate="label comment tooltip" module="postnl">
+                            <label>Enable same day delivery</label>
+                            <comment><![CDATA[You can read more about same day delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/" target="_blank" title="sunday delivery">here</a>.]]></comment>
+                            <tooltip>Activate same day delivery for your customers.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>332</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_timeframes>1</enable_timeframes>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </enable_sameday_delivery>
+                        <sameday_delivery_fee translate="label tooltip" module="postnl">
+                            <label>Same day delivery fee</label>
+                            <tooltip>Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>postnl_deliveryoptions/system_config_backend_validateFee_sameDayDeliveryFee</backend_model>
+                            <sort_order>334</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number validate-not-negative-number</validate>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_sameday_delivery>1</enable_sameday_delivery>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </sameday_delivery_fee>
                         <mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -3044,7 +3095,7 @@
                         </cod_product_options_header>
                         <default_cod_product_option translate="label tooltip" module="postnl">
                             <label>Default COD shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to domestic COD shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableNlCodOptions</source_model>
@@ -3056,7 +3107,7 @@
                         </default_cod_product_option>
                         <default_evening_cod_product_option translate="label tooltip" module="postnl">
                             <label>Default evening COD delivery shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
@@ -4429,7 +4480,7 @@
                         </supported_product_options>
                         <default_product_option translate="label tooltip" module="postnl">
                             <label>Default shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to domestic shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
@@ -4480,7 +4531,7 @@
                         </alternative_default_option>
                         <default_evening_product_option translate="label tooltip" module="postnl">
                             <label>Default evening delivery shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
@@ -4510,7 +4561,7 @@
                         </default_evening_product_option>
                         <default_sunday_product_option translate="label tooltip" module="postnl">
                             <label>Default sunday delivery shipping option</label>
-                            <tooltip>This setting may be overwritten by manualy creating shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_sundayProductOptions::getAvailableOptions</source_model>
@@ -4538,6 +4589,36 @@
                                 </country>
                             </depends>
                         </default_sunday_product_option>
+                        <default_sameday_product_option translate="label tooltip" module="postnl">
+                            <label>Default same day delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableSameDayOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>165</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_timeframes>
+                                <enable_sameday_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_sameday_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_sameday_product_option>
                         <default_pakjegemak_product_option translate="label tooltip" module="postnl">
                             <label>Default 'deliver at the Post Office' option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</tooltip>

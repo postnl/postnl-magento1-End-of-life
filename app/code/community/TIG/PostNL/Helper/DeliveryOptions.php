@@ -68,6 +68,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE = 'postnl/delivery_options/enable_pakketautomaat_for_buspakje';
     const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
+    const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
 
     /**
      * Xpaths to extra fee config settings.
@@ -624,10 +625,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         foreach($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
-            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d')) {
+
+            /**
+             * Check if the time frame's date is today. If so, it is probably a same day delivery time frame.
+             */
+            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery()) {
+                /**
+                 * Check for each sub-timeframe if it is indeed same day delivery.
+                 */
                 foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
                     $sameDay = false;
 
+                    /**
+                     * Same day delivery timeframes may have multiple 'options'. Only one of these needs to actually be
+                     * 'Sameday'.
+                     */
                     foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
                         if ($timeFrameTimeFrameOption == 'Sameday') {
                             $sameDay = true;
@@ -642,6 +654,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  * Reset the indices of the TimeframeTimeFrame's array.
                  */
                 $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery()) {
+                /**
+                 * If same day delivery it not allowed, remove the time frame.
+                 */
+                unset($timeframes[$key]);
+                continue;
             }
 
             $timeFrameDay = $timeFrameDate->format('N');
@@ -899,10 +917,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Make sure the value is between 1 and 14 days.
          */
-        if ($shippingDuration > 14 || $shippingDuration < 1) {
+        if ($shippingDuration > 14 || $shippingDuration < 0) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.',
+                    'Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.',
                     $shippingDuration
                 ),
                 'POSTNL-0127'
@@ -1876,6 +1894,38 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * Save the result in the PostNL cache.
              */
             $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
+                  ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Checks if sunday sorting is allowed.
+     *
+     * @return bool
+     */
+    public function canUseSameDayDelivery()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseSameDayDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseSameDayDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->getDomesticCountry() != 'NL') {
+            $allowed = false;
+        } else {
+            $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseSameDayDelivery($allowed)
                   ->saveCache();
         }
 

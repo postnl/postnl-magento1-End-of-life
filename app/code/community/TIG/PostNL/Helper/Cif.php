@@ -474,6 +474,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of same day delivery product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getSameDayProductCodes($flat = true)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $pakjeGemakProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array
