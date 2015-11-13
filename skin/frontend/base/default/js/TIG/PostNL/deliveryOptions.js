@@ -5387,6 +5387,8 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
         if (this.type == 'Monday') {
             comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
+        }
+
         if (this.type == 'Sameday') {
             comment = '<span class="option-comment">' + Translator.translate('same day') + '</span>';
         }
