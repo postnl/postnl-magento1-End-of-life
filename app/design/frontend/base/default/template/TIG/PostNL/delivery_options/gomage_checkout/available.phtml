@@ -58,6 +58,10 @@
         <?php $_sole = count($_shippingRateGroups) == 1; ?>
         <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
         <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
+        <?php $_canUseDeliveryOptions = false; ?>
+        <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+            <?php $_canUseDeliveryOptions = true; ?>
+        <?php endif; ?>
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <?php $_isPostnl = false; ?>
             <?php if (!$_deliveryOptionsShown
@@ -107,11 +111,6 @@
                            <?php endif ?>
 
                             <?php if (!$_deliveryOptionsShown): ?>
-                                <?php $_canUseDeliveryOptions = false; ?>
-                                <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
-                                    <?php $_canUseDeliveryOptions = true; ?>
-                                <?php endif; ?>
-
                                 <?php if ($_canUseDeliveryOptions
                                     && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())
                                     && $this->getChild('postnl.gomage.delivery.options')
