@@ -52,7 +52,7 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      */
     public function postDispatchSaveMassAction($config, $eventModel)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 
         $request = Mage::app()->getRequest();
         if ($request->getParam('shipment_ids')) {
@@ -86,7 +86,7 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      */
     public function postDispatchAction($config, $eventModel)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 
         return true;
     }
