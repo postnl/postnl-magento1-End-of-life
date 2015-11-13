@@ -879,6 +879,7 @@
                 <sunday_delivery_fee>0</sunday_delivery_fee> <!-- Sunday Delivery cost 0 {base currency} extra -->
                 <enable_sameday_delivery>0</enable_sameday_delivery> <!-- Disable same day delivery -->
                 <sameday_delivery_fee>0</sameday_delivery_fee> <!-- Same Day Delivery cost 0 {base currency} extra -->
+                <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->

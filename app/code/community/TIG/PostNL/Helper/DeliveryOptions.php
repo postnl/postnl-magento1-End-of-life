@@ -91,10 +91,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_SHIPPING_DAYS      = 'postnl/cif_labels_and_confirming/shipping_days';
+    const XPATH_SHIPPING_DURATION   = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME         = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_SUNDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SAMEDAY_CUTOFF_TIME = 'postnl/delivery_options/sameday_delivery_cutoff_time';
+    const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
      * Xpath to the 'stated_address_only_checked' setting.
@@ -257,7 +258,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getEveningFee($formatted, $includingTax, $convert);
     }
 
@@ -275,7 +276,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getExpressFee($formatted, $includingTax, $convert);
     }
 
@@ -294,7 +295,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
     }
 
@@ -313,7 +314,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
     }
 
@@ -332,7 +333,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getOptionFee($option, $formatted, $includingTax, $convert);
     }
 
@@ -629,7 +630,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * Check if the time frame's date is today. If so, it is probably a same day delivery time frame.
              */
-            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery()) {
+            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
                 /**
                  * Check for each sub-timeframe if it is indeed same day delivery.
                  */
@@ -654,7 +655,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  * Reset the indices of the TimeframeTimeFrame's array.
                  */
                 $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
-            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery()) {
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && !$this->canUseSameDayDelivery(true)) {
                 /**
                  * If same day delivery it not allowed, remove the time frame.
                  */
@@ -767,7 +768,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return $this->getQuoteShippingDuration($quote);
     }
 
@@ -983,7 +984,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return Mage::helper('postnl/deliveryOptions_fee')->getPriceWithTax($price, $includingTax, $formatted, $convert);
     }
 
@@ -1904,9 +1905,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if sunday sorting is allowed.
      *
+     * @param bool $checkCutOffTime
+     *
      * @return bool
      */
-    public function canUseSameDayDelivery()
+    public function canUseSameDayDelivery($checkCutOffTime = false)
+    {
+        $allowed = $this->_canUseSameDayDelivery();
+
+        if ($allowed && $checkCutOffTime) {
+            $isPastCutOff = Mage::helper('postnl/date')->isPastCutOff(
+                new DateTime('now', new DateTimeZone('UTC')),
+                Mage::app()->getStore()->getId(),
+                'sameday'
+            );
+
+            if ($isPastCutOff) {
+                $allowed = false;
+            }
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Checks if sunday sorting is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUseSameDayDelivery()
     {
         $cache = $this->getCache();
 
