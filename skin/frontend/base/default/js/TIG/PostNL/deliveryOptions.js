@@ -5191,6 +5191,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
                 break;
             case 'Monday' :
                 this.type = 'Monday';
+                break;
             case 'Sameday' :
                 this.type = 'Sameday';
                 break;

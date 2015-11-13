@@ -409,6 +409,21 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if the order is same day delivery.
+     *
+     * @return bool
+     */
+    public function isSameDayDelivery()
+    {
+        $type = $this->getType();
+        if ($type == 'Sameday') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Validate the chosen extra options. If an option is invalid, it will be unset.
      *
      * @return $this

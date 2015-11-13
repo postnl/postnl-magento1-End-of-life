@@ -77,7 +77,19 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      *
      * @var int
      */
-    protected $_postnlDeliveryDelay = 0;
+    protected $_postnlDeliveryDelay = 1;
+
+    /**
+     * @param int $postnlDeliveryDelay
+     *
+     * @return $this
+     */
+    public function setPostnlDeliveryDelay($postnlDeliveryDelay)
+    {
+        $this->_postnlDeliveryDelay = (int) $postnlDeliveryDelay;
+
+        return $this;
+    }
 
     /**
      * Build an array of valid delivery dates. Used for calculating delivery and shipping dates.
