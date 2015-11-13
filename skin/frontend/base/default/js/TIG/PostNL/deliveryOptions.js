@@ -5385,13 +5385,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
 
-<<<<<<< Updated upstream
         if (this.type == 'Monday') {
             comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
-=======
         if (this.type == 'Sameday') {
             comment = '<span class="option-comment">' + Translator.translate('same day') + '</span>';
->>>>>>> Stashed changes
         }
 
         return comment;
