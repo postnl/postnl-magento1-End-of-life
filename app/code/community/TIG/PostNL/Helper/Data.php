@@ -606,6 +606,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the current stability of the PostNL extension's code base.
+     *
+     * @return string
+     */
+    public function getModuleStability()
+    {
+        $stability = (string) Mage::getConfig()->getXpath('tig/stability/postnl')[0];
+
+        return $stability;
+    }
+
+    /**
      * Gets a shipment's PakjeGemak address if available.
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
