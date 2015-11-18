@@ -141,21 +141,21 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $countryId = $request->getDestCountryId();
         $helper = $this->getHelper();
         if ($countryId) {
+            $domesticCountry = $helper->getDomesticCountry();
             $euCountries = Mage::helper('postnl/cif')->getEuCountries();
 
-            if ($countryId == 'NL'
+            if ($countryId == $domesticCountry
                 && !$helper->canUseStandard()
             ) {
                 return false;
-            }
-
-            if (in_array($countryId, $euCountries)
+            } elseif (
+                $countryId != $domesticCountry
+                && in_array($countryId, $euCountries)
                 && !$helper->canUseEps()
             ) {
                 return false;
-            }
-
-            if ($countryId != 'NL'
+            } elseif (
+                $countryId != $domesticCountry
                 && !in_array($countryId, $euCountries)
                 && !$helper->canUseGlobalPack()
             ) {
