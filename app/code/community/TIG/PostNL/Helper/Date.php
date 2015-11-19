@@ -145,9 +145,11 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                  */
                 $this->_validDeliveryDays[self::MONDAY] = 0;
                 $this->_validDeliveryDays[self::TUESDAY] = 1;
-            } else {
-                $this->_validDeliveryDays[self::MONDAY] = 0;
             }
+        }
+
+        if (!$sundaySorting) {
+            $this->_validDeliveryDays[self::MONDAY] = 0;
         }
 
         /**
