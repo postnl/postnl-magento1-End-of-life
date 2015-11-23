@@ -366,11 +366,13 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         $checkoutExtension = Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION, $storeId);
+        Mage::log($checkoutExtension, null, 'riklog.log', true);
         if (!$checkoutExtension || $checkoutExtension == 'other') {
             return false;
         }
 
         $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $storeId);
+        Mage::log($usePostcodeCheck, null, 'riklog.log', true);
         return $usePostcodeCheck;
     }
 
