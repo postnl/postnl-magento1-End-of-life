@@ -382,7 +382,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If this is not a DateTime object, nor a string, this will get stuck.
          */
-        if (!is_object($checkValidDay) && !is_string($checkValidDay)) {
+        if (!is_object($checkValidDay) && !is_string($checkValidDay) && is_int($checkValidDay)) {
             return 0;
         }
 
