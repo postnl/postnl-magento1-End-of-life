@@ -64,6 +64,7 @@
         <?php endif; ?>
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <?php $_isPostnl = false; ?>
+            <?php $_rate = current($_rates); ?>
             <?php if (!$_deliveryOptionsShown
                 && $_canUseDeliveryOptions
                 && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())): ?>
