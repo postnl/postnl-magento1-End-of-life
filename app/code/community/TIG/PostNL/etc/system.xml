@@ -4638,16 +4638,17 @@
                                 </country>
                             </depends>
                         </default_stated_address_only_product_option>
-                        <valid_shipping_duration_days translate="label comment" module="postnl">
-                            <label>Valid shipping duration days</label>
-                            <comment>Select which days of the week count towards the shipping duration setting.</comment>
-                            <source_model>postnl_core/system_config_source_shippingDurationDays</source_model>
-                            <frontend_type>multiselect</frontend_type>
-                            <sort_order>210</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </valid_shipping_duration_days>
+                        <!-- Temporarily removed as it is not fully stable yet. -->
+                        <!--<valid_shipping_duration_days translate="label comment" module="postnl">-->
+                            <!--<label>Valid shipping duration days</label>-->
+                            <!--<comment>Select which days of the week count towards the shipping duration setting.</comment>-->
+                            <!--<source_model>postnl_core/system_config_source_shippingDurationDays</source_model>-->
+                            <!--<frontend_type>multiselect</frontend_type>-->
+                            <!--<sort_order>210</sort_order>-->
+                            <!--<show_in_default>1</show_in_default>-->
+                            <!--<show_in_website>0</show_in_website>-->
+                            <!--<show_in_store>0</show_in_store>-->
+                        <!--</valid_shipping_duration_days>-->
                     </fields>
                 </grid>
                 <advanced translate="label comment" module="postnl">
