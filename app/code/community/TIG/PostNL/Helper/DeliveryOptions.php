@@ -210,7 +210,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getConfigMinQty()
     {
-        $configMinQty = $this->_configManageStock;
+        $configMinQty = $this->_configMinQty;
 
         if (is_null($configMinQty)) {
             $configMinQty  = Mage::getStoreConfig(Mage_CatalogInventory_Model_Stock_Item::XML_PATH_MIN_QTY);
