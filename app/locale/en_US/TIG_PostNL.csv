@@ -92,7 +92,7 @@ TIG_PostNL::Use only the primary sender address,Use only the primary sender addr
 TIG_PostNL::Product Options,Product Options
 TIG_PostNL::Select selectable option,Select selectable option
 TIG_PostNL::Default shipping option,Default shipping option
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to domestic shipments.
 TIG_PostNL::Use an alternative default option,Use an alternative default option
 TIG_PostNL::Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.
 TIG_PostNL::Maximum amount,Maximum amount
@@ -659,7 +659,7 @@ TIG_PostNL::Invalid response for GetNearestLocations request: %s,Invalid respons
 TIG_PostNL::Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.,Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.
 TIG_PostNL::Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.,Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.
 TIG_PostNL::Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.,Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.
-TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.,Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.
+TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.,Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.
 TIG_PostNL::Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.,Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.
 "TIG_PostNL::Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s"
 "TIG_PostNL::Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s"
@@ -724,7 +724,7 @@ TIG_PostNL::Delete Shipping Labels,Delete Shipping Labels
 TIG_PostNL::The current user is not allowed to perform this action.,The current user is not allowed to perform this action.
 Actions,Actions
 TIG_PostNL::Default evening delivery shipping option,Default evening delivery shipping option
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.
 TIG_PostNL::Default early post office pickup option,Default early post office pickup option
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.
 TIG_PostNL::Default shipment type,Default shipment type
@@ -954,9 +954,9 @@ TIG_PostNL::Letter box qty,Letter box qty
 TIG_PostNL::No Confirmation Required,No Confirmation Required
 TIG_PostNL::The following options are only for COD orders.,The following options are only for COD orders.
 TIG_PostNL::Default COD shipping option,Default COD shipping option
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic COD shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to domestic COD shipments.
 TIG_PostNL::Default evening COD delivery shipping option,Default evening COD delivery shipping option
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.
 TIG_PostNL::Default 'deliver at the Post Office' COD option,Default 'deliver at the Post Office' COD option
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.
 TIG_PostNL::Default early post office pickup COD option,Default early post office pickup COD option
@@ -1287,7 +1287,7 @@ TIG_PostNL::Loading available delivery options for your shipping address...,Load
 TIG_PostNL::Picqer's PostNL add-on version,Picqer's PostNL add-on version
 TIG_PostNL::Default sunday delivery shipping option,Default sunday delivery shipping option
 TIG_PostNL::Enable sunday delivery,Enable sunday delivery
-TIG_PostNL::This setting may be overwritten by manualy creating shipments.,This setting may be overwritten by manualy creating shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments.,This setting may be overwritten by manually creating shipments.
 TIG_PostNL::Activate sunday delivery for your customers.,Activate sunday delivery for your customers.
 TIG_PostNL::Sunday Delivery,Sunday Delivery
 TIG_PostNL::Sunday,Sunday
@@ -1303,7 +1303,7 @@ TIG_PostNL::Belgium COD + Return when not home,Belgium COD + Return when not hom
 TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only
 TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,Belgium COD + Extra cover (EUR 500) + Return when not home
 TIG_PostNL::Default Belgium shipping option,Default Belgium shipping option
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian domestic shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian domestic shipments.
 TIG_PostNL::Default Belgium COD shipping option,Default Belgium COD shipping option
 TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL delivery options are only available when shipping from the Netherlands.
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Delivery options are only available when shipping from the Netherlands.
@@ -1314,5 +1314,17 @@ TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your cus
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>."
 "TIG_PostNL::You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>.","You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>."
 TIG_PostNL::sunday,sunday
-TIG_PostNL::Sunday delivery fee, Sunday delivery fee
-"TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.","Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery."
+TIG_PostNL::Same Day Delivery,Same Day Delivery
+TIG_PostNL::same day,same day
+TIG_PostNL::Enable same day delivery,Enable same day delivery
+"TIG_PostNL::You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>.","You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>."
+TIG_PostNL::Activate same day delivery for your customers.,Activate same day delivery for your customers.
+TIG_PostNL::Same day delivery fee,Same day delivery fee
+TIG_PostNL::Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.,Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.
+TIG_PostNL::Default same day delivery shipping option,Default same day delivery shipping option
+TIG_PostNL::This setting may be overwritten by manually creating shipments.,This setting may be overwritten by manually creating shipments.
+TIG_PostNL::Sunday delivery fee,Sunday delivery fee
+TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.,Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.
+TIG_PostNL::Same day delivery cut-off time,Same day delivery cut-off time
+TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.
+TIG_PostNL::N/A,N/A
