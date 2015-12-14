@@ -194,7 +194,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         } elseif ($optionType == 'Sunday') {
             return $this->_getSundayRenderedValue($row);
         } elseif ($optionType == 'Monday') {
-            return $this->_getMondayRenderedValue($row);
+            return $this->_getMondayRenderedValue($row, $value);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
