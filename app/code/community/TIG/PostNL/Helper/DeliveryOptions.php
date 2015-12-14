@@ -513,7 +513,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Add the delivery date.
          */
-        if ($deliveryDate) {
+        if ($deliveryDate
+            && $postnlOrder->getOrder()->getShippingAddress()->getCountryId() == $this->getDomesticCountry()
+        ) {
             $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
 
             $deliveryOptionsInfo['delivery_date'] = $deliveryDate->format('Y-m-d H:i:s');

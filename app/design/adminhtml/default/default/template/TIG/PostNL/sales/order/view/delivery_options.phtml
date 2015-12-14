@@ -60,10 +60,12 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <tr>
-                <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
-                <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
-            </tr>
+            <?php if ($_postnlOrder->getOrder()->getShippingAddress()->getCountryId() == $_helper->getDomesticCountry()): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
+                    <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+                </tr>
+            <?php endif; ?>
             <?php if ($_deliveryTimeInfo): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Requested delivery time'); ?></label></td>

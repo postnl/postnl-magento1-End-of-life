@@ -286,24 +286,24 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $packingSlipString = $pdf->render();
             $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
 
-            /* 
-             * Due to a problem with cloning Label-combi's in 
-             * lib/Zend/Pdf/Element/Dictionary.php method makeClone() 
-             * a work around 
-             */ 
-            if ($firstLabel->getLabelType() == 'Label-combi') { 
-                //switch labelString document to mainPdf document 
-                $tempPdf = $mainPdf; 
-                $mainPdf = $pdf; 
+            /*
+             * Due to a problem with cloning Label-combi's in
+             * lib/Zend/Pdf/Element/Dictionary.php method makeClone()
+             * a work around
+             */
+            if ($firstLabel->getLabelType() == 'Label-combi') {
+                //switch labelString document to mainPdf document
+                $tempPdf = $mainPdf;
+                $mainPdf = $pdf;
 
-                foreach($tempPdf->pages as $page) { 
-                    $mainPdf->pages[] = clone $page; 
-                } 
-            } else { 
-                //normal flow 
-                foreach($pdf->pages as $page) { 
-                    $mainPdf->pages[] = clone $page; 
-                }   
+                foreach($tempPdf->pages as $page) {
+                    $mainPdf->pages[] = clone $page;
+                }
+            } else {
+                //normal flow
+                foreach($pdf->pages as $page) {
+                    $mainPdf->pages[] = clone $page;
+                }
             }
 
             if (count($labels) > 0) {
@@ -789,13 +789,15 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
             $top -= 10;
 
-            $deliveryDate = $postnlShipment->getDeliveryDate();
-            /** @noinspection PhpParamsInspection */
-            $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
-            $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-            $page->drawText($text, $x, $top, 'UTF-8');
+            if ($postnlShipment->isDomesticShipment()) {
+                $deliveryDate = $postnlShipment->getDeliveryDate();
+                /** @noinspection PhpParamsInspection */
+                $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
+                $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+                $page->drawText($text, $x, $top, 'UTF-8');
 
-            $top -= 24;
+                $top -= 24;
+            }
         }
 
         if ($this->getConfig('show_shipping_date')) {

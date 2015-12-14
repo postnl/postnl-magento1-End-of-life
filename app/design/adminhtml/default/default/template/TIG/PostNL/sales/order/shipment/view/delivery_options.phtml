@@ -74,10 +74,12 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <tr>
-                <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
-                <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
-            </tr>
+            <?php if ($_isDomesticShipment): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
+                    <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+                </tr>
+            <?php endif; ?>
             <?php if ($_deliveryTimeInfo): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery time'); ?></label></td>
