@@ -451,6 +451,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             && (!isset($flags['group'])
                 || $flags['group'] == 'eu_options'
             )
+            && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
+            )
         ) {
             if (!$asFlatArray) {
                 $options['4955'] = array(
