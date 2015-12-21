@@ -96,7 +96,7 @@ PostnlPostcodecheck = new Class.create({
 
         var postcodeCheck = this;
 
-        if($('billing:country_id').hasClassName('country_hidden') == false){
+        if($('billing:country_id') === null || $('billing:country_id').hasClassName('country_hidden') == false) {
 
             $(countryField).observe('change', function() {
                 countryId = this.getValue();
@@ -114,7 +114,7 @@ PostnlPostcodecheck = new Class.create({
                     postcodeCheck.checkPostcode(postcode, housenumber);
                 }
             });
-        }else{
+        } else {
             countryField = 'billing:country_id';
         }
 

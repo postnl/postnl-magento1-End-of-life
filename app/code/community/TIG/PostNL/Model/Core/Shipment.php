@@ -4176,7 +4176,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $url = '';
         $shippingAddress = $this->getShippingAddress();
         if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
+            if ($forceNl) {
+                $lang = 'NL';
+            }
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang);
         }
 
         return $url;
