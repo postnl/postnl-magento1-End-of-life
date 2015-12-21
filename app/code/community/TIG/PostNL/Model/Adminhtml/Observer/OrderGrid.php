@@ -1428,7 +1428,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * need to explicitly filter those as well.
          */
         $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
-        if ($filterCond == $domesticCountry) {
+        if ($filterCond == strtolower($domesticCountry)) {
             $collection->addFieldToFilter('country_id', $cond);
             $collection->addFieldToFilter(
                        'postnl_order.type',

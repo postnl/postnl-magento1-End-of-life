@@ -1332,3 +1332,9 @@ TIG_PostNL::Additional costs for sunday delivery in the store's base currency. T
 TIG_PostNL::Same day delivery cut-off time,Zelfde dag bezorging cut-off tijd
 TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Zelfde dag bezorging is alleen beschikbaar voor bestellingen die geïnitieerd worden voor deze tijd. Vul de tijd s.v.p. in in de %s tijdzone.
 TIG_PostNL::N/A,N.v.t.
+TIG_PostNL::monday,maandag
+TIG_PostNL::Monday delivery,Maandagbezorging
+TIG_PostNL::Domestic (COD),Binnenland (rembours)
+TIG_PostNL::PakjeGemak (COD),PakjeGemak (rembours)
+TIG_PostNL::Evening Delivery (COD),Avondbezorging (rembours)
+TIG_PostNL::Early Pickup (COD),Extra Vroeg Ophalen (rembours)
