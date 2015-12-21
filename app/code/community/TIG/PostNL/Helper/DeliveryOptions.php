@@ -513,14 +513,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shippingAddress = null;
         if ($postnlOrder->getOrder()) {
             $shippingAddress = $postnlOrder->getOrder()->getShippingAddress();
-        } else {
+        } elseif ($postnlOrder->getQuote()) {
             $shippingAddress = $postnlOrder->getQuote()->getShippingAddress();
+        } elseif (Mage::getSingleton('checkout/session')->getQuote()) {
+            $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
         }
 
         /**
          * Add the delivery date.
          */
         if ($deliveryDate
+            && $shippingAddress
             && $shippingAddress->getCountryId() == $this->getDomesticCountry()
         ) {
             $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
