@@ -283,7 +283,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isCod' => false,
         );
 
-        if ($country === null) {
+        if (!$country) {
             $country = Mage::helper('postnl')->getDomesticCountry();
         }
 
