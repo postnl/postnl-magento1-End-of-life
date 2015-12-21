@@ -510,11 +510,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $productCode  = $postnlOrder->getProductCode();
         }
 
+        $shippingAddress = null;
+        if ($postnlOrder->getOrder()) {
+            $shippingAddress = $postnlOrder->getOrder()->getShippingAddress();
+        } else {
+            $shippingAddress = $postnlOrder->getQuote()->getShippingAddress();
+        }
+
         /**
          * Add the delivery date.
          */
         if ($deliveryDate
-            && $postnlOrder->getOrder()->getShippingAddress()->getCountryId() == $this->getDomesticCountry()
+            && $shippingAddress->getCountryId() == $this->getDomesticCountry()
         ) {
             $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
 
@@ -771,7 +778,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $items = $quote->getItemsCollection();
         foreach ($items as $key => $item) {
-            if ($item->isDeleted() || $item->getParentItemId()) {
+            if ($item->isDeleted()) {
                 $items->removeItemByKey($key);
             }
         }
