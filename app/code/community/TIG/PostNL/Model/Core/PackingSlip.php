@@ -286,6 +286,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $packingSlipString = $pdf->render();
             $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
 
+            $pdf = Zend_Pdf::parse($labelsString);
+
             /*
              * Due to a problem with cloning Label-combi's in
              * lib/Zend/Pdf/Element/Dictionary.php method makeClone()
