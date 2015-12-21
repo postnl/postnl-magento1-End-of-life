@@ -1317,6 +1317,7 @@ TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your cus
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""maandagbezorging"">hier</a> meer lezen over maandagbezorging."
 "TIG_PostNL::You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""zondagbezorging"">hier</a> meer lezen over zondagbezorging."
 TIG_PostNL::sunday,zondag
+TIG_PostNL::monday,maandag
 TIG_PostNL::Same Day Delivery,Zelfde Dag Bezorging
 TIG_PostNL::same day,zelfde dag
 TIG_PostNL::Enable same day delivery,Activeer zelfde dag bezorging
