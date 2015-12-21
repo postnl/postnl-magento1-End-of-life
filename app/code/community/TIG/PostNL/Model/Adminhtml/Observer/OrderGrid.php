@@ -1423,6 +1423,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * If the filter condition is Domestic, filter out all non-Overdag orders.
+         */
+        if ($filterCond == 'nl') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'overdag'),
+                    array('null' => true)
+                )
+            );
+            return $this;
+        }
+
+        /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
          * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
          * need to explicitly filter those as well.
