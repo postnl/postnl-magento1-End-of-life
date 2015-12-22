@@ -789,6 +789,52 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $tempPostnlShipment->isCod();
     }
 
+    /**
+     * Check if a given shipment is a Sunday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isSundayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isSunday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isSunday();
+    }
+
+    /**
+     * Check if a given shipment is a Monday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isMondayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isMonday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isMonday();
+    }
+
 
     /**
      * Gets the default product option for a shipment
