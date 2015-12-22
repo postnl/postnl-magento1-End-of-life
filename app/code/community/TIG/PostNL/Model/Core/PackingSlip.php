@@ -1233,7 +1233,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $total->setFontSize(10);
                 foreach ($total->getTotalsForDisplay() as $totalData) {
                     $label = array(
-                        'text'      => $totalData['label'],
+                        'text' => $this->getHelper()->__($totalData['label']),
                         'feed'      => 495,
                         'align'     => 'right',
                         'font_size' => 8,
