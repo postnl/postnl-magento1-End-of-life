@@ -352,7 +352,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     {
         $helper = Mage::helper('postnl');
 
-        $label = $helper->__('Monday delivery');
+        $label = $helper->__('Monday Delivery');
         return $this->_getDomesticRenderedValue($row, $destination, $label);
     }
 
