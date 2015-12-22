@@ -1341,3 +1341,10 @@ TIG_PostNL::Early Pickup (COD),Extra Vroeg Ophalen (rembours)
 TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
 TIG_PostNL::Name,Naam
 TIG_PostNL::Vat,Btw
+TIG_PostNL::Shipping & Handling:,Verzendkosten:
+TIG_PostNL::Subtotal (Excl. Tax):,Subtotaal (Ex. Btw):
+TIG_PostNL::Subtotal (Incl. Tax):,Subtotaal (Inc. Btw):
+TIG_PostNL::Shipping (Excl. Tax):,Verzendkosten (Ex. Btw):
+TIG_PostNL::Shipping (Incl. Tax):,Verzendkosten (Inc. Btw):
+TIG_PostNL::Grand Total (Excl. Tax):,Totaal (Ex. Btw):
+TIG_PostNL::Grand Total (Incl. Tax):,Totaal (Inc. Btw):
