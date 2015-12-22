@@ -921,7 +921,13 @@ PostnlDeliveryOptions.prototype = {
             }
 
             var fullAddressArray = this.fullAddress.split(',');
-            var useBillingForShipping = $('billing:use_for_shipping_yes').getValue();
+
+            var useBillingForShipping = true;
+            if ($('billing:use_for_shipping_yes')) {
+                useBillingForShipping = $('billing:use_for_shipping_yes').getValue();
+            } else if ($('billing_use_for_shipping_yes')) {
+                useBillingForShipping = $('billing_use_for_shipping_yes').getValue();
+            }
 
             if (fullAddressArray[0] == '') {
                 if(useBillingForShipping == 1) {
