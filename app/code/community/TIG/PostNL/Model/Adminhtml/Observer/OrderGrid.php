@@ -1124,7 +1124,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'         => 'standard_options',
                     'isCod'         => true,
-                    'isBelgiumOnly' => false,
                 ),
                 false,
                 true
