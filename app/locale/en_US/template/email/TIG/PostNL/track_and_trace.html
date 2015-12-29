@@ -25,7 +25,7 @@
                 <!-- [ middle starts here] -->
                 <tr>
                     <td valign="top">
-                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$customer.name}},</p>
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$order.getCustomerName()}},</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">To track the progress of your shipment click <a href="{{var barcode_url}}" target="_blank">here</a>.<p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Kind Regards,</p>
