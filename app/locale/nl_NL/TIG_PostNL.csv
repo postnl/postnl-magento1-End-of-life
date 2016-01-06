@@ -1348,3 +1348,6 @@ TIG_PostNL::Shipping (Excl. Tax):,Verzendkosten (Ex. Btw):
 TIG_PostNL::Shipping (Incl. Tax):,Verzendkosten (Inc. Btw):
 TIG_PostNL::Grand Total (Excl. Tax):,Totaal (Ex. Btw):
 TIG_PostNL::Grand Total (Incl. Tax):,Totaal (Inc. Btw):
+TIG_PostNL::Only use this if you have problems with special characters on your PostNL packing slip.,Gebruik dit alleen als u problemen ervaart met het tonen van speciale tekens binnen de PostNL pakbon.
+TIG_PostNL::This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.,Dit zorgt ervoor dat de PostNL pakbon gebruik maakt van hetzelfde font als de Magento pakbon. Hoewel dit er visueel slechter uit kan zien, kan dit ook problemen met bepaalde speciale tekens verhelpen.
+TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
