@@ -117,7 +117,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If a day is configured as shipping day, this day + the PostNL shipping delay is available as delivery day.
          */
-        foreach($shippingDays as $shippingDay) {
+        foreach ($shippingDays as $shippingDay) {
             $dayToEnable = ($shippingDay + $this->_postnlDeliveryDelay) % 7;
             $this->_validDeliveryDays[$dayToEnable] = 1;
         }
