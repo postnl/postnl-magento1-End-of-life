@@ -1133,7 +1133,7 @@
                             <validate>validate-int validate-greater-than-zero</validate>
                         </postcode_check_timeout>
                         <gomage_postcode_check_info translate="comment" module="postnl">
-                            <comment><![CDATA[If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href="##MUST_BE_REPLACED##" target="_blank">here</a>]]></comment>
+                            <comment><![CDATA[If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href="http://servicedesk.tig.nl/hc/nl/articles/208889777-GoMage-LightCheckout-Adresinstellingen" target="_blank">here</a>]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
