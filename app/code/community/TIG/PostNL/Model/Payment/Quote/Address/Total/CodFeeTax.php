@@ -142,8 +142,12 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
                 ->setPostnlCodFeeTax($feeTax)
                 ->setBasePostnlCodFeeTax($baseFeeTax);
 
-        $address->addTotalAmount('postnl_cod_fee_tax', $feeTax);
-        $address->addBaseTotalAmount('postnl_cod_fee_tax', $baseFeeTax);
+        if (!Mage::registry('postnl_cod_fee_tax_added')) {
+            Mage::register('postnl_cod_fee_tax_added', true);
+
+            $address->addTotalAmount('postnl_cod_fee_tax', $feeTax);
+            $address->addBaseTotalAmount('postnl_base_cod_fee_tax', $baseFeeTax);
+        }
 
         $quote->setPostnlCodFeeTax($feeTax)
               ->setBasePostnlCodFeeTax($baseFeeTax);
