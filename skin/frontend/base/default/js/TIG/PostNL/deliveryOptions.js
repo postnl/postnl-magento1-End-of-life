@@ -4121,7 +4121,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         headerHtml += '<div class="content">';
         headerHtml += '<a href="#" title="'
                     + Translator.translate('Show on the map')
-                    + '" class="show-map" id="show_map_'
+                    + '" class="show-map overflow-protect" id="show_map_'
                     + this.getLocationCode()
                     + '">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
@@ -5394,7 +5394,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         }
 
         if (this.type == 'Monday') {
-            comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
+            comment = '<span class="option-comment">' + '</span>';
         }
 
         return comment;

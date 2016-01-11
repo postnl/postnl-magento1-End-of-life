@@ -626,13 +626,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return StdClass[]|false
      */
-    public function filterTimeFrames($timeframes, $storeId) {
+    public function filterTimeFrames($timeframes, $storeId)
+    {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
 
-        foreach($timeframes as $key => $timeFrame) {
+        foreach ($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
@@ -648,6 +649,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                                          ->string[0] = 'Monday';
                     }
                 }
+            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
+                $date = $timeFrame->Date;
+
+                $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId);
+                $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId);
+
+                $now = $helper->getUtcDateTime('now', $storeId);
+
+                $timeFrameIsInPast = $now->diff($utcShippingDate)->invert;
+
+                if ($timeFrameIsInPast) {
+                    unset($timeframes[$key]);
+                }
+
             }
         }
 

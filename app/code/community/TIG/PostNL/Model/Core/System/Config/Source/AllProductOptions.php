@@ -132,6 +132,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
             'group'             => 'standard_options',
         ),
         '3389' => array(
@@ -153,6 +154,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
             'group'             => 'standard_options',
         ),
         '3090' => array(

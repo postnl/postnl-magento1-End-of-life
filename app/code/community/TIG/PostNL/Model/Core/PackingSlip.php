@@ -56,6 +56,18 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     const XPATH_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
 
     /**
+     * Xpath to the PDF font compatiblity mode flag.
+     */
+    const XPATH_PDF_FONT_COMPATIBILITY_MODE = 'postnl/packing_slip/pdf_font_compatibility_mode';
+
+    /**
+     * Paths to the compatiblity mode fonts
+     */
+    const COMPATIBLITY_FONT_REGULAR = '/lib/LinLibertineFont/LinLibertine_Re-4.4.1.ttf';
+    const COMPATIBLITY_FONT_BOLD = '/lib/LinLibertineFont/LinLibertine_Bd-2.8.1.ttf';
+    const COMPATIBLITY_FONT_ITALIC = '/lib/LinLibertineFont/LinLibertine_It-2.8.2.ttf';
+
+    /**
      * The height of a page's top and bottom margins.
      */
     const PAGE_TOP_HEIGHT    = 815;
@@ -422,6 +434,47 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     }
 
     /**
+     * Checks if the PDF font compatibility mode is activated for the current store.
+     *
+     * @return bool
+     */
+    protected function _isCompatiblityMode()
+    {
+        $storeId = $this->getStoreId();
+        return (bool) Mage::getStoreConfig(self::XPATH_PDF_FONT_COMPATIBILITY_MODE, $storeId);
+    }
+
+    /**
+     * Returns the path to the regular Magento Packing Slip font.
+     *
+     * @return string
+     */
+    protected function _getCompatiblityFontRegularPath()
+    {
+        return Mage::getBaseDir() . self::COMPATIBLITY_FONT_REGULAR;
+    }
+
+    /**
+     * Returns the path to the bold Magento Packing Slip font.
+     *
+     * @return string
+     */
+    protected function _getCompatiblityFontBoldPath()
+    {
+        return Mage::getBaseDir() . self::COMPATIBLITY_FONT_BOLD;
+    }
+
+    /**
+     * Returns the path to the italic Magento Packing Slip font.
+     *
+     * @return string
+     */
+    protected function _getCompatiblityFontItalicPath()
+    {
+        return Mage::getBaseDir() . self::COMPATIBLITY_FONT_ITALIC;
+    }
+
+    /**
      * Set font as regular.
      *
      * @param  Zend_Pdf_Page $object
@@ -431,7 +484,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _setFontRegular($object, $size = 8)
     {
-        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        if ($this->_isCompatiblityMode()) {
+            $font = Zend_Pdf_Font::fontWithPath($this->_getCompatiblityFontRegularPath());
+        } else {
+            $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        }
+
         $object->setFont($font, $size);
 
         return $font;
@@ -447,7 +505,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _setFontBold($object, $size = 8)
     {
-        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_BOLD);
+        if ($this->_isCompatiblityMode()) {
+            $font = Zend_Pdf_Font::fontWithPath($this->_getCompatiblityFontBoldPath());
+        } else {
+            $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_BOLD);
+        }
+
         $object->setFont($font, $size);
 
         return $font;
@@ -463,7 +526,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _setFontItalic($object, $size = 8)
     {
-        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_ITALIC);
+        if ($this->_isCompatiblityMode()) {
+            $font = Zend_Pdf_Font::fontWithPath($this->_getCompatiblityFontItalicPath());
+        } else {
+            $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_ITALIC);
+        }
+
         $object->setFont($font, $size);
 
         return $font;

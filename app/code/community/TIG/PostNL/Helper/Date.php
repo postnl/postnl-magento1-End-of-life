@@ -117,7 +117,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If a day is configured as shipping day, this day + the PostNL shipping delay is available as delivery day.
          */
-        foreach($shippingDays as $shippingDay) {
+        foreach ($shippingDays as $shippingDay) {
             $dayToEnable = ($shippingDay + $this->_postnlDeliveryDelay) % 7;
             $this->_validDeliveryDays[$dayToEnable] = 1;
         }
@@ -284,7 +284,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
             }
         }
 
+        /**
+         * Substract the delivery delay from the delivery date to get to the shipping date.
+         */
         $dateObject->sub(new DateInterval("P{$this->_postnlDeliveryDelay}D"));
+
+        /**
+         * If the projected shipping date is not a valid shipping date, substract 1 day and check again.
+         */
+        while (!in_array($dateObject->format('N'), $shippingDaysArray)) {
+            $dateObject->sub(new DateInterval("P1D"));
+        }
+
         return $dateObject;
     }
 

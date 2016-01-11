@@ -1091,9 +1091,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             ),
             'postnl_pg_options' => $optionsModel->getOptions(
                 array(
-                    'group'   => 'standard_options',
+                    'group'   => 'pakjegemak_options',
                     'isCod'   => false,
-                    'isAvond' => true,
                 ),
                 false,
                 true
@@ -1125,7 +1124,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'         => 'standard_options',
                     'isCod'         => true,
-                    'isBelgiumOnly' => false,
                 ),
                 false,
                 true
