@@ -50,6 +50,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const DOMESTIC_DELIVERY_OPTION           = 'Daytime';
     const EVENING_DELIVERY_OPTION            = 'Evening';
     const SUNDAY_DELIVERY_OPTION             = 'Sunday';
+    const SAMEDAY_DELIVERY_OPTION            = 'Sameday';
 
     /**
      * Config options used by the getDeliveryDate service.
@@ -493,6 +494,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        if ($helper->canUseSameDayDelivery()) {
+            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+        }
+
         if ($helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
@@ -519,7 +524,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        $options = array();
+        $options = array('');
+        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+        if ($sameDayDelivery) {
+            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+        }
+
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         if ($sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;

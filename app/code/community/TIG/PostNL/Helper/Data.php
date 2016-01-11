@@ -272,40 +272,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_domesticCountry;
 
     /**
-     * TIG_PostNL_Helper_Data constructor.
-     */
-    public function __construct()
-    {
-        if (!function_exists('postnlErrorHandler')) {
-            /**
-             * @param $errno
-             * @param $errstr
-             * @param $errfile
-             * @param $errline
-             *
-             * @return bool
-             * @throws Exception
-             *
-             * Register E_USER_DEPRECATED errors and pass them on to the Magento core error_handler as regular
-             * DEPRECATED errors.
-             *
-             * Magento's core error handler unfortunately doesn't recognize E_USER_DEPRECATED errors. Most likely
-             * because the developers simply forgot.
-             */
-            function postnlErrorHandler($errno, $errstr, $errfile, $errline)
-            {
-                if ($errno == E_USER_DEPRECATED) {
-                    $errno = E_DEPRECATED;
-                }
-
-                return mageCoreErrorHandler($errno, $errstr, $errfile, $errline);
-            }
-
-            set_error_handler('postnlErrorHandler');
-        }
-    }
-
-    /**
      * Get required fields array.
      *
      * @return array
@@ -637,6 +603,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $version = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
 
         return $version;
+    }
+
+    /**
+     * Get the current stability of the PostNL extension's code base.
+     *
+     * @return string
+     */
+    public function getModuleStability()
+    {
+        $stability = (string) Mage::getConfig()->getXpath('tig/stability/postnl')[0];
+
+        return $stability;
     }
 
     /**
@@ -1383,7 +1361,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isTestModeAllowed()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return true;
     }
 

@@ -75,6 +75,8 @@
 <?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
 <?php $_sundayFeeIncl     = $this->getFee('sunday', true); ?>
 <?php $_sundayFeeExcl     = $this->getFee('sunday', false); ?>
+<?php $_sameDayFeeIncl    = $this->getFee('sameday', true); ?>
+<?php $_sameDayFeeExcl    = $this->getFee('sameday', false); ?>
 <?php $_expressFeeIncl    = $this->getFee('express', true); ?>
 <?php $_expressFeeExcl    = $this->getFee('express', false); ?>
 <?php $_pakjeGemakFeeIncl = $this->getFee('pakje_gemak', true); ?>
@@ -330,12 +332,15 @@
             eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
             sundayFeeIncl          : <?php echo $_sundayFeeIncl; ?>,
             sundayFeeExcl          : <?php echo $_sundayFeeExcl; ?>,
+            sameDayFeeIncl         : <?php echo $_sameDayFeeIncl; ?>,
+            sameDayFeeExcl         : <?php echo $_sameDayFeeExcl; ?>,
             expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
             expressFeeExcl         : <?php echo $_expressFeeExcl; ?>,
             pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
             pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             sundayFeeText          : '<?php echo $this->getFeeText('sunday', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+            sameDayFeeText         : '<?php echo $this->getFeeText('sameday', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             pakjeGemakFeeText      : '<?php echo $this->getFeeText('pakje_gemak', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,

@@ -132,6 +132,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'Monday':
                 $shipmentType = $this->__('Monday Delivery');
                 break;
+            case 'Sameday':
+                $shipmentType = $this->__('Same Day Delivery');
+                break;
             case 'Overdag':
                 if ($countryId != $domesticCountry) {
                     continue;

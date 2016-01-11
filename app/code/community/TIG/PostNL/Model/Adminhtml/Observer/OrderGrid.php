@@ -445,6 +445,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'avond'               => $helper->__('Evening Delivery'),
                 'sunday'              => $helper->__('Sunday Delivery'),
                 'monday'              => $helper->__('Monday Delivery'),
+                'sameday'             => $helper->__('Same Day Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
@@ -963,6 +964,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_sameday_options'])) {
+                $config['postnl_sameday_options'] = array(
+                    'name'   => 'product_options[sameday_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_sameday_options'],
+                );
+            }
+
             if (!empty($options['postnl_pg_options'])) {
                 $config['postnl_pg_options'] = array(
                     'name'   => 'product_options[pg_options]',
@@ -1035,6 +1045,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_sameday_cod_options'])) {
+                $config['postnl_sameday_cod_options'] = array(
+                    'name'   => 'product_options[sameday_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_sameday_cod_options'],
+                );
+            }
+
             if (!empty($options['postnl_pa_options'])) {
                 $config['postnl_pa_options'] = array(
                     'name'   => 'product_options[pa_options]',
@@ -1085,6 +1104,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group' => 'standard_options',
                     'isCod' => false,
+                    'isAvond' => true,
                 ),
                 false,
                 true
@@ -1175,7 +1195,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 ),
                 false,
                 true
-            )
+            ),
+            'postnl_sameday_options' => $optionsModel->getOptions(
+                array(
+                    'group'     => 'standard_options',
+                    'isSameDay' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_sameday_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group'     => 'standard_options',
+                    'isCod'     => true,
+                    'isSameDay' => true,
+                ),
+                false,
+                true
+            ),
         );
 
         return $options;
@@ -1390,6 +1427,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'monday') {
             $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Monday'));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is same day delivery, filter out all other orders
+         */
+        if ($filterCond == 'sameday') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Sameday'));
 
             return $this;
         }

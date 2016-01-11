@@ -421,6 +421,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $deliveryDate = clone $dateObject;
         $confirmDate  = clone $dateObject;
 
+        if ($postnlOrder->isSameDayDelivery()) {
+            $helper->setPostnlDeliveryDelay(0);
+        }
+
         $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
         $helper->getShippingDate($confirmDate, $order->getStoreId());
 

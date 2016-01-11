@@ -46,9 +46,10 @@
 <?php $_userGuideUrl          = $this->getUserGuideUrl(); ?>
 <?php $_changelogUrl          = $this->getChangelogUrl(); ?>
 <?php $_kbUrl                 = $this->getKbUrl(); ?>
+<?php $_stability             = $this->getStability(); ?>
 <tr>
     <td>
-        <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion());?></h2>
+        <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion()); if ($_stability != 'stable') { echo ' - ' . $_stability; } ?></h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="col-left">
