@@ -5192,7 +5192,13 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.to   = timeframe.To;
 
         var today = new Date();
-        var formattedToday = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+        var formattedMonth = today.getMonth() + 1;
+
+        if (formattedMonth.toString().length < 2) {
+            formattedMonth = '0' + formattedMonth.toString();
+        }
+
+        var formattedToday = today.getDate() + '-' + formattedMonth + '-' + today.getFullYear();
 
         var type = '';
         timeframe.Options.string.each(function(value) {
@@ -5413,7 +5419,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
-        
+
         //if (this.type == 'Monday') {
         //    comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
         //}
