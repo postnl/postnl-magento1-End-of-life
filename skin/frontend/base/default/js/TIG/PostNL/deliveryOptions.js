@@ -577,7 +577,11 @@ PostnlDeliveryOptions.prototype = {
                                     this.getLastSelectedOption().getElements()[this.getLastSelectedType()]
                                 );
                             } else {
-                                this.timeframes[0].select();
+                                if (this.timeframes[0].getType() != 'Sameday') {
+                                    this.timeframes[0].select();
+                                } else {
+                                    this.timeframes[1].select();
+                                }
                             }
                         }
                         return;
@@ -913,11 +917,19 @@ PostnlDeliveryOptions.prototype = {
         }.bind(this));
 
         if (selectTimeframe) {
-            this.selectTimeframe(this.timeframes[0].getElement());
+            if (this.timeframes[0].type != 'Sameday') {
+                this.selectTimeframe(this.timeframes[0].getElement());
+            } else {
+                this.selectTimeframe(this.timeframes[1].getElement());
+            }
         }
 
         if (this.getOptions().isOsc) {
-            this.timeframes[0].renderAsOsc();
+            if (this.timeframes[0].type != 'Sameday') {
+                this.timeframes[0].renderAsOsc();
+            } else {
+                this.timeframes[1].renderAsOsc();
+            }
 
             if (selectTimeframe) {
                 this.saveSelectedOption();
@@ -5432,7 +5444,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
                 sameDayCostHtml += ' + ' + sameDayCosts;
             }
 
-            comment = '<span class="option-comment">' + Translator.translate('same day') + sameDayCostHtml + '</span>';
+            comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
         }
 
         return comment;

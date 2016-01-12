@@ -83,7 +83,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      * Same day delivery fee limits
      */
     const SAMEDAY_FEE_MIN = 0;
-    const SAMEDAY_FEE_MAX = 50;
+    const SAMEDAY_FEE_MAX = 25;
 
     /**
      * Get the fee limit, min or max, for the supplied fee type

@@ -61,7 +61,7 @@
         <message>monday</message>
     </monday>
     <same_day translate="message" module="postnl">
-        <message>same day</message>
+        <message>today</message>
     </same_day>
     <post_office translate="message" module="postnl">
         <message>Post Office</message>

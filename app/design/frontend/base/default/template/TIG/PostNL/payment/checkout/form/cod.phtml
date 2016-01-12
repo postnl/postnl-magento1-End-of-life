@@ -90,7 +90,7 @@
             var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
 
             if (postnlCodPaymentMethod && typeof deliveryOptions != 'undefined') {
-                if (deliveryOptions.selectedType == 'PA' || deliveryOptions.selectedType == 'Sunday') {
+                if (deliveryOptions.selectedType == 'PA' || deliveryOptions.selectedType == 'Sunday' || deliveryOptions.selectedType == 'Sameday') {
                     postnlCodPaymentMethod.disabled = true;
                     postnlCodPaymentMethod.up().hide();
 
@@ -133,6 +133,7 @@
                 (deliveryOptions.selectedType == 'Overdag'
                     && deliveryOptions.options.isBuspakje
                 ) || deliveryOptions.selectedType == 'PA'
+                || deliveryOptions.selectedType == 'Sameday'
             ) {
 
                 if (postnlCodPaymentMethod.checked) {

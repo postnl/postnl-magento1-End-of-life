@@ -1319,7 +1319,7 @@ TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your cus
 TIG_PostNL::sunday,zondag
 TIG_PostNL::monday,maandag
 TIG_PostNL::Same Day Delivery,Zelfde Dag Bezorging
-TIG_PostNL::same day,zelfde dag
+TIG_PostNL::today,vandaag
 TIG_PostNL::Enable same day delivery,Activeer zelfde dag bezorging
 "TIG_PostNL::You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>.","U kunt <a href="""" target=""_blank"" title=""zelfde dag bezorging"">hier</a> meer lezen over zelfde dag bezorging."
 TIG_PostNL::Activate same day delivery for your customers.,Activeer zelfde dag bezorging voor uw klanten.

@@ -403,7 +403,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     }
 
     /**
-     * Checks if the found delivery day is valid. If this is not the case, add a day to the deliverydaycorrection,
+     * Checks if the found delivery day is valid. If this is not the case, add a day to the delivery day correction,
      * point to the next found day, and repeat this.
      *
      * @param DateTime|int $checkValidDay
