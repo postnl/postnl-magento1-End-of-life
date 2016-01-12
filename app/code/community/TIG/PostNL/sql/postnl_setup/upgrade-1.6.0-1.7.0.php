@@ -38,7 +38,6 @@
  */
 
     const XPATH_CIF_VERSION_LABELLING       = 'postnl/advanced/cif_version_labelling';
-    const XPATH_CIF_VERSION_BARCODE         = 'postnl/advanced/cif_version_barcode';
     const XPATH_CIF_VERSION_DELIVERYDATE    = 'postnl/advanced/cif_version_deliverydate';
     const XPATH_CIF_VERSION_TIMEFRAME       = 'postnl/advanced/cif_version_timeframe';
     const XPATH_CIF_VERSION_LOCATION        = 'postnl/advanced/cif_version_location';
@@ -52,7 +51,6 @@ $installer = $this;
 
 $installer->startSetup();
 $installer->setConfigData(XPATH_CIF_VERSION_LABELLING, NEW_VERSION);
-$installer->setConfigData(XPATH_CIF_VERSION_BARCODE, NEW_VERSION);
 $installer->setConfigData(XPATH_CIF_VERSION_DELIVERYDATE, NEW_VERSION);
 $installer->setConfigData(XPATH_CIF_VERSION_TIMEFRAME, NEW_VERSION);
 $installer->setConfigData(XPATH_CIF_VERSION_LOCATION, NEW_VERSION);
