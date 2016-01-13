@@ -2001,7 +2001,7 @@
                             </depends>
                         </premium_delivery_options_header>
                         <premium_delivery_options_info translate="comment" module="postnl">
-                            <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.</comment>
+                            <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday, sunday or same day delivery.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>

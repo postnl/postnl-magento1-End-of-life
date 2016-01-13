@@ -611,7 +611,7 @@ TIG_PostNL::After this number of seconds a customer will be prompted to fill in 
 TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Toon PostNL checkout exclusief aan gebruikers met een PostNL account
 TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activeer om de PostNL Checkout enkel te tonen aan uw klanten die beschikken over een PostNL account. Let op: de bezorgopties moeten geactiveerd zijn.
 TIG_PostNL::Delivery Options,Bezorgopties
-"TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Met de PostNL bezorgopties kunnen uw klanten kiezen waar, wanneer en hoe zij hun bestelling willen ontvangen. Zo kunnen uw klanten de dag van ontvangst kiezen en wordt er direct aangegeven op welk moment ze het pakket kunnen verwachten. Op dinsdag en donderdag bezorgt PostNL zelfs ‘s avonds. Halen uw klanten het pakket liever af op één van de 2000 PostNL pakketpunten? Dit kan vanaf 15:00 uur en op sommige locaties zelfs vanaf 8:30 uur."
+"TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Met de PostNL bezorgopties kunnen uw klanten kiezen waar, wanneer en hoe zij hun bestelling willen ontvangen. Zo kunnen uw klanten de dag van ontvangst kiezen en wordt er direct aangegeven op welk moment ze het pakket kunnen verwachten. Van maandag tot en met vrijdag bezorgt PostNL ook in de avond en zelfs op de dag van bestelling laten bezorgen is mogelijk. Halen uw klanten het pakket liever af op één van de 2000 PostNL pakketpunten? Dit kan vanaf 15:00 uur en op sommige locaties zelfs vanaf 8:30 uur."
 TIG_PostNL::Enable PostNL delivery options,Activeer PostNL bezorgopties
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,U kunt PostNL bezorgopties deactiveren indien de bestelling een product bevat dat niet op voorraad is of indien de gehele bestelling minder weegt dan 2 kg.
 TIG_PostNL::Activate the PostNL Checkout for orders containing out of stock products,Activeer PostNL bezorgopties voor bestellingen van minder dan 2 kg
@@ -1311,26 +1311,25 @@ TIG_PostNL::Default Belgium COD shipping option,Standaard België rembours verze
 TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Delivery options based on contractual agreements,Bezorgopties op basis van contractafspraken
-TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.,Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van maandagbezorging en/of zondagbezorging.
+"TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday, sunday or same day delivery.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van Maandagbezorging, Zondagbezorging en/of Dezelfde dag bezorgd."
 TIG_PostNL::Enable monday delivery,Activeer maandagbezorging
 TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten.
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""maandagbezorging"">hier</a> meer lezen over maandagbezorging."
 "TIG_PostNL::You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""zondagbezorging"">hier</a> meer lezen over zondagbezorging."
 TIG_PostNL::sunday,zondag
-TIG_PostNL::monday,maandag
-TIG_PostNL::Same Day Delivery,Zelfde Dag Bezorging
+TIG_PostNL::Same Day Delivery,Dezelfde Dag Bezorgd
 TIG_PostNL::today,vandaag
-TIG_PostNL::Enable same day delivery,Activeer zelfde dag bezorging
-"TIG_PostNL::You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>.","U kunt <a href="""" target=""_blank"" title=""zelfde dag bezorging"">hier</a> meer lezen over zelfde dag bezorging."
-TIG_PostNL::Activate same day delivery for your customers.,Activeer zelfde dag bezorging voor uw klanten.
-TIG_PostNL::Same day delivery fee,Zelfde dag bezorging toeslag
-TIG_PostNL::Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.,"Additionele kosten voor het gebruik van zelfde dag bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Deze kosten moeten tussen de 0,00 en 20,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zelfde dag bezorging."
-TIG_PostNL::Default same day delivery shipping option,Standaard zelfde dag bezorging verzendoptie
+TIG_PostNL::Enable same day delivery,Activeer dezelfde dag bezorgd
+"TIG_PostNL::You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>.","U kunt <a href="""" target=""_blank"" title=""dezelfde dag bezorgd "">hier</a> meer lezen over dezelfde dag bezorgd ."
+TIG_PostNL::Activate same day delivery for your customers.,Activeer dezelfde dag bezorgd  voor uw klanten.
+TIG_PostNL::Same day delivery fee,Dezelfde dag bezorgd  toeslag
+TIG_PostNL::Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.,"Additionele kosten voor het gebruik van 'dezelfde dag bezorgd' in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Deze kosten moeten tussen de 0,00 en 25,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zelfde dag bezorging."
+TIG_PostNL::Default same day delivery shipping option,Standaard dezelfde dag bezorgd verzendoptie
 TIG_PostNL::This setting may be overwritten by manually creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op zelfde dag bezorging bestellingen.
 TIG_PostNL::Sunday delivery fee,Zondagbezorging toeslag
 TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.,Additionele kosten voor het gebruik van zelfde dag bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zondagbezorging.
-TIG_PostNL::Same day delivery cut-off time,Zelfde dag bezorging cut-off tijd
-TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Zelfde dag bezorging is alleen beschikbaar voor bestellingen die geïnitieerd worden voor deze tijd. Vul de tijd s.v.p. in in de %s tijdzone.
+TIG_PostNL::Same day delivery cut-off time,Dezelfde dag bezorgd cut-off tijd
+TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Dezelfde dag bezorgd is alleen beschikbaar voor bestellingen die geïnitieerd worden voor deze tijd. Vul de tijd s.v.p. in in de %s tijdzone.
 TIG_PostNL::N/A,N.v.t.
 TIG_PostNL::monday,maandag
 TIG_PostNL::Monday Delivery,Maandagbezorging
@@ -1338,17 +1337,10 @@ TIG_PostNL::Domestic (COD),Binnenland (rembours)
 TIG_PostNL::PakjeGemak (COD),PakjeGemak (rembours)
 TIG_PostNL::Evening Delivery (COD),Avondbezorging (rembours)
 TIG_PostNL::Early Pickup (COD),Extra Vroeg Ophalen (rembours)
-TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
+TIG_PostNL::Monday Delivery,Maandagbezorging
+"TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.",Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
 TIG_PostNL::Name,Naam
 TIG_PostNL::Vat,Btw
-TIG_PostNL::Shipping & Handling:,Verzendkosten:
-TIG_PostNL::Subtotal (Excl. Tax):,Subtotaal (Ex. Btw):
-TIG_PostNL::Subtotal (Incl. Tax):,Subtotaal (Inc. Btw):
-TIG_PostNL::Shipping (Excl. Tax):,Verzendkosten (Ex. Btw):
-TIG_PostNL::Shipping (Incl. Tax):,Verzendkosten (Inc. Btw):
-TIG_PostNL::Grand Total (Excl. Tax):,Totaal (Ex. Btw):
-TIG_PostNL::Grand Total (Incl. Tax):,Totaal (Inc. Btw):
 TIG_PostNL::Only use this if you have problems with special characters on your PostNL packing slip.,Gebruik dit alleen als u problemen ervaart met het tonen van speciale tekens binnen de PostNL pakbon.
-TIG_PostNL::This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.,Dit zorgt ervoor dat de PostNL pakbon gebruik maakt van hetzelfde font als de Magento pakbon. Hoewel dit er visueel slechter uit kan zien, kan dit ook problemen met bepaalde speciale tekens verhelpen.
+"TIG_PostNL::This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.","Dit zorgt ervoor dat de PostNL pakbon gebruik maakt van hetzelfde font als de Magento pakbon. Hoewel dit er visueel slechter uit kan zien, kan dit ook problemen met bepaalde speciale tekens verhelpen."
 TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
-TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Zelfde dag bezorging is alleen beschikbaar voor bestellingen die geïnitieerd worden voor deze tijd. Vul de tijd s.v.p. in in de %s tijdzone.
