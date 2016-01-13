@@ -404,6 +404,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'sunday':
                 $fee = $this->getSundayFee(false, $includingTax);
                 break;
+            case 'sameday':
+                $fee = $this->getSameDayFee(false, $includingTax);
+                break;
             case 'express':
                 $fee = $this->getExpressFee(false, $includingTax);
                 break;
@@ -433,6 +436,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
                 break;
             case 'sunday':
                 $feeText = $this->getSundayFee(true, $includingTax);
+                break;
+            case 'sameday':
+                $feeText = $this->getSameDayFee(true, $includingTax);
                 break;
             case 'express':
                 $feeText = $this->getExpressFee(true, $includingTax);
@@ -472,6 +478,20 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     {
         return Mage::helper('postnl/deliveryOptions_fee')->getSundayFee($formatted, $includingTax);
     }
+
+    /**
+     * Get the fee charged for same day delivery.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getSameDayFee($formatted = false, $includingTax = true)
+    {
+        return Mage::helper('postnl/deliveryOptions_fee')->getSameDayFee($formatted, $includingTax);
+    }
+
 
     /**
      * Get the fee charged for PakjeGemak Express.

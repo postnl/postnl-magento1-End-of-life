@@ -213,8 +213,10 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                 $fee = $helper->getExpressFee(false, $includingTax, false);
             } elseif ($type == 'Avond' ) {
                 $fee = $helper->getEveningFee(false, $includingTax, false);
-            } elseif ($type == TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_TYPE_SUNDAY ) {
+            } elseif ($type == $helper::FEE_TYPE_SUNDAY ) {
                 $fee = $helper->getSundayFee(false, $includingTax, false);
+            } elseif ($type == $helper::FEE_TYPE_SAMEDAY ) {
+                $fee = $helper->getSameDayFee(false, $includingTax, false);
             }
 
             $fee += $helper->getOptionsFee($postnlOrder, false, $includingTax, false);

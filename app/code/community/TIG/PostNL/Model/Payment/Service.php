@@ -61,45 +61,24 @@ class TIG_PostNL_Model_Payment_Service
      */
     public function addPostnlCodFeeTaxInfo($fullInfo, $source, Mage_Sales_Model_Order $order)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $feeTax = (float) $order->getPostnlCodFeeTax();
         if ($feeTax <= 0) {
             return $fullInfo;
         }
 
         /**
-         * There are 3 possible ways to add the COD fee tax info:
+         * There are 2 possible ways to add the COD fee tax info:
          *  - Go through all tax info records of an order and add the COD fee info to the record with the same title and
          *    a discrepancy in the recorded and expected amount.
-         *  - Add a missing tax info record.
          *  - Recalculate the tax info for the COD fee and update the amount of the tax record with the same title.
          */
+        /** @noinspection PhpParamsInspection */
         $orderClassName = Mage::getConfig()->getModelClassName('sales/order');
         if ($source instanceof $orderClassName) {
             $fullInfo = $this->_updateTaxAmountForTaxInfo($order, $fullInfo);
         } else {
-            /**
-             * Try to find a tax record that does not have a corresponding tax item record.
-             */
-            $taxItemCollection = Mage::getResourceModel('tax/sales_order_tax_item_collection');
-            $taxItemCollection->addFieldToSelect('tax_id');
-            $taxItemCollection->getSelect()->distinct();
-
-            $taxItemIds = $taxItemCollection->getColumnValues('tax_id');
-
-            $taxCollection = Mage::getResourceModel('sales/order_tax_collection')
-                                 ->addFieldToFilter('order_id', array('eq'  => $order->getId()))
-                                 ->addFieldToFilter('tax_id',   array('nin' => $taxItemIds));
-
-            /**
-             * If we have found a missing record, we need to add it with the COD fee tax info. Otherwise we need to
-             * recreate the entire tax request for the COD fee tax so we can match the title to an existing tax item
-             * record.
-             */
-            if ($taxCollection->getSize()) {
-                $fullInfo = $this->_addPostnlCodFeeTaxInfoFromCollection($taxCollection, $fullInfo, $source);
-            } else {
-                $fullInfo = $this->_addPostnlCodFeeTaxInfoFromRequest($order, $fullInfo, $source);
-            }
+            $fullInfo = $this->_addPostnlCodFeeTaxInfoFromRequest($order, $fullInfo, $source);
         }
 
         return $fullInfo;
@@ -158,7 +137,9 @@ class TIG_PostNL_Model_Payment_Service
                  * Update an existing entry.
                  */
                 if ($taxInfo['title'] == $tax->getTitle()) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $fullInfo[$key]['tax_amount']      += $source->getPostnlCodFeeTax();
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $fullInfo[$key]['base_tax_amount'] += $source->getBasePostnlCodFeeTax();
 
                     break(2);
@@ -169,7 +150,9 @@ class TIG_PostNL_Model_Payment_Service
              * Add a missing entry.
              */
             $fullInfo[] = array(
+                /** @noinspection PhpUndefinedMethodInspection */
                 'tax_amount'      => $source->getPostnlCodFeeTax(),
+                /** @noinspection PhpUndefinedMethodInspection */
                 'base_tax_amount' => $source->getBasePostnlCodFeeTax(),
                 'title'           => $tax->getTitle(),
                 'percent'         => $tax->getPercent(),
@@ -208,6 +191,7 @@ class TIG_PostNL_Model_Payment_Service
             $store
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $taxRequest->setProductClassId($codTaxClass);
 
         /**
@@ -241,7 +225,9 @@ class TIG_PostNL_Model_Payment_Service
                 /**
                  * Update the tax info entry with the COD fee tax.
                  */
+                /** @noinspection PhpUndefinedMethodInspection */
                 $fullInfo[$key]['tax_amount']      += $source->getPostnlCodFeeTax();
+                /** @noinspection PhpUndefinedMethodInspection */
                 $fullInfo[$key]['base_tax_amount'] += $source->getBasePostnlCodFeeTax();
                 break;
             }

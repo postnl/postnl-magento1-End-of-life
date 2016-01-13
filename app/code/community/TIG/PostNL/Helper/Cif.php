@@ -474,6 +474,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of same day delivery product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getSameDayProductCodes($flat = true)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $pakjeGemakProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array
@@ -866,7 +879,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptions()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);

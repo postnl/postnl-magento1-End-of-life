@@ -191,7 +191,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getPostnlShippingMethod()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return $this->getCurrentPostnlShippingMethod();
     }
 

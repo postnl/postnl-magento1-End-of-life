@@ -60,6 +60,9 @@
     <monday translate="message" module="postnl">
         <message>monday</message>
     </monday>
+    <same_day translate="message" module="postnl">
+        <message>today</message>
+    </same_day>
     <post_office translate="message" module="postnl">
         <message>Post Office</message>
     </post_office>

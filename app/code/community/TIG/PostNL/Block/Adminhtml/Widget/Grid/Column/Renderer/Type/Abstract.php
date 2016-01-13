@@ -122,6 +122,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case 'monday':
                 $label = $helper->__('Monday Delivery');
                 break;
+            case 'sameday':
+                $label = $helper->__('Same Day Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -186,6 +189,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Try to render the value based on the delivery option type.
          */
+        $domesticCountry = $helper->getDomesticCountry();
         $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
         if ($optionType == 'Avond') {
             return $this->_getAvondRenderedValue($row);
@@ -195,6 +199,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getSundayRenderedValue($row);
         } elseif ($optionType == 'Monday') {
             return $this->_getMondayRenderedValue($row, $value);
+        } elseif ($optionType == 'Sameday') {
+            return $this->_getSameDayRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -204,7 +210,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         /**
          * Check if this order is domestic.
          */
-        $domesticCountry = $helper->getDomesticCountry();
         if ($value == $domesticCountry) {
             return $this->_getDomesticRenderedValue($row, $value);
         }
@@ -354,6 +359,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label = $helper->__('Monday Delivery');
         return $this->_getDomesticRenderedValue($row, $destination, $label);
+    }
+
+    /**
+     * Render this column for a same day delivery shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getSameDayRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Same Day Delivery');
+        $type  = 'sameday';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
     }
 
     /**

@@ -80,6 +80,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     protected $_postnlDeliveryDelay = 1;
 
     /**
+     * @param int $postnlDeliveryDelay
+     *
+     * @return $this
+     */
+    public function setPostnlDeliveryDelay($postnlDeliveryDelay)
+    {
+        $this->_postnlDeliveryDelay = (int) $postnlDeliveryDelay;
+
+        return $this;
+    }
+
+    /**
      * Build an array of valid delivery dates. Used for calculating delivery and shipping dates.
      *
      * @param $storeId
@@ -330,27 +342,30 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Calculates if the orderDate is past the configured cutoff time.
      *
-     * @param DateTime  $orderDateObject
-     * @param int       $storeId
+     * @param DateTime    $orderDateObject
+     * @param int         $storeId
+     * @param null|string $type
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPastCutOff($orderDateObject, $storeId)
+    public function isPastCutOff($orderDateObject, $storeId, $type = null)
     {
-        $weekDay = $orderDateObject->format('w');
+        if (!$type) {
+            $weekDay = $orderDateObject->format('w');
 
-        /**
-         * If the weekday == 7, we need to check for sunday cutoff time instead.
-         */
-        $forSunday = false;
-        if ($weekDay == self::SUNDAY) {
-            $forSunday = true;
+            /**
+             * If the weekday == 7, we need to check for sunday cutoff time instead.
+             */
+            $type = 'weekday';
+            if ($weekDay == self::SUNDAY) {
+                $type = 'sunday';
+            }
         }
 
         /**
          * Check if the order time is before the cutoff time, disregarding dates.
          */
-        $cutoff = $this->getCutOff($storeId, $forSunday);
+        $cutoff = $this->getCutOff($storeId, $type);
         $orderTime = $orderDateObject->format("H:i:s");
 
         return ($cutoff < $orderTime);
@@ -360,28 +375,35 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * Gets the cut off time for the given store. When $forSunday is set to true,
      * will return sunday cut off time instead.
      *
-     * @param int   $storeId
-     * @param bool  $forSunday
+     * @param int    $storeId
+     * @param string $type
      *
      * @return DateTime
      */
-    public function getCutOff($storeId = 0, $forSunday = false)
+    public function getCutOff($storeId = 0, $type = 'weekday')
     {
-        /**
-         * If $forSunday is set to true, we need to get the sunday cutoff time.
-         */
-        $xpathToUse = self::XPATH_CUTOFF_TIME;
-        if ($forSunday) {
-            $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
+        switch ($type) {
+            case 'sunday':
+                $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
+                break;
+            case 'sameday':
+                $xpathToUse = self::XPATH_SAMEDAY_CUTOFF_TIME;
+                break;
+            case 'weekday':
+            default:
+                $xpathToUse = self::XPATH_CUTOFF_TIME;
+                break;
         }
+
         $cutoff = Mage::getStoreConfig($xpathToUse, $storeId);
+
         $cutoff = new DateTime($cutoff, new DateTimeZone("Europe/Amsterdam"));
         $correctedCutOff = $this->getUtcDateTime($cutoff, $storeId)->format('H:i:s');
         return $correctedCutOff;
     }
 
     /**
-     * Checks if the found delivery day is valid. If this is not the case, add a day to the deliverydaycorrection,
+     * Checks if the found delivery day is valid. If this is not the case, add a day to the delivery day correction,
      * point to the next found day, and repeat this.
      *
      * @param DateTime|int $checkValidDay
