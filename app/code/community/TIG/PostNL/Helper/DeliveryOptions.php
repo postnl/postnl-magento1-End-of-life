@@ -637,6 +637,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
 
+        if ($helper->isPastCutOff($today, $storeId)) {
+            $today->add(new DateInterval('P1D'));
+        }
+
         foreach ($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
@@ -945,7 +949,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Make sure the value is between 1 and 14 days.
          */
-        if ($shippingDuration > 14 || $shippingDuration < 0) {
+        if ($shippingDuration > 14 || $shippingDuration < -1) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.',
@@ -985,7 +989,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
-                && $product->getData('postnl_shipping_duration') !== 'config'
+                && $product->getData('postnl_shipping_duration') !== -1
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {
