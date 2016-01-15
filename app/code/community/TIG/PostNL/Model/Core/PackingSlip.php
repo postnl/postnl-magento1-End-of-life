@@ -404,7 +404,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $page->setLineColor(new Zend_Pdf_Color_GrayScale(0.9));
         $items = $invoice->getAllItems();
         foreach ($items as $item) {
-            if ($item->getOrderItem()->getParentItem()) {
+            $orderItem = $item->getOrderItem();
+            if ($orderItem->getParentItem() ||
+                $orderItem->getProductType() == 'virtual' ||
+                $orderItem->getProductType() == 'downloadable') {
                 continue;
             }
             /**
