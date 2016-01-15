@@ -492,6 +492,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
         if ($helper->canUseSameDayDelivery()) {
