@@ -52,8 +52,7 @@ $updatedWebservices = array(
     'cif_version_deliverydate',
 );
 
-$installer->resetWebserviceVersions($updatedWebservices)
-          ->addSupportedProductCode(
+$installer->addSupportedProductCode(
               array(
                   '4970',
                   '4971',
@@ -68,4 +67,5 @@ $installer->resetWebserviceVersions($updatedWebservices)
               'postnl/cif_labels_and_confirming/allow_sunday_sorting',
               'postnl/delivery_options/allow_sunday_sorting'
           )
+          ->resetWebserviceVersions($updatedWebservices)
           ->clearConfigCache();
