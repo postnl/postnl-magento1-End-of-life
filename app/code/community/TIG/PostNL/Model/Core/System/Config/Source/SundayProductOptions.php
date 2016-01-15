@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_SundayProductOptions
         ),
         array(
             'value'             => '3089',
-            'label'             => 'Signature on delivery + Deliver to stated address only',
+            'label'             => 'Signature on delivery + Delivery to stated address only',
             'isExtraCover'      => false,
             'isSunday'          => true,
             'statedAddressOnly' => true,
