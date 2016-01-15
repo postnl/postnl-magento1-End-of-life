@@ -637,6 +637,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
 
+        if ($helper->isPastCutOff($today, $storeId)) {
+            $today->add(new DateInterval('P1D'));
+        }
+
         foreach ($timeframes as $key => $timeFrame) {
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
