@@ -642,6 +642,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         foreach ($timeframes as $key => $timeFrame) {
+            $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
             /**
@@ -660,6 +661,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                      */
                     foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
                         if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $forceSameDayTimeFrame = true;
                             $sameDay = true;
                         }
                     }
@@ -683,30 +685,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
 
-            if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
-                unset($timeframes[$key]);
-            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
-                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe) {
-                    if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
-                        $timeframes[$key]->Timeframes
-                                         ->TimeframeTimeFrame[$timeframeTimeframeKey]
-                                         ->Options
-                                         ->string[0] = 'Monday';
-                    }
-                }
-            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
-                $date = $timeFrame->Date;
-
-                $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId, true);
-                $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId, false);
-                $now = $helper->getUtcDateTime('now', 0)->setTime(0, 0, 0);
-
-                $timeFrameIsInPast = $now->diff($utcShippingDate, true)->invert;
-
-                if ($timeFrameIsInPast) {
+            if (!$forceSameDayTimeFrame) {
+                if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
                     unset($timeframes[$key]);
-                }
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
+                    foreach (
+                        $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
+                    ) {
+                        if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
+                            $timeframes[$key]->Timeframes
+                                ->TimeframeTimeFrame[$timeframeTimeframeKey]
+                                ->Options
+                                ->string[0]
+                                = 'Monday';
+                        }
+                    }
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
+                    $date = $timeFrame->Date;
 
+                    $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId, true);
+                    $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId, false);
+                    $now = $helper->getUtcDateTime('now', 0)->setTime(0, 0, 0);
+
+                    $timeFrameIsInPast = $now->diff($utcShippingDate, true)->invert;
+
+                    if ($timeFrameIsInPast) {
+                        unset($timeframes[$key]);
+                    }
+
+                }
             }
         }
 

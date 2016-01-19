@@ -979,6 +979,15 @@ PostnlDeliveryOptions.prototype = {
         };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
+
+        var today = new Date();
+        var formattedToday = this.formatDate(today);
+
+        if (postnlTimeframe.date == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            postnlTimeframe.date = this.formatDate(today);
+        }
+
         this.setTimeframes(new Array(postnlTimeframe));
 
         this.renderTimeframes(true);
@@ -987,6 +996,18 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         return this;
+    },
+
+    formatDate : function(date) {
+        var formattedMonth = date.getMonth() + 1;
+
+        if (formattedMonth.toString().length < 2) {
+            formattedMonth = '0' + formattedMonth.toString();
+        }
+
+        var formattedDate = date.getDate() + '-' + formattedMonth + '-' + date.getFullYear();
+
+        return formattedDate
     },
 
     /**
@@ -5204,6 +5225,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.to   = timeframe.To;
 
         var today = new Date();
+
         var formattedMonth = today.getMonth() + 1;
 
         if (formattedMonth.toString().length < 2) {
