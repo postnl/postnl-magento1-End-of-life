@@ -928,6 +928,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $durationArray = $this->_getProductsShippingDuration($productIds, $defaultDuration, $storeId);
 
+        foreach ($durationArray as $key => $duration) {
+            if ($duration == '-1') {
+                unset ($durationArray[$key]);
+            }
+        }
+
         if (empty($durationArray)) {
             $durationArray = array($defaultDuration);
         }
