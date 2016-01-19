@@ -284,7 +284,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
         $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
-        $dateObject = $this->getUtcDateTime($deliveryDate, $storeId);
+        $dateObject = $this->getUtcDateTime($deliveryDate, $storeId, false);
 
         /**
          * If the delivery day is monday, the shipment possibly needs to be sent on saturday, if sundaydelivery is not
@@ -319,7 +319,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      *
      * @return DateTime
      */
-    public function getUtcDateTime($date, $storeId)
+    public function getUtcDateTime($date, $storeId, $convertTimeZone = true)
     {
         /**
          * If the orderDate is not an object. Make an object using the current store timezone
@@ -332,8 +332,10 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If the orderDate object is not in UTC, change the timezone to UTC.
          */
-        if ($date->getTimeZone()->getName() != 'UTC') {
-            $date->setTimeZone(new DateTimeZone('UTC'));
+        if ($convertTimeZone) {
+            if ($date->getTimeZone()->getName() != 'UTC') {
+                $date->setTimeZone(new DateTimeZone('UTC'));
+            }
         }
 
         return $date;
