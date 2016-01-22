@@ -4227,6 +4227,23 @@ PostnlDeliveryOptions.Location = new Class.create({
          * element.
          */
         this.getType().each(function(type) {
+
+            var today = new Date();
+
+            var todayDay = today.getDate();
+            var todayMonth = today.getMonth();
+            var todayYear = today.getYear();
+
+            var availableDay = availableDeliveryDate.getDate();
+            var availableMonth = availableDeliveryDate.getMonth();
+            var availableYear = availableDeliveryDate.getYear();
+
+            //Since it is not possible to ship to a PG location on the same day, add 1 day to the deliveryOption if the
+            //found available deliverydate is today.
+            if (todayDay == availableDay && todayMonth == availableMonth && todayYear == availableYear) {
+                availableDeliveryDate.setTime(availableDeliveryDate.getTime() + 86400000);
+            }
+
             element = this.renderOption(type, availableDeliveryDate, parent, false);
             if (element) {
                 elements[type] = element;
