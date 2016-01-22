@@ -1157,12 +1157,22 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
+        $timeZone = Mage::helper('postnl')->getStoreTimeZone(Mage::app()->getStore()->getId(), true);
+
         /**
          * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery
          * day.
          */
         if (array_key_exists('deliveryDate', $postData)) {
             $deliveryDate = $postData['deliveryDate'];
+            $today = new DateTime('now', $timeZone);
+            $formattedToday = $today->format('d-m-Y');
+
+            if ($formattedToday == $deliveryDate) {
+                $deliveryDate = new DateTime($deliveryDate);
+                $deliveryDate->add(new DateInterval('P1D'));
+                $deliveryDate = $deliveryDate->format('d-m-Y');
+            }
 
             $validator = new Zend_Validate_Date(array('format' => 'd-m-Y'));
             if (!$validator->isValid($deliveryDate)) {
@@ -1175,7 +1185,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $timeZone = Mage::helper('postnl')->getStoreTimeZone(Mage::app()->getStore()->getId(), true);
             $deliveryDate = new DateTime('now', $timeZone);
             $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
                          ->add(new DateInterval('P1D'));
