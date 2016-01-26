@@ -527,7 +527,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $options = array();
         $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
-        if ($sameDayDelivery) {
+        $shippingDelay = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
+        if ($sameDayDelivery && $shippingDelay == 0) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
         }
 
