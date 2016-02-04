@@ -5243,13 +5243,18 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
         var today = new Date();
 
+        var formattedDay = today.getDate();
         var formattedMonth = today.getMonth() + 1;
+
+        if (formattedDay.toString().length < 2) {
+            formattedDay = '0' + formattedDay.toString();
+        }
 
         if (formattedMonth.toString().length < 2) {
             formattedMonth = '0' + formattedMonth.toString();
         }
 
-        var formattedToday = today.getDate() + '-' + formattedMonth + '-' + today.getFullYear();
+        var formattedToday = formattedDay + '-' + formattedMonth + '-' + today.getFullYear();
 
         var type = '';
         timeframe.Options.string.each(function(value) {
