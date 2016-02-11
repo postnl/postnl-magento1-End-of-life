@@ -1041,6 +1041,27 @@
                                 <postcode_nl_extension_active>1</postcode_nl_extension_active>
                             </depends>
                         </postcode_nl_extension_conflict_info>
+                        <osc_google_places_active>
+                            <frontend_type>hidden</frontend_type>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_googlePlacesActive</frontend_model>
+                            <sort_order>125</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </osc_google_places_active>
+                        <osc_google_places_conflict>
+                                <comment><![CDATA[You are currently using the PostNL postcode check in combination with OneStepCheckout's Google Places. Please keep in mind that the PostNL postcode check will overwrite OneStepCheckout's address fields and thereby also the Google Places functionality.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
+                            <sort_order>126</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <checkout_extension>idev_onestepcheckout</checkout_extension>
+                                <osc_google_places_active>1</osc_google_places_active>
+                                <use_postcode_check>1</use_postcode_check>
+                            </depends>
+                        </osc_google_places_conflict>
                         <use_postcode_check translate="label tooltip" module="postnl">
                             <label>Use postcode check</label>
                             <tooltip>Automatically complete Dutch addresses after your customer fills in his postcode and house number.</tooltip>
