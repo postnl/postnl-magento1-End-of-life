@@ -118,6 +118,11 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED = 'onestepcheckout/googleplaces/enabled';
 
     /**
+     * Xpath to the OneStepCheckout extension's Delivery Date enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED = 'onestepcheckout/delivery/enabled_date';
+
+    /**
      * @var null|string|int
      */
     protected $_oscStreetFieldSortOrder = null;
@@ -508,6 +513,24 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         $googlePlacesEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED, $storeId);
         if (!$googlePlacesEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function checkOscDeliveryDateActive($storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->checkOneStepCheckoutActive($storeId)) {
+            return false;
+        }
+
+        $oscDeliveryDateEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED, $storeId);
+        if (!$oscDeliveryDateEnabled) {
             return false;
         }
 
