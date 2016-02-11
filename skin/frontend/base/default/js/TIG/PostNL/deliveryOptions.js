@@ -946,11 +946,21 @@ PostnlDeliveryOptions.prototype = {
 
             if (fullAddressArray[0] == '') {
                 if(useBillingForShipping == 1) {
-                    var street  = $('billing:street0').getValue();
-                    var houseNr = $('billing:street1').getValue();
+                    if ($('virtual:billing:street1')) {
+                        var street  = $('virtual:billing:street1').getValue();
+                        var houseNr = $('virtual:billing:street2').getValue();
+                    } else {
+                        var street = $('billing:street0').getValue();
+                        var houseNr = $('billing:street1').getValue();
+                    }
                 } else {
-                    var street  = $('shipping:street0').getValue();
-                    var houseNr = $('shipping:street1').getValue();
+                    if ($('virtual:shipping:street1')) {
+                        var street = $('shipping:street0').getValue();
+                        var houseNr = $('shipping:street1').getValue();
+                    } else {
+                        var street  = $('virtual:shipping:street1').getValue();
+                        var houseNr = $('virtual:shipping:street2').getValue();
+                    }
                 }
 
                 $$('.postnl-container #postnl_add_moment .location-name')[0].update(street + ' ' + houseNr);
