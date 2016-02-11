@@ -1050,12 +1050,12 @@
                             <show_in_store>1</show_in_store>
                         </osc_google_places_active>
                         <osc_google_places_conflict>
-                                <comment><![CDATA[You are currently using the PostNL postcode check in combination with OneStepCheckout's Google Places. Please keep in mind that the PostNL postcode check will overwrite OneStepCheckout's address fields and thereby also the Google Places functionality.]]></comment>
+                            <comment><![CDATA[You are currently using the PostNL postcode check in combination with OneStepCheckout's Google Places. Please keep in mind that the PostNL postcode check will overwrite OneStepCheckout's address fields and thereby also the Google Places functionality.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>126</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <depends>
                                 <checkout_extension>idev_onestepcheckout</checkout_extension>
                                 <osc_google_places_active>1</osc_google_places_active>
@@ -1419,6 +1419,49 @@
                                 </country>
                             </depends>
                         </delivery_options_belgium_header>
+                        <delivery_options_google_places_conflict>
+                            <comment><![CDATA[You are currently using the PostNL Delivery Options in combination with OneStepCheckout's Google Places. Since both functionalities use the Google Maps api, this could lead to unexpected errors.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>idev_onestepcheckout</value>
+                                </checkout_extension>
+                                <osc_google_places_active>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </osc_google_places_active>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </delivery_options_google_places_conflict>
+                        <osc_delivery_date_active>
+                            <frontend_type>hidden</frontend_type>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_oscDeliveryDateActive</frontend_model>
+                            <sort_order>36</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </osc_delivery_date_active>
+                        <osc_delivery_date_delivery_options_conflict>
+                            <comment><![CDATA[You are currenlty using both the delivery date functionality from OneStepCheckout and the PostNL Delivery Options. While these functionalities should work side by side without issues, this could be confusing to your clients.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
+                            <sort_order>37</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>idev_onestepcheckout</value>
+                                </checkout_extension>
+                                <osc_delivery_date_active>1</osc_delivery_date_active>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </osc_delivery_date_delivery_options_conflict>
                         <delivery_options_active translate="label" module="postnl">
                             <label>Enable PostNL delivery options</label>
                             <frontend_type>checkbox</frontend_type>
