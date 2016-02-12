@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -270,6 +270,7 @@
                         <postnl_allow_po_locations/>
                         <postnl_allow_timeframes/>
                         <postnl_allow_pakketautomaat/>
+                        <postnl_product_type/>
                     </product_attributes>
                 </item>
                 <totals>
