@@ -3958,6 +3958,15 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {void}
      */
     initialize : function(location, deliveryOptions, type) {
+        var deliveryDate = deliveryOptions.getDeliveryDate();
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (deliveryDate == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            deliveryDate = PostnlDeliveryOptions.prototype.formatDate(today);
+        }
+
         this.address           = location.Address;
         this.distance          = location.Distance;
         this.latitude          = location.Latitude;
@@ -3966,7 +3975,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryOptions.getDeliveryDate();
+        this.date              = deliveryDate;
         this.isEveningLocation = location.isEvening;
 
         this.deliveryOptions   = deliveryOptions;
