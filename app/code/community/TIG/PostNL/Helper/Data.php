@@ -978,6 +978,77 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Checks if the current quote is classified as a food quote, and saves the result in the cache.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return int
+     *  0 = Non-Food
+     *  1 = Dry & Groceries
+     *  2 = Cool Products
+     */
+    public function quoteIsFood(Mage_Sales_Model_Quote $quote = null)
+    {
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'postnl_quote_is_food' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        $quoteFoodType = $this->getQuoteFoodType($quote);
+
+        Mage::register($registryKey, $quoteFoodType);
+        return $quoteFoodType;
+    }
+
+    /**
+     * Returns the food Type of the provided quote.
+     *
+     * Cool products are leading. So if we find a cooled products, the entire quote is marked as Cool Products.
+     * If there is a Dry & Groceries product, but no Cooled Product, the quote is marked as Dry & Groceries.
+     * If neither of above is found, the quote is marked as Non-Food.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return int
+     *  0 = Non-Food
+     *  1 = Dry & Groceries
+     *  2 = Cool Products
+     */
+    public function getQuoteFoodType(Mage_Sales_Model_Quote $quote)
+    {
+        $quoteItems = $quote->getAllItems();
+
+        $foodType = 0;
+        foreach ($quoteItems as $quoteItem) {
+
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType == 2) {
+                $foodType = 2;
+                break;
+            }
+
+            if ($postnlProductType == 1) {
+                $foodType = 1;
+            }
+        }
+
+        return $foodType;
+    }
+
+    /**
      * Gets the currently configured buspakje calculation mode.
      *
      * @param null|int|string $storeId
