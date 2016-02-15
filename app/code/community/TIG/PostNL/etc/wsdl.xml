@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}" xmlns:ns0="urn:Magento">
-
+<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}">
     <types>
         <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
             <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
@@ -141,8 +142,8 @@
     <message name="postnlPrintShippingLabelsRequest">
         <part name="sessionId" type="xsd:string" />
         <part name="orderIds" type="typens:ArrayOfString" />
-        <part name="labelSize" type="xsd:string" minOccurs="0" />
-        <part name="labelStartPosition" type="xsd:int" minOccurs="0" />
+        <part name="labelSize" type="xsd:string" />
+        <part name="labelStartPosition" type="xsd:int"  />
     </message>
     <message name="postnlPrintShippingLabelsResponse">
         <part name="result" type="typens:postnlPrintedLabelEntityArray" />
@@ -151,8 +152,8 @@
     <message name="postnlConfirmAndPrintShippingLabelsRequest">
         <part name="sessionId" type="xsd:string" />
         <part name="orderIds" type="typens:ArrayOfString" />
-        <part name="labelSize" type="xsd:string" minOccurs="0" />
-        <part name="labelStartPosition" type="xsd:int" minOccurs="0" />
+        <part name="labelSize" type="xsd:string" />
+        <part name="labelStartPosition" type="xsd:int" />
     </message>
     <message name="postnlConfirmAndPrintShippingLabelsResponse">
         <part name="result" type="typens:postnlPrintedLabelEntityArray" />
@@ -279,5 +280,9 @@
             </output>
         </operation>
     </binding>
-
+    <service name="{{var wsdl.name}}Service">
+        <port name="{{var wsdl.handler}}Port" binding="typens:{{var wsdl.handler}}Binding">
+            <soap:address location="{{var wsdl.url}}" />
+        </port>
+    </service>
 </definitions>
