@@ -1315,7 +1315,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    public function canUsePakjeGemakExpress()
+    public function canUsePakjeGemakExpress($checkQuote = true)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
@@ -1357,6 +1357,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $allowed = $this->_canUsePakjeGemakExpress();
 
+        if ($allowed && $checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $allowed = $this->canUsePakjeGemakExpressForQuote();
+        }
+
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
@@ -1395,6 +1402,52 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allowed;
+    }
+
+    /**
+     * Check if 'pakje gemak express' is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakjeGemakExpressForQuote()
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        $registryKey = 'can_use_pakje_gemak_express_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If no shipping address is available, we have nothing to check and delivery options will not be allowed.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * PakjeGemak Express is only available when shipping to the Netherlands.
+         */
+        if ($shippingAddress->getCountry() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        Mage::register($registryKey, true);
+        return true;
     }
 
     /**
@@ -1494,6 +1547,23 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakketAutomaatForBuspakje($quote)
         ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If no shipping address is available, we have nothing to check and delivery options will not be allowed.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Pakketautomaat is only available when shipping to the Netherlands.
+         */
+        if ($shippingAddress->getCountry() != 'NL') {
             Mage::register($registryKey, false);
             return false;
         }
@@ -1672,6 +1742,23 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($this->quoteIsBuspakje($quote)
             && !$this->canShowDeliveryDaysForBuspakje($quote)
         ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If no shipping address is available, we have nothing to check and delivery options will not be allowed.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Delivery days are only available when shipping to the Netherlands.
+         */
+        if ($shippingAddress->getCountry() != 'NL') {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2420,14 +2507,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * Delivery options are only available when shipping to the Netherlands.
-         *
-         * Delivery options in Belgium are currently unstable and therefor not yet fully supported. Expect this to be
-         * added in a later release.
-         *
-         * @todo add Belgium as a valid country for PostNL delivery options.
+         * Delivery options are only available when shipping to the Netherlands or Belgium.
          */
-        if ($shippingAddress->getCountry() != 'NL' /*&& $shippingAddress->getCountry() != 'BE'*/) {
+        if ($shippingAddress->getCountry() != 'NL' && $shippingAddress->getCountry() != 'BE') {
             Mage::register($registryKey, false);
             return false;
         }
