@@ -125,6 +125,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const MAX_FEE = 2;
 
     /**
+     * The two supported food delivery types.
+     */
+    const FOOD_TYPE_DRY_GROCERIES = 1;
+    const FOOD_TYPE_COOL_PRODUCTS = 2;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -137,6 +143,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'Monday',
         'Sameday',
         'Food',
+        'Cooledfood',
     );
 
     /**
@@ -721,8 +728,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the quote is a food quote, every delivery option should be of the type 'Food'.
              */
-            if ($this->quoteIsFood()) {
-                $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
+            $isFood = $this->quoteIsFood();
+            if ($isFood) {
+                if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
+                    $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
+                } elseif ($isFood == self::FOOD_TYPE_COOL_PRODUCTS) {
+                    $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Cooledfood');
+                }
             }
         }
 
