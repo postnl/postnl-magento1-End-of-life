@@ -416,6 +416,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
+        /** @var TIG_PostNL_Helper_Data $postnlHelper */
+        $postnlHelper = Mage::helper('postnl');
 
         $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
         $deliveryDate = clone $dateObject;
@@ -425,8 +427,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             $helper->setPostnlDeliveryDelay(0);
         }
 
-        $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
-        $helper->getShippingDate($confirmDate, $order->getStoreId());
+        $domesticCountry = $postnlHelper->getDomesticCountry();
+        $orderCountry = $order->getShippingAddress()->getCountryId();
+
+        if ($domesticCountry == $orderCountry) {
+            $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
+            $helper->getShippingDate($confirmDate, $order->getStoreId());
+        }
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());

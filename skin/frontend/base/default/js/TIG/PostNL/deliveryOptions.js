@@ -979,6 +979,15 @@ PostnlDeliveryOptions.prototype = {
         };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
+
+        var today = new Date();
+        var formattedToday = this.formatDate(today);
+
+        if (postnlTimeframe.date == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            postnlTimeframe.date = this.formatDate(today);
+        }
+
         this.setTimeframes(new Array(postnlTimeframe));
 
         this.renderTimeframes(true);
@@ -987,6 +996,18 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         return this;
+    },
+
+    formatDate : function(date) {
+        var formattedMonth = date.getMonth() + 1;
+
+        if (formattedMonth.toString().length < 2) {
+            formattedMonth = '0' + formattedMonth.toString();
+        }
+
+        var formattedDate = date.getDate() + '-' + formattedMonth + '-' + date.getFullYear();
+
+        return formattedDate
     },
 
     /**
@@ -4206,6 +4227,23 @@ PostnlDeliveryOptions.Location = new Class.create({
          * element.
          */
         this.getType().each(function(type) {
+
+            var today = new Date();
+
+            var todayDay = today.getDate();
+            var todayMonth = today.getMonth();
+            var todayYear = today.getYear();
+
+            var availableDay = availableDeliveryDate.getDate();
+            var availableMonth = availableDeliveryDate.getMonth();
+            var availableYear = availableDeliveryDate.getYear();
+
+            //Since it is not possible to ship to a PG location on the same day, add 1 day to the deliveryOption if the
+            //found available deliverydate is today.
+            if (todayDay == availableDay && todayMonth == availableMonth && todayYear == availableYear) {
+                availableDeliveryDate.setTime(availableDeliveryDate.getTime() + 86400000);
+            }
+
             element = this.renderOption(type, availableDeliveryDate, parent, false);
             if (element) {
                 elements[type] = element;
@@ -5204,13 +5242,19 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.to   = timeframe.To;
 
         var today = new Date();
+
+        var formattedDay = today.getDate();
         var formattedMonth = today.getMonth() + 1;
+
+        if (formattedDay.toString().length < 2) {
+            formattedDay = '0' + formattedDay.toString();
+        }
 
         if (formattedMonth.toString().length < 2) {
             formattedMonth = '0' + formattedMonth.toString();
         }
 
-        var formattedToday = today.getDate() + '-' + formattedMonth + '-' + today.getFullYear();
+        var formattedToday = formattedDay + '-' + formattedMonth + '-' + today.getFullYear();
 
         var type = '';
         timeframe.Options.string.each(function(value) {

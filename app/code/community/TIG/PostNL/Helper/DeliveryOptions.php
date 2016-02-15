@@ -637,7 +637,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
 
+        if ($helper->isPastCutOff($today, $storeId)) {
+            $today->add(new DateInterval('P1D'));
+        }
+
         foreach ($timeframes as $key => $timeFrame) {
+            $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
             /**
@@ -656,6 +661,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                      */
                     foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
                         if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $forceSameDayTimeFrame = true;
                             $sameDay = true;
                         }
                     }
@@ -679,31 +685,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
 
-            if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
-                unset($timeframes[$key]);
-            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
-                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe) {
-                    if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
-                        $timeframes[$key]->Timeframes
-                                         ->TimeframeTimeFrame[$timeframeTimeframeKey]
-                                         ->Options
-                                         ->string[0] = 'Monday';
-                    }
-                }
-            } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
-                $date = $timeFrame->Date;
-
-                $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId);
-                $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId);
-
-                $now = $helper->getUtcDateTime('now', $storeId);
-
-                $timeFrameIsInPast = $now->diff($utcShippingDate)->invert;
-
-                if ($timeFrameIsInPast) {
+            if (!$forceSameDayTimeFrame) {
+                if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
                     unset($timeframes[$key]);
-                }
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
+                    foreach (
+                        $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
+                    ) {
+                        if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
+                            $timeframes[$key]->Timeframes
+                                ->TimeframeTimeFrame[$timeframeTimeframeKey]
+                                ->Options
+                                ->string[0]
+                                = 'Monday';
+                        }
+                    }
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
+                    $date = $timeFrame->Date;
 
+                    $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId, true);
+                    $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId, false);
+                    $now = $helper->getUtcDateTime('now', 0)->setTime(0, 0, 0);
+
+                    $timeFrameIsInPast = $now->diff($utcShippingDate, true)->invert;
+
+                    if ($timeFrameIsInPast) {
+                        unset($timeframes[$key]);
+                    }
+
+                }
             }
         }
 
@@ -918,6 +928,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $durationArray = $this->_getProductsShippingDuration($productIds, $defaultDuration, $storeId);
 
+        foreach ($durationArray as $key => $duration) {
+            if ($duration == '-1') {
+                unset ($durationArray[$key]);
+            }
+        }
+
         if (empty($durationArray)) {
             $durationArray = array($defaultDuration);
         }
@@ -945,7 +961,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Make sure the value is between 1 and 14 days.
          */
-        if ($shippingDuration > 14 || $shippingDuration < 0) {
+        if ($shippingDuration > 14 || $shippingDuration < -1) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.',
@@ -985,7 +1001,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
-                && $product->getData('postnl_shipping_duration') !== 'config'
+                && $product->getData('postnl_shipping_duration') !== -1
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {

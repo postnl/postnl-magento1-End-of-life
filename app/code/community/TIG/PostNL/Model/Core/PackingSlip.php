@@ -58,7 +58,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     /**
      * Xpath to the PDF font compatiblity mode flag.
      */
-    const XPATH_PDF_FONT_COMPATIBILITY_MODE = 'postnl/packing_slip/pdf_font_compatibility_mode';
+    const XPATH_PDF_FONT_COMPATIBILITY_MODE = 'postnl/advanced/pdf_font_compatibility_mode';
 
     /**
      * Paths to the compatiblity mode fonts
@@ -404,7 +404,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $page->setLineColor(new Zend_Pdf_Color_GrayScale(0.9));
         $items = $invoice->getAllItems();
         foreach ($items as $item) {
-            if ($item->getOrderItem()->getParentItem()) {
+            $orderItem = $item->getOrderItem();
+            if ($orderItem->getParentItem() ||
+                $orderItem->getProductType() == 'virtual' ||
+                $orderItem->getProductType() == 'downloadable') {
                 continue;
             }
             /**

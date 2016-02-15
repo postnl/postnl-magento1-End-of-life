@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
      */
     const LABEL_TYPE_LABEL             = 'Label';
     const LABEL_TYPE_RETURN_LABEL      = 'Return label';
-    const LABEL_TYPE_BUSPAKJE          = 'Buspakje';
+    const LABEL_TYPE_BUSPAKJE          = 'BusPakje';
     const LABEL_TYPE_BUSPAKJEEXTRA     = 'BusPakjeExtra';
     const LABEL_TYPE_LABEL_COMBI       = 'Label-combi';
     const LABEL_TYPE_CODCARD           = 'CODcard';

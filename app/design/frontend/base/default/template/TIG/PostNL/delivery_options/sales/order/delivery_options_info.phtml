@@ -40,8 +40,9 @@
 <?php $_helper = Mage::helper('postnl/deliveryOptions'); ?>
 <?php $_order = Mage::registry('current_order'); ?>
 <?php $_deliveryOptionsInfo = $_helper->getDeliveryOptionsInfo($_order); ?>
+<?php $_deliveryOptionsActive = $_helper->isDeliveryOptionsActive(); ?>
 
-<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType()): ?>
+<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType() || !$_deliveryOptionsActive): ?>
     <?php return ''; ?>
 <?php endif; ?>
 
