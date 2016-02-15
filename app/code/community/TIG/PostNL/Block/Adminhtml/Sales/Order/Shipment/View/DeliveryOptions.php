@@ -181,6 +181,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
                 $shipmentType = $this->__('Post Office');
+
+                if ($postnlShipment->isBelgiumShipment()) {
+                    $this->setSubType($this->__('Belgium'));
+                }
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG_COD:
                 $shipmentType = $this->__('Post Office');

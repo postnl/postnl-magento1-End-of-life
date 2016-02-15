@@ -355,14 +355,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order is being shipped to a domestic country.
+         * Check if this order has a shipping address.
          */
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$shippingAddress
-            || $shippingAddress->getCountryId() != $domesticCountry
-        ) {
+        if (!$shippingAddress) {
             return false;
         }
 

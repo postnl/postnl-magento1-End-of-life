@@ -279,6 +279,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'pakjegemak_options',
         ),
+        '4932' => array(
+            'value'             => '4932',
+            'label'             => 'Post Office (Belgium)',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options',
+        ),
         '4952' => array(
             'value'             => '4952',
             'label'             => 'EU Pack Special Consumer (incl. signature)',

@@ -50,6 +50,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     const PAYMENT_METHOD_COLUMN       = 'payment_method';
     const OPTIONS_COLUMN              = 'options';
     const DELIVERY_DATE_COLUMN        = 'delivery_date';
+    const COUNTRY_ID_COLUMN           = 'country_id';
 
     /**
      * Renders a type column for a shipment type.
@@ -83,6 +84,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 break;
             case 'pg':
                 $label = $helper->__('Post Office');
+
+                if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
+                    $comment = $helper->__('Belgium');
+                }
                 break;
             case 'pg_cod':
                 $label   = $helper->__('Post Office');
@@ -204,7 +209,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            return $this->_getPgRenderedValue($row);
+            return $this->_getPgRenderedValue($row, $value);
         }
 
         /**
@@ -301,10 +306,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      * Render this column for a PGE shipment.
      *
      * @param Varien_Object $row
+     * @param string        $value
      *
      * @return string
      */
-    protected function _getPgRenderedValue(Varien_Object $row)
+    protected function _getPgRenderedValue(Varien_Object $row, $value)
     {
         $helper = Mage::helper('postnl');
 
@@ -317,10 +323,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             $type .= '_cod';
         }
 
+        if ($value == 'BE') {
+            $type .= '_be';
+        }
+
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+        }
+
+        if ($value == 'BE') {
+            $renderedValue .= '<br /><em>' . $helper->__('Belgium') . '</em>';
         }
 
         return $renderedValue;

@@ -982,6 +982,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_pg_be_options'])) {
+                $config['postnl_pg_be_options'] = array(
+                    'name'   => 'product_options[pg_be_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pg_be_options'],
+                );
+            }
+
             if (!empty($options['postnl_pge_options'])) {
                 $config['postnl_pge_options'] = array(
                     'name'   => 'product_options[pge_options]',
@@ -1090,6 +1099,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getProductOptions()
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $optionsModel */
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
         $options = array(
             'postnl_domestic_options' => $optionsModel->getOptions(
@@ -1113,6 +1123,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'   => 'pakjegemak_options',
                     'isCod'   => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_pg_be_options' => $optionsModel->getOptions(
+                array(
+                    'group'         => 'pakjegemak_options',
+                    'isCod'         => false,
+                    'isBelgiumOnly' => true,
                 ),
                 false,
                 true

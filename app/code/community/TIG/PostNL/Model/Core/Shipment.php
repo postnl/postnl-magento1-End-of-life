@@ -77,6 +77,7 @@
  *  - postnl_shipment_send_return_label_email_after
  *
  * @method boolean                        getIsDomesticShipment()
+ * @method boolean                        getIsBelgiumShipment()
  * @method boolean                        getIsEuShipment()
  * @method boolean                        getIsGlobalShipment()
  * @method int                            getParcelCount()
@@ -231,6 +232,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/grid/default_evening_product_option';
     const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cod/default_evening_cod_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/grid/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION  = 'postnl/grid/default_pakjegemak_be_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION = 'postnl/cod/default_pakjegemak_cod_product_option';
     const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/grid/default_pge_product_option';
     const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cod/default_pge_cod_product_option';
@@ -1182,7 +1184,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_PG:
-                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
+                if ($this->isBelgiumShipment()) {
+                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
+                }
                 break;
             case self::SHIPMENT_TYPE_PG_COD:
                 $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
@@ -1197,10 +1203,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_EPS:
-                $shippingAddress = $this->getShippingAddress();
                 if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
-                    && $shippingAddress
-                    && $shippingAddress->getCountryId() == 'BE'
+                    && $this->isBelgiumShipment()
                 ) {
                     $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
                 } else {
@@ -1603,7 +1607,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
                 break;
             case self::SHIPMENT_TYPE_PG:
-                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat);
+                $destination = false;
+
+                $shippingAddress = $this->getShippingAddress();
+                if ($shippingAddress) {
+                    $destination = $shippingAddress->getCountryId();
+                }
+
+                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat, $destination);
                 break;
             case self::SHIPMENT_TYPE_PG_COD:
                 $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
@@ -2214,6 +2225,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $domesticCountry = $this->getHelper()->getDomesticCountry();
         if ($shippingDestination == $domesticCountry) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the shipping destination of this shipment is Belgium.
+     *
+     * @return bool
+     */
+    public function isBelgiumShipment()
+    {
+        if ($this->getIsBelgiumShipment()) {
+            return true;
+        }
+
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        $shippingDestination = $shippingAddress->getCountryId();
+
+        if ($shippingDestination == 'BE') {
             return true;
         }
 
@@ -4812,6 +4848,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (isset($codes['use_default']) && $codes['use_default'] == '1') {
             return $this->getDefaultProductCode();
         }
+
+        /**
+         * If this is a Belgian PG shipment, add the 'be' suffix.
+         */
+        if ($shipmentType == self::SHIPMENT_TYPE_PG && $this->isBelgiumShipment()) {
+            $shipmentType .= '_be';
+        }
+
         /**
          * Get the selected product code for the current shipment's shipment type.
          */

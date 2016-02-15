@@ -99,6 +99,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isPge'        => true,
             'isCod'        => true,
         ),
+        array(
+            'value'         => '4932',
+            'label'         => 'Post Office (Belgium)',
+            'isExtraCover'  => false,
+            'isPge'         => false,
+            'isCod'         => false,
+            'isBelgiumOnly' => true,
+        ),
     );
 
     /**
@@ -121,6 +129,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
     public function getAvailableOptions($flat = false)
     {
         return $this->getOptions(array('isCod' => false), $flat, true);
+    }
+
+    /**
+     * Get a list of available options for Belgium. This is a filtered/modified version of the array supplied by
+     * toOptionArray();
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableBeOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => true), $flat, true);
     }
 
     /**

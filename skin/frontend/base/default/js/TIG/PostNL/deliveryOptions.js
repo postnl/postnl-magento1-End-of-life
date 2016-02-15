@@ -5350,7 +5350,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed() && this.getDeliveryOptions().country != 'BE') {
             spanClass += ' no-display';
         }
         html += '<span class="' + spanClass + '">';
@@ -5366,8 +5366,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         spanClass = 'option-time';
         var openingHours = '';
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
-            spanClass    += ' no-timeframe-buspakje';
+            spanClass += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
+        } else if (this.getDeliveryOptions().country == 'BE') {
+            spanClass    += ' no-timeframe-buspakje';
+
+            var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
+            if (date.getDay() == 6) {
+                openingHours += '08:30 - 18:00';
+            } else {
+                openingHours += '08:30 - 21:30';
+            }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()
         ) {
