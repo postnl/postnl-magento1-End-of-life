@@ -490,10 +490,22 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         $storeId = $this->getStoreId();
 
-        $options = array(self::DOMESTIC_DELIVERY_OPTION);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
+
+        /**
+         * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
+         */
+        if ($helper->canUseFoodDelivery()) {
+            $options = array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+            );
+
+            return $options;
+        }
+
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
         if ($helper->canUseSameDayDelivery()) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;

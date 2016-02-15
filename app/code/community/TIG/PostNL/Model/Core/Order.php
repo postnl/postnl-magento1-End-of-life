@@ -109,6 +109,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const TYPE_PG      = 'PG';
     const TYPE_PGE     = 'PGE';
     const TYPE_PA      = 'PA';
+    const TYPE_FOOD    = 'Food';
 
     /**
      * Prefix of model events names.

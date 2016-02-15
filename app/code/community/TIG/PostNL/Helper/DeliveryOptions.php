@@ -69,6 +69,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
+    const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
 
     /**
      * Xpaths to extra fee config settings.
@@ -135,6 +136,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'Sunday',
         'Monday',
         'Sameday',
+        'Food',
     );
 
     /**
@@ -714,6 +716,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     }
 
                 }
+            }
+
+            /**
+             * If the quote is a food quote, every delivery option should be of the type 'Food'.
+             */
+            if ($this->quoteIsFood()) {
+                $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
             }
         }
 
@@ -1963,6 +1972,42 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              */
             $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
                   ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if food delivery is allowed by checking the current quote and configuration.
+     *
+     * @return bool
+     */
+    public function canUseFoodDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseFoodDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseFoodDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
+        $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
+        $quoteIsFood = (bool) $this->quoteIsFood();
+
+        if ($foodDeliveryEnabled && $quoteIsFood && $domesticCountryNL) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseFoodDelivery($allowed)
+                ->saveCache();
         }
 
         return $allowed;
