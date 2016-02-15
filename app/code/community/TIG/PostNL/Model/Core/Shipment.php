@@ -3861,10 +3861,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $statusHistory->setParentId($this->getId())
                           ->setCode($status->Code)
                           ->setDescription($status->Description)
-                          ->setLocationCode($status->LocationCode)
-                          ->setDestinationLocationCode($status->DestinationLocationCode)
-                          ->setRouteCode($status->RouteCode)
-                          ->setRouteName($status->RouteName)
+                          ->setLocationCode(empty($status->LocationCode) ? null : $status->LocationCode)
+                          ->setDestinationLocationCode(
+                              empty($status->DestinationLocationCode) ? null : $status->DestinationLocationCode
+                          )
+                          ->setRouteCode(empty($status->RouteCode) ? null : $status->RouteCode)
+                          ->setRouteName(empty($status->RouteName) ? null : $status->RouteName)
                           ->setTimestamp($timestamp)
                           ->save();
         }
