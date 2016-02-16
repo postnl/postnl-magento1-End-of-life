@@ -439,7 +439,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $allowedParcelTypes = array(
                 '*',
                 'letter_box',
-                'regular'
+                'regular',
+                'food',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -579,6 +580,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'parcel':           //no break
             case 'package':
                 $formattedType = 'regular';
+                break;
+            case 'food':
+            case 'voedsel':
+            case 'eten':
+            case 'coolfood':
+            case 'cooledfood':
+            case 'gekoeld':
+                $formattedType = 'food';
                 break;
             //no default
         }
