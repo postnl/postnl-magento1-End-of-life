@@ -461,7 +461,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 $request->setParcelType('regular');
             } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
                 $request->setParcelType('letter_box');
-            } elseif (Mage::helper('postnl')->quoteIsFood($quote)) {
+            } elseif (Mage::helper('postnl/deliveryOptions')->canUseFoodDelivery()) {
                 $request->setParcelType('food');
             }
         }
