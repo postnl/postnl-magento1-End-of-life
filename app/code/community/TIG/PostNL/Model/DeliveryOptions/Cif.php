@@ -55,12 +55,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Config options used by the getDeliveryDate service.
      */
-    const XPATH_SHIPPING_DURATION      = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME            = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_ALLOW_SUNDAY_SORTING   = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_SUNDAY_CUTOFF_TIME     = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_DELIVERY_DAYS_NUMBER   = 'postnl/delivery_options/delivery_days_number';
-    const XPATH_ENABLE_SUNDAY_DELIVERY = 'postnl/delivery_options/enable_sunday_delivery';
+    const XPATH_SHIPPING_DURATION       = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options/delivery_days_number_be';
+    const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
      * Check if the module is set to test mode
@@ -180,7 +181,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          * To calculate the end date we need to number of days we want to display minus 1.
          */
         $storeId = Mage::app()->getStore()->getId();
-        $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+
+        if ($data['country'] == 'BE') {
+            $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER_BE, $storeId);
+        } else {
+            $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+        }
         $maximumNumberOfDeliveryDays--;
 
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));

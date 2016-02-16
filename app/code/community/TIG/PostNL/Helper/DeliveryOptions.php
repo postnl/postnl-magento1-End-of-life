@@ -42,14 +42,16 @@
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 {
     /**
-     * Xpath to delivery options enabled config setting.
+     * Xpath to delivery options enabled config settings.
      */
-    const XPATH_DELIVERY_OPTIONS_ACTIVE = 'postnl/delivery_options/delivery_options_active';
+    const XPATH_DELIVERY_OPTIONS_ACTIVE    = 'postnl/delivery_options/delivery_options_active';
+    const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options/delivery_options_be_active';
 
     /**
      * Xpaths to various possible delivery option settings.
      */
     const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
+    const XPATH_ENABLE_PAKJEGEMAK_BE            = 'postnl/delivery_options/enable_pakjegemak_be';
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
     const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
@@ -581,7 +583,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 break;
             case 'pg':
             case 'PG':
-                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak';
+                $formattedType = 'PakjeGemak';
+
+                if ($shippingAddress->getCountryId() == 'BE') {
+                    $formattedType .= ' (België)';
+                }
+
+                $deliveryOptionsInfo['formatted_type'] = $formattedType;
                 break;
             case 'pg_cod':
                 $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak rembours';
@@ -1240,6 +1248,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakjeGemakForBuspakje($quote)
+        ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress
+            && $shippingAddress->getCountryId() == 'BE'
+            && Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_BE, $quote->getStoreId()) === false
         ) {
             Mage::register($registryKey, false);
             return false;
@@ -2510,6 +2527,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Delivery options are only available when shipping to the Netherlands or Belgium.
          */
         if ($shippingAddress->getCountry() != 'NL' && $shippingAddress->getCountry() != 'BE') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        if ($shippingAddress->getCountry() == 'BE'
+            && Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $quote->getStoreId()) === false
+        ) {
             Mage::register($registryKey, false);
             return false;
         }

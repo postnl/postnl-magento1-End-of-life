@@ -853,15 +853,18 @@
             </cif_labels_and_confirming>
             <delivery_options>
                 <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
+                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
                 <responsive>0</responsive> <!-- Do not use the responsive design -->
                 <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
                 <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
+                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
                 <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
                 <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
