@@ -1267,6 +1267,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
+         */
+        $isFood = Mage::helper('postnl')->quoteIsFood($quote);
+        if ($isFood) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
          * Check if any products in the quote have explicitly disabled PakjeGemak locations.
          *
          * @var Mage_Sales_Model_Quote_item $item
@@ -1515,6 +1524,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakketAutomaatForBuspakje($quote)
         ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
+         */
+        $isFood = Mage::helper('postnl')->quoteIsFood($quote);
+        if ($isFood) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2825,6 +2843,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * This shipment cannot be used for buspakje shipments.
          */
         if ($this->quoteIsBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If the shipment is a Food Delivery shipment, this option should not be shown.
+         */
+        if (Mage::helper('postnl')->quoteIsFood($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
