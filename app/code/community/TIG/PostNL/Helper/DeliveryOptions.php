@@ -728,12 +728,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the quote is a food quote, every delivery option should be of the type 'Food'.
              */
-            $isFood = $this->quoteIsFood();
-            if ($isFood) {
-                if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
-                    $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
-                } elseif ($isFood == self::FOOD_TYPE_COOL_PRODUCTS) {
-                    $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Cooledfood');
+            $canUseFood = $this->canUseFoodDelivery(false);
+            if ($canUseFood) {
+                $isFood = $this->quoteIsFood();
+                if ($isFood) {
+                    if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
+                        $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
+                    } elseif ($isFood == self::FOOD_TYPE_COOL_PRODUCTS) {
+                        $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Cooledfood');
+                    }
                 }
             }
         }
@@ -1269,7 +1272,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
          */
-        $isFood = Mage::helper('postnl')->quoteIsFood($quote);
+        $isFood = $this->canUseFoodDelivery();
         if ($isFood) {
             Mage::register($registryKey, false);
             return false;
@@ -1531,7 +1534,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
          */
-        $isFood = Mage::helper('postnl')->quoteIsFood($quote);
+        $isFood = $this->canUseFoodDelivery();
         if ($isFood) {
             Mage::register($registryKey, false);
             return false;
@@ -2012,7 +2015,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return bool
      */
-    public function canUseFoodDelivery()
+    public function canUseFoodDelivery($checkQuote = true)
     {
         $allowed = false;
 
@@ -2026,7 +2029,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
-        $quoteIsFood = (bool) $this->quoteIsFood();
+        if ($checkQuote) {
+            $quoteIsFood = (bool) $this->quoteIsFood();
+        } else {
+            //Dummy value to prevent checking of the quote, but still pass the if statement underneath.
+            $quoteIsFood = true;
+        }
 
         if ($foodDeliveryEnabled && $quoteIsFood && $domesticCountryNL) {
             $allowed = true;
@@ -2850,7 +2858,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the shipment is a Food Delivery shipment, this option should not be shown.
          */
-        if (Mage::helper('postnl')->quoteIsFood($quote)) {
+        if ($this->canUseFoodDelivery()) {
             Mage::register($registryKey, false);
             return false;
         }
