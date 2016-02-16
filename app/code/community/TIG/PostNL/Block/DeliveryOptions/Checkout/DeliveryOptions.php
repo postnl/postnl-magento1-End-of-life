@@ -757,7 +757,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return false;
         }
 
-        if ($this->getPakjeGemakFee() < 0.01) {
+        if (abs($this->getPakjeGemakFee()) < 0.01) {
             return false;
         }
 
