@@ -458,9 +458,11 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
             $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
             if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
-                $request->setParcelType('regular');
+                $request->setParcelType('pakje_gemak');
             } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
                 $request->setParcelType('letter_box');
+            } else {
+                $request->setParcelType('regular');
             }
         }
 

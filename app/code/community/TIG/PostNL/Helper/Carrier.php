@@ -299,7 +299,15 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setBaseSubtotalInclTax(
             $shippingAddress->getBaseSubtotalInclTax() + $shippingAddress->getBaseExtraTaxAmount()
         );
-        $request->setParcelType('regular');
+
+        /**
+         * Currently only Belgium allows for a separate PakjeGemak rate.
+         */
+        if ($shippingAddress->getCountryId() == 'BE') {
+            $request->setParcelType('pakje_gemak');
+        } else {
+            $request->setParcelType('regular');
+        }
 
         $rawResult = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
         if (!$rawResult) {

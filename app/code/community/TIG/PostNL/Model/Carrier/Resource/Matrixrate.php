@@ -439,7 +439,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $allowedParcelTypes = array(
                 '*',
                 'letter_box',
-                'regular'
+                'regular',
+                'pakje_gemak',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -562,14 +563,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case '*':
                 $formattedType = '*';
                 break;
-            case 'letter_box':       //no break
-            case 'letterbox':        //no break
-            case 'buspakje':         //no break
-            case 'bus_pakje':        //no break
-            case 'brievenbuspakje':  //no break
-            case 'brievenbus pakje': //no break
-            case 'letterboxparcel':  //no break
-            case 'letter box parcel':
+            case 'letter_box':        //no break
+            case 'letterbox':         //no break
+            case 'buspakje':          //no break
+            case 'bus_pakje':         //no break
+            case 'brievenbuspakje':   //no break
+            case 'brievenbus pakje':  //no break
+            case 'letterboxparcel':   //no break
+            case 'letter box parcel': //no break
                 $formattedType = 'letter_box';
                 break;
             case 'regular':          //no break
@@ -579,6 +580,13 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'parcel':           //no break
             case 'package':
                 $formattedType = 'regular';
+                break;
+            case 'pakje_gemak':      //no break
+            case 'pakje gemak':      //no break
+            case 'PakjeGemak':       //no break
+            case 'postkantoor':      //no break
+            case 'post office':      //no break
+                $formattedType = 'pakje_gemak';
                 break;
             //no default
         }

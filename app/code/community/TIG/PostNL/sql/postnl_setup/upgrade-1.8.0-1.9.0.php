@@ -114,4 +114,21 @@ if (!$conn->tableColumnExists($tableName, 'pg_retail_network_id')) {
     );
 }
 
+/***********************************************************************************************************************
+ * POSTNL MATRIX RATES
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_carrier/matrixrate');
+
+$conn->modifyColumn(
+    $tableName,
+    'parcel_type',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => false,
+        'default'  => '*',
+        'length'   => 16,
+    )
+);
+
 $installer->endSetup();
