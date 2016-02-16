@@ -1347,3 +1347,4 @@ TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
 TIG_PostNL::Same day delivery will only work if your shipping duration is set to 0 days in either the config or for applicaple products.,Dezelfde dag bezorgd zal enkel getoond worden wanneer de overkomstduur ingesteld staat op 0 dagen in de configuratie of voor geselecteerde producten.
 TIG_PostNL::today cooled,vandaag gekoeld
 TIG_PostNL::cooled delivery,gekoeld verstuurd
+TIG_PostNL::Food Delivery Options,Food Bezorging Opties

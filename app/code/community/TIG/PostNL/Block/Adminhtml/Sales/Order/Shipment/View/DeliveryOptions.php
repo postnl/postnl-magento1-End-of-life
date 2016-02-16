@@ -216,6 +216,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
                 $shipmentType = $this->__('Same Day Delivery');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_FOOD:
+                $shipmentType = $this->__('Food Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_COOLED:
+                $shipmentType = $this->__('Cooled Food Delivery');
+                break;
         }
 
         return $shipmentType;

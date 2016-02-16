@@ -5505,7 +5505,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
         }
 
-        if (this.type = 'Cooledfood') {
+        if (this.type == 'Cooledfood') {
             if (this.isTimeFrameToday()) {
                 comment = '<span class="option-comment">' + Translator.translate('today cooled') + '</span>';
             } else {
