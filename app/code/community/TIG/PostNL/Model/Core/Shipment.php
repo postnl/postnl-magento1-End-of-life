@@ -105,6 +105,8 @@
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
  * @method int                            getReturnPhase()
+ * @method string                         getPgLocationCode()
+ * @method string                         getPgRetailNetworkId()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -148,6 +150,8 @@
  * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeStart(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeEnd(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setPgLocationCode(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setPgRetailNetworkId(string $value)
  *
  * @method boolean                        hasBarcodeUrl()
  * @method boolean                        hasPostnlOrder()
@@ -180,6 +184,8 @@
  * @method boolean                        hasExpectedDeliveryTimeEnd()
  * @method boolean                        hasReturnPhase()
  * @method boolean                        hasReturnBarcodeUrl()
+ * @method string                         hasPgLocationCode()
+ * @method string                         hasPgRetailNetworkId()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {

@@ -121,6 +121,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 break;
             case 'PG':
                 $shipmentType = $this->__('Post Office');
+
+                if ($countryId == 'BE') {
+                    $this->setSubType($this->__('Belgium'));
+                }
                 break;
             case 'Avond':
                 $this->setSubType($this->__('Evening Delivery'));

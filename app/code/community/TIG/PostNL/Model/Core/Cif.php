@@ -990,9 +990,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentData['Customs'] = $this->_getCustoms($postnlShipment);
         }
 
+        /**
+         * Add product options.
+         */
         $productOptions = $this->_getProductOptions($postnlShipment);
         if ($productOptions) {
             $shipmentData['ProductOptions'] = $productOptions;
+        }
+
+        /**
+         * Add 'DownPartner' data.
+         */
+        $downPartnerData = $this->_getDownPartnerData($postnlShipment);
+        if ($downPartnerData) {
+            $shipmentData['DownPartnerID'] = $downPartnerData['id'];
+            $shipmentData['DownPartnerLocation'] = $downPartnerData['location'];
         }
 
         return $shipmentData;
@@ -1062,6 +1074,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         return $productOptions;
+    }
+
+    /**
+     * Get 'DownPartner' data from the specified PostNL shipment if available.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return array|bool
+     */
+    protected function _getDownPartnerData(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        if (!$postnlShipment->hasPgLocationCode() || !$postnlShipment->hasPgRetailNetworkId()) {
+            return false;
+        }
+
+        $downPartnerData = array(
+            'id'       => $postnlShipment->getPgRetailNetworkId(),
+            'location' => $postnlShipment->getPgLocationCode(),
+        );
+
+        return $downPartnerData;
     }
 
     /**

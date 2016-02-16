@@ -57,6 +57,8 @@
  * @method string                      getExpectedDeliveryTimeEnd()
  * @method string                      getUpdatedAt()
  * @method string                      getCreatedAt()
+ * @method string                      getPgLocationCode()
+ * @method string                      getPgRetailNetworkId()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -78,6 +80,8 @@
  * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeStart(string $value)
  * @method TIG_PostNL_Model_Core_Order setExpectedDeliveryTimeEnd(string $value)
  * @method TIG_PostNL_Model_Core_Order setStoreId(int $value)
+ * @method TIG_PostNL_Model_Core_Order setPgLocationCode(string $value)
+ * @method TIG_PostNL_Model_Core_Order setPgRetailNetworkId(string $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
@@ -89,6 +93,8 @@
  * @method boolean                     hasExpectedDeliveryTimeStart()
  * @method boolean                     hasExpectedDeliveryTimeEnd()
  * @method boolean                     hasStoreId()
+ * @method string                      hasPgLocationCode()
+ * @method string                      hasPgRetailNetworkId()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {

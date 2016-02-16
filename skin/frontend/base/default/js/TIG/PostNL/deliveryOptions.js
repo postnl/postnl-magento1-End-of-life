@@ -515,6 +515,9 @@ PostnlDeliveryOptions.prototype = {
             case 'automaat':
                 imageName = 'automaat';
                 break;
+            case 'kariboo':
+                imageName = 'kariboo';
+                break;
             default:
                 imageName = 'default';
                 break;
@@ -1586,10 +1589,12 @@ PostnlDeliveryOptions.prototype = {
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            var address            = selectedOption.getAddress();
-            address['Name']        = selectedOption.getName();
-            address['PhoneNumber'] = selectedOption.getPhoneNumber();
-            params['address']      = Object.toJSON(address);
+            var address               = selectedOption.getAddress();
+            address['Name']           = selectedOption.getName();
+            address['PhoneNumber']    = selectedOption.getPhoneNumber();
+            params['address']         = Object.toJSON(address);
+            params['locationCode']    = Object.toJSON(selectedOption.locationCode);
+            params['retailNetworkId'] = Object.toJSON(selectedOption.retailNetworkID);
         }
 
         if (selectedType == 'PA') {
@@ -2076,7 +2081,9 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.getName();
         }
 
-        if (typeof location.DeliveryOptions != 'undefined'
+        if (this.getDeliveryOptions().country == 'BE') {
+            name = 'kariboo';
+        } else if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
         ) {
             name = 'automaat';
@@ -2109,7 +2116,11 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.Name;
         }
 
-        if (typeof location.DeliveryOptions != 'undefined'
+        var anchor = new google.maps.Point(17, 46);
+        if (this.getDeliveryOptions().country == 'BE') {
+            name = 'kariboo';
+            anchor = new google.maps.Point(42, 78);
+        } else if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
             ) {
             name = 'automaat';
@@ -2124,7 +2135,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         var image = imageBase + '/drp_' + imageName + '.png';
 
         return {
-            anchor : new google.maps.Point(17, 46),
+            anchor : anchor,
             url    : image
         };
     },
@@ -3924,6 +3935,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     openingHours         : null,
     locationCode         : null,
     date                 : null,
+    retailNetworkID      : null,
 
     deliveryOptions      : null,
     type                 : [],
@@ -3958,6 +3970,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
         this.date              = deliveryOptions.getDeliveryDate();
         this.isEveningLocation = location.isEvening;
+        this.retailNetworkID   = location.RetailNetworkID;
 
         this.deliveryOptions   = deliveryOptions;
 
@@ -4768,9 +4781,16 @@ PostnlDeliveryOptions.Location = new Class.create({
         var html = '<li class="location" id="' + id + '">';
         html += '<div class="content">';
 
+        var imageName;
+        if (this.getDeliveryOptions().country == 'BE') {
+            imageName = 'kariboo';
+        } else {
+            imageName = this.getName();
+        }
+
         var image = this.getDeliveryOptions().getImageBasUrl()
                   + '/tmb_'
-                  + this.getDeliveryOptions().getImageName(this.getName())
+                  + this.getDeliveryOptions().getImageName(imageName)
                   + '.png';
         html += '<img src="' + image + '" class="location-icon" alt="' + this.getName() + '" />';
         html += '<span class="overflow-protect">';

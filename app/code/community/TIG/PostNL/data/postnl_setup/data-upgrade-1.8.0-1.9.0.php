@@ -36,13 +36,11 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryOptions.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/livepipe.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/slider.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/placeholder.min.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/scrollbar.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-yui.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-fonts.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-settings.js'); ?>" type="text/javascript"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->getApiKey(); ?>&libraries=places&v=3.22" type="text/javascript"></script>
+
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
+
+$installer->addSupportedProductCode('4932')
+          ->clearConfigCache();
