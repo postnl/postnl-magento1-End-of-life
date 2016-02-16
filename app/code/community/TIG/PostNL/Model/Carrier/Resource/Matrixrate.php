@@ -94,6 +94,15 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                           ->order(
                               array(
                                   'website_id DESC',
+                                  new Zend_Db_Expr(
+                                      "(CASE parcel_type" .
+                                      " WHEN 'letter_box' THEN 1" .
+                                      " WHEN 'pakje_gemak' THEN 2" .
+                                      " WHEN 'regular' THEN 3" .
+                                      " WHEN '*' THEN 4" .
+                                      " ELSE 100" .
+                                      " END) ASC"
+                                  ),
                                   'parcel_type DESC',
                                   'dest_country_id DESC',
                                   'dest_region_id DESC',
@@ -136,7 +145,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         $select->where('weight <= :weight');
         $select->where('subtotal <= :subtotal');
         $select->where('qty <= :qty');
-        $select->where("(parcel_type = :parcel_type) OR (parcel_type = '*')");
+
+        $parcelTypeWhereClause = "(parcel_type = :parcel_type)";
+        if ($parcelType == 'pakje_gemak') {
+            $parcelTypeWhereClause .= " OR (parcel_type = 'regular')";
+        }
+        $parcelTypeWhereClause .= " OR (parcel_type = '*')";
+
+        $select->where($parcelTypeWhereClause);
 
         $result = $adapter->fetchRow($select, $bind);
 

@@ -753,10 +753,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canShowSeparateRates()
     {
-        if (!$this->getIsBuspakje() && !$this->isBelgianOrder()) {
-            return false;
-        }
-
         if (!$this->canUsePakjeGemak()) {
             return false;
         }
@@ -766,21 +762,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         return true;
-    }
-
-    /**
-     * Check if this order's destination is Belgium.
-     *
-     * @return bool
-     */
-    public function isBelgianOrder()
-    {
-        $address = $this->getShippingAddress();
-        if ($address->getCountryId() == 'BE') {
-            return true;
-        }
-
-        return false;
     }
 
     /**

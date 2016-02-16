@@ -353,15 +353,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
-            /**
-             * If the current order is not a buspakje order, the fee is 0.
-             */
-            if ($this->quoteIsBuspakje($quote) && !$this->isBuspakjeConfigApplicableToQuote()) {
-                Mage::register($registryKey, 0);
-
-                return 0;
-            }
-
             $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
             if (!$pakjeGemakShippingRates) {
                 return 0;
