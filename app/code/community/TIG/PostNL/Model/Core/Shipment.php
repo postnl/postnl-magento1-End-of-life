@@ -100,6 +100,8 @@
  * @method boolean                        getIsSundayShipment()
  * @method boolean                        getIsMondayShipment()
  * @method boolean                        getIsSameDayShipment()
+ * @method boolean                        getIsFoodShipment()
+ * @method boolean                        getIsCooledShipment()
  * @method int                            getReturnLabelsPrinted()
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
@@ -138,6 +140,8 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsSundayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsMondayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsSameDayShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsFoodShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsCooledShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -171,6 +175,8 @@
  * @method boolean                        hasIsSundayShipment()
  * @method boolean                        hasIsMondayShipment()
  * @method boolean                        hasIsSameDayShipment()
+ * @method boolean                        hasIsFoodShipment()
+ * @method boolean                        hasIsCooledShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -222,6 +228,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_SUNDAY       = 'sunday';
     const SHIPMENT_TYPE_MONDAY       = 'monday';
     const SHIPMENT_TYPE_SAMEDAY      = 'sameday';
+    const SHIPMENT_TYPE_FOOD         = 'food';
+    const SHIPMENT_TYPE_COOLED       = 'cooledfood';
 
     /**
      * Xpaths to default product options settings.
@@ -235,6 +243,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/grid/default_pge_product_option';
     const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cod/default_pge_cod_product_option';
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/delivery_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_FOOD_PRODUCT_OPTION           = 'postnl/delivery_options/default_food_product_option';
+    const XPATH_DEFAULT_COOLED_PRODUCT_OPTION         = 'postnl/delivery_options/default_cooled_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_globalpack_settings/default_global_product_option';
@@ -815,6 +825,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_SAMEDAY;
         }
 
+        if ($this->isFoodShipment()) {
+            return self::SHIPMENT_TYPE_FOOD;
+        }
+
+        if ($this->isCooledShipment()) {
+            return self::SHIPMENT_TYPE_COOLED;
+        }
+
         if ($this->isDomesticShipment()) {
             return self::SHIPMENT_TYPE_DOMESTIC;
         }
@@ -1219,6 +1237,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case self::SHIPMENT_TYPE_SAMEDAY:
                 $xpath = self::XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION;
                 break;
+            case self::SHIPMENT_TYPE_FOOD:
+                $xpath = self::XPATH_DEFAULT_FOOD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_COOLED:
+                $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
+                break;
+
+
             //no default
         }
 
@@ -1631,6 +1657,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_SAMEDAY:
                 $allowedProductCodes = $cifHelper->getSameDayProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_COOLED:
+                $allowedProductCodes = $cifHelper->getCooledProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_FOOD:
+                $allowedProductCodes = $cifHelper->getFoodProductCodes($flat);
                 break;
             default:
                 $allowedProductCodes = array();
@@ -2473,6 +2505,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a food delivery shipment.
+     *
+     * @return bool
+     */
+    public function isFoodShipment()
+    {
+        if ($this->hasIsFoodShipment()) {
+            return $this->getIsFoodShipment();
+        }
+
+        $isFood = $this->isFood();
+
+        $this->setIsFoodShipment($isFood);
+        return $isFood;
+    }
+
+    /**
+     * Check if this shipment is a cooled food delivery shipment.
+     *
+     * @return bool
+     */
+    public function isCooledShipment()
+    {
+        if ($this->hasIsCooledShipment()) {
+            return $this->getIsCooledShipment();
+        }
+
+        $isFood = $this->isCooled();
+
+        $this->setIsCooledShipment($isFood);
+        return $isFood;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
@@ -2503,7 +2569,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Checks if the order of this shipment is a Monday order.
+     * Checks if the order of this shipment is a Sameday order.
      *
      * @return bool
      */
@@ -2511,6 +2577,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getType() == 'Sameday') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a Food order.
+     *
+     * @return bool
+     */
+    public function isFood()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Food') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a Cooled Food order.
+     *
+     * @return bool
+     */
+    public function isCooled()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == 'Cooledfood') {
             return true;
         }
 

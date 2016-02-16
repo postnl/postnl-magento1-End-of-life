@@ -141,6 +141,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 }
                 $shipmentType  = $this->__('Domestic');
                 break;
+            case 'Food':
+                $shipmentType = $this->__('Food Delivery');
+                break;
+            case 'Cooledfood':
+                $shipmentType = $this->__('Cooled Food Delivery');
+                break;
         }
 
         if ($shipmentType) {

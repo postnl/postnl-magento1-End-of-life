@@ -125,6 +125,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case 'sameday':
                 $label = $helper->__('Same Day Delivery');
                 break;
+            case 'food':
+                $label = $helper->__('Food Delivery');
+                break;
+            case 'cooledfood':
+                $label = $helper->__('Cooled Food Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
