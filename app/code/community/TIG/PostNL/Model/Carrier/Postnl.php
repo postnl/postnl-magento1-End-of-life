@@ -59,6 +59,20 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     const XPATH_RATE_SOURCE = 'carriers/postnl/rate_source';
 
     /**
+     * String values for parcel types.
+     */
+    const PARCEL_TYPE_REGULAR   = 'regular';
+    const PARCEL_TYPE_LETTERBOX = 'letter_box';
+    const PARCEL_TYPE_FOOD      = 'food';
+
+    /**
+     * String values for different rate types.
+     */
+    const RATE_TYPE_FLAT   = 'flat';
+    const RATE_TYPE_TABLE  = 'table';
+    const RATE_TYPE_MATRIX = 'matrix';
+
+    /**
      * PostNL carrier code
      *
      * @var string
@@ -83,6 +97,21 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     protected $_conditionNames = array();
 
     /**
+     * @var
+     */
+    protected $_requestItems;
+
+    /**
+     * @var Mage_Shipping_Model_Rate_Request
+     */
+    protected $_request;
+
+    /**
+     * @var Mage_Shipping_Model_Rate_Result
+     */
+    public $result;
+
+    /**
      * Class constructor.
      */
     public function __construct()
@@ -91,6 +120,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         foreach (array_keys($this->getCode('condition_name')) as $k) {
             $this->_conditionNames[] = $k;
         }
+        $this->result = Mage::getModel('shipping/rate_result');
     }
 
     /**
@@ -134,12 +164,19 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             return false;
         }
 
+        $this->_request = $request;
+
         /**
          * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping
          * products
          */
-        $countryId = $request->getDestCountryId();
+        $countryId = $this->_request->getDestCountryId();
         $helper = $this->getHelper();
+
+        if (!$this->_isShippingAllowed()) {
+            return false;
+        }
+
         if ($countryId) {
             $domesticCountry = $helper->getDomesticCountry();
             $euCountries = Mage::helper('postnl/cif')->getEuCountries();
@@ -163,40 +200,119 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             }
         }
 
+        /**
+         * Find the parcel type and set this on the request object.
+         */
+        $this->_findParcelType();
+
+        /**
+         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
+         */
+        if ($this->_request->getParcelType() == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
+            return $this->_addShippingRateNotFoundError();
+        }
+
+        $this->_collectRate();
+
+        return $this->result;
+    }
+
+    /**
+     * Collect rate based on configured rate type
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _collectRate()
+    {
+        $helper = $this->getHelper();
         $rateType = Mage::getStoreConfig(self::XPATH_RATE_TYPE, Mage::app()->getStore()->getId());
 
-        if ($rateType == 'flat') {
-            $result = $this->_getFlatRate($request);
+        switch ($rateType) {
+            case self::RATE_TYPE_FLAT:
+                $this->_collectFlatRate();
+                break;
+            case self::RATE_TYPE_TABLE:
+                $this->_collectTableRate();
+                break;
+            case self::RATE_TYPE_MATRIX:
+                $this->_collectMatrixRate();
+                break;
+            default:
+                throw new TIG_PostNL_Exception(
+                    $helper->__('Invalid rate type requested: %s', $rateType),
+                    'POSTNL-0036'
+                );
+        }
+    }
+
+    /**
+     * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping
+     * products
+     *
+     * @return bool
+     */
+    protected function _isShippingAllowed()
+    {
+        $countryId = $this->_request->getDestCountryId();
+        $helper = $this->getHelper();
+
+        if ($countryId) {
+            $domesticCountry = $helper->getDomesticCountry();
+            $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+
+            if ($countryId == $domesticCountry
+                && !$helper->canUseStandard()
+            ) {
+                return false;
+            } elseif (
+                $countryId != $domesticCountry
+                && in_array($countryId, $euCountries)
+                && !$helper->canUseEps()
+            ) {
+                return false;
+            } elseif (
+                $countryId != $domesticCountry
+                && !in_array($countryId, $euCountries)
+                && !$helper->canUseGlobalPack()
+            ) {
+                return false;
+            }
         }
 
-        if ($rateType == 'table') {
-            $result = $this->_getTableRate($request);
-        }
+        return true;
+    }
 
-        if ($rateType == 'matrix') {
-            $result = $this->_getMatrixRate($request);
-        }
+    /**
+     * Find the parcel type and set this on the request object.
+     */
+    protected function _findParcelType()
+    {
+        /**
+         * Determine the parcel type.
+         */
+        if ($this->getRequestItems()) {
+            $item  = current($this->getRequestItems());
+            $quote = $item->getQuote();
 
-        if (!isset($result)) {
-            throw new TIG_PostNL_Exception(
-                $helper->__('Invalid rate type requested: %s', $rateType),
-                'POSTNL-0036'
-            );
+            $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
+            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
+                $this->_request->setParcelType(self::PARCEL_TYPE_REGULAR);
+            } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
+                $this->_request->setParcelType(self::PARCEL_TYPE_LETTERBOX);
+            } elseif (Mage::helper('postnl')->quoteIsFood()) {
+                $this->_request->setParcelType(self::PARCEL_TYPE_FOOD);
+            }
         }
-
-        return $result;
     }
 
     /**
      * @param Mage_Shipping_Model_Rate_Request $request
-     *
-     * @return Mage_Shipping_Model_Rate_Result
      */
-    protected function _getFlatRate($request)
+    protected function _collectFlatRate()
     {
         $freeBoxes = 0;
-        if ($request->getAllItems()) {
-            foreach ($request->getAllItems() as $item) {
+        if ($this->getRequestItems()) {
+            foreach ($this->getRequestItems() as $item) {
 
                 if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
                     continue;
@@ -215,11 +331,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
         $this->setFreeBoxes($freeBoxes);
 
-        $result = Mage::getModel('shipping/rate_result');
         if ($this->getConfigData('type') == 'O') { // per order
             $shippingPrice = $this->getConfigData('price');
         } elseif ($this->getConfigData('type') == 'I') { // per item
-            $shippingPrice = ($request->getPackageQty() * $this->getConfigData('price'))
+            $shippingPrice = ($this->_request->getPackageQty() * $this->getConfigData('price'))
                            - ($this->getFreeBoxes() * $this->getConfigData('price'));
         } else {
             $shippingPrice = false;
@@ -236,40 +351,36 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $method->setMethod('flatrate');
             $method->setMethodTitle($this->getConfigData('name'));
 
-            if ($request->getFreeShipping() === true || $request->getPackageQty() == $this->getFreeBoxes()) {
+            if ($this->_request->getFreeShipping() === true || $this->_request->getPackageQty() == $this->getFreeBoxes()) {
                 $shippingPrice = '0.00';
             }
 
             $method->setPrice($shippingPrice);
             $method->setCost($shippingPrice);
 
-            $result->append($method);
+            $this->result->append($method);
         }
-
-        return $result;
     }
 
     /**
-     * @param Mage_Shipping_Model_Rate_Request $request
      *
-     * @return Mage_Shipping_Model_Rate_Result
      */
-    protected function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
+    protected function _collectTableRate()
     {
         // exclude Virtual products price from Package value if pre-configured
-        if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
-            foreach ($request->getAllItems() as $item) {
+        if (!$this->getConfigFlag('include_virtual_price') && $this->getRequestItems()) {
+            foreach ($this->getRequestItems() as $item) {
                 if ($item->getParentItem()) {
                     continue;
                 }
                 if ($item->getHasChildren() && $item->isShipSeparately()) {
                     foreach ($item->getChildren() as $child) {
                         if ($child->getProduct()->isVirtual()) {
-                            $request->setPackageValue($request->getPackageValue() - $child->getBaseRowTotal());
+                            $this->_request->setPackageValue($this->_request->getPackageValue() - $child->getBaseRowTotal());
                         }
                     }
                 } elseif ($item->getProduct()->isVirtual()) {
-                    $request->setPackageValue($request->getPackageValue() - $item->getBaseRowTotal());
+                    $this->_request->setPackageValue($this->_request->getPackageValue() - $item->getBaseRowTotal());
                 }
             }
         }
@@ -277,9 +388,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         // Free shipping by qty
         $freeQty = 0;
         $freePackageValue = false;
-        if ($request->getAllItems()) {
+        if ($this->getRequestItems()) {
             $freePackageValue = 0;
-            foreach ($request->getAllItems() as $item) {
+            foreach ($this->getRequestItems() as $item) {
                 if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
                     continue;
                 }
@@ -297,33 +408,33 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                     $freePackageValue += $item->getBaseRowTotal();
                 }
             }
-            $oldValue = $request->getPackageValue();
-            $request->setPackageValue($oldValue - $freePackageValue);
+            $oldValue = $this->_request->getPackageValue();
+            $this->_request->setPackageValue($oldValue - $freePackageValue);
         }
 
         if ($freePackageValue) {
-            $request->setPackageValue($request->getPackageValue() - $freePackageValue);
+            $this->_request->setPackageValue($this->_request->getPackageValue() - $freePackageValue);
         }
 
         $conditionName = $this->getConfigData('condition_name');
-        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
+        $this->_request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
 
          // Package weight and qty free shipping
-        $oldWeight = $request->getPackageWeight();
-        $oldQty = $request->getPackageQty();
+        $oldWeight = $this->_request->getPackageWeight();
+        $oldQty = $this->_request->getPackageQty();
 
-        $request->setPackageWeight($request->getFreeMethodWeight());
-        $request->setPackageQty($oldQty - $freeQty);
+        $this->_request->setPackageWeight($this->_request->getFreeMethodWeight());
+        $this->_request->setPackageQty($oldQty - $freeQty);
 
-        $result = Mage::getModel('shipping/rate_result');
-        $rate = $this->getRate($request);
+        $this->result = Mage::getModel('shipping/rate_result');
+        $rate = $this->getRate($this->_request);
 
-        $request->setPackageWeight($oldWeight);
-        $request->setPackageQty($oldQty);
+        $this->_request->setPackageWeight($oldWeight);
+        $this->_request->setPackageQty($oldQty);
 
         $method = Mage::getModel('shipping/rate_result_method');
         if (!empty($rate) && $rate['price'] >= 0) {
-            if ($request->getFreeShipping() === true || ($request->getPackageQty() == $freeQty)) {
+            if ($this->_request->getFreeShipping() === true || ($this->_request->getPackageQty() == $freeQty)) {
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
@@ -331,16 +442,16 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
             $price = $shippingPrice;
             $cost = $rate['cost'];
-        } elseif (empty($rate) && $request->getFreeShipping() === true) {
+        } elseif (empty($rate) && $this->_request->getFreeShipping() === true) {
             /**
              * was applied promotion rule for whole cart
              * other shipping methods could be switched off at all
              * we must show table rate method with 0$ price, if grand_total more, than min table condition_value
              * free setPackageWeight() has already was taken into account
              */
-            $request->setPackageValue($freePackageValue);
-            $request->setPackageQty($freeQty);
-            $rate = $this->getRate($request);
+            $this->_request->setPackageValue($freePackageValue);
+            $this->_request->setPackageQty($freeQty);
+            $rate = $this->getRate($this->_request);
             if (!empty($rate) && $rate['price'] >= 0) {
                 $method = Mage::getModel('shipping/rate_result_method');
             }
@@ -348,13 +459,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $price = 0;
             $cost = 0;
         } else {
-            $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('postnl');
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
-            $result->append($error);
-
-            return $result;
+            $this->_addShippingRateNotFoundError();
+            return;
         }
 
         $method->setCarrier('postnl');
@@ -366,24 +472,20 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $method->setPrice($price);
         $method->setCost($cost);
 
-        $result->append($method);
-
-        return $result;
+        $this->result->append($method);
     }
 
     /**
-     * @param Mage_Shipping_Model_Rate_Request $request
      *
-     * @return Mage_Shipping_Model_Rate_Result
      */
-    protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
+    protected function _collectMatrixRate()
     {
         // exclude Virtual products price from Package value if pre-configured
-        if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
+        if (!$this->getConfigFlag('include_virtual_price') && $this->getRequestItems()) {
             /**
              * @var Mage_Sales_Model_Quote_Item $item
              */
-            foreach ($request->getAllItems() as $item) {
+            foreach ($this->getRequestItems() as $item) {
                 if ($item->getParentItem()) {
                     continue;
                 }
@@ -393,11 +495,11 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                          * @var Mage_Sales_Model_Quote_Item $child
                          */
                         if ($child->getProduct()->isVirtual()) {
-                            $request->setPackageValue($request->getPackageValue() - $child->getBaseRowTotal());
+                            $this->_request->setPackageValue($this->_request->getPackageValue() - $child->getBaseRowTotal());
                         }
                     }
                 } elseif ($item->getProduct()->isVirtual()) {
-                    $request->setPackageValue($request->getPackageValue() - $item->getBaseRowTotal());
+                    $this->_request->setPackageValue($this->_request->getPackageValue() - $item->getBaseRowTotal());
                 }
             }
         }
@@ -405,12 +507,12 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         // Free shipping by qty
         $freeQty = 0;
         $freePackageValue = false;
-        if ($request->getAllItems()) {
+        if ($this->getRequestItems()) {
             $freePackageValue = 0;
             /**
              * @var Mage_Sales_Model_Quote_Item $item
              */
-            foreach ($request->getAllItems() as $item) {
+            foreach ($this->getRequestItems() as $item) {
                 if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
                     continue;
                 }
@@ -431,50 +533,33 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                     $freePackageValue += $item->getBaseRowTotal();
                 }
             }
-            $oldValue = $request->getPackageValue();
-            $request->setPackageValue($oldValue - $freePackageValue);
+            $oldValue = $this->_request->getPackageValue();
+            $this->_request->setPackageValue($oldValue - $freePackageValue);
         }
 
         if ($freePackageValue) {
-            $request->setPackageValue($request->getPackageValue() - $freePackageValue);
+            $this->_request->setPackageValue($this->_request->getPackageValue() - $freePackageValue);
         }
 
         $conditionName = $this->getConfigData('condition_name');
-        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
+        $this->_request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
 
         // Package weight and qty free shipping
-        $oldWeight = $request->getPackageWeight();
-        $oldQty = $request->getPackageQty();
+        $oldWeight = $this->_request->getPackageWeight();
+        $oldQty = $this->_request->getPackageQty();
 
-        $request->setPackageWeight($request->getFreeMethodWeight());
-        $request->setPackageQty($oldQty - $freeQty);
+        $this->_request->setPackageWeight($this->_request->getFreeMethodWeight());
+        $this->_request->setPackageQty($oldQty - $freeQty);
 
-        /**
-         * Determine the parcel type.
-         */
-        if ($request->getAllItems()) {
-            $item  = current($request->getAllItems());
-            $quote = $item->getQuote();
+        $this->result = Mage::getModel('shipping/rate_result');
+        $rate = $this->getMatrixRate($this->_request);
 
-            $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
-            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
-                $request->setParcelType('regular');
-            } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
-                $request->setParcelType('letter_box');
-            } elseif (Mage::helper('postnl/deliveryOptions')->canUseFoodDelivery()) {
-                $request->setParcelType('food');
-            }
-        }
-
-        $result = Mage::getModel('shipping/rate_result');
-        $rate = $this->getMatrixRate($request);
-
-        $request->setPackageWeight($oldWeight);
-        $request->setPackageQty($oldQty);
+        $this->_request->setPackageWeight($oldWeight);
+        $this->_request->setPackageQty($oldQty);
 
         $method = Mage::getModel('shipping/rate_result_method');
         if (!empty($rate) && $rate['price'] >= 0) {
-            if ($request->getFreeShipping() === true || ($request->getPackageQty() == $freeQty)) {
+            if ($this->_request->getFreeShipping() === true || ($this->_request->getPackageQty() == $freeQty)) {
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
@@ -482,16 +567,16 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
             $price = $shippingPrice;
             $cost = $rate['cost'];
-        } elseif (empty($rate) && $request->getFreeShipping() === true) {
+        } elseif (empty($rate) && $this->_request->getFreeShipping() === true) {
             /**
              * was applied promotion rule for whole cart
              * other shipping methods could be switched off at all
              * we must show table rate method with 0$ price, if grand_total more, than min table condition_value
              * free setPackageWeight() has already was taken into account
              */
-            $request->setPackageValue($freePackageValue);
-            $request->setPackageQty($freeQty);
-            $rate = $this->getMatrixRate($request);
+            $this->_request->setPackageValue($freePackageValue);
+            $this->_request->setPackageQty($freeQty);
+            $rate = $this->getMatrixRate($this->_request);
             if (!empty($rate) && $rate['price'] >= 0) {
                 $method = Mage::getModel('shipping/rate_result_method');
             }
@@ -499,13 +584,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $price = 0;
             $cost = 0;
         } else {
-            $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('postnl');
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
-            $result->append($error);
-
-            return $result;
+            $this->_addShippingRateNotFoundError();
+            return;
         }
 
         $method->setCarrier('postnl');
@@ -517,9 +597,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $method->setPrice($price);
         $method->setCost($cost);
 
-        $result->append($method);
-
-        return $result;
+        $this->result->append($method);
     }
 
     /**
@@ -529,14 +607,14 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        $websiteId = $request->getWebsiteId();
+        $websiteId = $this->_request->getWebsiteId();
         $website = Mage::getModel('core/website')->load($websiteId);
 
         $rateSource = $website->getConfig(self::XPATH_RATE_SOURCE);
         if ($rateSource == 'shipping_tablerate') {
-            $rate = Mage::getResourceModel('shipping/carrier_tablerate')->getRate($request);
+            $rate = Mage::getResourceModel('shipping/carrier_tablerate')->getRate($this->_request);
         } else {
-            $rate = Mage::getResourceModel('postnl_carrier/tablerate')->getRate($request);
+            $rate = Mage::getResourceModel('postnl_carrier/tablerate')->getRate($this->_request);
         }
 
         return $rate;
@@ -549,7 +627,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     public function getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        $rate = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
+        $rate = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($this->_request);
 
         return $rate;
     }
@@ -670,4 +748,67 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
         return $track;
     }
+
+    /**
+     * Adds shipping rate not found error to the given result, or instantiate empty result with error if neccessary.
+     *
+     * @param Mage_Shipping_Model_Rate_Request|null $request
+     *
+     * @return false|Mage_Core_Model_Abstract|null
+     */
+    protected function _addShippingRateNotFoundError(Mage_Shipping_Model_Rate_Request $request = null)
+    {
+        /**
+         * Initiate empty result model if not already set.
+         */
+        if (!$this->result) {
+            $this->result = Mage::getModel('shipping/rate_result');
+        }
+
+        $error = Mage::getModel('shipping/rate_result_error');
+        $error->setCarrier('postnl');
+        $error->setCarrierTitle($this->getConfigData('title'));
+        $error->setErrorMessage($this->_getShippingRateNotFoundErrorMessage($this->_request));
+        $this->result->append($error);
+
+        return $this->result;
+    }
+
+    /**
+     *
+     *
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return mixed
+     */
+    protected function _getShippingRateNotFoundErrorMessage(Mage_Shipping_Model_Rate_Request $request = null)
+    {
+        if (!$this->_request) {
+            return $this->getConfigData('specificerrmsg');
+        }
+
+        $parcelType = $this->_request->getParcelType();
+
+        switch ($parcelType) {
+            case self::PARCEL_TYPE_FOOD:
+                return $this->getConfigData('foodspecificerrmsg');
+            default:
+                return $this->getConfigData('specificerrmsg');
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestItems()
+    {
+        if ($this->_requestItems) {
+            return $this->_requestItems;
+        }
+
+        $this->_requestItems = $this->_request->getAllItems();
+
+        return $this->_requestItems;
+    }
+
 }
