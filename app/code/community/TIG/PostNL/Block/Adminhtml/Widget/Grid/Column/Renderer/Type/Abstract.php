@@ -87,6 +87,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
                 if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
                     $comment = $helper->__('Belgium');
+                    $type .= '_be';
                 }
                 break;
             case 'pg_cod':

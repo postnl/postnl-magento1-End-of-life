@@ -281,14 +281,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4932' => array(
             'value'             => '4932',
-            'label'             => 'Post Office (Belgium)',
+            'label'             => 'Post Office',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'NL',
-            'group'             => 'pakjegemak_options',
+            'group'             => 'pakjegemak_be_options',
         ),
         '4952' => array(
             'value'             => '4952',
@@ -460,6 +460,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     protected $_groups = array(
         'standard_options'       => 'Domestic options',
         'pakjegemak_options'     => 'Post Office options',
+        'pakjegemak_be_options'  => 'Post Office Belgium options',
         'eu_options'             => 'EU options',
         'global_options'         => 'Global options',
         'pakketautomaat_options' => 'Parcel Dispenser options',
