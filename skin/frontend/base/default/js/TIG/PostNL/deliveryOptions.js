@@ -5298,6 +5298,12 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Sameday' :
                 this.type = 'Sameday';
                 break;
+            case 'Food' :
+                this.type = 'Food';
+                break;
+            case 'Cooledfood' :
+                this.type = 'Cooledfood';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
@@ -5520,7 +5526,35 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
         }
 
+        if (this.type == 'Food') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('evening') + '</span>';
+            }
+        }
+
+        if (this.type == 'Cooledfood') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today cooled') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('cooled delivery') + '</span>';
+            }
+        }
+
         return comment;
+    },
+
+    isTimeFrameToday : function() {
+        var timeframeDate = this.date;
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (formattedToday == timeframeDate) {
+            return true;
+        }
+
+        return false;
     },
 
     /**

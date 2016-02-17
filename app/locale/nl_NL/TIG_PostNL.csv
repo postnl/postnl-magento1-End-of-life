@@ -1351,3 +1351,6 @@ TIG_PostNL::Belgium,België
 TIG_PostNL::Enable post office locations for Belgium,Activeer postkantoor locaties voor België
 TIG_PostNL::Maximum number of delivery days for Belgium,Maximum aantal bezorgdagen voor België
 TIG_PostNL::Enable PostNL delivery options in Belgium,Activeer PostNL bezorgopties voor België
+TIG_PostNL::today cooled,vandaag gekoeld
+TIG_PostNL::cooled delivery,gekoeld verstuurd
+TIG_PostNL::Food Delivery Options,Food Bezorging Opties

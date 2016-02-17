@@ -71,6 +71,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
+    const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
 
     /**
      * Xpaths to extra fee config settings.
@@ -126,6 +127,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const MAX_FEE = 2;
 
     /**
+     * The two supported food delivery types.
+     */
+    const FOOD_TYPE_DRY_GROCERIES = 1;
+    const FOOD_TYPE_COOL_PRODUCTS = 2;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -137,6 +144,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'Sunday',
         'Monday',
         'Sameday',
+        'Food',
+        'Cooledfood',
     );
 
     /**
@@ -723,6 +732,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
                 }
             }
+
+            /**
+             * If the quote is a food quote, every delivery option should be of the type 'Food'.
+             */
+            $canUseFood = $this->canUseFoodDelivery(false);
+            if ($canUseFood) {
+                $isFood = $this->quoteIsFood();
+                if ($isFood) {
+                    if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
+                        $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
+                    } elseif ($isFood == self::FOOD_TYPE_COOL_PRODUCTS) {
+                        $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Cooledfood');
+                    }
+                }
+            }
         }
 
         return array_values($timeframes);
@@ -1263,6 +1287,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
+         */
+        $isFood = $this->canUseFoodDelivery();
+        if ($isFood) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
          * Check if any products in the quote have explicitly disabled PakjeGemak locations.
          *
          * @var Mage_Sales_Model_Quote_item $item
@@ -1580,7 +1613,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Pakketautomaat is only available when shipping to the Netherlands.
          */
-        if ($shippingAddress->getCountry() != 'NL') {
+        if ($shippingAddress->getCountryId() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
+         */
+        $isFood = $this->canUseFoodDelivery();
+        if ($isFood) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2067,6 +2109,47 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              */
             $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
                   ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if food delivery is allowed by checking the current quote and configuration.
+     *
+     * @return bool
+     */
+    public function canUseFoodDelivery($checkQuote = true)
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseFoodDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseFoodDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
+        $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
+        if ($checkQuote) {
+            $quoteIsFood = (bool) $this->quoteIsFood();
+        } else {
+            //Dummy value to prevent checking of the quote, but still pass the if statement underneath.
+            $quoteIsFood = true;
+        }
+
+        if ($foodDeliveryEnabled && $quoteIsFood && $domesticCountryNL) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseFoodDelivery($allowed)
+                ->saveCache();
         }
 
         return $allowed;
@@ -2874,6 +2957,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * This shipment cannot be used for buspakje shipments.
          */
         if ($this->quoteIsBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If the shipment is a Food Delivery shipment, this option should not be shown.
+         */
+        if ($this->canUseFoodDelivery()) {
             Mage::register($registryKey, false);
             return false;
         }

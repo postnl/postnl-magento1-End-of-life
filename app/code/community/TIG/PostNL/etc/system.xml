@@ -2218,6 +2218,32 @@
                                 </country>
                             </depends>
                         </sameday_delivery_fee>
+                        <enable_food_delivery>
+                            <label>Enable food delivery</label>
+                            <comment>Same day delivery will only work if your shipping duration is set to 0 days in either the config or for applicaple products.</comment>
+                            <tooltip>Activate same day delivery for your customers.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>352</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_timeframes>1</enable_timeframes>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </enable_food_delivery>
                         <sameday_delivery_cutoff_time translate="label tooltip" module="postnl">
                             <label>Same day delivery cut-off time</label>
                             <tooltip><![CDATA[Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.]]></tooltip>

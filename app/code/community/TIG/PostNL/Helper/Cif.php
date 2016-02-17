@@ -493,6 +493,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getFoodProductCodes($flat = true)
+    {
+        $foodProductCodes = Mage::getSingleton('postnl_core/system_config_source_foodProductOptions');
+        return $foodProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getCooledProductCodes($flat = true)
+    {
+        $cooledProductCodes = Mage::getSingleton('postnl_core/system_config_source_cooledProductOptions');
+        return $cooledProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array

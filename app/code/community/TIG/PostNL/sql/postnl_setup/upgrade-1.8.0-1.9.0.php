@@ -131,4 +131,48 @@ $conn->modifyColumn(
     )
 );
 
+/***********************************************************************************************************************
+ * PRODUCT ATTRIBUTES
+ **********************************************************************************************************************/
+
+/**
+ * Add PostNL product type attribute to products.
+ */
+if (!$installer->getAttribute('catalog_product', 'postnl_product_type')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_product_type',
+        array(
+            'backend'                    => '',
+            'group'                      => 'PostNL',
+            'sort_order'                 => 170,
+            'frontend'                   => '',
+            'frontend_class'             => '',
+            'default'                    => '0',
+            'label'                      => 'PostNL product type',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'postnl_deliveryoptions/product_attribute_source_productType',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => implode(',', $applyTo),
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
+
 $installer->endSetup();

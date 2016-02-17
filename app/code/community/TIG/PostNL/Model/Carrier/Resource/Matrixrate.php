@@ -98,8 +98,9 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       "(CASE parcel_type" .
                                       " WHEN 'letter_box' THEN 1" .
                                       " WHEN 'pakje_gemak' THEN 2" .
-                                      " WHEN 'regular' THEN 3" .
-                                      " WHEN '*' THEN 4" .
+                                      " WHEN 'food' THEN 3" .
+                                      " WHEN 'regular' THEN 4" .
+                                      " WHEN '*' THEN 5" .
                                       " ELSE 100" .
                                       " END) ASC"
                                   ),
@@ -457,6 +458,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 'letter_box',
                 'regular',
                 'pakje_gemak',
+                'food',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -603,6 +605,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'postkantoor':      //no break
             case 'post office':      //no break
                 $formattedType = 'pakje_gemak';
+                break;
+            case 'food':             //no break
+            case 'voedsel':          //no break
+            case 'eten':             //no break
+            case 'coolfood':         //no break
+            case 'cooledfood':       //no break
+            case 'gekoeld':          //no break
+                $formattedType = 'food';
                 break;
             //no default
         }

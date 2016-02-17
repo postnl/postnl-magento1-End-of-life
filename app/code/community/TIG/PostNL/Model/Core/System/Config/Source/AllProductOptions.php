@@ -428,6 +428,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'standard_options',
         ),
+        '3083' => array(
+            'value'             => '3083',
+            'label'             => 'Dry & Groceries',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'food_options',
+        ),
+        '3084' => array(
+            'value'             => '3084',
+            'label'             => 'Cool Products',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'cooled_options',
+        ),
     );
 
     /**
@@ -441,6 +465,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'pakketautomaat_options' => 'Parcel Dispenser options',
         'buspakje_options'       => 'Letter Box Parcel options',
         'sunday_options'         => 'Sunday options',
+        'food_options'           => 'Food Delivery Options',
+        'cooled_options'         => 'Cooled Delivery Options',
     );
 
     /**
