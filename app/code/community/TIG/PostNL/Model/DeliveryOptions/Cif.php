@@ -496,7 +496,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         /**
          * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
          */
-        if ($helper->canUseFoodDelivery()) {
+        if ($helper->canUseFoodDelivery(true)) {
             $options = array(
                 self::SAMEDAY_DELIVERY_OPTION,
                 self::EVENING_DELIVERY_OPTION,

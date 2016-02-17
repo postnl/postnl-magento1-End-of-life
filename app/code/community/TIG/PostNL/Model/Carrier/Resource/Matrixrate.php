@@ -136,7 +136,15 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         $select->where('weight <= :weight');
         $select->where('subtotal <= :subtotal');
         $select->where('qty <= :qty');
-        $select->where("(parcel_type = :parcel_type) OR (parcel_type = '*')");
+        $where = "(parcel_type = :parcel_type)";
+        /**
+         * In order to prevent the display of the PostNL shipping method in case of non-domestic shipments or
+         * when no food rate can be matched, asteriks will not be handled when the given quote is a food quote.
+         */
+        if ($parcelType != 'food') {
+            $where .= " OR (parcel_type = '*')";
+        }
+        $select->where($where);
 
         $result = $adapter->fetchRow($select, $bind);
 
