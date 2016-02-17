@@ -1348,3 +1348,6 @@ TIG_PostNL::Same day delivery will only work if your shipping duration is set to
 TIG_PostNL::today cooled,vandaag gekoeld
 TIG_PostNL::cooled delivery,gekoeld verstuurd
 TIG_PostNL::Food Delivery Options,Food Bezorging Opties
+"TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.",Food Delivery kan gebruik worden voor het verzenden van zowel KW artikelen als gekoelde producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
+TIG_PostNL::Food Delivery,Food Bezorging
+TIG_PostNL::Cooled Food Delivery,Gekoeld Food Bezorging
