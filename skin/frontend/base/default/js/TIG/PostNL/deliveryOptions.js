@@ -1030,6 +1030,10 @@ PostnlDeliveryOptions.prototype = {
             console.info('Getting available delivery locations.');
         }
 
+        if (!this.isPaAllowed && !this.isPgAllowed) {
+            this.hideLocations();
+        }
+
         if (this.locationsRequest !== false) {
             try {
                 this.locationsRequest.transport.abort();
