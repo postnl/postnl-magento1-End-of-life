@@ -573,6 +573,12 @@
                         <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
                         <method>saveOptions</method>
                     </checkout_shipping_method_save_options>
+                    <!-- Recollect quote totals. -->
+                    <checkout_shipping_method_recollect_quote_totals>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>recollectQuoteTotals</method>
+                    </checkout_shipping_method_recollect_quote_totals>
                 </observers>
             </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
             <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
@@ -583,6 +589,12 @@
                         <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
                         <method>saveOptions</method>
                     </checkout_shipping_method_save_options>
+                    <!-- Recollect quote totals. -->
+                    <checkout_shipping_method_recollect_quote_totals>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>recollectQuoteTotals</method>
+                    </checkout_shipping_method_recollect_quote_totals>
                 </observers>
             </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
             <controller_action_predispatch_gomage_checkout_onepage_ajax>
