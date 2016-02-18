@@ -194,7 +194,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 return false;
             } elseif (
                 $countryId != $domesticCountry
-                && !in_array($countryId, $euCountries)
                 && !$helper->canUseGlobalPack()
             ) {
                 return false;
@@ -273,7 +272,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 return false;
             } elseif (
                 $countryId != $domesticCountry
-                && !in_array($countryId, $euCountries)
                 && !$helper->canUseGlobalPack()
             ) {
                 return false;
@@ -296,7 +294,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $quote = $item->getQuote();
 
             $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
-            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
+            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
                 $this->_request->setParcelType(self::PARCEL_TYPE_PAKJE_GEMAK);
             } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
                 $this->_request->setParcelType(self::PARCEL_TYPE_LETTERBOX);
