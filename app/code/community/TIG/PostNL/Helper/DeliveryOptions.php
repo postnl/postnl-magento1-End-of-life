@@ -1815,9 +1815,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * Delivery days are only available when shipping to the Netherlands.
+         * Delivery days are only available when shipping to the Netherlands or Belgium.
          */
-        if ($shippingAddress->getCountry() != 'NL') {
+        if ($shippingAddress->getCountry() != 'NL' && $shippingAddress->getCountry() != 'BE') {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2501,13 +2501,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
             }
 
+            $itemQty = $item->getParentItem() ? $item->getParentItem()->getQty() : $item->getQty();
             $available = false;
             switch ($stockOption) {
                 case 'in_stock':
-                    $available = $this->_isStockItemInStock($stockItem, false, $item->getQty());
+                    $available = $this->_isStockItemInStock($stockItem, false, $itemQty);
                     break;
                 case 'backordered':
-                    $available = $this->_isStockItemInStock($stockItem, true, $item->getQty());
+                    $available = $this->_isStockItemInStock($stockItem, true, $itemQty);
                     break;
             }
 

@@ -1479,6 +1479,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Order_Address $address
      *
      * @return array
+     * @throws TIG_PostNL_Exception
      */
     protected function _getStreetData($address)
     {
@@ -1486,6 +1487,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $storeId = $this->getStoreId();
 
         $streetData = $helper->getStreetData($storeId, $address, false);
+
+        $houseNumberRequiredCountries = $helper->getHouseNumberRequiredCountries($storeId);
+
+        if (in_array($address->getCountryId(), $houseNumberRequiredCountries) && empty($streetData['housenumber'])) {
+            throw new TIG_PostNL_Exception(
+                $helper->__("House number is required for the destination country (%s).", $address->getCountryId()),
+                ''
+            );
+        }
 
         return $streetData;
     }

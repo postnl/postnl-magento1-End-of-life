@@ -912,7 +912,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $city        = $address['City'];
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
-        $houseNumber = $address['HouseNr'];
+        $houseNumber = str_replace('-', '', $address['HouseNr']);
         $postcode    = str_replace(' ', '', $address['Zipcode']);
         $name        = $address['Name'];
 
@@ -953,7 +953,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        if (!$housenumberValidator->isValid($houseNumber)) {
+        if (!empty($houseNumber) && !$housenumberValidator->isValid($houseNumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                      'Invalid housenumber supplied: %s.',
