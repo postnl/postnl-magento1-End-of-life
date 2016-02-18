@@ -62,4 +62,22 @@ class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
 
         return $extra['postnl']['hidden_notification'];
     }
+
+    /**
+     * Returns either the store id of the current scope, or returns 0 for global level scope.
+     *
+     * @return int|mixed
+     * @throws Mage_Core_Exception
+     */
+    public function getCurrentScope()
+    {
+        $storeId = 0;
+
+        if (strlen($code = Mage::getSingleton('adminhtml/config_data')->getStore())) {
+            $storeId = Mage::getModel('core/store')->load($code)->getId();
+        }
+
+        return $storeId;
+    }
+
 }

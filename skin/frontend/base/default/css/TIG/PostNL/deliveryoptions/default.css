@@ -29,7 +29,7 @@
 
 /* Buttons */
 .postnl-container .button { border:0; padding:0; margin:0; background:transparent; overflow:visible; cursor:pointer; vertical-align:middle; height:26px !important; }
-.postnl-container .button span { border:0; padding:0 0 0 12px; margin:0; cursor:pointer; display:-moz-inline-stack; display:inline-block; height:26px; color:#fff; text-decoration:none; background:transparent url(../../../../images/TIG/PostNL/deliveryoptions/bkg_button.png) 0 -68px no-repeat !important; }
+.postnl-container .button span { border:0; margin:0; cursor:pointer; display:-moz-inline-stack; display:inline-block; height:26px; color:#fff; text-decoration:none; background:transparent url(../../../../images/TIG/PostNL/deliveryoptions/bkg_button.png) 0 -68px no-repeat !important; }
 .postnl-container .button span span { padding:0 12px 0 0; background-position:100% -68px !important; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
 .postnl-container .button.disabled span { background-position:0 -94px !important; color:#b0b0b0 !important; cursor:default !important; }
 .postnl-container .button.disabled span span { background-position:100% -94px !important; }
@@ -42,7 +42,7 @@
 
 .postnl-container .button.next { height:30px !important; }
 .postnl-container .button.next span { background-position:0 -120px !important; height:30px; }
-.postnl-container .button.next span span { background-position:100% -120px !important; padding:0 40px 0 0; line-height:28px; }
+.postnl-container .button.next span span { background-position:100% -120px !important; padding: 0 60px 0 20px; line-height:28px; }
 .postnl-container .button.next.disabled span { background-position:0 -150px !important; }
 .postnl-container .button.next.disabled span span { background-position:100% -150px !important; }
 

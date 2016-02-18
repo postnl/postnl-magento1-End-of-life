@@ -2148,6 +2148,14 @@
                                 </country>
                             </depends>
                         </sameday_delivery_fee>
+                        <food_delivery_warnings>
+                            <label>Warnings</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_checkForWarningBox</frontend_model>
+                            <backend_model>postnl_adminhtml/system_config_form_foodWarnings</backend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>351</sort_order>
+                        </food_delivery_warnings>
                         <enable_food_delivery>
                             <label>Enable food delivery</label>
                             <comment>Food Delivery can be used to ship both Dry &amp; Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.</comment>
@@ -2157,7 +2165,6 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>352</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
@@ -2174,6 +2181,22 @@
                                 </country>
                             </depends>
                         </enable_food_delivery>
+                        <food_delivery_default_product_type>
+                            <label>Default product type</label>
+                            <comment>This value is used to determine the product type of newly created products.</comment>
+                            <tooltip>This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_productType</backend_model>
+                            TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
+                            <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
+                            <sort_order>353</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_food_delivery>1</enable_food_delivery>
+                            </depends>
+                        </food_delivery_default_product_type>
                         <sameday_delivery_cutoff_time translate="label tooltip" module="postnl">
                             <label>Same day delivery cut-off time</label>
                             <tooltip><![CDATA[Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.]]></tooltip>
