@@ -261,6 +261,26 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'Option'         => '006',
             ),
         ),
+        'Food' => array(
+            array (
+                'Characteristic' => '118',
+                'Option'         => '015',
+            ),
+            array (
+                'Characteristic' => '118',
+                'Option'         => '006',
+            ),
+        ),
+        'Cooledfood' => array(
+            array (
+                'Characteristic' => '118',
+                'Option'         => '015',
+            ),
+            array (
+                'Characteristic' => '118',
+                'Option'         => '006',
+            ),
+        ),
     );
 
     /**
@@ -582,7 +602,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
         } else {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode,$shipmentNumber)
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber)
             );
         }
 
@@ -990,9 +1010,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentData['Customs'] = $this->_getCustoms($postnlShipment);
         }
 
+        /**
+         * Add product options.
+         */
         $productOptions = $this->_getProductOptions($postnlShipment);
         if ($productOptions) {
             $shipmentData['ProductOptions'] = $productOptions;
+        }
+
+        /**
+         * Add 'DownPartner' data.
+         */
+        $downPartnerData = $this->_getDownPartnerData($postnlShipment);
+        if ($downPartnerData) {
+            $shipmentData['DownPartnerID'] = $downPartnerData['id'];
+            $shipmentData['DownPartnerLocation'] = $downPartnerData['location'];
         }
 
         return $shipmentData;
@@ -1062,6 +1094,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         return $productOptions;
+    }
+
+    /**
+     * Get 'DownPartner' data from the specified PostNL shipment if available.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return array|bool
+     */
+    protected function _getDownPartnerData(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        if (!$postnlShipment->hasPgLocationCode() || !$postnlShipment->hasPgRetailNetworkId()) {
+            return false;
+        }
+
+        $downPartnerData = array(
+            'id'       => $postnlShipment->getPgRetailNetworkId(),
+            'location' => $postnlShipment->getPgLocationCode(),
+        );
+
+        return $downPartnerData;
     }
 
     /**
@@ -1426,6 +1479,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Order_Address $address
      *
      * @return array
+     * @throws TIG_PostNL_Exception
      */
     protected function _getStreetData($address)
     {
@@ -1433,6 +1487,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $storeId = $this->getStoreId();
 
         $streetData = $helper->getStreetData($storeId, $address, false);
+
+        $houseNumberRequiredCountries = $helper->getHouseNumberRequiredCountries($storeId);
+
+        if (in_array($address->getCountryId(), $houseNumberRequiredCountries) && empty($streetData['housenumber'])) {
+            throw new TIG_PostNL_Exception(
+                $helper->__("House number is required for the destination country (%s).", $address->getCountryId()),
+                ''
+            );
+        }
 
         return $streetData;
     }

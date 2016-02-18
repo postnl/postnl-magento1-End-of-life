@@ -25,7 +25,7 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
@@ -36,20 +36,47 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php /** @var Mage_Sales_Model_Order $_order */ ?>
-<?php $_order = $this->getOrder(); ?>
-<?php
-/** @var TIG_PostNL_Helper_DeliveryOptions $_helper */
-$_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_deliveryOptions = $_helper->getDeliveryOptionsInfo($_order, false); ?>
-<?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
-<?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
-    <br />
-    <?php echo $_deliveryOptions['store_delivery_date']; ?>
-    <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php echo $_deliveryOptions['store_delivery_time_end']; ?>)
-    <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $_deliveryOptions['store_delivery_time_start']; ?>)
-    <?php endif; ?>
-<?php endif; ?>
+class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_Model_Config_Data
+{
+
+    const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
+
+    const PRODUCTY_TYPE_NON_FOOD      = '0';
+    const PRODUCTY_TYPE_DRY_GROCERIES = '1';
+    const PRODUCTY_TYPE_COOL_PRODUCTS = '2';
+
+    protected $_validOptions = array(
+        self::PRODUCTY_TYPE_NON_FOOD,
+        self::PRODUCTY_TYPE_DRY_GROCERIES,
+        self::PRODUCTY_TYPE_COOL_PRODUCTS,
+    );
+
+    /**
+     * Validate the value chosen by the user.
+     */
+    protected function _beforeSave()
+    {
+        $value = $this->getValue();
+
+        if (!in_array($value, $this->_validOptions)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__("Please enter a valid default value for PostNL product type."),
+                ''
+            );
+        }
+    }
+
+    /**
+     * The product attribute's default value needs to be updated to the chosen value.
+     */
+    protected function _afterSave()
+    {
+        $value = $this->getValue();
+
+        /** @var Mage_Eav_Model_Entity_Attribute $attributeModel */
+        $attributeModel = Mage::getModel('eav/entity_attribute')
+            ->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_PRODUCT_TYPE);
+
+        $attributeModel->setDefaultValue($value)->save();
+    }
+}

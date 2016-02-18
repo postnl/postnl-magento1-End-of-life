@@ -25,7 +25,7 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
@@ -36,20 +36,49 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php /** @var Mage_Sales_Model_Order $_order */ ?>
-<?php $_order = $this->getOrder(); ?>
-<?php
-/** @var TIG_PostNL_Helper_DeliveryOptions $_helper */
-$_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_deliveryOptions = $_helper->getDeliveryOptionsInfo($_order, false); ?>
-<?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
-<?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
-    <br />
-    <?php echo $_deliveryOptions['store_delivery_date']; ?>
-    <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php echo $_deliveryOptions['store_delivery_time_end']; ?>)
-    <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $_deliveryOptions['store_delivery_time_start']; ?>)
-    <?php endif; ?>
-<?php endif; ?>
+class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
+    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
+{
+    /**
+     * Retrieve all attribute options
+     *
+     * @return array
+     */
+    public function getAllOptions()
+    {
+        if ($this->_options) {
+            return $this->_options;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        $options = array(
+            array(
+                'label' => $helper->__('Non-Food'),
+                'value' => 0,
+            ),
+            array(
+                'value' => 1,
+                'label' => $helper->__('Dry & Groceries'),
+            ),
+            array(
+                'value' => 2,
+                'label' => $helper->__('Cool Products'),
+            ),
+        );
+
+        $this->_options = $options;
+
+        return $options;
+    }
+
+    /**
+     * Function referencing getAllOptions to be used in the PostNL configuration.
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        return $this->getAllOptions();
+    }
+}

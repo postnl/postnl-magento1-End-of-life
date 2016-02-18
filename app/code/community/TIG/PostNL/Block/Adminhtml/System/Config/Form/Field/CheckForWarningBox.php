@@ -25,7 +25,7 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
@@ -36,20 +36,18 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php /** @var Mage_Sales_Model_Order $_order */ ?>
-<?php $_order = $this->getOrder(); ?>
-<?php
-/** @var TIG_PostNL_Helper_DeliveryOptions $_helper */
-$_helper = Mage::helper('postnl/deliveryOptions'); ?>
-<?php $_deliveryOptions = $_helper->getDeliveryOptionsInfo($_order, false); ?>
-<?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
-<?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
-    <br />
-    <?php echo $_deliveryOptions['store_delivery_date']; ?>
-    <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php echo $_deliveryOptions['store_delivery_time_end']; ?>)
-    <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-        &nbsp;(<?php echo $_helper->__('from')?> <?php echo $_deliveryOptions['store_delivery_time_start']; ?>)
-    <?php endif; ?>
-<?php endif; ?>
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_CheckForWarningBox
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
+{
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_check_for_warningbox';
+
+    /**
+     * Template file used
+     *
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/system/config/form/field/check_for_warning_box.phtml';
+}

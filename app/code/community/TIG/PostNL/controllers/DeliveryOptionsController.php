@@ -863,8 +863,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $data;
         }
 
+        if ($type == 'PG') {
+            if (empty($params['locationCode']) || empty($params['retailNetworkId'])) {
+                throw new TIG_PostNL_Exception(
+                    $this->__('Location Code and Retail Network ID are required for post office locations.'),
+                    'POSTNL-0238'
+                );
+            }
+
+            $data['locationCode'] = Mage::helper('core')->stripTags(trim($params['locationCode'], '"'));
+            $data['retailNetworkId'] = Mage::helper('core')->stripTags(trim($params['retailNetworkId'], '"'));
+        }
+
         $address = $this->_validateAddress($params['address']);
         $data['address'] = $address;
+
 
         return $data;
     }
@@ -899,7 +912,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $city        = $address['City'];
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
-        $houseNumber = $address['HouseNr'];
+        $houseNumber = str_replace('-', '', $address['HouseNr']);
         $postcode    = str_replace(' ', '', $address['Zipcode']);
         $name        = $address['Name'];
 
@@ -940,7 +953,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        if (!$housenumberValidator->isValid($houseNumber)) {
+        if (!empty($houseNumber) && !$housenumberValidator->isValid($houseNumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                      'Invalid housenumber supplied: %s.',

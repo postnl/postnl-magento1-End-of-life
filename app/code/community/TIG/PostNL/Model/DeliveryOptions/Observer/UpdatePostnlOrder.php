@@ -287,8 +287,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * may have been saved.
          */
         $shippingAddress = $quote->getShippingAddress();
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         if (!$shippingAddress
-            || $shippingAddress->getCountryId() != 'NL'
+            || $shippingAddress->getCountryId() != $domesticCountry
             || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
 
         ) {
@@ -315,6 +316,29 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->setOptions($postnlOptions)
                     ->validateOptions()
                     ->save();
+
+        return $this;
+    }
+
+    /**
+     * Recollect quote totals.
+     *
+     * @return $this
+     *
+     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
+     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
+     *
+     * @observer checkout_shipping_method_recollect_quote_totals
+     */
+    public function recollectQuoteTotals()
+    {
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quote->setTotalsCollectedFlag(false);
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->collectTotals();
+        $quote->save();
 
         return $this;
     }
@@ -355,14 +379,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order is being shipped to a domestic country.
+         * Check if this order has a shipping address.
          */
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$shippingAddress
-            || $shippingAddress->getCountryId() != $domesticCountry
-        ) {
+        if (!$shippingAddress) {
             return false;
         }
 

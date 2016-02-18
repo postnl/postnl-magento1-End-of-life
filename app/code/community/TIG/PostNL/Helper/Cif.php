@@ -78,6 +78,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
+     * Xpath to the 'house_number_required_countries' setting.
+     */
+    const XPATH_HOUSE_NUMBER_REQUIRED_COUNTRIES_XPATH = 'postnl/cif/house_number_required_countries';
+
+    /**
      * Regular expression used to split street name from house number. This regex works well for dutch addresses, but
      * may fail for international addresses. We strongly recommend using split address lines instead.
      */
@@ -285,6 +290,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param int|Mage_Core_Model_Store|null $toreId
+     *
+     * @return array|mixed
+     */
+    public function getHouseNumberRequiredCountries($toreId = null)
+    {
+        $requiredCountries = Mage::getStoreConfig(self::XPATH_HOUSE_NUMBER_REQUIRED_COUNTRIES_XPATH, $toreId);
+        $requiredCountries = explode(',', $requiredCountries);
+
+        return $requiredCountries;
+    }
+
+    /**
      * Gets an array of country-restricted product codes
      *
      * @return array
@@ -357,13 +375,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of PakjeGemak product codes.
      *
-     * @param boolean $flat
+     * @param boolean      $flat
+     * @param string|false $destination
      *
      * @return array
      */
-    public function getPakjeGemakProductCodes($flat = true)
+    public function getPakjeGemakProductCodes($flat = true, $destination = false)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+
+        if ($destination == 'BE') {
+            return $pakjeGemakProductCodes->getAvailableBeOptions($flat);
+        }
+
         return $pakjeGemakProductCodes->getAvailableOptions($flat);
     }
 
@@ -484,6 +508,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
         return $pakjeGemakProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getFoodProductCodes($flat = true)
+    {
+        $foodProductCodes = Mage::getSingleton('postnl_core/system_config_source_foodProductOptions');
+        return $foodProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getCooledProductCodes($flat = true)
+    {
+        $cooledProductCodes = Mage::getSingleton('postnl_core/system_config_source_cooledProductOptions');
+        return $cooledProductCodes->getAvailableSameDayOptions($flat);
     }
 
     /**
@@ -1108,7 +1154,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $fullStreet = $address->getStreetFull();
 
         /**
-         * Select countries don't have to split their street values into seperate part
+         * Select countries don't have to split their street values into separate part
          */
         if ($allowFullStreet === true
             && in_array($address->getCountry(), $allowedFullStreetCountries)
@@ -1151,11 +1197,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
         $housenumber = trim($housenumber);
+        $housenumberExtension = '';
 
         /**
-         * If street or house number fields are empty, use alternative options to obtain the address data
+         * If street field is empty, use alternative options to obtain the address data
          */
-        if (empty($streetname) || empty($housenumber)) {
+        if (empty($streetname)) {
             return false;
         }
 
@@ -1170,12 +1217,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             /**
              * Make sure the house number is actually split.
              */
-            if (!$housenumberExtension && !is_numeric($housenumber)) {
+            if (!empty($housenumber) && !$housenumberExtension && !is_numeric($housenumber)) {
                 $housenumberParts     = $this->_splitHousenumber($housenumber);
                 $housenumber          = $housenumberParts['number'];
                 $housenumberExtension = $housenumberParts['extension'];
             }
-        } else {
+        } elseif (!empty($housenumber)) {
             $housenumberParts     = $this->_splitHousenumber($housenumber);
             $housenumber          = $housenumberParts['number'];
             $housenumberExtension = $housenumberParts['extension'];
@@ -1208,14 +1255,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $result = preg_match(self::SPLIT_STREET_REGEX, $fullStreet, $matches);
         if (!$result || !is_array($matches)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid full street supplied: %s', $fullStreet),
-                'POSTNL-0060'
+            $streetData = array(
+                'streetname'           => $fullStreet,
+                'housenumber'          => '',
+                'housenumberExtension' => '',
+                'fullStreet'           => '',
             );
+
+            return $streetData;
         }
 
         $streetname = '';
         $housenumber = '';
+        $housenumberExtension = '';
         if (isset($matches[1])) {
             $streetname = $matches[1];
         }
@@ -1224,9 +1276,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $housenumber = $matches[2];
         }
 
-        $housenumberParts = $this->_splitHousenumber($housenumber);
-        $housenumber = $housenumberParts['number'];
-        $housenumberExtension = $housenumberParts['extension'];
+        if (!empty($housenumber)) {
+            $housenumberParts     = $this->_splitHousenumber($housenumber);
+            $housenumber          = $housenumberParts['number'];
+            $housenumberExtension = $housenumberParts['extension'];
+        }
 
         $streetData = array(
             'streetname'           => $streetname,

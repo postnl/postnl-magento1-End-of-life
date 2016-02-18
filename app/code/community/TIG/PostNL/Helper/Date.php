@@ -389,6 +389,8 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                 $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
                 break;
             case 'sameday':
+            case 'food':
+            case 'cooledfood':
                 $xpathToUse = self::XPATH_SAMEDAY_CUTOFF_TIME;
                 break;
             case 'weekday':

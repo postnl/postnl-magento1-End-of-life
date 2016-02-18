@@ -515,6 +515,9 @@ PostnlDeliveryOptions.prototype = {
             case 'automaat':
                 imageName = 'automaat';
                 break;
+            case 'kariboo':
+                imageName = 'kariboo';
+                break;
             default:
                 imageName = 'default';
                 break;
@@ -839,8 +842,11 @@ PostnlDeliveryOptions.prototype = {
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
         } else if (this.getOptions().isOsc) {
-            checkbox.checked = true;
             selectPostnlShippingMethod = true;
+
+            if ($$('[name="shipping_method"]:checked').length == 0) {
+                checkbox.checked = true;
+            }
         }
 
         /**
@@ -1025,6 +1031,10 @@ PostnlDeliveryOptions.prototype = {
     getLocations : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
+        }
+
+        if (!this.isPaAllowed && !this.isPgAllowed) {
+            this.hideLocations();
         }
 
         if (this.locationsRequest !== false) {
@@ -1586,10 +1596,12 @@ PostnlDeliveryOptions.prototype = {
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            var address            = selectedOption.getAddress();
-            address['Name']        = selectedOption.getName();
-            address['PhoneNumber'] = selectedOption.getPhoneNumber();
-            params['address']      = Object.toJSON(address);
+            var address               = selectedOption.getAddress();
+            address['Name']           = selectedOption.getName();
+            address['PhoneNumber']    = selectedOption.getPhoneNumber();
+            params['address']         = Object.toJSON(address);
+            params['locationCode']    = Object.toJSON(selectedOption.locationCode);
+            params['retailNetworkId'] = Object.toJSON(selectedOption.retailNetworkID);
         }
 
         if (selectedType == 'PA') {
@@ -2076,7 +2088,9 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.getName();
         }
 
-        if (typeof location.DeliveryOptions != 'undefined'
+        if (this.getDeliveryOptions().country == 'BE') {
+            name = 'kariboo';
+        } else if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
         ) {
             name = 'automaat';
@@ -2109,7 +2123,11 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.Name;
         }
 
-        if (typeof location.DeliveryOptions != 'undefined'
+        var anchor = new google.maps.Point(17, 46);
+        if (this.getDeliveryOptions().country == 'BE') {
+            name = 'kariboo';
+            anchor = new google.maps.Point(42, 78);
+        } else if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
             ) {
             name = 'automaat';
@@ -2124,7 +2142,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         var image = imageBase + '/drp_' + imageName + '.png';
 
         return {
-            anchor : new google.maps.Point(17, 46),
+            anchor : anchor,
             url    : image
         };
     },
@@ -3924,6 +3942,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     openingHours         : null,
     locationCode         : null,
     date                 : null,
+    retailNetworkID      : null,
 
     deliveryOptions      : null,
     type                 : [],
@@ -3958,6 +3977,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
         this.date              = deliveryOptions.getDeliveryDate();
         this.isEveningLocation = location.isEvening;
+        this.retailNetworkID   = location.RetailNetworkID;
 
         this.deliveryOptions   = deliveryOptions;
 
@@ -4768,9 +4788,16 @@ PostnlDeliveryOptions.Location = new Class.create({
         var html = '<li class="location" id="' + id + '">';
         html += '<div class="content">';
 
+        var imageName;
+        if (this.getDeliveryOptions().country == 'BE') {
+            imageName = 'kariboo';
+        } else {
+            imageName = this.getName();
+        }
+
         var image = this.getDeliveryOptions().getImageBasUrl()
                   + '/tmb_'
-                  + this.getDeliveryOptions().getImageName(this.getName())
+                  + this.getDeliveryOptions().getImageName(imageName)
                   + '.png';
         html += '<img src="' + image + '" class="location-icon" alt="' + this.getName() + '" />';
         html += '<span class="overflow-protect">';
@@ -5278,6 +5305,12 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Sameday' :
                 this.type = 'Sameday';
                 break;
+            case 'Food' :
+                this.type = 'Food';
+                break;
+            case 'Cooledfood' :
+                this.type = 'Cooledfood';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
@@ -5350,7 +5383,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed() && this.getDeliveryOptions().country != 'BE') {
             spanClass += ' no-display';
         }
         html += '<span class="' + spanClass + '">';
@@ -5366,8 +5399,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         spanClass = 'option-time';
         var openingHours = '';
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
-            spanClass    += ' no-timeframe-buspakje';
+            spanClass += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
+        } else if (this.getDeliveryOptions().country == 'BE') {
+            spanClass    += ' no-timeframe-buspakje';
+
+            var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
+            if (date.getDay() == 6) {
+                openingHours += '08:30 - 18:00';
+            } else {
+                openingHours += '08:30 - 21:30';
+            }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()
         ) {
@@ -5491,7 +5533,35 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
         }
 
+        if (this.type == 'Food') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('evening') + '</span>';
+            }
+        }
+
+        if (this.type == 'Cooledfood') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today cooled') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('cooled delivery') + '</span>';
+            }
+        }
+
         return comment;
+    },
+
+    isTimeFrameToday : function() {
+        var timeframeDate = this.date;
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (formattedToday == timeframeDate) {
+            return true;
+        }
+
+        return false;
     },
 
     /**

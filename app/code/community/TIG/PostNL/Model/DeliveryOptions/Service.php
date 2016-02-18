@@ -263,7 +263,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                         ->setProductCode(3553)
                         ->setMobilePhoneNumber($data['number']);
         } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
-            $postnlOrder->setIsPakjeGemak(true);
+            $postnlOrder->setIsPakjeGemak(true)
+                        ->setPgLocationCode($data['locationCode'])
+                        ->setPgRetailNetworkId($data['retailNetworkId']);
         }
 
         /**

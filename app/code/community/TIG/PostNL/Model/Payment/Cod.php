@@ -204,6 +204,13 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         /**
+         * COD is not available for Food shipments.
+         */
+        if ($helper->quoteIsFood($quote)) {
+            return false;
+        }
+
+        /**
          * If COD is only available for PostNL shipping methods, we need to check if the shipping method is PostNL.
          */
         if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
