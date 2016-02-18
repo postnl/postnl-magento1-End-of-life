@@ -794,6 +794,7 @@
                 <handling_type>F</handling_type> <!-- Fixed -->
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <foodspecificerrmsg>Food shipments can only be delivered within the Netherlands.</foodspecificerrmsg> <!-- Food method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->

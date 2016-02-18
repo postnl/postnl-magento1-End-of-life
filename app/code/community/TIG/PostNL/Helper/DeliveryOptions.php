@@ -72,6 +72,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
     const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
+    const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
      * Xpaths to extra fee config settings.
@@ -146,6 +147,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'Sameday',
         'Food',
         'Cooledfood',
+    );
+
+    protected $_foodProductCodes = array(
+        '3083',
+        '3084',
     );
 
     /**
@@ -1289,7 +1295,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
          */
-        $isFood = $this->canUseFoodDelivery();
+        $isFood = $this->quoteIsFood();
         if ($isFood) {
             Mage::register($registryKey, false);
             return false;
@@ -1621,7 +1627,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the current quote should be sent as a Food Delivery, PakjeGemak should not be shown.
          */
-        $isFood = $this->canUseFoodDelivery();
+        $isFood = $this->quoteIsFood();
         if ($isFood) {
             Mage::register($registryKey, false);
             return false;
@@ -2121,6 +2127,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseFoodDelivery($checkQuote = true)
     {
+        $allowed = $this->_canUseFoodDelivery();
+
+        if ($allowed && $checkQuote) {
+            $allowed = (bool) $this->quoteIsFood();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if Food Delivery is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUseFoodDelivery()
+    {
         $allowed = false;
 
         $cache = $this->getCache();
@@ -2130,17 +2152,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $storeId = Mage::app()->getStore()->getId();
-
         $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
-        if ($checkQuote) {
-            $quoteIsFood = (bool) $this->quoteIsFood();
-        } else {
-            //Dummy value to prevent checking of the quote, but still pass the if statement underneath.
-            $quoteIsFood = true;
-        }
+        $productOptionsAvailable = $this->_getFoodProductOptionsAvailable($storeId);
 
-        if ($foodDeliveryEnabled && $quoteIsFood && $domesticCountryNL) {
+        if ($domesticCountryNL && $foodDeliveryEnabled && $productOptionsAvailable) {
             $allowed = true;
         }
 
@@ -2153,6 +2169,32 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allowed;
+    }
+
+    /**
+     * Check if at least one food product code is avaialble in the config.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    protected function _getFoodProductOptionsAvailable($storeId = null)
+    {
+        $available = false;
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $availableProductOptions = Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId);
+
+        foreach ($this->_foodProductCodes as $foodProductCode) {
+            if (in_array($foodProductCode, $availableProductOptions)) {
+                $available = true;
+            }
+        }
+
+        return $available;
     }
 
     /**
@@ -2965,7 +3007,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * If the shipment is a Food Delivery shipment, this option should not be shown.
          */
-        if ($this->canUseFoodDelivery()) {
+        if ($this->quoteIsFood()) {
             Mage::register($registryKey, false);
             return false;
         }

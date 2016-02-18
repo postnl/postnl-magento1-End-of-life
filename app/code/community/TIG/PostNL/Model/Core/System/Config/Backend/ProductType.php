@@ -36,49 +36,47 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
-    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
+class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_Model_Config_Data
 {
+
+    const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
+
+    const PRODUCTY_TYPE_NON_FOOD      = '0';
+    const PRODUCTY_TYPE_DRY_GROCERIES = '1';
+    const PRODUCTY_TYPE_COOL_PRODUCTS = '2';
+
+    protected $_validOptions = array(
+        self::PRODUCTY_TYPE_NON_FOOD,
+        self::PRODUCTY_TYPE_DRY_GROCERIES,
+        self::PRODUCTY_TYPE_COOL_PRODUCTS,
+    );
+
     /**
-     * Retrieve all attribute options
-     *
-     * @return array
+     * Validate the value chosen by the user.
      */
-    public function getAllOptions()
+    protected function _beforeSave()
     {
-        if ($this->_options) {
-            return $this->_options;
+        $value = $this->getValue();
+
+        if (!in_array($value, $this->_validOptions)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__("Please enter a valid default value for PostNL product type."),
+                ''
+            );
         }
-
-        $helper = Mage::helper('postnl');
-
-        $options = array(
-            array(
-                'label' => $helper->__('Non-Food'),
-                'value' => 0,
-            ),
-            array(
-                'value' => 1,
-                'label' => $helper->__('Dry & Groceries'),
-            ),
-            array(
-                'value' => 2,
-                'label' => $helper->__('Cool Products'),
-            ),
-        );
-
-        $this->_options = $options;
-
-        return $options;
     }
 
     /**
-     * Function referencing getAllOptions to be used in the PostNL configuration.
-     *
-     * @return array
+     * The product attribute's default value needs to be updated to the chosen value.
      */
-    public function toOptionArray()
+    protected function _afterSave()
     {
-        return $this->getAllOptions();
+        $value = $this->getValue();
+
+        /** @var Mage_Eav_Model_Entity_Attribute $attributeModel */
+        $attributeModel = Mage::getModel('eav/entity_attribute')
+            ->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_PRODUCT_TYPE);
+
+        $attributeModel->setDefaultValue($value)->save();
     }
 }

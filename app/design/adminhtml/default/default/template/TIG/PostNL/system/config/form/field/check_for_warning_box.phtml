@@ -35,50 +35,23 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox $this
  */
-class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
-    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
-{
-    /**
-     * Retrieve all attribute options
-     *
-     * @return array
-     */
-    public function getAllOptions()
-    {
-        if ($this->_options) {
-            return $this->_options;
-        }
+?>
+<?php $_htmlId   = $this->getHtmlId(); ?>
+<?php $_label    = $this->getElement()->getLabel(); ?>
+<?php $_warnings = $this->getElement()->getValue(); ?>
 
-        $helper = Mage::helper('postnl');
-
-        $options = array(
-            array(
-                'label' => $helper->__('Non-Food'),
-                'value' => 0,
-            ),
-            array(
-                'value' => 1,
-                'label' => $helper->__('Dry & Groceries'),
-            ),
-            array(
-                'value' => 2,
-                'label' => $helper->__('Cool Products'),
-            ),
-        );
-
-        $this->_options = $options;
-
-        return $options;
-    }
-
-    /**
-     * Function referencing getAllOptions to be used in the PostNL configuration.
-     *
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        return $this->getAllOptions();
-    }
-}
+<?php if (count($_warnings)): ?>
+    <tr id='row-<?php echo $_htmlId; ?>'>
+        <td colspan='5'>
+            <div class="module-message warning">
+                <h4 id="<?php echo $_htmlId; ?>"><?php echo $this->__($_label); ?></h4>
+                <?php foreach ($_warnings as $_warning) :?>
+                    <p id="<?php echo $_htmlId; ?>"> - <?php echo $this->__($_warning); ?></p>
+                <?php endforeach; ?>
+            </div>
+        </td>
+    </tr>
+<?php endif; ?>

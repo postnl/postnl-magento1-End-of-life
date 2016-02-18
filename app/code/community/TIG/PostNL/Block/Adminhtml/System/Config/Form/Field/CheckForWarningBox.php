@@ -36,49 +36,18 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
-    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_CheckForWarningBox
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
-     * Retrieve all attribute options
-     *
-     * @return array
+     * @var string
      */
-    public function getAllOptions()
-    {
-        if ($this->_options) {
-            return $this->_options;
-        }
-
-        $helper = Mage::helper('postnl');
-
-        $options = array(
-            array(
-                'label' => $helper->__('Non-Food'),
-                'value' => 0,
-            ),
-            array(
-                'value' => 1,
-                'label' => $helper->__('Dry & Groceries'),
-            ),
-            array(
-                'value' => 2,
-                'label' => $helper->__('Cool Products'),
-            ),
-        );
-
-        $this->_options = $options;
-
-        return $options;
-    }
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_check_for_warningbox';
 
     /**
-     * Function referencing getAllOptions to be used in the PostNL configuration.
+     * Template file used
      *
-     * @return array
+     * @var string
      */
-    public function toOptionArray()
-    {
-        return $this->getAllOptions();
-    }
+    protected $_template = 'TIG/PostNL/system/config/form/field/check_for_warning_box.phtml';
 }
