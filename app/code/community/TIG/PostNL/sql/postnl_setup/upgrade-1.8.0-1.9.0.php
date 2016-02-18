@@ -77,7 +77,6 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_type')) {
             'is_html_allowed_on_front'   => false,
             'used_in_product_listing'    => false,
             'user_defined'               => false,
-            'apply_to'                   => implode(',', $applyTo),
             'is_configurable'            => false,
             'used_for_sort_by'           => false,
             'position'                   => 0,
