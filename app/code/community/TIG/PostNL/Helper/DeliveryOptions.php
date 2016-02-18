@@ -70,6 +70,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
     const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
+    const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
      * Xpaths to extra fee config settings.
@@ -144,6 +145,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'Sameday',
         'Food',
         'Cooledfood',
+    );
+
+    protected $_foodProductCodes = array(
+        '3083',
+        '3084',
     );
 
     /**
@@ -2044,8 +2050,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $storeId = Mage::app()->getStore()->getId();
         $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
+        $productOptionsAvailable = $this->_getFoodProductOptionsAvailable($storeId);
 
-        if ($domesticCountryNL && $foodDeliveryEnabled) {
+        if ($domesticCountryNL && $foodDeliveryEnabled && $productOptionsAvailable) {
             $allowed = true;
         }
 
@@ -2058,6 +2065,32 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allowed;
+    }
+
+    /**
+     * Check if at least one food product code is avaialble in the config.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    protected function _getFoodProductOptionsAvailable($storeId = null)
+    {
+        $available = false;
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $availableProductOptions = Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId);
+
+        foreach ($this->_foodProductCodes as $foodProductCode) {
+            if (in_array($foodProductCode, $availableProductOptions)) {
+                $available = true;
+            }
+        }
+
+        return $available;
     }
 
     /**
