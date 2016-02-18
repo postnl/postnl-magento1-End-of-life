@@ -2149,7 +2149,7 @@
                             </depends>
                         </sameday_delivery_fee>
                         <food_delivery_warnings>
-                            <label>Warnings</label>
+                            <label>Warnings:</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_checkForWarningBox</frontend_model>
                             <backend_model>postnl_adminhtml/system_config_form_foodWarnings</backend_model>
                             <show_in_default>1</show_in_default>
