@@ -2127,10 +2127,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseFoodDelivery($checkQuote = true)
     {
+        Mage::log('test', null, 'test.log', true);
         $allowed = $this->_canUseFoodDelivery();
 
+        Mage::log($allowed, null, 'test.log', true);
         if ($allowed && $checkQuote) {
             $allowed = (bool) $this->quoteIsFood();
+            Mage::log('test2', null, 'test.log', true);
+
+            Mage::log($allowed, null, 'test.log', true);
         }
 
         return $allowed;
@@ -2186,7 +2191,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $availableProductOptions = Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId);
+        $availableProductOptions = explode(',', Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId));
 
         foreach ($this->_foodProductCodes as $foodProductCode) {
             if (in_array($foodProductCode, $availableProductOptions)) {
