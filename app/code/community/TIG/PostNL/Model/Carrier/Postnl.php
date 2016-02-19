@@ -172,33 +172,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
          * products
          */
         $countryId = $this->_request->getDestCountryId();
-        $helper = $this->getHelper();
 
         if (!$this->_isShippingAllowed()) {
             return false;
-        }
-
-        if ($countryId) {
-            $domesticCountry = $helper->getDomesticCountry();
-            $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-
-            if ($countryId == $domesticCountry
-                && !$helper->canUseStandard()
-            ) {
-                return false;
-            } elseif (
-                $countryId != $domesticCountry
-                && in_array($countryId, $euCountries)
-                && !$helper->canUseEps()
-            ) {
-                return false;
-            } elseif (
-                $countryId != $domesticCountry
-                && !in_array($countryId, $euCountries)
-                && !$helper->canUseGlobalPack()
-            ) {
-                return false;
-            }
         }
 
         /**

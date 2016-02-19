@@ -1369,3 +1369,4 @@ TIG_PostNL::Default product type,Default producttype
 TIG_PostNL::This value is used to determine the product type of newly created products.,Deze waarde wordt gebruikt om het producttype van nieuw aangemaakte producten te bepalen.
 TIG_PostNL::This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.,Dit heeft enkel effect op nieuw aangemaakte producten. Voor bestaande producten is het noodzakelijk om deze handmatig naar het gewenste producttype aan te passen.
 "TIG_PostNL::Warnings:","Let op:"
+TIG_PostNL::Activate food delivery for your customers.,Activeer food bezorging voor uw klanten.
