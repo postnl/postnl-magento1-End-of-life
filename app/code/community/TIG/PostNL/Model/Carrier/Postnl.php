@@ -751,13 +751,11 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     }
 
     /**
-     * Adds shipping rate not found error to the given result, or instantiate empty result with error if neccessary.
-     *
-     * @param Mage_Shipping_Model_Rate_Request|null $request
+     * Adds shipping rate not found error to the given result, or instantiate empty result with error if necessary.
      *
      * @return false|Mage_Core_Model_Abstract|null
      */
-    protected function _addShippingRateNotFoundError(Mage_Shipping_Model_Rate_Request $request = null)
+    protected function _addShippingRateNotFoundError()
     {
         /**
          * Initiate empty result model if not already set.
@@ -769,20 +767,16 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $error = Mage::getModel('shipping/rate_result_error');
         $error->setCarrier('postnl');
         $error->setCarrierTitle($this->getConfigData('title'));
-        $error->setErrorMessage($this->_getShippingRateNotFoundErrorMessage($this->_request));
+        $error->setErrorMessage($this->_getShippingRateNotFoundErrorMessage());
         $this->result->append($error);
 
         return $this->result;
     }
 
     /**
-     *
-     *
-     * @param Mage_Shipping_Model_Rate_Request $request
-     *
      * @return mixed
      */
-    protected function _getShippingRateNotFoundErrorMessage(Mage_Shipping_Model_Rate_Request $request = null)
+    protected function _getShippingRateNotFoundErrorMessage()
     {
         if (!$this->_request) {
             return $this->getConfigData('specificerrmsg');

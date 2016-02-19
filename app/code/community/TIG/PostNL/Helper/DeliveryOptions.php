@@ -55,6 +55,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
     const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
+    const XPATH_ENABLE_DELIVERY_DAYS_BE         = 'postnl/delivery_options/enable_delivery_days_be';
     const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
     const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
@@ -63,6 +64,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options/allow_sunday_sorting_be';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
     const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
@@ -647,12 +649,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * $helper TIG_PostNL_Helper_Date
      *
-     * @param $storeId
      * @param StdClass[] $timeframes
+     * @param int        $storeId
+     * @param string     $destinationCountry
      *
-     * @return StdClass[]|false
+     * @return false|StdClass[]
+     * @throws TIG_PostNL_Exception
      */
-    public function filterTimeFrames($timeframes, $storeId)
+    public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL')
     {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
@@ -715,12 +719,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     foreach (
                         $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
                     ) {
-                        if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
-                            $timeframes[$key]->Timeframes
+                        if ($timeframeTimeframe->Options->string[0] == 'Daytime' && $destinationCountry == 'NL') {
+                            $timeframes[$key]
+                                ->Timeframes
                                 ->TimeframeTimeFrame[$timeframeTimeframeKey]
                                 ->Options
-                                ->string[0]
-                                = 'Monday';
+                                ->string[0] = 'Monday';
                         }
                     }
                 } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
@@ -1760,7 +1764,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         } else {
             $storeId = Mage::app()->getStore()->getId();
 
-            $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_DELIVERY_DAYS, $storeId);
+            $quote = $this->getQuote();
+
+            $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS;
+            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
+                $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS_BE;
+            }
+
+            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
         }
 
         if ($cache) {
@@ -2101,12 +2112,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
-        $storeId = Mage::app()->getStore()->getId();
-
         if ($this->getDomesticCountry() != 'NL') {
             $allowed = false;
         } else {
-            $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+            $storeId = Mage::app()->getStore()->getId();
+
+            $quote = $this->getQuote();
+
+            $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING;
+            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
+                $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
+            }
+
+            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
         }
 
         if ($cache) {

@@ -66,7 +66,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             ':website_id'  => (int) $request->getWebsiteId(),
             ':country_id'  => "%{$request->getDestCountryId()}%",
             ':region_id'   => (int) $request->getDestRegionId(),
-            ':postcode'    => $request->getDestPostcode(),
+            ':postcode'    => str_replace(' ', '', $request->getDestPostcode()),
             ':weight'      => $request->getPackageWeight(),
             ':subtotal'    => $request->getBaseSubtotalInclTax(),
             ':qty'         => $request->getPackageQty(),

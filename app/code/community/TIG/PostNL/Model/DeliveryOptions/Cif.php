@@ -58,6 +58,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_SHIPPING_DURATION       = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options/allow_sunday_sorting_be';
     const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
     const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
     const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options/delivery_days_number_be';
@@ -127,7 +128,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'PostalCode'                 => $postcode,
                 'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
-                'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
+                'AllowSundaySorting'         => $this->_getSundaySortingAllowed($country),
                 'CutOffTimes'                => $CutOffTimes,
                 'Options'                    => $options,
                 'CountryCode'                => $country,
@@ -201,7 +202,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'CountryCode'   => $data['country'],
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
-                'SundaySorting' => $this->_getSundaySortingAllowed(),
+                'SundaySorting' => $this->_getSundaySortingAllowed($data['country']),
                 'Options'       => $options
             ),
             'Message' => $this->_getMessage('')
@@ -348,11 +349,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @return string
      */
-    protected function _getSundaySortingAllowed()
+    protected function _getSundaySortingAllowed($country)
     {
         $storeId = $this->getStoreId();
 
         $allowSundaySorting = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        if ($country == 'BE') {
+            $allowSundaySorting  = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         if ($allowSundaySorting === true) {
             return 'true';
         }
@@ -456,7 +461,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         /**
          * Add flag to identify if Sunday Sorting is allowed
          */
-        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed();
+        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed($data['country']);
 
         return $location;
     }

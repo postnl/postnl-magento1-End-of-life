@@ -867,7 +867,6 @@
             </cif_labels_and_confirming>
             <delivery_options>
                 <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
-                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
                 <responsive>0</responsive> <!-- Do not use the responsive design -->
                 <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
@@ -878,7 +877,6 @@
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
-                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
                 <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
                 <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
@@ -897,6 +895,13 @@
                 <enable_sameday_delivery>0</enable_sameday_delivery> <!-- Disable same day delivery -->
                 <sameday_delivery_fee>0</sameday_delivery_fee> <!-- Same Day Delivery cost 0 {base currency} extra -->
                 <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
+                <enable_food_delivery>0</enable_food_delivery> <!-- Disable food delivery -->
+                <food_delivery_default_product_type>0</food_delivery_default_product_type> <!-- By default products are considered non-food. -->
+                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
+                <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
+                <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
+                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->

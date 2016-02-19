@@ -118,6 +118,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $shippingDays   = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDays   = explode(',', $shippingDays);
 
+        if ($this->getQuote()
+            && $this->getQuote()->getShippingAddress()
+            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
+        ) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         /**
          * Sunday delivery and sunday sorting are not available for letter box parcels.
          */
@@ -250,6 +257,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $dateObject = $this->getDeliveryDate($date, $storeId);
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
 
+        if ($this->getQuote()
+            && $this->getQuote()->getShippingAddress()
+            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
+        ) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         /**
          * If the delivery day is monday, the shipment possibly needs to be sent on saturday, if sundaydelivery is not
          * allowed, and sundaysorting is active.
@@ -282,6 +296,14 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          * Get required config values and date object.
          */
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
+        if ($this->getQuote()
+            && $this->getQuote()->getShippingAddress()
+            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
+        ) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
         $dateObject = $this->getUtcDateTime($deliveryDate, $storeId, false);

@@ -1419,28 +1419,6 @@
                                 </country>
                             </depends>
                         </delivery_options_active>
-                        <delivery_options_be_active translate="label" module="postnl">
-                            <label>Enable PostNL delivery options in Belgium</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>45</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
-                        </delivery_options_be_active>
                         <gomage_delivery_date_conflict>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_goMageDeliveryDateConflicts</frontend_model>
@@ -1587,30 +1565,6 @@
                                 </country>
                             </depends>
                         </delivery_days_number>
-                        <delivery_days_number_be translate="label tooltip" module="postnl">
-                            <label>Maximum number of delivery days for Belgium</label>
-                            <tooltip>Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>115</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <enable_delivery_days>1</enable_delivery_days>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </delivery_days_number_be>
                         <enable_timeframes translate="label tooltip" module="postnl">
                             <label>Enable timeframes</label>
                             <tooltip>Enable timeframes to show the expected delivery times for each delivery day.</tooltip>
@@ -1709,30 +1663,6 @@
                                 </country>
                             </depends>
                         </enable_pakjegemak>
-                        <enable_pakjegemak_be translate="label tooltip" module="postnl">
-                            <label>Enable post office locations for Belgium</label>
-                            <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>155</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </enable_pakjegemak_be>
                         <enable_pakjegemak_express translate="label tooltip" module="postnl">
                             <label>Enable early delivery locations</label>
                             <tooltip>Some locations allow package pick-ups early in the morning. The extension will automatically check if this option is available for locations in the area submitted by your customer. You cannot use Premium Sorting or Sunday Sorting for these shipments. </tooltip>
@@ -2218,13 +2148,39 @@
                                 </country>
                             </depends>
                         </sameday_delivery_fee>
+                        <sameday_delivery_cutoff_time translate="label tooltip" module="postnl">
+                            <label>Same day delivery cut-off time</label>
+                            <tooltip><![CDATA[Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.]]></tooltip>
+                            <tooltip_block>postnl_adminhtml/system_config_form_field_tooltip_hourMinute</tooltip_block>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
+                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
+                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
+                            <sort_order>360</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_sameday_delivery>1</enable_sameday_delivery>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </sameday_delivery_cutoff_time>
                         <food_delivery_warnings>
                             <label>Warnings:</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_checkForWarningBox</frontend_model>
                             <backend_model>postnl_adminhtml/system_config_form_foodWarnings</backend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_store>1</show_in_store>
-                            <sort_order>360</sort_order>
+                            <sort_order>370</sort_order>
                         </food_delivery_warnings>
                         <enable_food_delivery>
                             <label>Enable food delivery</label>
@@ -2233,7 +2189,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>370</sort_order>
+                            <sort_order>380</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_store>1</show_in_store>
                             <depends>
@@ -2257,9 +2213,8 @@
                             <tooltip>This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_productType</backend_model>
-                            TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
                             <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>380</sort_order>
+                            <sort_order>390</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2267,21 +2222,15 @@
                                 <enable_food_delivery>1</enable_food_delivery>
                             </depends>
                         </food_delivery_default_product_type>
-                        <sameday_delivery_cutoff_time translate="label tooltip" module="postnl">
-                            <label>Same day delivery cut-off time</label>
-                            <tooltip><![CDATA[Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.]]></tooltip>
-                            <tooltip_block>postnl_adminhtml/system_config_form_field_tooltip_hourMinute</tooltip_block>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
-                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
-                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
-                            <sort_order>390</sort_order>
+                        <delivery_options_in_belgium_header translate="label" module="postnl">
+                            <label>PostNL delivery options in Belgium</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>400</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
-                                <enable_delivery_days>1</enable_delivery_days>
-                                <enable_sameday_delivery>1</enable_sameday_delivery>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2292,11 +2241,132 @@
                                     <value>NL</value>
                                 </country>
                             </depends>
-                        </sameday_delivery_cutoff_time>
+                        </delivery_options_in_belgium_header>
+                        <delivery_options_be_active translate="label" module="postnl">
+                            <label>Enable PostNL delivery options in Belgium</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>410</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </delivery_options_be_active>
+                        <enable_delivery_days_be translate="label tooltip" module="postnl">
+                            <label>Enable delivery days for Belgium</label>
+                            <tooltip>Delivery days allow customers to choose on which date they want their order delivered.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>420</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </enable_delivery_days_be>
+                        <allow_sunday_sorting_be translate="label comment tooltip" module="postnl">
+                            <label>Enable monday delivery for Belgium</label>
+                            <comment><![CDATA[You can read more about monday delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/" target="_blank" title="monday delivery">here</a>.]]></comment>
+                            <tooltip>Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>430</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <enable_timeframes>1</enable_timeframes>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </allow_sunday_sorting_be>
+                        <delivery_days_number_be translate="label tooltip" module="postnl">
+                            <label>Maximum number of delivery days for Belgium</label>
+                            <tooltip>Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
+                            <sort_order>440</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </delivery_days_number_be>
+                        <enable_pakjegemak_be translate="label tooltip" module="postnl">
+                            <label>Enable post office locations for Belgium</label>
+                            <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>450</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </enable_pakjegemak_be>
                         <mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>400</sort_order>
+                            <sort_order>460</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2319,7 +2389,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>410</sort_order>
+                            <sort_order>470</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2342,7 +2412,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>420</sort_order>
+                            <sort_order>480</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2365,7 +2435,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>430</sort_order>
+                            <sort_order>490</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2389,7 +2459,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>440</sort_order>
+                            <sort_order>500</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2410,7 +2480,7 @@
                         <buspakje_header translate="label" module="postnl">
                             <label>Letter box parcels</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>450</sort_order>
+                            <sort_order>510</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2427,7 +2497,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>460</sort_order>
+                            <sort_order>520</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2444,7 +2514,7 @@
                             <tooltip>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
-                            <sort_order>470</sort_order>
+                            <sort_order>530</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2459,7 +2529,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>480</sort_order>
+                            <sort_order>540</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
