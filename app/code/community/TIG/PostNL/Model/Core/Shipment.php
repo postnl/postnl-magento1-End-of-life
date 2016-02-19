@@ -3547,20 +3547,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Only confirm the main shipment
-         */
-        if ($parcelCount < 2) {
-            $this->_confirm();
-
-            $this->registerConfirmation();
-
-            Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
-
-            $this->unlock();
-            return $this;
-        }
-
-        /**
          * Confirm each parcel in the shipment separately
          */
         for ($i = 0; $i < $parcelCount; $i++) {

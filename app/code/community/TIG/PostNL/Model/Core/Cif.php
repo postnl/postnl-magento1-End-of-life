@@ -261,6 +261,26 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'Option'         => '006',
             ),
         ),
+        'Food' => array(
+            array (
+                'Characteristic' => '118',
+                'Option'         => '015',
+            ),
+            array (
+                'Characteristic' => '118',
+                'Option'         => '006',
+            ),
+        ),
+        'Cooledfood' => array(
+            array (
+                'Characteristic' => '118',
+                'Option'         => '015',
+            ),
+            array (
+                'Characteristic' => '118',
+                'Option'         => '006',
+            ),
+        ),
     );
 
     /**
@@ -582,7 +602,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
         } else {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode,$shipmentNumber)
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber)
             );
         }
 
