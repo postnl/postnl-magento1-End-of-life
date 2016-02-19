@@ -42,5 +42,11 @@
  */
 $installer = $this;
 
-$installer->addSupportedProductCode('4932')
-          ->clearConfigCache();
+$installer->addSupportedProductCode(
+    array(
+        '4932',
+        '3083',
+        '3084',
+        )
+    )
+    ->clearConfigCache();

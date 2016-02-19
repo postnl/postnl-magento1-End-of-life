@@ -2145,10 +2145,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseFoodDelivery($checkQuote = true)
     {
+        Mage::log('test', null, 'test.log', true);
         $allowed = $this->_canUseFoodDelivery();
 
+        Mage::log($allowed, null, 'test.log', true);
         if ($allowed && $checkQuote) {
             $allowed = (bool) $this->quoteIsFood();
+            Mage::log('test2', null, 'test.log', true);
+
+            Mage::log($allowed, null, 'test.log', true);
         }
 
         return $allowed;
