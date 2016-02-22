@@ -875,6 +875,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      */
     public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         /**
          * Get the current default value.
          */
@@ -938,6 +939,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
                                              $removeOldValue = true, $defaultValue = false)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         $config = Mage::getConfig();
 
         if ($scope == 'store') {

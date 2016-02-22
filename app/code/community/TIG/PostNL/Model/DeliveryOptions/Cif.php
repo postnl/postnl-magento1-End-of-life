@@ -50,6 +50,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const DOMESTIC_DELIVERY_OPTION           = 'Daytime';
     const EVENING_DELIVERY_OPTION            = 'Evening';
     const SUNDAY_DELIVERY_OPTION             = 'Sunday';
+    const SAMEDAY_DELIVERY_OPTION            = 'Sameday';
 
     /**
      * Config options used by the getDeliveryDate service.
@@ -118,7 +119,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
-        $options = $this->_getDeliveryDateOptionsArray();
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -491,7 +492,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUseSameDayDelivery()) {
+            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+        }
 
         if ($helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
@@ -511,15 +517,27 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * important to prevent certain dates from being unavailable. The order used in this method is (depending on the
      * extension's config): sunday > daytime > evening.
      *
+     * @param null $shippingDuration
+     *
      * @return array
      */
-    protected function _getDeliveryDateOptionsArray()
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null)
     {
         $storeId = $this->getStoreId();
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
         $options = array();
+        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+
+        if ($shippingDuration == null) {
+            $shippingDuration = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
+        }
+
+        if ($sameDayDelivery && $shippingDuration == 0) {
+            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+        }
+
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         if ($sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;

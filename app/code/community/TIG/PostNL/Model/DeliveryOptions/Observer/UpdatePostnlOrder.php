@@ -144,7 +144,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
              * Calculate the correct fee based on the order type.
              */
             if ($type == $postnlOrder::TYPE_PGE) {
-                $fee = Mage::helper('postnl/deliveryOptions')
+                $fee = Mage::helper('postnl/deliveryOptions_fee')
                            ->getExpressFee(false, $includingTax, false);
             } elseif ($type == $postnlOrder::TYPE_AVOND) {
                 $fee = Mage::helper('postnl/deliveryOptions')
@@ -416,13 +416,24 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
+        /** @var TIG_PostNL_Helper_Data $postnlHelper */
+        $postnlHelper = Mage::helper('postnl');
 
         $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
         $deliveryDate = clone $dateObject;
         $confirmDate  = clone $dateObject;
 
-        $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
-        $helper->getShippingDate($confirmDate, $order->getStoreId());
+        if ($postnlOrder->isSameDayDelivery()) {
+            $helper->setPostnlDeliveryDelay(0);
+        }
+
+        $domesticCountry = $postnlHelper->getDomesticCountry();
+        $orderCountry = $order->getShippingAddress()->getCountryId();
+
+        if ($domesticCountry == $orderCountry) {
+            $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
+            $helper->getShippingDate($confirmDate, $order->getStoreId());
+        }
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())
                     ->setConfirmDate($confirmDate->getTimestamp());

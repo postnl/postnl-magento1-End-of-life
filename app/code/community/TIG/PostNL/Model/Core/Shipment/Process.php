@@ -187,7 +187,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $varDir     = Mage::getConfig()->getVarDir('locks');
         $file       = $varDir . DS . 'postnl_process_'.$this->getId().'.lock';
 
-        if(!is_file($file)){
+        if (!is_file($file) || !is_readable($file)) {
             return false;
         }
 

@@ -210,6 +210,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             case $postnlShipment::SHIPMENT_TYPE_SUNDAY:
                 $shipmentType = $this->__('Sunday Delivery');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_MONDAY:
+                $shipmentType = $this->__('Monday Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
+                $shipmentType = $this->__('Same Day Delivery');
+                break;
         }
 
         return $shipmentType;

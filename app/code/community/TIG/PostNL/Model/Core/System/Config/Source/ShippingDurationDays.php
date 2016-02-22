@@ -36,80 +36,47 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_ShippingDuration
+class TIG_PostNL_Model_Core_System_Config_Source_ShippingDurationDays
 {
     /**
-     * Gets an option array for possible shipping durations.
+     * Returns an option array for possible shipping duration days.
      *
      * @return array
      */
     public function toOptionArray()
     {
-        $helper = Mage::helper('postnl');
-
-        $options = array(
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $labelSizes = array(
             array(
-                'value' => 0,
-                'label' => '0 ' . $helper->__('days'),
+                'value' => '1',
+                'label' => $helper->__('Monday')
             ),
             array(
-                'value' => 1,
-                'label' => '1 ' . $helper->__('day'),
+                'value' => '2',
+                'label' => $helper->__('Tuesday')
             ),
             array(
-                'value' => 2,
-                'label' => '2 ' . $helper->__('days'),
+                'value' => '3',
+                'label' => $helper->__('Wednesday')
             ),
             array(
-                'value' => 3,
-                'label' => '3 ' . $helper->__('days'),
+                'value' => '4',
+                'label' => $helper->__('Thursday')
             ),
             array(
-                'value' => 4,
-                'label' => '4 ' . $helper->__('days'),
+                'value' => '5',
+                'label' => $helper->__('Friday')
             ),
             array(
-                'value' => 5,
-                'label' => '5 ' . $helper->__('days'),
+                'value' => '6',
+                'label' => $helper->__('Saturday')
             ),
             array(
-                'value' => 6,
-                'label' => '6 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 7,
-                'label' => '7 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 8,
-                'label' => '8 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 9,
-                'label' => '9 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 10,
-                'label' => '10 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 11,
-                'label' => '11 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 12,
-                'label' => '12 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 13,
-                'label' => '13 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 14,
-                'label' => '14 ' . $helper->__('days'),
+                'value' => '7',
+                'label' => $helper->__('Sunday'),
             ),
         );
 
-        return $options;
+        return $labelSizes;
     }
 }

@@ -62,7 +62,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Regex to determine whether a label is actually a combi-label.
      */
-    const COMBI_LABEL_REGEX = '#/MediaBox \[0 0 ([\d]+) ([\d]+) \]#';
+    const COMBI_LABEL_REGEX = TIG_PostNL_Model_Core_Shipment_Label::COMBI_LABEL_REGEX;
 
     /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.
@@ -107,7 +107,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @var array
      */
     protected $_labelPositions = array(
-        'Label' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -129,7 +129,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'Return Label' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -151,7 +151,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'BusPakje' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -173,7 +173,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'BusPakjeExtra' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -195,7 +195,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'Label-combi' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI => array(
             1 => array(
                 'x' => 0.5,
                 'y' => -277.6,
@@ -217,28 +217,28 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 105.3,
             ),
         ),
-        'CODcard' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD => array(
             array(
                 'x' => 2,
                 'y' => -39,
                 'w' => 103,
             ),
         ),
-        'CN23' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23 => array(
             array(
                 'x' => 3.9,
                 'y' => 4.5,
                 'w' => 204.2,
             ),
         ),
-        'CommercialInvoice' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE => array(
             array(
                 'x' => 3.9,
                 'y' => 4.5,
                 'w' => 204.2,
             ),
         ),
-        'CP71' => array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71 => array(
             array(
                 'x' => 3.9,
                 'y' => 152.1,
@@ -518,8 +518,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Creates a pdf containing both the packing slip and a shipping label. The shipping label must be of the 'Label' or
-     * 'Label-combi' type.
+     * Creates a pdf containing both the packing slip and a shipping label. The shipping label must be of the TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL or
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI type.
      *
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
      * @param string                               $packingSlip
@@ -548,15 +548,25 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $pdf->insertTemplate($tempPackingslip, 0, 0);
 
-        if ($label->getLabelType() == 'Label'
-            || $label->getLabelType() == 'BusPakje'
-            || $label->getLabelType() == 'BusPakjeExtra'
+        if ($label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
+            || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
+            || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
         ) {
             $pdf->Rotate(90);
             $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
             $pdf->Rotate(0);
-        } elseif ($label->getLabelType() == 'Label-combi') {
-            $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(569), $this->pix2pt(400));
+        } elseif ($label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI) {
+            $contents = file_get_contents($tempLabel);
+            preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
+
+            if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+                // combilabel detected
+                $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(569), $this->pix2pt(400));
+            } else {
+                $pdf->Rotate(90);
+                $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
+                $pdf->Rotate(0);
+            }
         } else {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
@@ -648,19 +658,19 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $labelType = $label->getLabelType();
 
-        $contents = file_get_contents($tempFilename);
-        preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
-
-        if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
-            $labelType = 'Label-combi';
-        }
-
-        if ($labelType == 'Label'
-            || $labelType == 'Label-combi'
-            || $labelType == 'BusPakje'
-            || $labelType == 'BusPakjeExtra'
-            || $labelType == 'Return Label'
+        if ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
         ) {
+            $contents = file_get_contents($tempFilename);
+            preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
+
+            if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+                $labelType = TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI;
+            }
+
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
                 $this->setIsFirstLabel(false);
@@ -683,11 +693,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(3); //used to calculate the top left position
                 $pdf->addOrientedPage('L', 'A6');
             }
-        } elseif ($labelType == 'CODcard') {
+        } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD) {
             $pdf->addOrientedPage('P', array(156.65, 73.85));
-        } elseif ($labelType == 'CN23'
-            || $labelType == 'CommercialInvoice'
-            || $labelType == 'CODcard'
+        } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD
         ) {
             $pdf->addOrientedPage('P', 'A4');
         }
@@ -697,28 +707,37 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * degrees.
          */
         switch ($labelType) {
-            case 'Label-combi':
-                /**
-                 * Rotate the pdf to accommodate the rotated combi-label.
-                 */
-                $pdf->Rotate('-90');
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI:
+                $contents = file_get_contents($tempFilename);
+                preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
 
+                if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
+                    /**
+                     * Rotate the pdf to accommodate the rotated combi-label.
+                     */
+                    $pdf->Rotate('-90');
+
+                    $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
+
+                    $this->increaseLabelCounter();
+
+                    $rotate = true;
+                } else {
+                    $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
+
+                    $this->increaseLabelCounter();
+                }
+                break;
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL:
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
-
-                $rotate = true;
                 break;
-            case 'Label':
-            case 'BusPakje':
-            case 'BusPakjeExtra':
-            case 'Return Label':
-                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
-
-                $this->increaseLabelCounter();
-                break;
-            case 'CN23':
-            case 'CommercialInvoice':
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE:
                 $position = $this->_getLabelPosition($labelType);
 
                 /**
@@ -726,7 +745,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                  */
                 $this->setLabelCounter(5);
                 break;
-            case 'CP71':
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71:
                 $position = $this->_getLabelPosition($labelType);
 
                 /**
@@ -734,7 +753,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                  */
                 $this->setLabelCounter(5);
                 break;
-            case 'CODcard':
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD:
                 $pdf->Rotate('-90');
 
                 $position = $this->_getLabelPosition($labelType);
@@ -868,8 +887,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BusPakjeExtra' type.
-     * Then all other labels in the order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments.
+     * Sorts labels by label type. First all labels of the TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL,
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI,
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE and
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA' type.
+     * Then all other labels in the order of TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD >
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23 > TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71 >
+     * TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE grouped by shipments.
      *
      * @param array $labels
      *
@@ -888,11 +912,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             /**
              * Separate general labels from the rest.
              */
-            if ($label->getLabelType() == 'Label'
-                || $label->getLabelType() == 'Label-combi'
-                || $label->getLabelType() == 'BusPakje'
-                || $label->getLabelType() == 'BusPakjeExtra'
-                || $label->getLabelType() == 'Return Label'
+            if ($label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
+                || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI
+                || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
+                || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
+                || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
             ) {
                 $generalLabels[] = $label;
                 continue;
@@ -901,7 +925,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             /**
              * Separate COD cards.
              */
-            if ($label->getLabelType() == 'CODcard') {
+            if ($label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD) {
                 $codCards[] = $label;
                 continue;
             }
@@ -921,16 +945,18 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $sortedGlobalLabels = array();
         foreach ($globalLabels as $shipmentLabels) {
-            if (isset($shipmentLabels['CN23'])) {
-                $sortedGlobalLabels[] = $shipmentLabels['CN23'];
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23];
             }
 
-            if (isset($shipmentLabels['CP71'])) {
-                $sortedGlobalLabels[] = $shipmentLabels['CP71'];
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71];
             }
 
-            if (isset($shipmentLabels['CommercialInvoice'])) {
-                $sortedGlobalLabels[] = $shipmentLabels['CommercialInvoice'];
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE])) {
+                $sortedGlobalLabels[] = $shipmentLabels[
+                    TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE
+                ];
             }
         }
 

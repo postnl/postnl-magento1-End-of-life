@@ -57,6 +57,7 @@
     <?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
     <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
     <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
+    <?php $_hasExtraCoverAmount   = (bool) $_postnlShipment->getExtraCoverAmount(); ?>
 <?php endif; ?>
 <?php if ($_postnlShipment->getId() && $_postnlShipment->getShipmentType()): ?>
     <div class="hor-scroll" id="postnl_delivery_option_info">
@@ -74,10 +75,12 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <tr>
-                <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
-                <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
-            </tr>
+            <?php if (isset($_isDomesticShipment) && $_isDomesticShipment): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
+                    <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+                </tr>
+            <?php endif; ?>
             <?php if ($_deliveryTimeInfo): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery time'); ?></label></td>
@@ -171,7 +174,7 @@
                             <?php continue; ?>
                         <?php endif; ?>
 
-                        <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
+                        <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true && !$_hasExtraCoverAmount): ?>
                             <?php continue;?>
                         <?php endif; ?>
 

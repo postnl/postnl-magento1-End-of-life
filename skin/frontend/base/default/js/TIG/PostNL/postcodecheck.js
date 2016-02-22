@@ -95,22 +95,28 @@ PostnlPostcodecheck = new Class.create({
         }
 
         var postcodeCheck = this;
-        $(countryField).observe('change', function() {
-            countryId = this.getValue();
 
-            $('postnl_address_error_' + addressType).hide();
-            $('postnl_address_missing_' + addressType).hide();
-            $('postnl_address_invalid_' + addressType).hide();
+        if($(countryField) === null || $(countryField).hasClassName('country_hidden') == false) {
 
-            postcodeCheck.changePostcodeCheckDisabledFields(countryId);
+            $(countryField).observe('change', function() {
+                countryId = this.getValue();
 
-            if (countryId == 'NL') {
-                postcode = $(postcodeField).getValue();
-                housenumber = $(virtualPrefix + housenumberField).getValue();
+                $('postnl_address_error_' + addressType).hide();
+                $('postnl_address_missing_' + addressType).hide();
+                $('postnl_address_invalid_' + addressType).hide();
 
-                postcodeCheck.checkPostcode(postcode, housenumber);
-            }
-        });
+                postcodeCheck.changePostcodeCheckDisabledFields(countryId);
+
+                if (countryId == 'NL') {
+                    postcode = $(postcodeField).getValue();
+                    housenumber = $(virtualPrefix + housenumberField).getValue();
+
+                    postcodeCheck.checkPostcode(postcode, housenumber);
+                }
+            });
+        } else {
+            countryField = 'billing:country_id';
+        }
 
         $(postcodeField).observe('change', function() {
             var postcode = this.getValue();

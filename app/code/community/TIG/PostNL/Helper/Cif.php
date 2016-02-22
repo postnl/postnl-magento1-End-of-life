@@ -120,6 +120,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'GR',
         'MT',
         'NL',
+        'CY',
+        'ML',
     );
 
     /**
@@ -472,6 +474,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of same day delivery product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getSameDayProductCodes($flat = true)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $pakjeGemakProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array
@@ -785,6 +800,52 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $tempPostnlShipment->setShipment($shipment);
 
         return $tempPostnlShipment->isCod();
+    }
+
+    /**
+     * Check if a given shipment is a Sunday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isSundayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isSunday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isSunday();
+    }
+
+    /**
+     * Check if a given shipment is a Monday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isMondayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isMonday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isMonday();
     }
 
 

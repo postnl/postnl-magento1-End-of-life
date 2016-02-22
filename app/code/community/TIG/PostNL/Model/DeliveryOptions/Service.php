@@ -225,6 +225,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
+        if ($data['type'] == 'Sameday') {
+            $helper->setPostnlDeliveryDelay(0);
+        }
+
         $quote = $this->getQuote();
 
         $amsterdamTimeZone = new DateTimeZone('Europe/Amsterdam');

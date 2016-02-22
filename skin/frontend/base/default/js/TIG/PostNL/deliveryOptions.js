@@ -215,10 +215,13 @@ PostnlDeliveryOptions.prototype = {
             eveningFeeExcl            : 0,
             sundayFeeIncl             : 0,
             sundayFeeExcl             : 0,
+            sameDayFeeIncl            : 0,
+            sameDayFeeExcl            : 0,
             expressFeeIncl            : 0,
             expressFeeExcl            : 0,
             eveningFeeText            : '',
             sundayFeeText             : '',
+            sameDayFeeText            : '',
             expressFeeText            : '',
             allowStreetview           : true,
             scrollbarContainer        : 'scrollbar_content',
@@ -239,7 +242,9 @@ PostnlDeliveryOptions.prototype = {
             postnlShippingMethods     : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
             ],
-            extraOptions              : {}
+            extraOptions              : {},
+            getLocationsTimeout       : 5,
+            getTimeframesTimeout      : 5
         }, options || {});
 
         this.debug = debug;
@@ -572,7 +577,11 @@ PostnlDeliveryOptions.prototype = {
                                     this.getLastSelectedOption().getElements()[this.getLastSelectedType()]
                                 );
                             } else {
-                                this.timeframes[0].select();
+                                if (this.timeframes[0].getType() != 'Sameday') {
+                                    this.timeframes[0].select();
+                                } else {
+                                    this.timeframes[1].select();
+                                }
                             }
                         }
                         return;
@@ -773,6 +782,7 @@ PostnlDeliveryOptions.prototype = {
             deliveryDate = this.getDeliveryDate();
         }
 
+        var options = this.getOptions();
         this.timeframeRequest = new Ajax.PostnlRequest(this.getTimeframesUrl(), {
             method : 'post',
             parameters : {
@@ -786,7 +796,9 @@ PostnlDeliveryOptions.prototype = {
             onFailure : this.showDefaultTimeframe.bind(this),
             onComplete : function() {
                 this.timeframeRequest = false;
-            }.bind(this)
+            }.bind(this),
+            onTimeout : this.showDefaultTimeframe.bind(this),
+            timeoutDelay: options.getTimeframesTimeout
         });
 
         return this;
@@ -827,8 +839,11 @@ PostnlDeliveryOptions.prototype = {
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
         } else if (this.getOptions().isOsc) {
-            checkbox.checked = true;
             selectPostnlShippingMethod = true;
+
+            if ($$('[name="shipping_method"]:checked').length == 0) {
+                checkbox.checked = true;
+            }
         }
 
         /**
@@ -905,14 +920,43 @@ PostnlDeliveryOptions.prototype = {
         }.bind(this));
 
         if (selectTimeframe) {
-            this.selectTimeframe(this.timeframes[0].getElement());
+            if (this.timeframes[0].type != 'Sameday') {
+                this.selectTimeframe(this.timeframes[0].getElement());
+            } else {
+                this.selectTimeframe(this.timeframes[1].getElement());
+            }
         }
 
         if (this.getOptions().isOsc) {
-            this.timeframes[0].renderAsOsc();
+            if (this.timeframes[0].type != 'Sameday') {
+                this.timeframes[0].renderAsOsc();
+            } else {
+                this.timeframes[1].renderAsOsc();
+            }
 
             if (selectTimeframe) {
                 this.saveSelectedOption();
+            }
+
+            var fullAddressArray = this.fullAddress.split(',');
+
+            var useBillingForShipping = true;
+            if ($('billing:use_for_shipping_yes')) {
+                useBillingForShipping = $('billing:use_for_shipping_yes').getValue();
+            } else if ($('billing_use_for_shipping_yes')) {
+                useBillingForShipping = $('billing_use_for_shipping_yes').getValue();
+            }
+
+            if (fullAddressArray[0] == '') {
+                if(useBillingForShipping == 1) {
+                    var street  = $('virtual:billing:street1').getValue();
+                    var houseNr = $('virtual:billing:street2').getValue();
+                } else {
+                    var street  = $('virtual:shipping:street1').getValue();
+                    var houseNr = $('virtual:shipping:street2').getValue();
+                }
+
+                $$('.postnl-container #postnl_add_moment .location-name')[0].update(street + ' ' + houseNr);
             }
         }
 
@@ -938,6 +982,15 @@ PostnlDeliveryOptions.prototype = {
         };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
+
+        var today = new Date();
+        var formattedToday = this.formatDate(today);
+
+        if (postnlTimeframe.date == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            postnlTimeframe.date = this.formatDate(today);
+        }
+
         this.setTimeframes(new Array(postnlTimeframe));
 
         this.renderTimeframes(true);
@@ -946,6 +999,18 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         return this;
+    },
+
+    formatDate : function(date) {
+        var formattedMonth = date.getMonth() + 1;
+
+        if (formattedMonth.toString().length < 2) {
+            formattedMonth = '0' + formattedMonth.toString();
+        }
+
+        var formattedDate = date.getDate() + '-' + formattedMonth + '-' + date.getFullYear();
+
+        return formattedDate
     },
 
     /**
@@ -973,6 +1038,7 @@ PostnlDeliveryOptions.prototype = {
             }
         }
 
+        var options = this.getOptions();
         this.locationsRequest = new Ajax.PostnlRequest(this.getLocationsUrl(),{
             method : 'post',
             parameters : {
@@ -986,7 +1052,9 @@ PostnlDeliveryOptions.prototype = {
             onFailure : this.hideLocations.bind(this),
             onComplete : function() {
                 this.locationsRequest = false;
-            }.bind(this)
+            }.bind(this),
+            onTimeout : this.hideLocations.bind(this),
+            timeoutDelay: options.getLocationsTimeout
         });
 
         return this;
@@ -1582,6 +1650,8 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().eveningFeeIncl;
             } else if (selectedType == 'Sunday') {
                 extraCosts = this.getOptions().sundayFeeIncl;
+            } else if (selectedType == 'Sameday') {
+                extraCosts = this.getOptions().sameDayFeeIncl;
             }
 
             if (this.debug) {
@@ -1597,6 +1667,8 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().eveningFeeExcl;
         } else if (selectedType == 'Sunday') {
             extraCosts = this.getOptions().sundayFeeExcl;
+        } else if (selectedType == 'Sameday') {
+            extraCosts = this.getOptions().sameDayFeeExcl;
         }
 
         if (this.debug) {
@@ -4092,7 +4164,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         headerHtml += '<div class="content">';
         headerHtml += '<a href="#" title="'
                     + Translator.translate('Show on the map')
-                    + '" class="show-map" id="show_map_'
+                    + '" class="show-map overflow-protect" id="show_map_'
                     + this.getLocationCode()
                     + '">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
@@ -4158,6 +4230,23 @@ PostnlDeliveryOptions.Location = new Class.create({
          * element.
          */
         this.getType().each(function(type) {
+
+            var today = new Date();
+
+            var todayDay = today.getDate();
+            var todayMonth = today.getMonth();
+            var todayYear = today.getYear();
+
+            var availableDay = availableDeliveryDate.getDate();
+            var availableMonth = availableDeliveryDate.getMonth();
+            var availableYear = availableDeliveryDate.getYear();
+
+            //Since it is not possible to ship to a PG location on the same day, add 1 day to the deliveryOption if the
+            //found available deliverydate is today.
+            if (todayDay == availableDay && todayMonth == availableMonth && todayYear == availableYear) {
+                availableDeliveryDate.setTime(availableDeliveryDate.getTime() + 86400000);
+            }
+
             element = this.renderOption(type, availableDeliveryDate, parent, false);
             if (element) {
                 elements[type] = element;
@@ -5155,13 +5244,42 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.from = timeframe.From;
         this.to   = timeframe.To;
 
-        var type =  timeframe.Options.string[0];
+        var today = new Date();
+
+        var formattedDay = today.getDate();
+        var formattedMonth = today.getMonth() + 1;
+
+        if (formattedDay.toString().length < 2) {
+            formattedDay = '0' + formattedDay.toString();
+        }
+
+        if (formattedMonth.toString().length < 2) {
+            formattedMonth = '0' + formattedMonth.toString();
+        }
+
+        var formattedToday = formattedDay + '-' + formattedMonth + '-' + today.getFullYear();
+
+        var type = '';
+        timeframe.Options.string.each(function(value) {
+            if (value == 'Sameday' && date == formattedToday) {
+                type = value;
+            } else if (value != 'Sameday' && !type) {
+                type = value;
+            }
+        });
+
         switch (type) {
             case 'Evening' :
                 this.type = 'Avond';
                 break;
             case 'Sunday' :
                 this.type = 'Sunday';
+                break;
+            case 'Monday' :
+                this.type = 'Monday';
+                break;
+            case 'Sameday' :
+                this.type = 'Sameday';
                 break;
             default :
                 this.type = 'Overdag';
@@ -5359,6 +5477,21 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             }
 
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
+        }
+
+        //if (this.type == 'Monday') {
+        //    comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
+        //}
+
+        if (this.type == 'Sameday') {
+            var sameDayCosts = this.getOptions().sameDayFeeText;
+            var sameDayCostHtml = '';
+
+            if (this.getOptions().sameDayFeeIncl) {
+                sameDayCostHtml += ' + ' + sameDayCosts;
+            }
+
+            comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
         }
 
         return comment;

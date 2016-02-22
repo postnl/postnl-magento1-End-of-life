@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @deprecated this class is no longer used as of v1.7.0.
  */
 class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_Model_Handler_Controllers
 {
@@ -45,9 +47,13 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      * @param Enterprise_Logging_Model_Event $eventModel
      *
      * @return boolean
+     *
+     * @deprecated v1.7.0
      */
     public function postDispatchSaveMassAction($config, $eventModel)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+
         $request = Mage::app()->getRequest();
         if ($request->getParam('shipment_ids')) {
             $eventModel->setInfo(
@@ -75,9 +81,13 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      * @param Enterprise_Logging_Model_Event $eventModel
      *
      * @return boolean
+     *
+     * @deprecated v1.7.0
      */
     public function postDispatchAction($config, $eventModel)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+
         return true;
     }
 }

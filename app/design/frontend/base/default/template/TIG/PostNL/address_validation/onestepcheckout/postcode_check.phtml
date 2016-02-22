@@ -54,16 +54,25 @@
 <?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
 <?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>
 
-<li class="clearfix">
-    <div class="input-box input-country">
-        <label for="<?php echo $_addressType; ?>:country_id">
-            <?php echo $_postnlHelper->__('Country') ?>
-            <span class="required">*</span>
-        </label>
-        <br />
-        <?php echo $this->getCountryHtmlSelect() ?>
-    </div>
-</li>
+<?php if(!Mage::getStoreConfig('onestepcheckout/exclude_fields/exclude_country_id')) : ?>
+    <li class="clearfix">
+        <div class="input-box input-country">
+            <label for="<?php echo $_addressType; ?>:country_id">
+                <?php echo $_postnlHelper->__('Country') ?>
+                <span class="required">*</span>
+            </label>
+            <br />
+            <?php echo $this->getCountryHtmlSelect() ?>
+        </div>
+    </li>
+<?php else: ?>
+    <?php $defaultCountry = Mage::getStoreConfig('onestepcheckout/general/default_country')?>
+    <li class="clearfix">
+        <div class="input-box input-country">
+            <input type="hidden" name="billing[use_for_shipping]" id="<?php echo $_addressType; ?>:country_id" class="validate-select country_hidden" value="<?php echo $defaultCountry; ?>" title="Country"  />
+        </div>
+    </li>
+<?php endif;?>
 <li class="clearfix" id="osc_postnl">
     <div class="input-box input-postcode">
         <label for="<?php echo $_addressType; ?>:postcode">

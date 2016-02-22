@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.7.1</version>
+            <version>1.8.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -447,16 +447,6 @@
                     </postnl_core_shipment_save>
                 </observers>
             </controller_action_predispatch_adminhtml_sales_order_shipment_save>
-            <controller_action_postdispatch_postnl_admin>
-                <observers>
-                    <!-- Admin logging -->
-                    <postnl_enterprise_logging>
-                        <type>model</type>
-                        <class>postnl/admin_logging_observer</class>
-                        <method>controllerPostdispatch</method>
-                    </postnl_enterprise_logging>
-                </observers>
-            </controller_action_postdispatch_postnl_admin>
             <admin_system_config_changed_section_postnl>
                 <observers>
                     <!-- Clean PostNL config cache -->
@@ -885,8 +875,11 @@
                 <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
                 <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
-                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Sunday Delivery cost 0 {base currency} extra -->
-                <sunday_delivery_fee>0</sunday_delivery_fee> <!-- Disable sunday delivery -->
+                <enable_sunday_delivery>0</enable_sunday_delivery> <!-- Disable sunday delivery -->
+                <sunday_delivery_fee>0</sunday_delivery_fee> <!-- Sunday Delivery cost 0 {base currency} extra -->
+                <enable_sameday_delivery>0</enable_sameday_delivery> <!-- Disable same day delivery -->
+                <sameday_delivery_fee>0</sameday_delivery_fee> <!-- Same Day Delivery cost 0 {base currency} extra -->
+                <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
@@ -902,6 +895,7 @@
                 <mijnpakket_login_btn_test_base_url>tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
+                <ajax_timeout>5</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
             </delivery_options>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
@@ -1068,8 +1062,10 @@
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
                 <default_sunday_product_option>3385</default_sunday_product_option> <!-- Deliver to stated address only -->
+                <default_sameday_product_option>3385</default_sameday_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+                <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
@@ -1088,11 +1084,11 @@
                 <show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
                 <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
                 <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
-                <cif_version_confirming>1_5</cif_version_confirming> <!-- v1.5 -->
+                <cif_version_confirming>1_9</cif_version_confirming> <!-- v1.9 -->
                 <cif_version_labelling>2_0</cif_version_labelling> <!-- v2.0 -->
                 <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
-                <cif_version_deliverydate>2_0</cif_version_deliverydate> <!-- v2.0 -->
+                <cif_version_deliverydate>2_1</cif_version_deliverydate> <!-- v2.0 -->
                 <cif_version_timeframe>2_0</cif_version_timeframe> <!-- v2.0 -->
                 <cif_version_location>2_0</cif_version_location> <!-- v2.0 -->
             </advanced>

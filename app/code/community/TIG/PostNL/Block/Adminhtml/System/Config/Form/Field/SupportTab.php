@@ -74,6 +74,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     /**
      * @return string
      */
+    public function getStability()
+    {
+        $version = Mage::helper('postnl')->getModuleStability();
+
+        return $version;
+    }
+
+    /**
+     * @return string
+     */
     public function getPostnlRegisterUrl()
     {
         $url = Mage::getStoreConfig(self::POSTNL_REGISTER_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);

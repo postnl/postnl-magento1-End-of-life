@@ -68,6 +68,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE = 'postnl/delivery_options/enable_pakketautomaat_for_buspakje';
     const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
+    const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
 
     /**
      * Xpaths to extra fee config settings.
@@ -90,10 +91,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_SHIPPING_DAYS      = 'postnl/cif_labels_and_confirming/shipping_days';
+    const XPATH_SHIPPING_DURATION   = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME         = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_SUNDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SAMEDAY_CUTOFF_TIME = 'postnl/delivery_options/sameday_delivery_cutoff_time';
+    const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
      * Xpath to the 'stated_address_only_checked' setting.
@@ -130,7 +132,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PG',
         'PGE',
         'PA',
-        'Sunday'
+        'Sunday',
+        'Monday',
+        'Sameday',
     );
 
     /**
@@ -209,7 +213,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getConfigMinQty()
     {
-        $configMinQty = $this->_configManageStock;
+        $configMinQty = $this->_configMinQty;
 
         if (is_null($configMinQty)) {
             $configMinQty  = Mage::getStoreConfig(Mage_CatalogInventory_Model_Stock_Item::XML_PATH_MIN_QTY);
@@ -509,10 +513,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $productCode  = $postnlOrder->getProductCode();
         }
 
+        $shippingAddress = null;
+        if ($postnlOrder->getOrder()) {
+            $shippingAddress = $postnlOrder->getOrder()->getShippingAddress();
+        } elseif ($postnlOrder->getQuote()) {
+            $shippingAddress = $postnlOrder->getQuote()->getShippingAddress();
+        } elseif (Mage::getSingleton('checkout/session')->getQuote()) {
+            $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
+        }
+
         /**
          * Add the delivery date.
          */
-        if ($deliveryDate) {
+        if ($deliveryDate
+            && $shippingAddress
+            && $shippingAddress->getCountryId() == $this->getDomesticCountry()
+        ) {
             $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
 
             $deliveryOptionsInfo['delivery_date'] = $deliveryDate->format('Y-m-d H:i:s');
@@ -613,18 +629,91 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return StdClass[]|false
      */
-    public function filterTimeFrames($timeframes, $storeId) {
+    public function filterTimeFrames($timeframes, $storeId)
+    {
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
+        $today = new DateTime('now', new DateTimeZone('UTC'));
 
-        foreach($timeframes as $key => $timeFrame) {
+        if ($helper->isPastCutOff($today, $storeId)) {
+            $today->add(new DateInterval('P1D'));
+        }
+
+        foreach ($timeframes as $key => $timeFrame) {
+            $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
+
+            /**
+             * Check if the time frame's date is today. If so, it is probably a same day delivery time frame.
+             */
+            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
+                /**
+                 * Check for each sub-timeframe if it is indeed same day delivery.
+                 */
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    $sameDay = false;
+
+                    /**
+                     * Same day delivery timeframes may have multiple 'options'. Only one of these needs to actually be
+                     * 'Sameday'.
+                     */
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $forceSameDayTimeFrame = true;
+                            $sameDay = true;
+                        }
+                    }
+
+                    if (!$sameDay) {
+                        unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                    }
+                }
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && !$this->canUseSameDayDelivery(true)) {
+                /**
+                 * If same day delivery it not allowed, remove the time frame.
+                 */
+                unset($timeframes[$key]);
+                continue;
+            }
+
             $timeFrameDay = $timeFrameDate->format('N');
             $correctedTimeFrameDay = $timeFrameDay % 7;
-            if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
-                unset($timeframes[$key]);
+
+            if (!$forceSameDayTimeFrame) {
+                if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
+                    unset($timeframes[$key]);
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
+                    foreach (
+                        $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
+                    ) {
+                        if ($timeframeTimeframe->Options->string[0] == 'Daytime') {
+                            $timeframes[$key]->Timeframes
+                                ->TimeframeTimeFrame[$timeframeTimeframeKey]
+                                ->Options
+                                ->string[0]
+                                = 'Monday';
+                        }
+                    }
+                } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
+                    $date = $timeFrame->Date;
+
+                    $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId, true);
+                    $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId, false);
+                    $now = $helper->getUtcDateTime('now', 0)->setTime(0, 0, 0);
+
+                    $timeFrameIsInPast = $now->diff($utcShippingDate, true)->invert;
+
+                    if ($timeFrameIsInPast) {
+                        unset($timeframes[$key]);
+                    }
+
+                }
             }
         }
 
@@ -758,7 +847,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $items = $quote->getItemsCollection();
         foreach ($items as $key => $item) {
-            if ($item->isDeleted() || $item->getParentItemId()) {
+            if ($item->isDeleted()) {
                 $items->removeItemByKey($key);
             }
         }
@@ -839,6 +928,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $durationArray = $this->_getProductsShippingDuration($productIds, $defaultDuration, $storeId);
 
+        foreach ($durationArray as $key => $duration) {
+            if ($duration == '-1') {
+                unset ($durationArray[$key]);
+            }
+        }
+
         if (empty($durationArray)) {
             $durationArray = array($defaultDuration);
         }
@@ -866,10 +961,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Make sure the value is between 1 and 14 days.
          */
-        if ($shippingDuration > 14 || $shippingDuration < 1) {
+        if ($shippingDuration > 14 || $shippingDuration < -1) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.',
+                    'Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.',
                     $shippingDuration
                 ),
                 'POSTNL-0127'
@@ -889,7 +984,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @return array
      * @throws Mage_Core_Exception
      */
-    protected function _getProductsShippingDuration(array $productIds, $configDuration = 1, $storeId = null)
+    protected function _getProductsShippingDuration(array $productIds, $configDuration = 0, $storeId = null)
     {
         /**
          * Get all products.
@@ -906,7 +1001,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
-                && (int) $product->getData('postnl_shipping_duration') > 0
+                && $product->getData('postnl_shipping_duration') !== -1
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {
@@ -1159,6 +1254,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($quoteItems as $item) {
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
                 $poLocationsAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_pakje_gemak');
+            } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL) {
+                /**
+                 * Virtual products have no PostNL settings.
+                 */
+                continue;
             } else {
                 $poLocationsAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $item->getProductId(),
@@ -1406,7 +1506,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $quoteItems = $quote->getAllItems();
         foreach ($quoteItems as $item) {
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-                $pakketautomaatAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_pakketautomaat');
+                $pakketautomaatAllowed = $this->bundleCheckAllowedForSimpleProducts(
+                    $item,
+                    'postnl_allow_pakketautomaat'
+                );
+            } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL) {
+                /**
+                 * Virtual products have no PostNL settings.
+                 */
+                continue;
             } else {
                 $pakketautomaatAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $item->getProductId(),
@@ -1579,6 +1687,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              */
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
                 $deliveryDaysAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_delivery_days');
+            } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL) {
+                /**
+                 * Virtual products have no PostNL settings.
+                 */
+                continue;
             } else {
                 $deliveryDaysAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $item->getProductId(),
@@ -1719,6 +1832,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              */
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
                 $timeframesAllowed = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_timeframes');
+            } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL) {
+                /**
+                 * Virtual products have no PostNL settings.
+                 */
+                continue;
             } else {
                 $timeframesAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $item->getProductId(),
@@ -1844,6 +1962,64 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * Save the result in the PostNL cache.
              */
             $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
+                  ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Checks if sunday sorting is allowed.
+     *
+     * @param bool $checkCutOffTime
+     *
+     * @return bool
+     */
+    public function canUseSameDayDelivery($checkCutOffTime = false)
+    {
+        $allowed = $this->_canUseSameDayDelivery();
+
+        if ($allowed && $checkCutOffTime) {
+            $isPastCutOff = Mage::helper('postnl/date')->isPastCutOff(
+                new DateTime('now', new DateTimeZone('UTC')),
+                Mage::app()->getStore()->getId(),
+                'sameday'
+            );
+
+            if ($isPastCutOff) {
+                $allowed = false;
+            }
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Checks if sunday sorting is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUseSameDayDelivery()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseSameDayDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseSameDayDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->getDomesticCountry() != 'NL') {
+            $allowed = false;
+        } else {
+            $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseSameDayDelivery($allowed)
                   ->saveCache();
         }
 
@@ -2006,11 +2182,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
 
             /**
-             * If the product is a bundled product, check if the delivey options are allowed for all underlying
-             * simple products. Else just check the given product, since this will point correctly to the simple product.
+             * If the product is a bundled product, check if the delivery options are allowed for all underlying
+             * simple products. Else just check the given product, since this will point correctly to the simple
+             * product.
              */
             if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-                $allowDeliveryOptions = $this->bundleCheckAllowedForSimpleProducts($item, 'postnl_allow_delivery_options');
+                $allowDeliveryOptions = $this->bundleCheckAllowedForSimpleProducts(
+                    $item,
+                    'postnl_allow_delivery_options'
+                );
+            } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL) {
+                /**
+                 * Virtual products have no PostNL settings.
+                 */
+                continue;
             } else {
                 $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
                     $productId,
@@ -2019,7 +2204,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 );
 
                 if ($option) {
-                    $allowParentDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                    /** @noinspection PhpUndefinedVariableInspection */
+                    $allowParentDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')
+                        ->getAttributeRawValue(
                         $parentProductId,
                         'postnl_allow_delivery_options',
                         $item->getStoreId()

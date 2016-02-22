@@ -40,6 +40,11 @@
 class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
 {
     /**
+     * Xpath to the 'valid_shipping_duration_days' setting.
+     */
+    const XPATH_VALID_SHIPPING_DURATION_DAYS = 'postnl/grid/valid_shipping_duration_days';
+
+    /**
      * Constants to define the indices for shipping/delivery day arrays.
      */
     const SUNDAY             = 0;
@@ -73,6 +78,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * @var int
      */
     protected $_postnlDeliveryDelay = 1;
+
+    /**
+     * @param int $postnlDeliveryDelay
+     *
+     * @return $this
+     */
+    public function setPostnlDeliveryDelay($postnlDeliveryDelay)
+    {
+        $this->_postnlDeliveryDelay = (int) $postnlDeliveryDelay;
+
+        return $this;
+    }
 
     /**
      * Build an array of valid delivery dates. Used for calculating delivery and shipping dates.
@@ -112,7 +129,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If a day is configured as shipping day, this day + the PostNL shipping delay is available as delivery day.
          */
-        foreach($shippingDays as $shippingDay) {
+        foreach ($shippingDays as $shippingDay) {
             $dayToEnable = ($shippingDay + $this->_postnlDeliveryDelay) % 7;
             $this->_validDeliveryDays[$dayToEnable] = 1;
         }
@@ -140,9 +157,11 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                  */
                 $this->_validDeliveryDays[self::MONDAY] = 0;
                 $this->_validDeliveryDays[self::TUESDAY] = 1;
-            } else {
-                $this->_validDeliveryDays[self::MONDAY] = 0;
             }
+        }
+
+        if (!$sundaySorting) {
+            $this->_validDeliveryDays[self::MONDAY] = 0;
         }
 
         /**
@@ -170,7 +189,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * Checks if the current day is a valid day for delivery, using the validDeliveryDay array built beforehand.
      *
      * @param int    $weekDay
-     * @param Array  $validDeliveryDays
+     * @param array  $validDeliveryDays
      *
      * @return       bool
      */
@@ -214,7 +233,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * Add the calculated total shipping duration to the order date, to get the Delivery Date.
          */
-        $deliveryDate = $orderDateObject->add(new DateInterval('P'.$shippingDuration.'D'));
+        $deliveryDate = $this->getShippingDateCorrection($shippingDuration, $orderDateObject, $storeId);
         return $deliveryDate;
     }
 
@@ -265,7 +284,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
         $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
-        $dateObject = $this->getUtcDateTime($deliveryDate, $storeId);
+        $dateObject = $this->getUtcDateTime($deliveryDate, $storeId, false);
 
         /**
          * If the delivery day is monday, the shipment possibly needs to be sent on saturday, if sundaydelivery is not
@@ -277,7 +296,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
             }
         }
 
+        /**
+         * Substract the delivery delay from the delivery date to get to the shipping date.
+         */
         $dateObject->sub(new DateInterval("P{$this->_postnlDeliveryDelay}D"));
+
+        /**
+         * If the projected shipping date is not a valid shipping date, substract 1 day and check again.
+         */
+        while (!in_array($dateObject->format('N'), $shippingDaysArray)) {
+            $dateObject->sub(new DateInterval("P1D"));
+        }
+
         return $dateObject;
     }
 
@@ -289,7 +319,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      *
      * @return DateTime
      */
-    public function getUtcDateTime($date, $storeId)
+    public function getUtcDateTime($date, $storeId, $convertTimeZone = true)
     {
         /**
          * If the orderDate is not an object. Make an object using the current store timezone
@@ -302,8 +332,10 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If the orderDate object is not in UTC, change the timezone to UTC.
          */
-        if ($date->getTimeZone()->getName() != 'UTC') {
-            $date->setTimeZone(new DateTimeZone('UTC'));
+        if ($convertTimeZone) {
+            if ($date->getTimeZone()->getName() != 'UTC') {
+                $date->setTimeZone(new DateTimeZone('UTC'));
+            }
         }
 
         return $date;
@@ -312,27 +344,30 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Calculates if the orderDate is past the configured cutoff time.
      *
-     * @param DateTime  $orderDateObject
-     * @param int       $storeId
+     * @param DateTime    $orderDateObject
+     * @param int         $storeId
+     * @param null|string $type
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPastCutOff($orderDateObject, $storeId)
+    public function isPastCutOff($orderDateObject, $storeId, $type = null)
     {
-        $weekDay = $orderDateObject->format('N');
+        if (!$type) {
+            $weekDay = $orderDateObject->format('w');
 
-        /**
-         * If the weekday == 7, we need to check for sunday cutoff time instead.
-         */
-        $forSunday = false;
-        if ($weekDay == self::ALTERNATIVE_SUNDAY) {
-            $forSunday = true;
+            /**
+             * If the weekday == 7, we need to check for sunday cutoff time instead.
+             */
+            $type = 'weekday';
+            if ($weekDay == self::SUNDAY) {
+                $type = 'sunday';
+            }
         }
 
         /**
          * Check if the order time is before the cutoff time, disregarding dates.
          */
-        $cutoff = $this->getCutOff($storeId, $forSunday);
+        $cutoff = $this->getCutOff($storeId, $type);
         $orderTime = $orderDateObject->format("H:i:s");
 
         return ($cutoff < $orderTime);
@@ -342,28 +377,35 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * Gets the cut off time for the given store. When $forSunday is set to true,
      * will return sunday cut off time instead.
      *
-     * @param int   $storeId
-     * @param bool  $forSunday
+     * @param int    $storeId
+     * @param string $type
      *
      * @return DateTime
      */
-    public function getCutOff($storeId = 0, $forSunday = false)
+    public function getCutOff($storeId = 0, $type = 'weekday')
     {
-        /**
-         * If $forSunday is set to true, we need to get the sunday cutoff time.
-         */
-        $xpathToUse = self::XPATH_CUTOFF_TIME;
-        if ($forSunday) {
-            $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
+        switch ($type) {
+            case 'sunday':
+                $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
+                break;
+            case 'sameday':
+                $xpathToUse = self::XPATH_SAMEDAY_CUTOFF_TIME;
+                break;
+            case 'weekday':
+            default:
+                $xpathToUse = self::XPATH_CUTOFF_TIME;
+                break;
         }
+
         $cutoff = Mage::getStoreConfig($xpathToUse, $storeId);
+
         $cutoff = new DateTime($cutoff, new DateTimeZone("Europe/Amsterdam"));
         $correctedCutOff = $this->getUtcDateTime($cutoff, $storeId)->format('H:i:s');
         return $correctedCutOff;
     }
 
     /**
-     * Checks if the found delivery day is valid. If this is not the case, add a day to the deliverydaycorrection,
+     * Checks if the found delivery day is valid. If this is not the case, add a day to the delivery day correction,
      * point to the next found day, and repeat this.
      *
      * @param DateTime|int $checkValidDay
@@ -375,14 +417,16 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         /**
          * If this is not a DateTime object, nor a string, this will get stuck.
          */
-        if(!is_object($checkValidDay) && !is_string($checkValidDay)) {
+        if (!is_object($checkValidDay) && !is_string($checkValidDay) && !is_int($checkValidDay)) {
             return 0;
         }
 
         if (is_object($checkValidDay)) {
+            /** @var DateTime $checkValidDay */
             $checkValidDay = $checkValidDay->format('N');
         }
 
+        /** @var int $checkValidDay */
         $checkValidDay = (int) $checkValidDay;
 
         /**
@@ -407,5 +451,54 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         }
 
         return $deliveryDurationCorrection;
+    }
+
+    /**
+     * Correct the delivery dat with the specified shipping duration, taking into account the configured available
+     * shipping duration days.
+     *
+     * @param int      $shippingDuration
+     * @param DateTime $deliveryDate
+     * @param int      $storeId
+     *
+     * @return DateTime
+     */
+    public function getShippingDateCorrection($shippingDuration, DateTime $deliveryDate, $storeId)
+    {
+        /**
+         * Get and array of valid days for the shipping duration calculation.
+         */
+        $validDurationDays = explode(
+            ',',
+            Mage::getStoreConfig(self::XPATH_VALID_SHIPPING_DURATION_DAYS, $storeId)
+        );
+
+        /**
+         * In case no such array is available, use all days of the week.
+         */
+        if (empty($validDurationDays)) {
+            $validDurationDays = array(
+                self::MONDAY,
+                self::TUESDAY,
+                self::WEDNESDAY,
+                self::THURSDAY,
+                self::FRIDAY,
+                self::SATURDAY,
+                self::ALTERNATIVE_SUNDAY,
+            );
+        }
+
+        /**
+         * Calculate the delivery date.
+         */
+        $i = 0;
+        while ($i < $shippingDuration) {
+            if (in_array($deliveryDate->format('N'), $validDurationDays)) {
+                $i++;
+            }
+            $deliveryDate->add(new DateInterval('P1D'));
+        }
+
+        return $deliveryDate;
     }
 }

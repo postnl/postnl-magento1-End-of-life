@@ -55,7 +55,11 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ShippingDuration
         $options = array(
             array(
                 'label' => $helper->__('Use configuration value'),
-                'value' => ''
+                'value' => '-1'
+            ),
+            array(
+                'value' => 0,
+                'label' => '0 ' . $helper->__('days'),
             ),
             array(
                 'value' => 1,

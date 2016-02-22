@@ -49,6 +49,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -58,6 +59,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -67,6 +69,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -76,6 +79,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -85,6 +89,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => true,
             'countryLimitation' => 'NL',
         ),
@@ -94,6 +99,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -103,6 +109,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => true,
             'countryLimitation' => 'NL',
         ),
@@ -112,6 +119,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -121,6 +129,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => true,
             'countryLimitation' => 'NL',
         ),
@@ -130,6 +139,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => false,
+            'isSameDay'         => true,
             'statedAddressOnly' => true,
             'countryLimitation' => 'NL',
         ),
@@ -139,6 +149,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => true,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -148,6 +159,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => true,
             'isCod'             => true,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -157,6 +169,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isCod'             => true,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -166,6 +179,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => true,
             'isCod'             => true,
+            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
         ),
@@ -175,6 +189,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => true,
             'countryLimitation' => 'BE',
         ),
@@ -185,6 +200,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isAvond'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
+            'isSameDay'         => false,
             'countryLimitation' => 'BE',
         ),
         array(
@@ -193,6 +209,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => true,
             'countryLimitation' => 'BE',
         ),
@@ -202,6 +219,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
         ),
@@ -211,6 +229,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isCod'             => true,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
         ),
@@ -220,6 +239,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => false,
             'isCod'             => false,
+            'isSameDay'         => false,
             'statedAddressOnly' => true,
             'countryLimitation' => 'BE',
             'extraCover'        => 500,
@@ -230,6 +250,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isExtraCover'      => true,
             'isAvond'           => false,
             'isCod'             => true,
+            'isSameDay'         => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
         ),
@@ -283,7 +304,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isCod' => false,
         );
 
-        if ($country === null) {
+        if (!$country) {
             $country = Mage::helper('postnl')->getDomesticCountry();
         }
 
@@ -334,7 +355,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
 
         switch ($country) {
             case 'NL':
-                $flags['isBelgiumOnly'] = false;
+                $flags['isBelgiumOnly'] = array(false, null);
                 break;
             case 'BE':
                 $flags['isBelgiumOnly'] = true;
@@ -353,7 +374,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableNlCodOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => false), $flat, true);
+        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => array(null, false)), $flat, true);
     }
 
     /**
@@ -390,6 +411,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     public function getAvailableAvondCodOptions($flat = false)
     {
         return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
+    }
+
+    /**
+     * Get available same day delivery options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableSameDayOptions($flat = false)
+    {
+        return $this->getOptions(array('isSameDay' => true, 'isCod' => false), $flat, true);
+    }
+
+    /**
+     * Get available same day delivery COD options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableSameDayCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isSameDay' => true, 'isCod' => true), $flat, true);
     }
 
     /**
