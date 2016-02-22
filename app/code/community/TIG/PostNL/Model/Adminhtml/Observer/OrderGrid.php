@@ -1547,6 +1547,34 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * If the filter is set to cooled food, only return postnlorders of the type 'Cooledfood'.
+         */
+        if ($filterCond == 'cooledfood') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Cooledfood'),
+                )
+            );
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to food, only return postnlorders of the type 'Food'.
+         */
+        if ($filterCond == 'food') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Food'),
+                )
+            );
+
+            return $this;
+        }
+
+        /**
          * Lastly, filter out all orders who are being shipped to the Netherlands or other EU countries
          */
         $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
