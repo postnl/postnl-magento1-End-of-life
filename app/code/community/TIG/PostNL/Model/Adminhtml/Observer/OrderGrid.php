@@ -447,6 +447,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'monday'              => $helper->__('Monday Delivery'),
                 'sameday'             => $helper->__('Same Day Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
+                'food'                => $helper->__('Food Delivery'),
+                'cooledfood'          => $helper->__('Cooled Food Delivery'),
             ),
         );
 
@@ -1540,6 +1542,34 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         if ($filterCond == 'eu') {
             $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
             $collection->addFieldToFilter('country_id', array('in', $euCountries));
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to cooled food, only return postnlorders of the type 'Cooledfood'.
+         */
+        if ($filterCond == 'cooledfood') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Cooledfood'),
+                )
+            );
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to food, only return postnlorders of the type 'Food'.
+         */
+        if ($filterCond == 'food') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Food'),
+                )
+            );
 
             return $this;
         }
