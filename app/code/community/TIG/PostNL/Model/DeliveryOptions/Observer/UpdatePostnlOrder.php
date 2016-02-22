@@ -411,7 +411,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     {
         $postnlOrder->setQuoteId($order->getQuoteId())
                     ->setOrderId($order->getId())
-                    ->setType($postnlOrder::TYPE_OVERDAG)
+                    ->setType($this->_getOrderType($postnlOrder, $order))
                     ->setIsActive(0)
                     ->setIsCanceled(0)
                     ->setShipmentCosts(0)
@@ -423,6 +423,23 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->save();
 
         return $this;
+    }
+
+    protected function _getOrderType(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
+    {
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUseFoodDelivery(false)) {
+            $isFood = $helper->quoteIsFood($order->getQuote());
+            switch ($isFood) {
+                case 1:
+                    return $postnlOrder::TYPE_FOOD;
+                case 2:
+                    return $postnlOrder::TYPE_COOLED_FOOD;
+            }
+        }
+
+        return $postnlOrder::TYPE_OVERDAG;
     }
 
     /**

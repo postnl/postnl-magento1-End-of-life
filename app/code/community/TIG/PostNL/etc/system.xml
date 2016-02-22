@@ -2185,7 +2185,7 @@
                         <enable_food_delivery>
                             <label>Enable food delivery</label>
                             <comment>Food Delivery can be used to ship both Dry &amp; Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.</comment>
-                            <tooltip>Activate same day delivery for your customers.</tooltip>
+                            <tooltip>Activate food delivery for your customers.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
