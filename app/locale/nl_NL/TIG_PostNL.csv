@@ -784,11 +784,11 @@ TIG_PostNL::Choose printing start position,Kies printer startpositie
 TIG_PostNL::When printing multiple labels simultaneously you may choose where the printer will start printing. All fields marked orange will be used. The printer will start at position 1 on all pages after the first.,"Wanneer u meerdere labels tegelijk afdrukt, kunt u aangeven waar de printer moet beginnen op de pagina. De printer zal voor alle pagina's na de eerste op positie 1 beginnen."
 TIG_PostNL::Click on the field where you would like the printer to start. All orange coloured fields will be used as long as you have selected sufficient shipments to fill these fields.,"Klik op een veld om deze te selecteren als de startpositie van de printer. Alle oranje gekleurde velden zullen gevuld worden, mits u voldoende zendingen geselcteerd heeft."
 TIG_PostNL::Show on the map,Toon op de kaart
-TIG_PostNL::Magento Community Edition version,Magento Community editie versie
-TIG_PostNL::Magento Enterprise Edition version,Magento Enterprise editie versie
+TIG_PostNL::Magento Community Edition,Magento Community Editie
+TIG_PostNL::Magento Enterprise Edition,Magento Enterprise Editie
 TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout versie
 TIG_PostNL::choose a different shipping address,kies een ander verzendadres
-TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party versie compatibiliteit
+"TIG_PostNL::PHP, Magento & 3rd party version compatibility","PHP, Magento & 3rd party versie compatibiliteit"
 TIG_PostNL::PostNL - Confirm Shipment,PostNL - Zending voormelden
 TIG_PostNL::Always stay informed? Click %shere%s to create a PostNL account based on your order details.,Altijd op de hoogte? Klik %shier%s om direct een PostNL account aan te maken op basis van uw bestelling.
 TIG_PostNL::Track your shipment's current status and whereabouts,Volg de actuele status van uw pakket
@@ -1358,7 +1358,7 @@ TIG_PostNL::Enable monday delivery for Belgium,Activeer maandagbezorging voor Be
 TIG_PostNL::today cooled,vandaag gekoeld
 TIG_PostNL::cooled delivery,gekoeld verstuurd
 TIG_PostNL::Food Delivery Options,Food Bezorging Opties
-"TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.",Food bezorging kan gebruikt worden voor het verzenden van zowel KW artikelen als gekoelde producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
+TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.,Food bezorging kan gebruikt worden voor het verzenden van zowel KW artikelen als gekoelde producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
 TIG_PostNL::Food Delivery,Food Bezorging
 TIG_PostNL::Cooled Food Delivery,Gekoeld Food Bezorging
 TIG_PostNL::Food shipments can only be delivered within the Netherlands.,Versproducten kunnen enkel verstuurd worden naar locaties in Nederland.
@@ -1366,11 +1366,12 @@ TIG_PostNL::Non-Food,Non-Food
 TIG_PostNL::Dry & Groceries,Vers Ongekoeld
 TIG_PostNL::Cool Products,Vers Gekoeld
 TIG_PostNL::The domestic country is not set to NL. Please keep in mind that Food Delivery is only available in the Netherlands.,Het verzendland staat op het moment niet ingesteld op Nederland. Houdt er rekening mee dat Food bezorging enkel mogelijk is bij verzendingen binnen Nederland.
-TIG_PostNL::You have enabled food delivery, but have not yet enabled a Food product code. Please enable a Food product code in Advanced -> User Settings.,U heeft Food delivery geactiveerd, maar nog geen Food productopties geactiveerd. Hierdoor zal het in de frontend niet mogelijk zijn om een Food bestelling aan te maken. Activeer de Food productopties in Geavanceerd -> Gebruikersinstellingen.
-"TIG_PostNL::You currently selected the options to ship to multiple countries. It seems that these countries also include non-domestic countries. Please keep in mind that Food deliveries can only be shipped to the Netherlands.",Volgens de instellingen is het op het moment mogelijk om te verzenden naar landen buiten Nederland. Houdt er rekening mee dat het enkel mogelijk om Food bestellingen binnen Nederland te versturen.
+"TIG_PostNL::You have enabled food delivery, but have not yet enabled a Food product code. Please enable a Food product code in Advanced -> User Settings.","U heeft Food delivery geactiveerd, maar nog geen Food productopties geactiveerd. Hierdoor zal het in de frontend niet mogelijk zijn om een Food bestelling aan te maken. Activeer de Food productopties in Geavanceerd -> Gebruikersinstellingen."
+TIG_PostNL::You currently selected the options to ship to multiple countries. It seems that these countries also include non-domestic countries. Please keep in mind that Food deliveries can only be shipped to the Netherlands.,Volgens de instellingen is het op het moment mogelijk om te verzenden naar landen buiten Nederland. Houdt er rekening mee dat het enkel mogelijk om Food bestellingen binnen Nederland te versturen.
 TIG_PostNL::Enable food delivery,Activeer Food bezorging
 TIG_PostNL::Default product type,Default producttype
 TIG_PostNL::This value is used to determine the product type of newly created products.,Deze waarde wordt gebruikt om het producttype van nieuw aangemaakte producten te bepalen.
 TIG_PostNL::This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.,Dit heeft enkel effect op nieuw aangemaakte producten. Voor bestaande producten is het noodzakelijk om deze handmatig naar het gewenste producttype aan te passen.
-"TIG_PostNL::Warnings:","Let op:"
+TIG_PostNL::Warnings:,Let op:
 TIG_PostNL::Activate food delivery for your customers.,Activeer food bezorging voor uw klanten.
+TIG_PostNL::PHP,PHP

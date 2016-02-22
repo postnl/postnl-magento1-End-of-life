@@ -187,6 +187,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         if ($countryId) {
+            $helper = $this->getHelper();
+
             $domesticCountry = $helper->getDomesticCountry();
             $euCountries = Mage::helper('postnl/cif')->getEuCountries();
 
@@ -370,7 +372,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $method->setMethod('flatrate');
             $method->setMethodTitle($this->getConfigData('name'));
 
-            if ($this->_request->getFreeShipping() === true || $this->_request->getPackageQty() == $this->getFreeBoxes()) {
+            if ($this->_request->getFreeShipping() === true
+                || $this->_request->getPackageQty() == $this->getFreeBoxes())
+            {
                 $shippingPrice = '0.00';
             }
 

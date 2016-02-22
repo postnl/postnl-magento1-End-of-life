@@ -82,6 +82,67 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     }
 
     /**
+     * @return array|Mage_Core_Model_Config_Element|string|false
+     */
+    public function getCompatibility()
+    {
+        $postnlConfig = Mage::app()->getConfig()->getNode('tig/compatibility/postnl');
+
+        if ($postnlConfig) {
+            $postnlConfig = $postnlConfig->asArray();
+        }
+
+        return $postnlConfig;
+    }
+
+    /**
+     * @param string $extensionKey
+     *
+     * @return string
+     */
+    public function getCompatibleExtensionLabel($extensionKey)
+    {
+        switch ($extensionKey) {
+            case 'Idev_OneStepCheckout':
+                return "Idev's OneStepCheckout";
+            case 'Bpost_ShippingManager':
+                return "Bpost Shipping Manager";
+            case 'GoMage_Checkout':
+                return "GoMage's Checkout";
+            case 'Picqer_PostNL':
+                return "Picqer's PostNL add-on";
+            default:
+                return $extensionKey;
+        }
+    }
+
+    /**
+     * @param $versions
+     *
+     * @return string
+     */
+    public function formatCompatibleVersion($versions)
+    {
+        $versionString = '';
+        $versions = explode(',', $versions);
+
+        $i = 0;
+        $count = count($versions);
+        foreach ($versions as $version) {
+            $i++;
+            if ($i > 1 && $i < $count) {
+                $versionString .= ', ';
+            } elseif ($i > 1) {
+                $versionString .= ' & ';
+            }
+
+            $versionString .= 'v' . $version;
+        }
+
+        return $versionString;
+    }
+
+    /**
      * @return string
      */
     public function getPostnlRegisterUrl()

@@ -1142,15 +1142,17 @@
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
             <postnl>
-                <enterprise>1.12,1.13,1.14</enterprise>
-                <community>1.7,1.8,1.9</community>
-                <php>5.3,5.4</php>
+                <php>5.3,5.4,5.5,5.6,7.0</php>
+                <magento>
+                    <enterprise>1.12,1.13,1.14</enterprise>
+                    <community>1.7,1.8,1.9</community>
+                </magento>
                 <!-- Compatibility with other extensions -->
                 <extensions>
-                    <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
+                    <Idev_OneStepCheckout>4.0,4.1,4.5</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
                     <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
-                    <Picqer_PostNL>1.0</Picqer_PostNL>
+                    <Picqer_PostNL>1.0,1.1</Picqer_PostNL>
                 </extensions>
             </postnl>
         </compatibility>
