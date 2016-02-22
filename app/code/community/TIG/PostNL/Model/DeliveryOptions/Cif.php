@@ -163,7 +163,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @param array $data
      *
-     * @return StdClass[]
+     * @return StdClass[]|false
      *
      * @throws TIG_PostNL_Exception
      */
@@ -217,11 +217,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $soapParams
         );
 
-        if (!isset($response->Timeframes)
-            || !isset($response->Timeframes->Timeframe)
-        ) {
+        if (empty($response->Timeframes)) {
+            return false;
+        }
+
+        if (!isset($response->Timeframes->Timeframe)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid response for getDeliveryTimeframes request: %s', $response),
+                Mage::helper('postnl')->__(
+                    'Invalid response for getDeliveryTimeframes request: %s',
+                    var_export($response, true)
+                ),
                 'POSTNL-0122'
             );
         }

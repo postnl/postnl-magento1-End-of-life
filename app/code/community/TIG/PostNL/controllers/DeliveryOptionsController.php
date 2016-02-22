@@ -371,6 +371,13 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
+        if (!$response) {
+            $this->getResponse()
+                 ->setBody('empty_response');
+
+            return $this;
+        }
+
         /**
          * Filter out unavailable time frames.
          */
