@@ -121,7 +121,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
-        $options = $this->_getDeliveryDateOptionsArray($shippingDuration);
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -193,7 +193,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
-        $options = $this->_getDeliveryTimeframesOptionsArray();
+        $options = $this->_getDeliveryTimeframesOptionsArray($data['country']);
 
         $soapParams = array(
             'Timeframe' => array(
@@ -495,9 +495,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * Builds array of time frame options, to be sent in the GetTimeframes request.
      * These options determine which delivery timeframes should be requested.
      *
+     * @param $country
+     *
      * @return array
      */
-    protected function _getDeliveryTimeframesOptionsArray()
+    protected function _getDeliveryTimeframesOptionsArray($country)
     {
         $storeId = $this->getStoreId();
 
@@ -507,7 +509,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         /**
          * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
          */
-        if ($helper->canUseFoodDelivery(true)) {
+        if ($country == 'NL' && $helper->canUseFoodDelivery(true)) {
             $options = array(
                 self::SAMEDAY_DELIVERY_OPTION,
                 self::EVENING_DELIVERY_OPTION,
@@ -518,16 +520,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
-        if ($helper->canUseSameDayDelivery()) {
+        if ($country == 'NL' && $helper->canUseSameDayDelivery()) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
         }
 
-        if ($helper->canUseEveningTimeframes()) {
+        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        if ($sundayDelivery) {
+        if ($country == 'NL' && $sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
@@ -540,11 +542,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * important to prevent certain dates from being unavailable. The order used in this method is (depending on the
      * extension's config): sunday > daytime > evening.
      *
-     * @param null $shippingDuration
+     * @param null   $shippingDuration
+     * @param string $country
      *
      * @return array
      */
-    protected function _getDeliveryDateOptionsArray($shippingDuration = null)
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL')
     {
         $storeId = $this->getStoreId();
 
@@ -557,18 +560,18 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $shippingDuration = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
         }
 
-        if ($sameDayDelivery && $shippingDuration == 0) {
+        if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        if ($sundayDelivery) {
+        if ($country == 'NL' && $sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
         $options[] = self::DOMESTIC_DELIVERY_OPTION;
 
-        if ($helper->canUseEveningTimeframes()) {
+        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 

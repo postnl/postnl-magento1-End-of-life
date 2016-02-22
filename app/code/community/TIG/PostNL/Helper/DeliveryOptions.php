@@ -2258,6 +2258,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if ($this->getDomesticCountry() != 'NL') {
             $allowed = false;
+        } elseif ($this->getQuote()
+            && $this->getQuote()->getShippingAddress()
+            && $this->getQuote()->getShippingAddress()->getCountryId() != 'NL')
+        {
+            $allowed = false;
         } else {
             $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
         }
