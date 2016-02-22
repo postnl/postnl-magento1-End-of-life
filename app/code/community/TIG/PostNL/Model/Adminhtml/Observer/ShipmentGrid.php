@@ -413,6 +413,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_PGE          => $helper->__('Early Pickup'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_PGE_COD      => $helper->__('Early Pickup (COD)'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_BUSPAKJE     => $helper->__('Letter Box Parcel'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_FOOD         => $helper->__('Food Delivery'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_COOLED       => $helper->__('Cooled Food Delivery'),
                     ),
                 ),
                 $after

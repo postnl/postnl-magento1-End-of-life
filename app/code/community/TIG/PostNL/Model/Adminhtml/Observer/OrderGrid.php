@@ -447,6 +447,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'monday'              => $helper->__('Monday Delivery'),
                 'sameday'             => $helper->__('Same Day Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
+                'food'                => $helper->__('Food Delivery'),
+                'cooledfood'          => $helper->__('Cooled Food Delivery'),
             ),
         );
 
