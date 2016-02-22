@@ -49,4 +49,5 @@ $installer->addSupportedProductCode(
             '3084',
         )
     )
+    ->setUseConfigShippingDuration()
     ->clearConfigCache();
