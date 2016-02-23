@@ -1006,14 +1006,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry($registryKey);
         }
 
-        /**
-         * If the quote has a shipping country, but that shipping country is not NL, the quote cannot be a food quote.
-         */
-        $quoteCountryId = $quote->getShippingAddress()->getCountryId();
-        if ($quoteCountryId && $quoteCountryId != 'NL') {
-            return 0;
-        }
-
         $quoteFoodType = $this->getQuoteFoodType($quote);
 
         Mage::register($registryKey, $quoteFoodType);
