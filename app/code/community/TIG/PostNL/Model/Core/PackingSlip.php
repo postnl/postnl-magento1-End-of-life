@@ -866,6 +866,32 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $deliveryDate = $postnlShipment->getDeliveryDate();
                 /** @noinspection PhpParamsInspection */
                 $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
+
+                switch ($postnlShipment->getShipmentType()) {
+                    case $postnlShipment::SHIPMENT_TYPE_AVOND: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_AVOND_COD:
+                        $text .= ' (' . $this->getHelper()->__('Evening Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
+                        $text .= ' (' . $this->getHelper()->__('Same Day Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PG: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_PG_COD:
+                        $text .= ' (' . $this->getHelper()->__('Post Office') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PGE: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_PGE_COD:
+                        $text .= ' (' . $this->getHelper()->__('Early Pickup') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PA:
+                        $text .= ' (' . $this->getHelper()->__('Parcel Dispenser') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
+                        $text .= ' (' . $this->getHelper()->__('Letter Box Parcel') . ')';
+                        break;
+                    // no default
+                }
+
                 $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
                 $page->drawText($text, $x, $top, 'UTF-8');
 
