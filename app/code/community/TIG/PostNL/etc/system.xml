@@ -2182,6 +2182,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <enable_food_delivery>1</enable_food_delivery>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                             <sort_order>370</sort_order>
                         </food_delivery_warnings>
@@ -2222,6 +2223,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
+                                <delivery_options_active>1</delivery_options_active>
                                 <enable_food_delivery>1</enable_food_delivery>
                             </depends>
                         </food_delivery_default_product_type>
