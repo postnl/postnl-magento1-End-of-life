@@ -889,6 +889,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                     case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
                         $text .= ' (' . $this->getHelper()->__('Letter Box Parcel') . ')';
                         break;
+                    case $postnlShipment::SHIPMENT_TYPE_FOOD:
+                        $text .= ' (' . $this->getHelper()->__('Food Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_COOLED:
+                        $text .= ' (' . $this->getHelper()->__('Cooled Food Delivery') . ')';
+                        break;
                     // no default
                 }
 
