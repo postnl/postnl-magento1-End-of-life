@@ -953,11 +953,21 @@ PostnlDeliveryOptions.prototype = {
 
             if (fullAddressArray[0] == '') {
                 if(useBillingForShipping == 1) {
-                    var street  = $('virtual:billing:street1').getValue();
-                    var houseNr = $('virtual:billing:street2').getValue();
+                    if ($('virtual:billing:street1')) {
+                        var street  = $('virtual:billing:street1').getValue();
+                        var houseNr = $('virtual:billing:street2').getValue();
+                    } else {
+                        var street = $('billing:street0').getValue();
+                        var houseNr = $('billing:street1').getValue();
+                    }
                 } else {
-                    var street  = $('virtual:shipping:street1').getValue();
-                    var houseNr = $('virtual:shipping:street2').getValue();
+                    if ($('virtual:shipping:street1')) {
+                        var street = $('shipping:street0').getValue();
+                        var houseNr = $('shipping:street1').getValue();
+                    } else {
+                        var street  = $('virtual:shipping:street1').getValue();
+                        var houseNr = $('virtual:shipping:street2').getValue();
+                    }
                 }
 
                 $$('.postnl-container #postnl_add_moment .location-name')[0].update(street + ' ' + houseNr);
@@ -3969,6 +3979,15 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {void}
      */
     initialize : function(location, deliveryOptions, type) {
+        var deliveryDate = deliveryOptions.getDeliveryDate();
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (deliveryDate == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            deliveryDate = PostnlDeliveryOptions.prototype.formatDate(today);
+        }
+
         this.address           = location.Address;
         this.distance          = location.Distance;
         this.latitude          = location.Latitude;
@@ -3977,7 +3996,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryOptions.getDeliveryDate();
+        this.date              = deliveryDate;
         this.isEveningLocation = location.isEvening;
         this.retailNetworkID   = location.RetailNetworkID;
 
