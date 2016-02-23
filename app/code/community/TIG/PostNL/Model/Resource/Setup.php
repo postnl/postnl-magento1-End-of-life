@@ -1685,6 +1685,37 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
+     * Set the shipping duration to -1 for all products that currently use 'use config'.
+     *
+     * @return $this
+     */
+    public function setUseConfigShippingDuration()
+    {
+        $conn = $this->getConnection();
+        /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+        $attribute = Mage::getResourceModel('catalog/product')->getAttribute('postnl_shipping_duration');
+
+        $conn->update(
+            $attribute->getResource()->getTable(
+                array(
+                    $attribute->getEntity()->getEntityTablePrefix(),
+                    $attribute->getBackendType()
+                )
+            ),
+            array(
+                'value' => -1,
+            ),
+            array(
+                'attribute_id = ?' => $attribute->getAttributeId(),
+                'value IS NULL OR value = ?' => '',
+            )
+        );
+
+        return $this;
+    }
+
+
+    /**
      * Prepare attribute values to save.
      *
      * @param array $attr

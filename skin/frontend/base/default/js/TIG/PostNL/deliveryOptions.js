@@ -824,7 +824,8 @@ PostnlDeliveryOptions.prototype = {
         if (responseText == 'not_allowed'
             || responseText == 'invalid_data'
             || responseText == 'error'
-            ) {
+            || responseText == 'empty_response'
+        ) {
             this.showDefaultTimeframe();
 
             return false;
@@ -1033,8 +1034,9 @@ PostnlDeliveryOptions.prototype = {
             console.info('Getting available delivery locations.');
         }
 
-        if (!this.isPaAllowed && !this.isPgAllowed) {
+        if (!this.isPaAllowed() && !this.isPgAllowed()) {
             this.hideLocations();
+            return this;
         }
 
         if (this.locationsRequest !== false) {

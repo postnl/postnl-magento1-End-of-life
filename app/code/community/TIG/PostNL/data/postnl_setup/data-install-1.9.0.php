@@ -58,6 +58,7 @@
         'postnl_allow_timeframes'       => 1,
         'postnl_allow_pakketautomaat'   => 1,
         'postnl_allow_delivery_options' => 1,
+        'postnl_shipping_duration'      => -1,
     );
 
     $productTypes = array(

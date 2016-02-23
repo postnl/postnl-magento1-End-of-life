@@ -972,7 +972,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         foreach ($durationArray as $key => $duration) {
             if ($duration == '-1') {
-                unset ($durationArray[$key]);
+                unset($durationArray[$key]);
             }
         }
 
