@@ -1248,7 +1248,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $addressArray = array(
             'FirstName'        => $address->getFirstname(),
-            'Name'             => $address->getLastname(),
+            'Name'             => $address->getMiddlename() . ' ' . $address->getLastname(),
             'CompanyName'      => $address->getCompany(),
             'Street'           => $streetData['streetname'],
             'HouseNr'          => $streetData['housenumber'],
