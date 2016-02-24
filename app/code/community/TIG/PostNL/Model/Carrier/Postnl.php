@@ -186,30 +186,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             return false;
         }
 
-        if ($countryId) {
-            $helper = $this->getHelper();
-
-            $domesticCountry = $helper->getDomesticCountry();
-            $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-
-            if ($countryId == $domesticCountry
-                && !$helper->canUseStandard()
-            ) {
-                return false;
-            } elseif (
-                $countryId != $domesticCountry
-                && in_array($countryId, $euCountries)
-                && !$helper->canUseEps()
-            ) {
-                return false;
-            } elseif (
-                $countryId != $domesticCountry
-                && !$helper->canUseGlobalPack()
-            ) {
-                return false;
-            }
-        }
-
         /**
          * Find the parcel type and set this on the request object.
          */
@@ -292,6 +268,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 return false;
             } elseif (
                 $countryId != $domesticCountry
+                && !in_array($countryId, $euCountries)
                 && !$helper->canUseGlobalPack()
             ) {
                 return false;
