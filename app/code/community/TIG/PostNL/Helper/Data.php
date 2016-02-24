@@ -1006,14 +1006,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry($registryKey);
         }
 
-        /**
-         * If the quote has a shipping country, but that shipping country is not NL, the quote cannot be a food quote.
-         */
-        $quoteCountryId = $quote->getShippingAddress()->getCountryId();
-        if ($quoteCountryId && $quoteCountryId != 'NL') {
-            return 0;
-        }
-
         $quoteFoodType = $this->getQuoteFoodType($quote);
 
         Mage::register($registryKey, $quoteFoodType);
@@ -2113,6 +2105,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
+        if ($this->isFoodOrder($order)) {
+            return false;
+        }
+        
         /**
          * Loop through all confirmed shipments. If at least one of them is able to print return labels, return true.
          */
@@ -2123,6 +2119,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Determines if the order contains food products.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool
+     */
+    public function isFoodOrder($order)
+    {
+        $orderItems = $order->getAllItems();
+
+        foreach ($orderItems as $orderItem) {
+            $postnlProductType = $orderItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType) {
+                return true;
+            }
+        }
     }
 
     /**

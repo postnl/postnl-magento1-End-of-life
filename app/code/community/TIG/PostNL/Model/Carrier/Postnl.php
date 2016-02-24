@@ -741,7 +741,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $error = Mage::getModel('shipping/rate_result_error');
         $error->setCarrier('postnl');
         $error->setCarrierTitle($this->getConfigData('title'));
-        $error->setErrorMessage($this->_getShippingRateNotFoundErrorMessage());
+        $error->setErrorMessage($this->getHelper()->__($this->_getShippingRateNotFoundErrorMessage()));
         $this->result->append($error);
 
         return $this->result;

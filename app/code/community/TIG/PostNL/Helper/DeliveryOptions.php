@@ -714,7 +714,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
             if (!$forceSameDayTimeFrame) {
                 if ($deliveryDateArray[$correctedTimeFrameDay] == 0) {
-                    unset($timeframes[$key]);
+                    if (!$helper->canUseFoodDelivery()) {
+                        unset($timeframes[$key]);
+                    }
                 } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
                     foreach (
                         $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
