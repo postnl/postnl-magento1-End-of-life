@@ -360,6 +360,7 @@
             allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+            allowFallBackTimeFrame : <?php echo $this->canUseFallBackTimeframe() ? 'true' : 'false'; ?>,
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,

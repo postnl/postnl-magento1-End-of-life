@@ -156,4 +156,7 @@
     <cooled_delivery translate="message" module="postnl">
         <message>cooled delivery</message>
     </cooled_delivery>
+    <food_delivery_not_possible_postalcode translate="message" module="postnl">
+        <message>Food products delivery is not possible for this postal code. Please choose a different address.</message>
+    </food_delivery_not_possible_postalcode>
 </jstranslator>

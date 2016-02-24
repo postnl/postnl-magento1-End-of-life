@@ -2102,6 +2102,31 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Determines if the DeliveryOptions can show the default FallBack Timeframe. This function is not cached,
+     * since this is dependant on the quote.
+     *
+     * @return bool
+     */
+    public function canUseFallBackTimeframe()
+    {
+        $allowed = $this->_canUseFallBackTimeframe();
+
+        return $allowed;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function _canUseFallBackTimeframe()
+    {
+        if ($this->canUseFoodDelivery()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if sunday sorting is allowed.
      *
      * @return bool
