@@ -1375,6 +1375,6 @@ TIG_PostNL::This will only be used to change the default product type for new pr
 TIG_PostNL::Warnings:,Let op:
 TIG_PostNL::Activate food delivery for your customers.,Activeer food bezorging voor uw klanten.
 TIG_PostNL::PHP,PHP
-"TIG_PostNL::You are currently using the PostNL postcode check in combination with OneStepCheckout's Google Places. Please keep in mind that the PostNL postcode check will overwrite OneStepCheckout's address fields and thereby also the Google Places functionality.","U maakt op het moment gebruik van zowel de PostNL postcode check als van de Google Places functionaliteit van OneStepCheckout. Houdt er rekening mee dat de postcode check van PostNL de adresvelden van OneStepCheckout zal overschrijven en daarmee ook de Google Places functionaliteit onbruikbaar zal maken."
-"TIG_PostNL::You are currently using the PostNL Delivery Options in combination with OneStepCheckout's Google Places. Since both functionalities use the Google Maps api, this could lead to unexpected errors.","U maakt op het moment gebruik van zowel de PostNL bezorgopties als de Google Places functionaliteit van OneStepCheckout. Aangezien beide functionaliteiten gebruik maken van de Google Maps API, kan dit mogelijk tot onverwachte resultaten leiden."
-"TIG_PostNL::You are currenlty using both the delivery date functionality from OneStepCheckout and the PostNL Delivery Options. While these functionalities should work side by side without issues, this could be confusing to your clients.","U maakt op het moment gebruik van zowel de delivery date functionaliteit van OneStepCheckout als de PostNL Bezorgopties. Hoewel deze functionaliteiten zij aan zij zouden moeten kunnen werken zonder problemen, kan dit verwarring opleveren voor uw klanten."
+TIG_PostNL::Post Office Belgium options,Postkantoor België opties
+TIG_PostNL::Letter Box Parcel options,Brievenbuspakje opties
+TIG_PostNL::Cooled Delivery Options,Gekoeld versturen opties
