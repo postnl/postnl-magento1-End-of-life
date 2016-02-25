@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.7.1</version>
+            <version>1.7.2</version>
         </TIG_PostNL>
     </modules>
 
@@ -447,16 +447,6 @@
                     </postnl_core_shipment_save>
                 </observers>
             </controller_action_predispatch_adminhtml_sales_order_shipment_save>
-            <controller_action_postdispatch_postnl_admin>
-                <observers>
-                    <!-- Admin logging -->
-                    <postnl_enterprise_logging>
-                        <type>model</type>
-                        <class>postnl/admin_logging_observer</class>
-                        <method>controllerPostdispatch</method>
-                    </postnl_enterprise_logging>
-                </observers>
-            </controller_action_postdispatch_postnl_admin>
             <admin_system_config_changed_section_postnl>
                 <observers>
                     <!-- Clean PostNL config cache -->
@@ -902,6 +892,7 @@
                 <mijnpakket_login_btn_test_base_url>tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
+                <ajax_timeout>5</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
             </delivery_options>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
@@ -1070,6 +1061,7 @@
                 <default_sunday_product_option>3385</default_sunday_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+                <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
@@ -1135,7 +1127,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>develop</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

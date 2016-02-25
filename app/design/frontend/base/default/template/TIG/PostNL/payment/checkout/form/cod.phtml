@@ -122,6 +122,11 @@
 
         togglePostnlCod = function() {
             var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+
+            if (typeof postnlCodPaymentMethod == 'undefined') {
+                return;
+            }
+
             var postnlCodPaymentMethodContainer = $('container_payment_method_<?php echo $_methodCode; ?>');
 
             if (

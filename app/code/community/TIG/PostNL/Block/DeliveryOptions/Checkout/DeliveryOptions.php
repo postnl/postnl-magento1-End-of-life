@@ -68,6 +68,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     const XPATH_STATED_ADDRESS_ONLY_CHECKED = 'postnl/delivery_options/stated_address_only_checked';
 
     /**
+     * Xpath to the 'timeout' setting.
+     */
+    const XPATH_DELIVERY_OPTIONS_TIMEOUT = 'postnl/delivery_options/ajax_timeout';
+
+    /**
      * Shipping method code used by PostNL matrix rate.
      */
     const POSTNL_MATRIX_RATE_CODE = 'postnl_matrixrate';
@@ -825,6 +830,20 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeliveryOptionsAjaxTimeout()
+    {
+        $timeout = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_OPTIONS_TIMEOUT, Mage::app()->getStore()->getid());
+
+        if ($timeout < 1) {
+            $timeout = 5;
+        }
+
+        return $timeout;
     }
 
     /**

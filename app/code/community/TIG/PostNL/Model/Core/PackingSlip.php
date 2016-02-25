@@ -287,8 +287,25 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
 
             $pdf = Zend_Pdf::parse($labelsString);
-            foreach($pdf->pages as $page) {
-                $mainPdf->pages[] = clone $page;
+
+            /*
+             * Due to a problem with cloning Label-combi's in
+             * lib/Zend/Pdf/Element/Dictionary.php method makeClone()
+             * a work around
+             */
+            if ($firstLabel->getLabelType() == 'Label-combi') {
+                //switch labelString document to mainPdf document
+                $tempPdf = $mainPdf;
+                $mainPdf = $pdf;
+
+                foreach($tempPdf->pages as $page) {
+                    $mainPdf->pages[] = clone $page;
+                }
+            } else {
+                //normal flow
+                foreach($pdf->pages as $page) {
+                    $mainPdf->pages[] = clone $page;
+                }
             }
 
             if (count($labels) > 0) {
@@ -774,13 +791,15 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
             $top -= 10;
 
-            $deliveryDate = $postnlShipment->getDeliveryDate();
-            /** @noinspection PhpParamsInspection */
-            $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
-            $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-            $page->drawText($text, $x, $top, 'UTF-8');
+            if ($postnlShipment->isDomesticShipment()) {
+                $deliveryDate = $postnlShipment->getDeliveryDate();
+                /** @noinspection PhpParamsInspection */
+                $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
+                $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+                $page->drawText($text, $x, $top, 'UTF-8');
 
-            $top -= 24;
+                $top -= 24;
+            }
         }
 
         if ($this->getConfig('show_shipping_date')) {
@@ -1214,7 +1233,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $total->setFontSize(10);
                 foreach ($total->getTotalsForDisplay() as $totalData) {
                     $label = array(
-                        'text'      => $totalData['label'],
+                        'text' => $this->getHelper()->__($totalData['label']),
                         'feed'      => 495,
                         'align'     => 'right',
                         'font_size' => 8,

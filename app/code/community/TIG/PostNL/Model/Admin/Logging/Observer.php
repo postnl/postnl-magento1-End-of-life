@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @deprecated this class is no longer used as of v1.7.0.
  */
 class TIG_PostNL_Model_Admin_Logging_Observer
 {
@@ -47,9 +49,13 @@ class TIG_PostNL_Model_Admin_Logging_Observer
      * @return $this
      *
      * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     *
+     * @deprecated v1.7.0
      */
     public function controllerPostdispatch(Varien_Event_Observer $observer)
     {
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
+
         $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
         $found = mageFindClassFile($loggingObserverClassName);
 

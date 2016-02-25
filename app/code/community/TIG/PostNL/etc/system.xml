@@ -2023,7 +2023,7 @@
                         <allow_sunday_sorting translate="label comment tooltip" module="postnl">
                             <label>Enable monday delivery</label>
                             <comment><![CDATA[You can read more about monday delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/" target="_blank" title="monday delivery">here</a>.]]></comment>
-                            <tooltip>Activate monday delivery (also known as sunday sorting) for your customers.</tooltip>
+                            <tooltip>Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -4550,6 +4550,14 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_pakjegemak>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak>
                                 <country>
                                     <fieldset>cif_address</fieldset>
                                     <value>NL</value>
@@ -4630,6 +4638,17 @@
                                 </country>
                             </depends>
                         </default_stated_address_only_product_option>
+                        <!-- Temporarily removed as it is not fully stable yet. -->
+                        <!--<valid_shipping_duration_days translate="label comment" module="postnl">-->
+                            <!--<label>Valid shipping duration days</label>-->
+                            <!--<comment>Select which days of the week count towards the shipping duration setting.</comment>-->
+                            <!--<source_model>postnl_core/system_config_source_shippingDurationDays</source_model>-->
+                            <!--<frontend_type>multiselect</frontend_type>-->
+                            <!--<sort_order>210</sort_order>-->
+                            <!--<show_in_default>1</show_in_default>-->
+                            <!--<show_in_website>0</show_in_website>-->
+                            <!--<show_in_store>0</show_in_store>-->
+                        <!--</valid_shipping_duration_days>-->
                     </fields>
                 </grid>
                 <advanced translate="label comment" module="postnl">
@@ -4720,8 +4739,8 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                         </show_error_details_in_frontend>
                         <postnl_shipping_methods translate="label tooltip" module="postnl">
                             <label>PostNL shipping methods</label>

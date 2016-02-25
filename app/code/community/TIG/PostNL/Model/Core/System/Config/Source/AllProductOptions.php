@@ -132,6 +132,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
             'group'             => 'standard_options',
         ),
         '3389' => array(
@@ -153,6 +154,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'isBelgiumOnly'     => false,
+            'countryLimitation' => 'NL',
             'group'             => 'standard_options',
         ),
         '3090' => array(
@@ -297,9 +299,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         '4945' => array(
             'value'             => '4945',
             'label'             => 'GlobalPack',
-            'isExtraCover'      => true,
+            'isExtraCover'      => false,
             'isSunday'          => false,
-            'extraCover'        => 200,
             'countryLimitation' => false,
             'group'             => 'global_options',
         ),
@@ -315,7 +316,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'value'             => '2828',
             'label'             => 'Letter Box Parcel',
             'isExtraCover'      => false,
-            'isSunday'               => false,
+            'isSunday'          => false,
             'countryLimitation' => 'NL',
             'group'             => 'buspakje_options',
         ),
@@ -450,6 +451,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         if ($helper->canUseEpsBEOnlyOption()
             && (!isset($flags['group'])
                 || $flags['group'] == 'eu_options'
+            )
+            && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
             )
         ) {
             if (!$asFlatArray) {

@@ -144,7 +144,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
              * Calculate the correct fee based on the order type.
              */
             if ($type == $postnlOrder::TYPE_PGE) {
-                $fee = Mage::helper('postnl/deliveryOptions')
+                $fee = Mage::helper('postnl/deliveryOptions_fee')
                            ->getExpressFee(false, $includingTax, false);
             } elseif ($type == $postnlOrder::TYPE_AVOND) {
                 $fee = Mage::helper('postnl/deliveryOptions')

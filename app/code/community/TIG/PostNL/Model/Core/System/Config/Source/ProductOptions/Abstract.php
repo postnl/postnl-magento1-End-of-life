@@ -141,6 +141,10 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     protected function _optionMatchesFlags($option, $flags)
     {
         foreach($flags as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
             if (is_array($value)) {
                 foreach ($value as $valueOption) {
                     $result = $this->_optionMatchesFlags($option, array($key => $valueOption));

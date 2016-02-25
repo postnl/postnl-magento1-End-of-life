@@ -71,6 +71,8 @@
 
 <?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
 
+<?php $_deliveryOptionsAjaxTimeout = $this->getDeliveryOptionsAjaxTimeout(); ?>
+
 <?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
 <?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
 <?php $_sundayFeeIncl     = $this->getFee('sunday', true); ?>
@@ -366,7 +368,9 @@
                 }
             },
             <?php endif; ?>
-            optionsContainer       : 'osc_scrollbar_container'
+            optionsContainer       : 'osc_scrollbar_container',
+            getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
+            getTimeframesTimeout   : <?php echo $_deliveryOptionsAjaxTimeout; ?>
         };
 
         try {
@@ -381,7 +385,7 @@
                 deliveryOptions.showOptions();
                 $('carrier_postnl').addClassName('options-available');
 
-                <?php if($_canShowSeparateRates): ?>
+                <?php if ($_canShowSeparateRates): ?>
                 /**
                  * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
                  */

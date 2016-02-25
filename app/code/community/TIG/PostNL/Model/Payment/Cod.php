@@ -283,7 +283,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      * Check whether payment method is applicable to quote.
      * Purposed to allow use in controllers some logic that was implemented in blocks only before.
      *
-     * Overloaded to expand the CHECK_USE_FOR_COUNTRY check with the shipping address.
+     * Overloaded to replace the CHECK_USE_FOR_COUNTRY check with the shipping address.
      *
      * @param Mage_Sales_Model_Quote $quote
      * @param int|null               $checksBitMask
@@ -293,9 +293,6 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     public function isApplicableToQuote($quote, $checksBitMask)
     {
         if ($checksBitMask & self::CHECK_USE_FOR_COUNTRY) {
-            if (!$this->canUseForCountry($quote->getBillingAddress()->getCountry())) {
-                return false;
-            }
             if (!$this->canUseForCountry($quote->getShippingAddress()->getCountry())) {
                 return false;
             }

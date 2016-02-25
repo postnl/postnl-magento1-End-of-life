@@ -57,6 +57,9 @@
     <sunday translate="message" module="postnl">
         <message>sunday</message>
     </sunday>
+    <monday translate="message" module="postnl">
+        <message>monday</message>
+    </monday>
     <post_office translate="message" module="postnl">
         <message>Post Office</message>
     </post_office>

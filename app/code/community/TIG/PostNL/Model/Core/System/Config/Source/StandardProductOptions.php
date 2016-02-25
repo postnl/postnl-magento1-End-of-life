@@ -283,7 +283,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'isCod' => false,
         );
 
-        if ($country === null) {
+        if (!$country) {
             $country = Mage::helper('postnl')->getDomesticCountry();
         }
 
@@ -334,7 +334,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
 
         switch ($country) {
             case 'NL':
-                $flags['isBelgiumOnly'] = false;
+                $flags['isBelgiumOnly'] = array(false, null);
                 break;
             case 'BE':
                 $flags['isBelgiumOnly'] = true;
@@ -353,7 +353,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableNlCodOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => false), $flat, true);
+        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => array(null, false)), $flat, true);
     }
 
     /**

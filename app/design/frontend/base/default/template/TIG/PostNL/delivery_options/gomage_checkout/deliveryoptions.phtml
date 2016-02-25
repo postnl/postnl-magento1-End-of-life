@@ -84,6 +84,8 @@
 <?php $_methodRate = $this->getMethodRate(); ?>
 
 <?php $_pakjeGemakRate = $_methodRate + $this->getFee('pakje_gemak', $this->helper('tax')->shippingPriceIncludesTax()); ?>
+
+<?php $_deliveryOptionsAjaxTimeout = $this->getDeliveryOptionsAjaxTimeout(); ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -358,7 +360,9 @@
                 }
             },
             <?php endif; ?>
-            optionsContainer       : 'osc_scrollbar_container'
+            optionsContainer       : 'osc_scrollbar_container',
+            getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
+            getTimeframesTimeout   : <?php echo $_deliveryOptionsAjaxTimeout; ?>
         };
 
         try {

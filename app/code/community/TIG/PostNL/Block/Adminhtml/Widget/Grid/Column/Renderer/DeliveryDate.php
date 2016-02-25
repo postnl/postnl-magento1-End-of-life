@@ -44,6 +44,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     const CONFIRM_DATE_COLUMN    = 'confirm_date';
+    const COUNTRY_ID_COLUMN      = 'country_id';
 
     /**
      * Renders column.
@@ -57,6 +58,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return '';
+        }
+
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        if ($row->getData(self::COUNTRY_ID_COLUMN) != $domesticCountry) {
+            return Mage::helper('postnl')->__('N/A');
         }
 
         $value = $row->getData($this->getColumn()->getIndex());

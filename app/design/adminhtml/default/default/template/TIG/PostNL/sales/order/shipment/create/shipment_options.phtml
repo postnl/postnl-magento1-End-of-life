@@ -52,10 +52,22 @@
 <?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
 <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
+<?php $_isPakketautomaat      = (bool) $_cifHelper->isPakketautomaatShipment($_shipment);?>
 <?php $_isAvond               = (bool) $_cifHelper->isAvondShipment($_shipment); ?>
+<?php $_isSunday              = (bool) $_cifHelper->isSundayShipment($_shipment); ?>
+<?php $_isMonday              = (bool) $_cifHelper->isMondayShipment($_shipment); ?>
 <?php $_parcelCount           = $this->getParcelCount(); ?>
 <div id="postnl_product_options">
-    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDomesticShipment && !$_isCod && !$_isPakjeGemak && !$_isAvond && !$_isBelgium): ?>
+    <?php if (Mage::helper('postnl')->canUseBuspakje()
+        && $_isDomesticShipment
+        && !$_isCod
+        && !$_isPakjeGemak
+        && !$_isAvond
+        && !$_isPakketautomaat
+        && !$_isBelgium
+        && !$_isSunday
+        && !$_isMonday
+    ) : ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
         <?php $_buspakjeCalcMode = $this->getBuspakjeCalcMode(); ?>
         <div id="postnl_is_buspakje_container" <?php if ($_buspakjeCalcMode == 'automatic'): ?>style="display:none;"<?php endif; ?>>

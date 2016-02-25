@@ -92,7 +92,7 @@ TIG_PostNL::Use only the primary sender address,Gebruik enkel het primaire afzen
 TIG_PostNL::Product Options,Productopties
 TIG_PostNL::Select selectable option,Selecteer de beschikbare opties
 TIG_PostNL::Default shipping option,Standaard verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse zendingen.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse zendingen.
 TIG_PostNL::Use an alternative default option,Gebruik een alternatieve standaard optie
 TIG_PostNL::Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Zet deze aan als u een alternatieve standaardwaarde gebruikt als de totaalwaarde van de zending groter is dan een bepaald bedrag.
 TIG_PostNL::Maximum amount,Maximaal bedrag
@@ -661,7 +661,7 @@ TIG_PostNL::Invalid response for GetNearestLocations request: %s,Ongeldig antwoo
 TIG_PostNL::Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.,Ongeldige argumenten aangegeven. GetDeliveryTimeframes verwacht een postcode en een huisnummer.
 TIG_PostNL::Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.,Ongeldige postcode aangegeven voor het GetDeliveryTimeframes verzoek: %s Postcodes mogen enkel 4 cijfers en 2 letters bevatten.
 TIG_PostNL::Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.,Ongeldig huisnummer aangegeven voor het GetDeliveryTimeframes verzoek: %s. Huisnummers mogen enkel getallen bevatten.
-TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.,Ongeldige overkomstduur: %s De overkomstduur moet tussen de 1 en 14 dagen liggen.
+TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 0 and 14 days.,Ongeldige overkomstduur: %s De overkomstduur moet tussen de 0 en 14 dagen liggen.
 TIG_PostNL::Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.,Ongeldige argumenten aangegeven. getNearestLocations verwacht 2 sets aan coördinaten.
 "TIG_PostNL::Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Ongeldige NE coördinaten aangegeven voor het getNearestLocations verzoek. lat: %s, long: %s"
 "TIG_PostNL::Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Ongeldige SW coördinaten aangegeven voor het getNearestLocations verzoek. lat: %s, long: %s"
@@ -695,7 +695,7 @@ TIG_PostNL::Invalid arguments supplied. The 'number' parameter is required.,Onge
 TIG_PostNL::Invalid mobile phone number supplied: %s.,Ongeldig mobiel telefoonnummer opgegeven : %s.
 TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL delivery options.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te maken van PostNL bezorgopties.
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Ongeldige parameters opgegeven. De 'costs' parameter moet een bedrag incl. en excl. BTW bevatten.
-TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.,"Ongeldige toeslag ingevoerd: %s incl. BTW. Vul s.v.p. een waarde in tussen %.2f and %.2f %s incl. BTW."
+TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.,Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.
 TIG_PostNL::The PostNL Extension is currently configured in test mode.,De PostNL extensie is momenteel geconfigureerd in test modus.
 "TIG_PostNL::You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","U kunt uw live gebruikersnaam en wachtwoord invullen onder het 'Account Instellingen' tabje. Vergeet hier niet ook uw klantnummer, klantcode en BLS (locatie) code in te vullen. U kunt vervolgens de extensie op live modus zetten."
 "TIG_PostNL::You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.","U kunt de extensie testen, maar u kunt geen zendingen versturen in test modus. Als u een zending voormeldt of de labels print van een zending terwijl de extensie in test modus staat, zullen deze zendingen gemarkeerd worden als testzendingen. Deze testzendingen kunt u niet versturen. Indien u deze wel verzendt, zult u boetes oplopen bij PostNL. Om de extensie in livemodus te gebruiken, dient u eerst uw PostNL accountgegevens in te voeren en de configuratie op livemodus in te stellen. Vervolgens kunt u zendingen versturen met de PostNL extensie."
@@ -726,7 +726,7 @@ TIG_PostNL::Delete Shipping Labels,Verzendlabels Verwijderen
 TIG_PostNL::The current user is not allowed to perform this action.,De huidige gebruiker heeft geen toegang tot deze actie.
 Actions,Acties
 TIG_PostNL::Default evening delivery shipping option,Standaard avondbezorging verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondzendingen.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondzendingen.
 TIG_PostNL::Default early post office pickup option,Standaard extra vroeg ophalen optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor zendingen.
 TIG_PostNL::Default shipment type,Standaard zending type
@@ -957,9 +957,9 @@ TIG_PostNL::Letter box qty,Brievenbuspakje hoeveelheid
 TIG_PostNL::No Confirmation Required,Geen Voormelding Nodig
 TIG_PostNL::The following options are only for COD orders.,De volgende opties zijn enkel van toepassing op rembours bestellingen.
 TIG_PostNL::Default COD shipping option,Standaard rembours verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse rembours zendingen.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic COD shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse rembours zendingen.
 TIG_PostNL::Default evening COD delivery shipping option,Standaard avondbezorging rembours verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondbezorging rembours zendingen.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondbezorging rembours zendingen.
 TIG_PostNL::Default 'deliver at the Post Office' COD option,Standaard 'afhalen op postkantoor' rembours optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op postkantoor rembours zendingen.
 TIG_PostNL::Default early post office pickup COD option,Standaard extra vroeg ophalen rembours optie
@@ -1290,7 +1290,7 @@ TIG_PostNL::Loading available delivery options for your shipping address...,De b
 TIG_PostNL::Picqer's PostNL add-on version,Picqer's PostNL add-on versie
 TIG_PostNL::Default sunday delivery shipping option,Standaard zondagbezorging verzendoptie
 TIG_PostNL::Enable sunday delivery,Activeer zondagbezorging
-TIG_PostNL::This setting may be overwritten by manualy creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken.
+TIG_PostNL::This setting may be overwritten by manually creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken.
 TIG_PostNL::Activate sunday delivery for your customers.,Activeer zondagbezorging voor uw klanten.
 TIG_PostNL::Sunday Delivery,Zondagbezorging
 TIG_PostNL::Sunday,Zondag
@@ -1306,9 +1306,9 @@ TIG_PostNL::Belgium COD + Return when not home,België Extra dekking (EUR 500) +
 TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to Belgian domestic shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische binnenlandse zendingen.
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian domestic shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische binnenlandse zendingen.
 TIG_PostNL::Default Belgium COD shipping option,Standaard België rembours verzendoptie
-TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL bezorgopties zijn alleen beschikbaar wanneer ur verstuurd vanuit Nederland.
+TIG_PostNL::PostNL delivery options are only available when shipping from the Netherlands.,PostNL bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Delivery options based on contractual agreements,Bezorgopties op basis van contractafspraken
 TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.,Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van maandagbezorging en/of zondagbezorging.
@@ -1317,5 +1317,34 @@ TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your cus
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""maandagbezorging"">hier</a> meer lezen over maandagbezorging."
 "TIG_PostNL::You can read more about sunday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""sunday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/zondagbezorging/"" target=""_blank"" title=""zondagbezorging"">hier</a> meer lezen over zondagbezorging."
 TIG_PostNL::sunday,zondag
-TIG_PostNL::Sunday delivery fee, Zondagbezorging toeslag
-"TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.","Additionele kosten voor het gebruik van zondagbezorgin in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zondagbezorging."
+TIG_PostNL::monday,maandag
+TIG_PostNL::Same Day Delivery,Zelfde Dag Bezorging
+TIG_PostNL::same day,zelfde dag
+TIG_PostNL::Enable same day delivery,Activeer zelfde dag bezorging
+"TIG_PostNL::You can read more about same day delivery <a href="""" target=""_blank"" title=""same day delivery"">here</a>.","U kunt <a href="""" target=""_blank"" title=""zelfde dag bezorging"">hier</a> meer lezen over zelfde dag bezorging."
+TIG_PostNL::Activate same day delivery for your customers.,Activeer zelfde dag bezorging voor uw klanten.
+TIG_PostNL::Same day delivery fee,Zelfde dag bezorging toeslag
+TIG_PostNL::Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.,"Additionele kosten voor het gebruik van zelfde dag bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Deze kosten moeten tussen de 0,00 en 20,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zelfde dag bezorging."
+TIG_PostNL::Default same day delivery shipping option,Standaard zelfde dag bezorging verzendoptie
+TIG_PostNL::This setting may be overwritten by manually creating shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op zelfde dag bezorging bestellingen.
+TIG_PostNL::Sunday delivery fee,Zondagbezorging toeslag
+TIG_PostNL::Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.,Additionele kosten voor het gebruik van zelfde dag bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van zondagbezorging.
+TIG_PostNL::Same day delivery cut-off time,Zelfde dag bezorging cut-off tijd
+TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Zelfde dag bezorging is alleen beschikbaar voor bestellingen die geïnitieerd worden voor deze tijd. Vul de tijd s.v.p. in in de %s tijdzone.
+TIG_PostNL::N/A,N.v.t.
+TIG_PostNL::monday,maandag
+TIG_PostNL::Monday Delivery,Maandagbezorging
+TIG_PostNL::Domestic (COD),Binnenland (rembours)
+TIG_PostNL::PakjeGemak (COD),PakjeGemak (rembours)
+TIG_PostNL::Evening Delivery (COD),Avondbezorging (rembours)
+TIG_PostNL::Early Pickup (COD),Extra Vroeg Ophalen (rembours)
+TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
+TIG_PostNL::Name,Naam
+TIG_PostNL::Vat,Btw
+TIG_PostNL::Shipping & Handling:,Verzendkosten:
+TIG_PostNL::Subtotal (Excl. Tax):,Subtotaal (Ex. Btw):
+TIG_PostNL::Subtotal (Incl. Tax):,Subtotaal (Inc. Btw):
+TIG_PostNL::Shipping (Excl. Tax):,Verzendkosten (Ex. Btw):
+TIG_PostNL::Shipping (Incl. Tax):,Verzendkosten (Inc. Btw):
+TIG_PostNL::Grand Total (Excl. Tax):,Totaal (Ex. Btw):
+TIG_PostNL::Grand Total (Incl. Tax):,Totaal (Inc. Btw):

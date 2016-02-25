@@ -389,6 +389,30 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $storeIdColumn->setFilterIndex('main_table.store_id');
         }
 
+        $this->_modifyExtensionColumns($block);
+
+        return $this;
+    }
+
+    /**
+     * Modify columns added by other extensions for compatibility reasons.
+     *
+     * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
+     *
+     * @return $this
+     */
+    protected function _modifyExtensionColumns($block)
+    {
+        /**
+         * Fix for conflict with Adyen_Payment extension.
+         *
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $adyenEventCodeColumn
+         */
+        $adyenEventCodeColumn = $block->getColumn('adyen_event_code');
+        if ($adyenEventCodeColumn) {
+            $adyenEventCodeColumn->setFilterIndex('main_table.adyen_event_code');
+        }
+
         return $this;
     }
 
@@ -420,6 +444,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                 'avond'               => $helper->__('Evening Delivery'),
                 'sunday'              => $helper->__('Sunday Delivery'),
+                'monday'              => $helper->__('Monday Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
@@ -1066,9 +1091,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             ),
             'postnl_pg_options' => $optionsModel->getOptions(
                 array(
-                    'group'   => 'standard_options',
+                    'group'   => 'pakjegemak_options',
                     'isCod'   => false,
-                    'isAvond' => true,
                 ),
                 false,
                 true
@@ -1100,7 +1124,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'         => 'standard_options',
                     'isCod'         => true,
-                    'isBelgiumOnly' => false,
                 ),
                 false,
                 true
@@ -1363,6 +1386,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * If the filter condition is monday delivery, filter out all other orders
+         */
+        if ($filterCond == 'monday') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Monday'));
+
+            return $this;
+        }
+
+        /**
          * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
          */
         if ($filterCond == 'pakje_gemak') {
@@ -1389,12 +1421,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * If the filter condition is Domestic, filter out all non-Overdag orders.
+         */
+        if ($filterCond == 'nl') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'overdag'),
+                    array('null' => true)
+                )
+            );
+            return $this;
+        }
+
+        /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
          * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
          * need to explicitly filter those as well.
          */
         $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
-        if ($filterCond == $domesticCountry) {
+        if ($filterCond == strtolower($domesticCountry)) {
             $collection->addFieldToFilter('country_id', $cond);
             $collection->addFieldToFilter(
                        'postnl_order.type',

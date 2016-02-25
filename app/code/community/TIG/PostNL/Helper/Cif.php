@@ -120,6 +120,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'GR',
         'MT',
         'NL',
+        'CY',
+        'ML',
     );
 
     /**
@@ -787,6 +789,52 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $tempPostnlShipment->isCod();
     }
 
+    /**
+     * Check if a given shipment is a Sunday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isSundayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isSunday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isSunday();
+    }
+
+    /**
+     * Check if a given shipment is a Monday Delivery
+     *
+     * @param $shipment
+     *
+     * @return bool
+     */
+    public function isMondayShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isMonday();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isMonday();
+    }
+
 
     /**
      * Gets the default product option for a shipment
@@ -818,7 +866,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptions()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
+        trigger_error('This method is deprecated and may be removed in the future.', E_USER_DEPRECATED);
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);

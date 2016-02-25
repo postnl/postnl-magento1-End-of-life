@@ -119,6 +119,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case 'sunday':
                 $label = $helper->__('Sunday Delivery');
                 break;
+            case 'monday':
+                $label = $helper->__('Monday Delivery');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -190,6 +193,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getPgeRenderedValue($row);
         } elseif ($optionType == 'Sunday') {
             return $this->_getSundayRenderedValue($row);
+        } elseif ($optionType == 'Monday') {
+            return $this->_getMondayRenderedValue($row, $value);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -336,19 +341,38 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     }
 
     /**
+     * Render this column for monday shipments.
+     *
+     * @param Varien_Object $row
+     * @param               $destination
+     *
+     * @return string
+     */
+    protected function _getMondayRenderedValue(Varien_Object $row, $destination)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Monday Delivery');
+        return $this->_getDomesticRenderedValue($row, $destination, $label);
+    }
+
+    /**
      * Render this column for a domestic shipment.
      *
      * @param Varien_Object $row
      * @param string        $destination
+     * @param null|string   $label
      *
      * @return string
      */
-    protected function _getDomesticRenderedValue(Varien_Object $row, $destination)
+    protected function _getDomesticRenderedValue(Varien_Object $row, $destination, $label = null)
     {
         $helper = Mage::helper('postnl');
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
-        $label = $helper->__('Domestic');
+        if (!$label) {
+            $label = $helper->__('Domestic');
+        }
         $type  = 'domestic';
 
         $isCod = $this->_isCod($row);
@@ -365,7 +389,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
                 $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
-                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                if ($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
                     $label = $helper->__('Letter Box Parcel');
                     $type  = 'buspakje';
 
@@ -388,7 +412,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
                 $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
-                if ($deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                if ($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
                     $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
                 }
             }
