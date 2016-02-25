@@ -179,7 +179,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $startDate = $data['deliveryDate'];
 
         /**
-         * To calculate the end date we need to number of days we want to display minus 1.
+         * To calculate the end date we need to number of days we want to display.
          */
         $storeId = Mage::app()->getStore()->getId();
 
@@ -187,8 +187,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER_BE, $storeId);
         } else {
             $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+
+            /**
+             * For other countries we need the days minus 1.
+             */
+            $maximumNumberOfDeliveryDays--;
         }
-        $maximumNumberOfDeliveryDays--;
 
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
