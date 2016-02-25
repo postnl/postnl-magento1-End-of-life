@@ -126,13 +126,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
         $versionString = '';
         $versions = explode(',', $versions);
 
-        $i = 0;
         $count = count($versions);
-        foreach ($versions as $version) {
-            $i++;
-            if ($i > 1 && $i < $count) {
+        foreach (array_values($versions) as $index => $version) {
+            if ($index > 0 && $index < $count) {
                 $versionString .= ', ';
-            } elseif ($i > 1) {
+            } elseif ($index > 0) {
                 $versionString .= ' & ';
             }
 

@@ -419,7 +419,16 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $method->setCarrier('postnl');
         $method->setCarrierTitle($this->getConfigData('title'));
 
-        $method->setMethod('tablerate');
+        $carrierMethod = '';
+        switch ($this->getRateType()) {
+            case self::RATE_TYPE_MATRIX:
+                $carrierMethod = 'matrixrate';
+                break;
+            case self::RATE_TYPE_TABL:
+                $carrierMethod = 'tablerate';
+                break;
+        }
+        $method->setMethod($carrierMethod);
         $method->setMethodTitle($this->getConfigData('name'));
 
         $method->setPrice($price);
