@@ -162,7 +162,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             $this->_setDates($postnlOrder, $order);
         }
 
-
         /**
          * Update the PostNL order.
          */
@@ -469,8 +468,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $orderCountry = $order->getShippingAddress()->getCountryId();
 
         if ($domesticCountry == $orderCountry) {
-            $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
-            $helper->getShippingDate($confirmDate, $order->getStoreId());
+            $helper->getDeliveryDate($deliveryDate, $order->getStoreId(), $postnlOrder->isSameDayDelivery());
+            $helper->getShippingDateFromDeliveryDate(clone $deliveryDate, $order->getStoreId());
         }
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())

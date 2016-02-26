@@ -208,12 +208,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Calculates the date an order should be delivered, based on the order date
      *
-     * @param mixed  $date
-     * @param int    $storeId
+     * @param mixed $date
+     * @param int   $storeId
+     * @param bool  $allowSameDay
      *
      * @return DateTime
      */
-    public function getDeliveryDate($date, $storeId)
+    public function getDeliveryDate($date, $storeId, $allowSameDay = true)
     {
         $orderDateObject = $this->getUtcDateTime($date, $storeId);
 
@@ -229,6 +230,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         $weekday = $orderDateObject->format('N');
         $shippingDuration = $this->getQuoteShippingDuration();
+
+        /**
+         * The shipping duration may only be less than 1 when same day is allowed.
+         */
+        if ($shippingDuration < 1 && !$allowSameDay) {
+            $shippingDuration = 1;
+        }
 
         /**
          * Get a possible addition of day(s), if the found deliveryDay is not a valid deliveryday.
