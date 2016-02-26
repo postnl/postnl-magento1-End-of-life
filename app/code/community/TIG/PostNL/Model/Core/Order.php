@@ -115,6 +115,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const TYPE_PG           = 'PG';
     const TYPE_PGE          = 'PGE';
     const TYPE_PA           = 'PA';
+    const TYPE_SAMEDAY      = 'Sameday';
     const TYPE_FOOD         = 'Food';
     const TYPE_COOLED_FOOD  = 'Cooledfood';
 
@@ -424,7 +425,22 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     public function isSameDayDelivery()
     {
         $type = $this->getType();
-        if ($type == 'Sameday') {
+        if ($type == self::TYPE_SAMEDAY) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the order is a food order.
+     *
+     * @return bool
+     */
+    public function isFood()
+    {
+        $type = $this->getType();
+        if ($type == self::TYPE_FOOD || $type == self::TYPE_COOLED_FOOD) {
             return true;
         }
 
