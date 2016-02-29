@@ -38,7 +38,6 @@
  */
 class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Core_Model_Config_Data
 {
-
     /**
      * Country code for the Netherlands.
      */
@@ -85,7 +84,7 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
     /**
      * Constructor function which will set some values which will be needed later.
      */
-    public function __construct()
+    protected function _construct()
     {
         $this->_helper = Mage::helper('postnl');
         $this->_cifHelper = Mage::helper('postnl/cif');
@@ -99,6 +98,8 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
      */
     protected function _afterLoad()
     {
+        parent::_afterLoad();
+
         $this->_checkForDomesticCountry();
         $this->_checkForFoodProductOptions();
         $this->_checkForShippingCountries();
@@ -110,15 +111,21 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
      * Adds the given warning to the _warning array property.
      *
      * @param string $warning
+     *
+     * @return $this
      */
     protected function _addWarning($warning)
     {
         $this->_warnings[] = $warning;
+
+        return $this;
     }
 
     /**
      * Checks if the current domestic country is indeed the Netherlands,
      * since it is impossible to ship food outside the Netherlands.
+     *
+     * @return $this
      */
     protected function _checkForDomesticCountry()
     {
@@ -127,11 +134,15 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
         if ($domesticCountry != self::COUNTRY_CODE_NL) {
             $this->_addWarning(self::WARNING_DOMESTIC_COUNTRY);
         }
+
+        return $this;
     }
 
     /**
      * Checks if at least 1 food product code is available.
      * If this is not the case, the PostNL shipping method cannot be shown in the checkout.
+     *
+     * @return $this
      */
     protected function _checkForFoodProductOptions()
     {
@@ -143,18 +154,23 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
         foreach ($foodProductOptions as $productCode => $foodProductOption) {
             if ($availableProductOptions[$productCode]) {
                 $available = true;
+                break;
             }
         }
 
         if (!$available) {
             $this->_addWarning(self::WARNING_AVAIALBLE_PRODUCT_CODES);
         }
+
+        return $this;
     }
 
     /**
      * Checks for the current scope if the Netherlands is the only country that can be shipped to.
      * Since it is impossible to ship food deliveries outside the Netherlands, this check is built to prevent problems
      * for the merchant.
+     *
+     * @return $this
      */
     protected function _checkForShippingCountries()
     {
@@ -163,6 +179,8 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
         if ($availableCountries != array(self::COUNTRY_CODE_NL)) {
             $this->_addWarning(self::WARNING_ALLOW_SPECIFIC_COUNTRIES);
         }
+
+        return $this;
     }
 
     /**

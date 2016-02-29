@@ -1493,7 +1493,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (in_array($address->getCountryId(), $houseNumberRequiredCountries) && empty($streetData['housenumber'])) {
             throw new TIG_PostNL_Exception(
                 $helper->__("House number is required for the destination country (%s).", $address->getCountryId()),
-                ''
+                'POSTNL-0239'
             );
         }
 

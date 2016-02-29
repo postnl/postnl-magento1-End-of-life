@@ -424,7 +424,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             case self::RATE_TYPE_MATRIX:
                 $carrierMethod = 'matrixrate';
                 break;
-            case self::RATE_TYPE_TABL:
+            case self::RATE_TYPE_TABLE:
                 $carrierMethod = 'tablerate';
                 break;
         }

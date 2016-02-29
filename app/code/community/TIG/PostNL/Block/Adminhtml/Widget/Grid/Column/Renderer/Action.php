@@ -176,6 +176,19 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         }
 
         /**
+         * @todo remove this once PostNL has fixed the issue with manually confirming GlobalPack shipments.
+         */
+        if (!in_array($countryId, $euCountries)) {
+            $message = $helper->__(
+                "You cannot manually confirm GlobalPack shipments. Please use the 'print label & confirm' massaction" .
+                " instead."
+            );
+            $action = $this->_disableAction($action, $message);
+
+            return $action;
+        }
+
+        /**
          * If this shipment uses a custom barcode it does not need to be confirmed.
          */
         $customBarcodeProductCodes = $helper->getCustomBarcodes();

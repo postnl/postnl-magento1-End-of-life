@@ -238,7 +238,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
         $deliveryDate->setTimezone($utcTimeZone);
 
-        if ($data['type'] == ('Food' || 'Cooledfood')) {
+        if ($data['type'] == 'Food' || $data['type'] == 'Cooledfood') {
             $confirmDate = $deliveryDate;
         } else {
             $deliveryDateClone = clone $deliveryDate;

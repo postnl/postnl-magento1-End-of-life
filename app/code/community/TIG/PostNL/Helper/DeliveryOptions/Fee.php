@@ -349,7 +349,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $registryKey .= '_incl';
         }
 
-        $quote = $this->getQuote();
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
@@ -370,7 +369,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         }
 
         if ($convert) {
-            $store = $quote->getStore();
+            $store = $this->getQuote()->getStore();
 
             $price = $store->convertPrice($price, false, false);
         }

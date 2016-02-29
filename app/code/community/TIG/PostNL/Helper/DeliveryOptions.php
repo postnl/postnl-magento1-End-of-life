@@ -748,8 +748,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the quote is a food quote, every delivery option should be of the type 'Food'.
              */
-            $canUseFood = $this->canUseFoodDelivery(false);
-            if ($canUseFood) {
+            if ($this->canUseFoodDelivery(false)) {
                 $isFood = $this->quoteIsFood();
                 if ($isFood) {
                     if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
@@ -2172,11 +2171,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $storeId = Mage::app()->getStore()->getId();
-        $domesticCountryNL = (bool) ($this->getDomesticCountry() == 'NL');
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
-        $productOptionsAvailable = $this->_getFoodProductOptionsAvailable($storeId);
 
-        if ($domesticCountryNL && $foodDeliveryEnabled && $productOptionsAvailable) {
+        if ($this->getDomesticCountry() == 'NL'
+            && $foodDeliveryEnabled
+            && $this->_getFoodProductOptionsAvailable($storeId)
+        ) {
             $allowed = true;
         }
 
@@ -2211,6 +2211,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($this->_foodProductCodes as $foodProductCode) {
             if (in_array($foodProductCode, $availableProductOptions)) {
                 $available = true;
+                break;
             }
         }
 
@@ -2258,12 +2259,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if ($this->getDomesticCountry() != 'NL') {
-            $allowed = false;
-        } elseif ($this->getQuote()
-            && $this->getQuote()->getShippingAddress()
-            && $this->getQuote()->getShippingAddress()->getCountryId() != 'NL')
-        {
+        if ($this->getDomesticCountry() != 'NL'
+            || ($this->getQuote()
+                && $this->getQuote()->getShippingAddress()
+                && $this->getQuote()->getShippingAddress()->getCountryId() != 'NL'
+            )
+        ) {
             $allowed = false;
         } else {
             $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
