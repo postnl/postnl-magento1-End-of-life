@@ -851,7 +851,7 @@ TIG_PostNL::Order item #%s could not be invoiced.,Order item #%s kon niet gefact
 TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling mist."
 TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling niet gefactureerd kan worden."
 TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgetreden tijdens het aanmaken van een factuur voor deze zending.
-TIG_PostNL::No valid shipment type found for shipment #%s,Geen valide zending gevonden voor zending #%s.
+TIG_PostNL::No valid shipment type found for order #%s,Geen valide zending gevonden voor bestelling #%s.
 TIG_PostNL::Print packing slips,Print pakbonnen
 TIG_PostNL::PostNL - Print packing slips,PostNL - Print pakbonnen
 TIG_PostNL::Products,Producten
@@ -1355,7 +1355,7 @@ TIG_PostNL::House number is required for the destination country (%s).,Huisnumme
 TIG_PostNL::PostNL delivery options in Belgium,PostNL bezorgopties in België
 TIG_PostNL::Enable delivery days for Belgium,Activeer bezorgdagen voor België
 TIG_PostNL::Enable monday delivery for Belgium,Activeer maandagbezorging voor België
-TIG_PostNL::today cooled,vandaag gekoeld
+TIG_PostNL::today cooled,vandaag gekoeld verstuurd
 TIG_PostNL::cooled delivery,gekoeld verstuurd
 TIG_PostNL::Food Delivery Options,Food Bezorging Opties
 TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.,Food bezorging kan gebruikt worden voor het verzenden van zowel KW artikelen als gekoelde producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
@@ -1378,3 +1378,5 @@ TIG_PostNL::PHP,PHP
 TIG_PostNL::Post Office Belgium options,Postkantoor België opties
 TIG_PostNL::Letter Box Parcel options,Brievenbuspakje opties
 TIG_PostNL::Cooled Delivery Options,Gekoeld versturen opties
+"TIG_PostNL::Unable to create a shipment for order #%s, because GlobalPack is currently disabled.","Kan geen zending aanmaken voor bestelling #%s, omdat GlobalPack momenteel uitgeschakeld is."
+TIG_PostNL::You cannot manually confirm GlobalPack shipments. Please use the 'print label & confirm' massaction instead.,Het is niet mogelijk om GlobalPack zendingen handmatig voor te melden. Gebruik s.v.p. de 'print label & meld voor' massa-actie.
