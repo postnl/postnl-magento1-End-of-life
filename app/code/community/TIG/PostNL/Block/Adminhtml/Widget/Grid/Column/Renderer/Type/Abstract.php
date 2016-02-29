@@ -66,23 +66,26 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label         = '';
         $comment       = false;
+        /** @noinspection PhpParamsInspection */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass */
+        $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         switch ($type) {
-            case 'domestic':
+            case $postnlShipmentClass::SHIPMENT_TYPE_DOMESTIC:
                 $label = $helper->__('Domestic');
                 break;
-            case 'domestic_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_DOMESTIC_COD:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('COD');
                 break;
-            case 'avond':
+            case $postnlShipmentClass::SHIPMENT_TYPE_AVOND:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery');
                 break;
-            case 'avond_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_AVOND_COD:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery') . ' + ' . $helper->__('COD');
                 break;
-            case 'pg':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PG:
                 $label = $helper->__('Post Office');
 
                 if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
@@ -90,51 +93,47 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                     $type .= '_be';
                 }
                 break;
-            case 'pg_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PG_COD:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('COD');
                 break;
-            case 'pge':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PGE:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('Early Pickup');
                 break;
-            case 'pge_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PGE_COD:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('Early Pickup') . ' + ' . $helper->__('COD');
                 break;
-            case 'pa':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PA:
                 $label = $helper->__('Parcel Dispenser');
                 break;
-            case 'pa_cod':
-                $label   = $helper->__('Parcel Dispenser');
-                $comment = $helper->__('COD');
-                break;
-            case 'eps':
+            case $postnlShipmentClass::SHIPMENT_TYPE_EPS:
                 $label = $helper->__('EPS');
                 break;
-            case 'globalpack':
+            case $postnlShipmentClass::SHIPMENT_TYPE_GLOBALPACK:
                 $label = $helper->__('GlobalPack');
                 break;
-            case 'buspakje':
+            case $postnlShipmentClass::SHIPMENT_TYPE_BUSPAKJE:
                 $label = $helper->__('Letter Box Parcel');
 
                 if ($row->getData(self::PRODUCT_CODE_COLUMN) == '2928') {
                     $comment = $helper->__('Extra');
                 }
                 break;
-            case 'sunday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_SUNDAY:
                 $label = $helper->__('Sunday Delivery');
                 break;
-            case 'monday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_MONDAY:
                 $label = $helper->__('Monday Delivery');
                 break;
-            case 'sameday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_SAMEDAY:
                 $label = $helper->__('Same Day Delivery');
                 break;
-            case 'food':
+            case $postnlShipmentClass::SHIPMENT_TYPE_FOOD:
                 $label = $helper->__('Food Delivery');
                 break;
-            case 'cooledfood':
+            case $postnlShipmentClass::SHIPMENT_TYPE_COOLED:
                 $label = $helper->__('Cooled Food Delivery');
                 break;
         }

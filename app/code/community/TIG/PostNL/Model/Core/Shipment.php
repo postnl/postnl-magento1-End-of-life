@@ -236,7 +236,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_MONDAY       = 'monday';
     const SHIPMENT_TYPE_SAMEDAY      = 'sameday';
     const SHIPMENT_TYPE_FOOD         = 'food';
-    const SHIPMENT_TYPE_COOLED       = 'cooledfood';
+    const SHIPMENT_TYPE_COOLED       = 'cooledfood'; /** @todo rename to 'cooled_doo' for consistency */
 
     /**
      * Xpaths to default product options settings.
@@ -849,12 +849,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_EPS;
         }
 
-        if ($this->isGlobalShipment() && $this->getHelper('cif')->isGlobalAllowed()) {
+        if ($this->isGlobalShipment()) {
+            if (!$this->getHelper('cif')->isGlobalAllowed()) {
+                throw new TIG_PostNL_Exception(
+                    $this->getHelper()->__(
+                        'Unable to create a shipment for order #%s, because GlobalPack is currently disabled.',
+                        $this->getOrderId()
+                    ),
+                    'POSTNL-0240'
+                );
+            }
+
             return self::SHIPMENT_TYPE_GLOBALPACK;
         }
 
         throw new TIG_PostNL_Exception(
-            $this->getHelper()->__('No valid shipment type found for shipment #%s.', $this->getId()),
+            $this->getHelper()->__('No valid shipment type found for order #%s.', $this->getOrderId()),
             'POSTNL-0167'
         );
     }

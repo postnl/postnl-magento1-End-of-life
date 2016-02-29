@@ -104,16 +104,23 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     {
         switch ($extensionKey) {
             case 'Idev_OneStepCheckout':
-                return "Idev's OneStepCheckout";
+                $label = "Idev's OneStepCheckout";
+                break;
             case 'Bpost_ShippingManager':
-                return "Bpost Shipping Manager";
+                $label = "Bpost Shipping Manager";
+                break;
             case 'GoMage_Checkout':
-                return "GoMage's Checkout";
+                $label = "GoMage's Checkout";
+                break;
             case 'Picqer_PostNL':
-                return "Picqer's PostNL add-on";
+                $label = "Picqer's PostNL add-on";
+                break;
             default:
-                return $extensionKey;
+                $label = $extensionKey;
+                break;
         }
+
+        return $label;
     }
 
     /**

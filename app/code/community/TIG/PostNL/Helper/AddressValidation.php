@@ -104,6 +104,8 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
     /**
      * Extension code of the OneStepCheckout extension.
+     *
+     * @todo move all OSC specific code to a separate OSC-helper class.
      */
     const ONESTEPCHECKOUT_EXTENSION_CODE = 'Idev_OneStepCheckout';
 
@@ -519,6 +521,13 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         return true;
     }
 
+    /**
+     * Check if the OSC delivery date functionality is active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
     public function checkOscDeliveryDateActive($storeId = null)
     {
         if ($storeId == null) {

@@ -118,10 +118,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $shippingDays   = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDays   = explode(',', $shippingDays);
 
-        if ($this->getQuote()
-            && $this->getQuote()->getShippingAddress()
-            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
-        ) {
+        if ($this->isBe($this->getQuote())) {
             $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
         }
 
@@ -265,10 +262,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $dateObject = $this->getDeliveryDate($date, $storeId);
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
 
-        if ($this->getQuote()
-            && $this->getQuote()->getShippingAddress()
-            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
-        ) {
+        if ($this->isBe($this->getQuote())) {
             $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
         }
 
@@ -305,10 +299,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
 
-        if ($this->getQuote()
-            && $this->getQuote()->getShippingAddress()
-            && $this->getQuote()->getShippingAddress()->getCountryId() == 'BE'
-        ) {
+        if ($this->isBe($this->getQuote())) {
             $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
         }
 

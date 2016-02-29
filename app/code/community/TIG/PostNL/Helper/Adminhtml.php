@@ -73,7 +73,8 @@ class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
     {
         $storeId = 0;
 
-        if (strlen($code = Mage::getSingleton('adminhtml/config_data')->getStore())) {
+        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
+        if (strlen($code)) {
             $storeId = Mage::getModel('core/store')->load($code)->getId();
         }
 

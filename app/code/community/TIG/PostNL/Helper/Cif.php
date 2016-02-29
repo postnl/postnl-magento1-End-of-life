@@ -290,13 +290,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * @param int|Mage_Core_Model_Store|null $toreId
+     * @param int|Mage_Core_Model_Store|null $storeId
      *
      * @return array|mixed
      */
-    public function getHouseNumberRequiredCountries($toreId = null)
+    public function getHouseNumberRequiredCountries($storeId = null)
     {
-        $requiredCountries = Mage::getStoreConfig(self::XPATH_HOUSE_NUMBER_REQUIRED_COUNTRIES_XPATH, $toreId);
+        $requiredCountries = Mage::getStoreConfig(self::XPATH_HOUSE_NUMBER_REQUIRED_COUNTRIES_XPATH, $storeId);
         $requiredCountries = explode(',', $requiredCountries);
 
         return $requiredCountries;

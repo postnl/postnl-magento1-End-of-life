@@ -1031,17 +1031,19 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $quoteItems = $quote->getAllItems();
 
         $foodType = 0;
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
         foreach ($quoteItems as $quoteItem) {
 
             $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
 
-            if ($postnlProductType == 2) {
-                $foodType = 2;
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS) {
+                $foodType = $postnlProductType;
                 break;
             }
 
-            if ($postnlProductType == 1) {
-                $foodType = 1;
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES) {
+                $foodType = $postnlProductType;
             }
         }
 
@@ -2108,7 +2110,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         if ($this->isFoodOrder($order)) {
             return false;
         }
-        
+
         /**
          * Loop through all confirmed shipments. If at least one of them is able to print return labels, return true.
          */
@@ -2139,6 +2141,31 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 return true;
             }
         }
+    }
+
+    /**
+     * Check if the provided quote or order is being shipped to Belgium.
+     *
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote $object
+     *
+     * @return bool
+     */
+    public function isBe($object)
+    {
+        if (!($object instanceof Mage_Sales_Model_Order) && !($object instanceof Mage_Sales_Model_Quote)) {
+            throw new InvalidArgumentException("The object parameter must be an instance of an order or a quote.");
+        }
+
+        $shippingAddress = $object->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        if ($shippingAddress->getCountryId() == 'BE') {
+            return true;
+        }
+
+        return false;
     }
 
     /**
