@@ -1364,7 +1364,7 @@ TIG_PostNL::Cooled Food Delivery,Gekoeld Food Bezorging
 TIG_PostNL::Food shipments can only be delivered within the Netherlands.,Versproducten kunnen enkel verstuurd worden naar locaties in Nederland.
 TIG_PostNL::Non-Food,Non-Food
 TIG_PostNL::Dry & Groceries,Vers Ongekoeld
-TIG_PostNL::Cool Products,Vers Gekoeld
+TIG_PostNL::Cooled Products,Vers Gekoeld
 TIG_PostNL::The domestic country is not set to NL. Please keep in mind that Food Delivery is only available in the Netherlands.,Het verzendland staat op het moment niet ingesteld op Nederland. Houdt er rekening mee dat Food bezorging enkel mogelijk is bij verzendingen binnen Nederland.
 "TIG_PostNL::You have enabled food delivery, but have not yet enabled a Food product code. Please enable a Food product code in Advanced -> User Settings.","U heeft Food delivery geactiveerd, maar nog geen Food productopties geactiveerd. Hierdoor zal het in de frontend niet mogelijk zijn om een Food bestelling aan te maken. Activeer de Food productopties in Geavanceerd -> Gebruikersinstellingen."
 TIG_PostNL::You currently selected the options to ship to multiple countries. It seems that these countries also include non-domestic countries. Please keep in mind that Food deliveries can only be shipped to the Netherlands.,Volgens de instellingen is het op het moment mogelijk om te verzenden naar landen buiten Nederland. Houdt er rekening mee dat het enkel mogelijk is om Food bestellingen binnen Nederland te versturen.
