@@ -40,6 +40,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_AddressLines
     extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
 {
     /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return int|string
      */
     protected function _getValue(Varien_Data_Form_Element_Abstract $element)

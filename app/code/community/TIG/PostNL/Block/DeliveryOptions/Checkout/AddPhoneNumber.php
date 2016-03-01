@@ -93,6 +93,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostN
 
         $quote = $this->getQuote();
         if (!$quote) {
+            /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
             $shippingAddress = Mage::getModel('sales/quote_address');
 
             $this->setShippingAddress($shippingAddress);

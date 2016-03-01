@@ -336,7 +336,8 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * Returns an UTC DateTime object built from the orderdate.
      *
      * @param mixed $date
-     * @param $storeId
+     * @param       $storeId
+     * @param bool  $convertTimeZone
      *
      * @return DateTime
      */

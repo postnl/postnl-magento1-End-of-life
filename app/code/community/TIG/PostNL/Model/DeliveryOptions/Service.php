@@ -73,6 +73,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $quote = $this->getQuote();
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
@@ -319,6 +320,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                 $phoneNumber = $address['telephone'];
             }
 
+            /** @var Mage_Sales_Model_Quote_Address $pakjeGemakAddress */
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setCity($address['city'])

@@ -57,6 +57,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      */
     public function render(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $actions = $this->getColumn()->getActions();
         if (empty($actions) || !is_array($actions)) {
             return '&nbsp;';
@@ -144,6 +145,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     protected function _checkDisableAction($row, $action)
     {
         $helper = Mage::helper('postnl/cif');
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         $euCountries   = $helper->getEuCountries();

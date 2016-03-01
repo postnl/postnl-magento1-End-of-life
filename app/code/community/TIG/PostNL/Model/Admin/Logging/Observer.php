@@ -56,8 +56,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 
+        /** @noinspection PhpParamsInspection */
         $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        $found                    = mageFindClassFile($loggingObserverClassName);
 
         /**
          * If we can't find the model, there's nothing that can be logged.

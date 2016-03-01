@@ -46,6 +46,7 @@ class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Tablerate_Grid
      */
     protected function _prepareCollection()
     {
+        /** @var TIG_PostNL_Model_Carrier_Resource_Tablerate_Collection $collection */
         $collection = Mage::getResourceModel('postnl_carrier/tablerate_collection');
         $collection->setConditionFilter($this->getConditionName())
                    ->setWebsiteFilter($this->getWebsiteId());

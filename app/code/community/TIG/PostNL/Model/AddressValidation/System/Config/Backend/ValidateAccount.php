@@ -90,6 +90,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         }
 
         $websiteCode = $this->getWebsiteCode();
+        /** @var Mage_Core_Model_Website $website */
         $website = Mage::getModel('core/website')->load($websiteCode, 'code');
 
         $this->setWebsite($website);

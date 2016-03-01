@@ -47,7 +47,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
      *
      * @return array
      */
-    public function toOptionArray($isMultiSelect = false, $isActiveOnlyFlag = false)
+    public function toOptionArray(/** @noinspection PhpUnusedParameterInspection */
+        $isMultiSelect = false, $isActiveOnlyFlag = false)
     {
         $methods = array();
 

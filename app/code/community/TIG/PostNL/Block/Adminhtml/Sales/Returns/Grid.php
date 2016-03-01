@@ -102,6 +102,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         );
 
         /** @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus     = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $colloNotFoundStatus = $postnlShipmentModelClass::SHIPPING_PHASE_NOT_APPLICABLE;
@@ -276,6 +277,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($row->getData($column->getIndex())) {

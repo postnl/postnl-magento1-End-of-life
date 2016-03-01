@@ -259,7 +259,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $addressData    = $this->_getAddressData($shipment);
         $addressData['SMSnr'] = $this->_getMobilePhoneNumber($postnlShipment);
 
-        $pakjeGemakData = $this->_getPakjeGemakAddressData($postnlShipment, $shipment);
+        $pakjeGemakData = $this->_getPakjeGemakAddressData($postnlShipment);
         $referenceData  = $this->_getReferenceData();
         $extraCover     = array($postnlShipment->getExtraCoverAmount());
         $productOptions = $this->_getProductOptions($postnlShipment);

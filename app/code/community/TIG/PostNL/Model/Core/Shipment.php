@@ -457,6 +457,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         $orderId = $this->getOrderId();
 
+        /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = Mage::getModel('sales/order_payment')
                        ->load($orderId, 'parent_id');
 
@@ -1599,6 +1600,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('label_collection');
         }
 
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection $labelCollection */
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 

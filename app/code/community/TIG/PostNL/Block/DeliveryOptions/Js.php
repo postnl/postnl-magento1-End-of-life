@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                             hasApiKey()
- * @method TIG_PostNL_Block_DeliveryOptions_Js setApiKey()
+ * @method TIG_PostNL_Block_DeliveryOptions_Js setApiKey($apiKey)
  */
 class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
 {

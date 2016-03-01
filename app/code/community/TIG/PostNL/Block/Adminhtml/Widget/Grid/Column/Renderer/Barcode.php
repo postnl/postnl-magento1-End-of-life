@@ -71,6 +71,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
          *
          * @var $postnlShipmentClassName TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentClassName::CONFIRM_STATUS_BUSPAKJE) {
             return '';
@@ -79,6 +80,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
         /**
          * Check if any data is available.
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (!$value) {
             $value = Mage::helper('postnl')->__('No barcode available.');

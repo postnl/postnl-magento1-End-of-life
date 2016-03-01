@@ -186,6 +186,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             return false;
         }
 
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->load($orderId);
 
         if ($this->_canViewOrder($order)) {
@@ -217,6 +218,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
 
         $shipmentId = Mage::getResourceModel('postnl/order_shipment')->getShipmentId($shipmentIncrementId);
 
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
 
         if ($this->_canViewPostnlShipment($postnlShipment)) {

@@ -161,6 +161,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     {
         $service = $this->_service;
         if ($service === null) {
+            /** @var TIG_PostNL_Model_DeliveryOptions_Service $service */
             $service = Mage::getModel('postnl_deliveryoptions/service');
 
             $this->setService($service);

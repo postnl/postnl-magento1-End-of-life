@@ -52,6 +52,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         $resultArray = array();
@@ -116,6 +117,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         $response = array();
@@ -190,6 +192,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -256,6 +259,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -322,6 +326,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -358,6 +363,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -396,6 +402,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**

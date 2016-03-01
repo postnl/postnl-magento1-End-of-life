@@ -65,6 +65,7 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
         }
 
         $shipment = $this->getShipment();
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
 
         $this->setPostnlShipment($postnlShipment);

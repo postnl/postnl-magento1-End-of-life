@@ -48,6 +48,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
      */
     public function render(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $values = $row->getData($this->getColumn()->getIndex());
 
         if (empty($values)) {

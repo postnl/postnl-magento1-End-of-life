@@ -50,7 +50,8 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      *
      * @deprecated v1.7.0
      */
-    public function postDispatchSaveMassAction($config, $eventModel)
+    public function postDispatchSaveMassAction(/** @noinspection PhpUnusedParameterInspection */
+        $config, $eventModel)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 
@@ -84,7 +85,8 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      *
      * @deprecated v1.7.0
      */
-    public function postDispatchAction($config, $eventModel)
+    public function postDispatchAction(/** @noinspection PhpUnusedParameterInspection */
+        $config, $eventModel)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 

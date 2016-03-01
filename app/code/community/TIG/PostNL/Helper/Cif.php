@@ -315,7 +315,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * Get an array of standard product codes.
      *
      * @param boolean      $flat
-     * @param string|false $destination
+     * @param string|bool $destination
      *
      * @return array
      */
@@ -331,8 +331,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of standard COD product codes.
      *
-     * @param boolean      $flat
-     * @param string|false $destination
+     * @param boolean     $flat
+     * @param string|bool $destination
      *
      * @return array
      */
@@ -374,8 +374,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of PakjeGemak product codes.
      *
-     * @param boolean      $flat
-     * @param string|false $destination
+     * @param boolean     $flat
+     * @param string|bool $destination
      *
      * @return array
      */
@@ -683,6 +683,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isPakjeGemakShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -708,6 +709,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isPakketautomaatShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -733,6 +735,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isAvondShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -758,6 +761,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isDomesticShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -783,6 +787,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isEuShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -808,6 +813,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isGlobalShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -833,6 +839,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isCodShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -856,6 +863,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isSundayShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**
@@ -879,6 +887,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function isMondayShipment($shipment)
     {
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($shipment instanceof $postnlShipmentClass) {
             /**

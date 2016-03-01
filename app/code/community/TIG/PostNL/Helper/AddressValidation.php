@@ -637,7 +637,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * Logs a cendris request and response for debug purposes.
      *
-     * @param Soap>__getLastRe $client
+     * @param SoapClient $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *

@@ -498,7 +498,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      *
      * @param int $storeId
      *
-     * @return array
+     * @return boolean
      */
     protected function _isCheckoutConfigured($storeId)
     {

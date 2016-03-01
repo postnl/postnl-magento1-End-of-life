@@ -732,7 +732,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
                     $date = $timeFrame->Date;
 
-                    $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId, true);
+                    $shippingDate = $helper->getShippingDateFromDeliveryDate($date, $storeId);
                     $utcShippingDate = $helper->getUtcDateTime($shippingDate, $storeId, false);
                     $now = $helper->getUtcDateTime('now', 0)->setTime(0, 0, 0);
 
@@ -1375,7 +1375,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if PakjeGemak Express is available.
      *
-     * @return boolean
+     * @param bool $checkQuote
+     *
+     * @return bool
      */
     public function canUsePakjeGemakExpress($checkQuote = true)
     {
@@ -2142,6 +2144,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
     /**
      * Determines if food delivery is allowed by checking the current quote and configuration.
+     *
+     * @param bool $checkQuote
      *
      * @return bool
      */

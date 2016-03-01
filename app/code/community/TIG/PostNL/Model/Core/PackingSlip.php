@@ -220,9 +220,16 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _construct()
     {
-        $this->setHelper(Mage::helper('postnl'))
-             ->setCoreHelper(Mage::helper('core'))
-             ->setStringHelper(Mage::helper('core/string'));
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        /** @var Mage_Core_Helper_String $stringHelper */
+        $stringHelper = Mage::helper('core/string');
+
+        $this->setHelper($helper)
+             ->setCoreHelper($coreHelper)
+             ->setStringHelper($stringHelper);
     }
 
     /**

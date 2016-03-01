@@ -65,6 +65,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
         /**
          * Check if any data is available
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (is_null($value) || $value === '') {
             return parent::render($row);
@@ -93,7 +94,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
      */
     public function getProductCode(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $options = $this->getColumn()->getOptions();
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $showMissingOptionValues = (bool)$this->getColumn()->getShowMissingOptionValues();
 
         $value = '';

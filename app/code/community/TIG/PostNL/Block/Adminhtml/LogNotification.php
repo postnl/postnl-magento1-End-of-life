@@ -60,6 +60,7 @@ class TIG_PostNL_Block_Adminhtml_LogNotification extends TIG_PostNL_Block_Adminh
         /**
          * @var $logModelClass TIG_PostNL_Model_Adminhtml_Support_Logs
          */
+        /** @noinspection PhpParamsInspection */
         $logModelClass = Mage::getConfig()->getModelClassName('postnl_adminhtml/support_logs');
         $maxSize = $logModelClass::LOG_MAX_TOTAL_SIZE;
 

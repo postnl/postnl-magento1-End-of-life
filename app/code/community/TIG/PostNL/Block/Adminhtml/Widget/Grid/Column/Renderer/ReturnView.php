@@ -48,12 +48,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ReturnView
      */
     public function render(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $actions = $this->getColumn()->getActions();
 
         if ( empty($actions) || !is_array($actions) ) {
             return '&nbsp;';
         }
 
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         if(sizeof($actions)==1 && !$this->getColumn()->getNoLink()) {
             foreach ($actions as $action) {
                 if (is_array($action)) {

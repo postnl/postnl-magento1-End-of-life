@@ -137,6 +137,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $delivery = $data->Bezorging;
         $shippingAddressData = $delivery->Geadresseerde;
 
+        /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
         $shippingAddress = Mage::getModel('sales/quote_address');
         $shippingAddress->setAddressType($shippingAddress::TYPE_SHIPPING)
                         ->setEmail($email)
@@ -154,6 +155,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Parse the billing address
          */
         $billingAddressData = $data->Facturatie->Adres;
+        /** @var Mage_Sales_Model_Quote_Address $billingAddress */
         $billingAddress = Mage::getModel('sales/quote_address');
         $billingAddress->setAddressType($billingAddress::TYPE_BILLING)
                        ->setEmail($email)
@@ -166,6 +168,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         if (isset($delivery->ServicePunt)) {
             $serviceLocationData = $delivery->ServicePunt;
+            /** @var Mage_Sales_Model_Quote_Address $pakjeGemakAddress */
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setEmail($email)
@@ -248,6 +251,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          *
          * @since Magento v1.13
          */
+        /** @noinspection PhpParamsInspection */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
         if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
             && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
@@ -400,6 +404,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          *
          * @var $paymentMethodAbstractClass Mage_Payment_Model_Method_Abstract
          */
+        /** @noinspection PhpParamsInspection */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
         if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
             && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
@@ -871,6 +876,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                         . PHP_EOL
                         . $addressData->HuisnummerExt;
 
+            /** @noinspection PhpParamsInspection */
             $address->setStreet($streetData);
             return $address;
         }
@@ -905,6 +911,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Sort the street data according to the field numbers and set it
          */
         ksort($streetData);
+        /** @noinspection PhpParamsInspection */
         $address->setStreet($streetData);
 
         return $address;

@@ -65,6 +65,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
             return Mage::helper('postnl')->__('N/A');
         }
 
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $value = $row->getData($this->getColumn()->getIndex());
 
         /**
@@ -83,6 +84,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
         $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
         $deliveryDate = $deliveryDate->setTimezone($timeZone)->format('Y-m-d H:i:s');
 
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $row->setData($this->getColumn()->getIndex(), $deliveryDate);
 
         /**

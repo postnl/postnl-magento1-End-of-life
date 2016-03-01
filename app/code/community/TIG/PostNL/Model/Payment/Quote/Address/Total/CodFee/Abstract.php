@@ -63,10 +63,14 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
      *
      * Sets several class variables.
      */
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct()
     {
         $this->setCode($this->_totalCode);
-        $this->setTaxCalculation(Mage::getSingleton('tax/calculation'));
+
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+        $this->setTaxCalculation($taxCalculation);
 
         $this->_helper = Mage::helper('tax');
         $this->_config = Mage::getSingleton('tax/config');
@@ -83,6 +87,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
             return $taxCalculation;
         }
 
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
         $taxCalculation = Mage::getSingleton('tax/calculation');
 
         $this->setTaxCalculation($taxCalculation);

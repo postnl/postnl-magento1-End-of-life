@@ -71,6 +71,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
             return $this->getData('postnl_helper');
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $this->setPostnlHelper($helper);

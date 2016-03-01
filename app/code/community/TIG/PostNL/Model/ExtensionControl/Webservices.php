@@ -419,7 +419,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         /**
          * Get the website's base URL
          */
-        $baseUrl = $website->getConfig(self::XPATH_UNSECURE_BASE_URL, $website->getId());
+        $baseUrl = $website->getConfig(self::XPATH_UNSECURE_BASE_URL);
 
         /**
          * Parse the URL and get the host name

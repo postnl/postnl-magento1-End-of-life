@@ -78,6 +78,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     {
         $postnlShipmentId = $this->getPostnlShipment()->getId();
 
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection $collection */
         $collection = Mage::getResourceModel('postnl_core/shipment_status_history_collection');
         $collection->addFieldToFilter('parent_id', array('eq' => $postnlShipmentId));
 

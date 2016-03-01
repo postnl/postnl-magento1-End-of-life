@@ -1643,7 +1643,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Sorts an array of shipment items based on a product attribute that is defined in the module configuration.
      *
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Item_Collection $items
+     * @param Mage_Sales_Model_Resource_Order_Shipment_Item[] $items
      *
      * @return array
      */
