@@ -136,40 +136,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return false;
         }
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
         return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry);
-    }
-
-    /**
-     * Validate if saturday shipping is allowed for the specified shipping date when taking the earliest possible
-     * shipping date into consideration.
-     *
-     * @param array    $shippingDays
-     * @param DateTime $shippingDate
-     * @param DateTime $earliestShippingDate
-     *
-     * @return bool
-     */
-    protected function _validateSaturdayShipping($shippingDays, DateTime $shippingDate, DateTime $earliestShippingDate)
-    {
-        $shippingDate->modify('last saturday ' . $shippingDate->format('H:i:s'));
-        $shippingDay = 6;
-
-        if (!in_array($shippingDay, $shippingDays)) {
-            return false;
-        }
-
-        $cutOffTime = Mage::helper('postnl/deliveryOptions')->getCutOffTime(null, true, $shippingDate);
-        $cutOffTime = explode(':', $cutOffTime);
-
-        $shippingDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2]);
-
-        if ($shippingDate < $earliestShippingDate) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

@@ -80,6 +80,11 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     protected $_postnlDeliveryDelay = 1;
 
     /**
+     * @var bool
+     */
+    protected $_useFoodCutOffTime = false;
+
+    /**
      * @param int $postnlDeliveryDelay
      *
      * @return $this
@@ -87,6 +92,26 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     public function setPostnlDeliveryDelay($postnlDeliveryDelay)
     {
         $this->_postnlDeliveryDelay = (int) $postnlDeliveryDelay;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function useFoodCutOffTime()
+    {
+        return $this->_useFoodCutOffTime;
+    }
+
+    /**
+     * @param boolean $useFoodCutOffTime
+     *
+     * @return $this
+     */
+    public function setUseFoodCutOffTime($useFoodCutOffTime)
+    {
+        $this->_useFoodCutOffTime = $useFoodCutOffTime;
 
         return $this;
     }
@@ -374,14 +399,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     public function isPastCutOff($orderDateObject, $storeId, $type = null)
     {
         if (!$type) {
-            $weekDay = $orderDateObject->format('w');
+            if ($this->useFoodCutOffTime()) {
+                $type = 'food';
+            } else {
+                $weekDay = $orderDateObject->format('w');
 
-            /**
-             * If the weekday == 7, we need to check for sunday cutoff time instead.
-             */
-            $type = 'weekday';
-            if ($weekDay == self::SUNDAY) {
-                $type = 'sunday';
+                /**
+                 * If the weekday == 7, we need to check for sunday cutoff time instead.
+                 */
+                $type = 'weekday';
+                if ($weekDay == self::SUNDAY) {
+                    $type = 'sunday';
+                }
             }
         }
 
@@ -411,7 +440,6 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                 break;
             case 'sameday':
             case 'food':
-            case 'cooledfood':
                 $xpathToUse = self::XPATH_SAMEDAY_CUTOFF_TIME;
                 break;
             case 'weekday':
