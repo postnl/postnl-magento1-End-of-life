@@ -121,7 +121,8 @@ class TIG_PostNL_Model_Core_Observer_Returns
         /**
          * Check if this block is the block we need to edit.
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block          = $observer->getBlock();
         $blockClassName = $this->getBlockClassName();
         if (!($block instanceof $blockClassName)) {
             return $this;
@@ -139,6 +140,7 @@ class TIG_PostNL_Model_Core_Observer_Returns
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -151,7 +153,9 @@ class TIG_PostNL_Model_Core_Observer_Returns
         /**
          * Add the link.
          */
-        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        if ($session->isLoggedIn()) {
             $block->addLink(
                 'postnl_returns',
                 'postnl/order/returns',

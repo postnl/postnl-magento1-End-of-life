@@ -5547,12 +5547,20 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         return comment;
     },
 
+    /**
+     * @returns {boolean}
+     */
     isTimeFrameToday : function() {
-        var timeframeDate = this.date;
+        var timeframeDate = new Date(
+            this.date.substring(6, 10),
+            this.date.substring(3, 5) - 1,
+            this.date.substring(0, 2)
+        );
         var today = new Date();
         var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+        var formattedTimeframeDate = PostnlDeliveryOptions.prototype.formatDate(timeframeDate);
 
-        return formattedToday == timeframeDate;
+        return formattedToday == formattedTimeframeDate;
     },
 
     /**
