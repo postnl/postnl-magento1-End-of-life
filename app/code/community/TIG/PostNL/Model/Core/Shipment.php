@@ -236,7 +236,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_MONDAY       = 'monday';
     const SHIPMENT_TYPE_SAMEDAY      = 'sameday';
     const SHIPMENT_TYPE_FOOD         = 'food';
-    const SHIPMENT_TYPE_COOLED       = 'cooledfood'; /** @todo rename to 'cooled_doo' for consistency */
+    const SHIPMENT_TYPE_COOLED       = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
 
     /**
      * Xpaths to default product options settings.
@@ -604,10 +604,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_DeliveryOptions
-     *         |TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_Checkout|TIG_PostNL_Helper_Mijnpakket
-     *         |TIG_PostNL_Helper_Parcelware|TIG_PostNL_Helper_Payment|TIG_PostNL_Helper_Webservices
-     *         |TIG_PostNL_Helper_Date
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_DeliveryOptions|TIG_PostNL_Helper_DeliveryOptions_Fee|TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_Checkout|TIG_PostNL_Helper_Mijnpakket|TIG_PostNL_Helper_Parcelware|TIG_PostNL_Helper_Payment|TIG_PostNL_Helper_Webservices|TIG_PostNL_Helper_Date
      */
     public function getHelper($type = 'data')
     {
@@ -663,8 +660,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_extraCoverProductCodes;
         }
 
-        $productCodes = Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                            ->getOptions(array('isExtraCover' => true), true);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $productCodesModel */
+        $productCodesModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        $productCodes = $productCodesModel->getOptions(array('isExtraCover' => true), true);
 
         $this->_extraCoverProductCodes = array_keys($productCodes);
         return $this->_extraCoverProductCodes;
@@ -728,7 +726,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If the product code was switched from a combi-label product code to a regular one, switch it back so we can
          * find the product code that was chosen by the merchant.
          */
-        $combiLabelProductCodes = Mage::helper('postnl/cif')->getCombiLabelProductCodes();
+        $cifHelper = $this->getHelper('cif');
+        $combiLabelProductCodes = $cifHelper->getCombiLabelProductCodes();
         if (isset($combiLabelProductCodes[$productCode])) {
             $productCode = $combiLabelProductCodes[$productCode];
         }
@@ -736,8 +735,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Get all product options.
          */
-        $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                              ->getOptions(array(), true);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $productOptionsModel */
+        $productOptionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        $productOptions = $productOptionsModel->getOptions(array(), true);
 
         if (isset($productOptions[$productCode])) {
             $productOption = $productOptions[$productCode];
@@ -834,12 +834,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_SAMEDAY;
         }
 
-        if ($this->isFoodShipment()) {
-            return self::SHIPMENT_TYPE_FOOD;
-        }
-
         if ($this->isCooledShipment()) {
             return self::SHIPMENT_TYPE_COOLED;
+        }
+
+        if ($this->isFoodShipment()) {
+            return self::SHIPMENT_TYPE_FOOD;
         }
 
         if ($this->isDomesticShipment()) {
@@ -1723,11 +1723,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $deliveryDate;
         }
 
-        /**
-         * @var TIG_PostNL_Helper_Date $helper
-         */
+        /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
-        $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
+        $orderDate = $dateModel->date(null, $this->getOrder()->getCreatedAt());
         $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId())->format('Y-m-d H:i:s');
 
         return $deliveryDate;
@@ -2092,7 +2092,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $returnLabelTypes = Mage::helper('postnl/cif')->getReturnLabelTypes();
+        $cifHelper = $this->getHelper('cif');
+        $returnLabelTypes = $cifHelper->getReturnLabelTypes();
 
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
@@ -2648,8 +2649,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder
-            && ($postnlOrder->getType() == 'Food'
-                || $postnlOrder->getType() == 'Cooledfood'
+            && ($postnlOrder->getType() == $postnlOrder::TYPE_FOOD
+                || $postnlOrder->getType() == $postnlOrder::TYPE_COOLED_FOOD
             )
         ) {
             return true;
@@ -2666,7 +2667,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function isCooled()
     {
         $postnlOrder = $this->getPostnlOrder();
-        if ($postnlOrder && $postnlOrder->getType() == 'Cooledfood') {
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_COOLED_FOOD) {
             return true;
         }
 
@@ -2680,7 +2681,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isCod()
     {
-        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+        $codPaymentMethods = $this->getHelper('payment')->getCodPaymentMethods();
 
         /**
          * @var Mage_Sales_Model_Order_Payment $payment
@@ -4113,7 +4114,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function sendTrackAndTraceEmail($ignoreAlreadySent = false, $ignoreConfig = false)
     {
-        $helper = Mage::helper('postnl');
+        $helper = $this->getHelper();
         if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent, $ignoreConfig)) {
             throw new TIG_PostNL_Exception(
                 $helper->__('The sendTrackAndTraceEmail action is currently unavailable.'),
@@ -4224,7 +4225,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
         $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
 
+        /** @var Mage_Core_Model_Email_Template_Mailer $mailer */
         $mailer = Mage::getModel('core/email_template_mailer');
+        /** @var Mage_Core_Model_Email_Info $emailInfo */
         $emailInfo = Mage::getModel('core/email_info');
         $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
 
@@ -4559,7 +4562,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function sendReturnLabelEmail()
     {
-        $helper = Mage::helper('postnl');
+        $helper = $this->getHelper();
         if (!$this->canSendReturnLabelEmail()) {
             throw new TIG_PostNL_Exception(
                 $helper->__('The sendReturnLabelEmail action is currently unavailable.'),
@@ -4663,10 +4666,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $templateVariables = new Varien_Object($templateVariables);
 
-        $returnLabelPdf = Mage::getModel('postnl_core/label')
-                              ->setLabelSize('A4')
-                              ->setOutputMode('S')
-                              ->createPdf($returnLabels);
+        /** @var TIG_PostNL_Model_Core_Label $labelModel */
+        $labelModel = Mage::getModel('postnl_core/label');
+        $returnLabelPdf = $labelModel->setLabelSize('A4')
+                                     ->setOutputMode('S')
+                                     ->createPdf($returnLabels);
         $returnLabelObject = new varien_Object(array('label_pdf' => $returnLabelPdf));
 
         Mage::dispatchEvent(
@@ -4678,9 +4682,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             )
         );
 
+        /** @var Mage_Core_Model_Email_Info $emailInfo */
         $emailInfo = Mage::getModel('core/email_info');
         $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
 
+        /** @var Mage_Core_Model_Email_Template $transactionalEmail */
         $transactionalEmail = Mage::getModel('core/email_template');
         $transactionalEmail->setDesignConfig(array('area' => 'frontend', 'store' => $storeId));
 
@@ -4999,7 +5005,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Check if the product code is allowed.
          */
         if (!in_array($productCode, $allowedProductCodes)) {
-            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $productOptionsModel */
+            $productOptionsModel = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+            $options = $productOptionsModel->getOptions();
             $productName = $cifHelper->__($options[$productCode]['label']);
 
             throw new TIG_PostNL_Exception(
@@ -5025,7 +5033,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$shippingAddress
             || !in_array($shippingAddress->getCountryId(), $allowedCountries)
         ) {
-            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $productOptionsModel */
+            $productOptionsModel = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+            $options = $productOptionsModel->getOptions();
             $productName = $cifHelper->__($options[$productCode]['label']);
 
             throw new TIG_PostNL_Exception(
