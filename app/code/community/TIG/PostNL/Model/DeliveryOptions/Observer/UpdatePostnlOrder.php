@@ -424,13 +424,19 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         return $this;
     }
 
+    /**
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param Mage_Sales_Model_Order      $order
+     *
+     * @return mixed
+     */
     protected function _getOrderType(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
     {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        if ($helper->canUseFoodDelivery(false)) {
-            $isFood = $helper->quoteIsFood($order->getQuote());
-            switch ($isFood) {
+        if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
+            switch ($helper->getQuoteFoodType($order->getQuote())) {
                 case 1:
                     return $postnlOrder::TYPE_FOOD;
                 case 2:

@@ -989,10 +989,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return int
-     *  0 = Non-Food
-     *  1 = Dry & Groceries
-     *  2 = Cool Products
+     * @return boolean
      */
     public function quoteIsFood(Mage_Sales_Model_Quote $quote = null)
     {
@@ -1013,7 +1010,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry($registryKey);
         }
 
-        $quoteFoodType = $this->getQuoteFoodType($quote);
+        $quoteFoodType = (bool) $this->getQuoteFoodType($quote);
 
         Mage::register($registryKey, $quoteFoodType);
         return $quoteFoodType;
@@ -1033,8 +1030,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *  1 = Dry & Groceries
      *  2 = Cool Products
      */
-    public function getQuoteFoodType(Mage_Sales_Model_Quote $quote)
+    public function getQuoteFoodType(Mage_Sales_Model_Quote $quote = null)
     {
+        if (!$quote) {
+            $quote = $this->getQuote();
+        }
+
         $quoteItems = $quote->getAllItems();
 
         $foodType = 0;

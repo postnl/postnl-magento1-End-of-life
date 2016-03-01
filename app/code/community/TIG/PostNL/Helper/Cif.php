@@ -107,6 +107,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'FI',
         'FR',
         'GB',
+        'UK', //alias for GB
         'HU',
         'IE',
         'IT',
@@ -125,7 +126,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'GR',
         'MT',
         'NL',
-        'ML',
     );
 
     /**

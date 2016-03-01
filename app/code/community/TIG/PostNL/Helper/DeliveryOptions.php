@@ -751,9 +751,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             if ($this->canUseFoodDelivery(false)) {
                 $isFood = $this->quoteIsFood();
                 if ($isFood) {
-                    if ($isFood == self::FOOD_TYPE_DRY_GROCERIES) {
+                    $foodType = $this->getQuoteFoodType();
+                    if ($foodType == self::FOOD_TYPE_DRY_GROCERIES) {
                         $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Food');
-                    } elseif ($isFood == self::FOOD_TYPE_COOL_PRODUCTS) {
+                    } elseif ($foodType == self::FOOD_TYPE_COOL_PRODUCTS) {
                         $timeFrame->Timeframes->TimeframeTimeFrame[0]->Options->string = array('Cooledfood');
                     }
                 }
@@ -2149,7 +2150,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $allowed = $this->_canUseFoodDelivery();
 
         if ($allowed && $checkQuote) {
-            $allowed = (bool) $this->quoteIsFood();
+            $allowed = $this->quoteIsFood();
         }
 
         return $allowed;
