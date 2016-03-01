@@ -5519,10 +5519,6 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('sunday') + sundayCostHtml + '</span>';
         }
 
-        //if (this.type == 'Monday') {
-        //    comment = '<span class="option-comment">' + Translator.translate('monday') + '</span>';
-        //}
-
         if (this.type == 'Sameday') {
             var sameDayCosts = this.getOptions().sameDayFeeText;
             var sameDayCostHtml = '';
