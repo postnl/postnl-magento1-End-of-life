@@ -52,6 +52,8 @@ class TIG_PostNL_Model_Core_Service_PaymentDummy extends Mage_Sales_Model_Order_
     }
 
     /**
+     * @param Varien_Object $document
+     *
      * @return bool
      */
     public function canVoid(Varien_Object $document)

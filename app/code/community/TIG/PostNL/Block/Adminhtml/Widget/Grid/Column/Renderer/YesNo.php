@@ -64,6 +64,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
         /**
          * Check if any data is available
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (is_null($value) || $value === '') {
             return parent::render($row);

@@ -1451,6 +1451,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
          *
          * @var $labelClassName TIG_PostNL_Model_Core_Label
          */
+        /** @noinspection PhpParamsInspection */
         $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
         if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
             && !Mage::helper('postnl/cif')->allowInfinitePrinting()
@@ -1530,6 +1531,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              *
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
+            /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
                 && !Mage::helper('postnl/cif')->allowInfinitePrinting()
@@ -1671,6 +1673,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              *
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
+            /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
                 && !Mage::helper('postnl/cif')->allowInfinitePrinting()
@@ -1792,6 +1795,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             /**
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
+            /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
                 && !Mage::helper('postnl/cif')->allowInfinitePrinting()
@@ -1954,6 +1958,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             /**
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
+            /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
                 && !Mage::helper('postnl/cif')->allowInfinitePrinting()

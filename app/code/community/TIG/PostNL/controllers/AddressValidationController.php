@@ -66,6 +66,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             return $cendrisModel;
         }
 
+        /** @var TIG_PostNL_Model_AddressValidation_Cendris $cendris */
         $cendris = Mage::getModel('postnl_addressvalidation/cendris');
         $this->setCendrisModel($cendris);
 

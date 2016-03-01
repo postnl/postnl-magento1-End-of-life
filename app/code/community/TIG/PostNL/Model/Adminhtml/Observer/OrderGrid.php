@@ -135,6 +135,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          *
          * @todo see if this can be avoided in any way
          */
+        /** @var TIG_PostNL_Model_Resource_Order_Grid_Collection $collection */
         $collection = Mage::getResourceModel('postnl/order_grid_collection');
         $collection->setSelect($select)
                    ->setPageSize($currentCollection->getPageSize())
@@ -544,7 +545,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * Decorates the confirm_sate column
      *
      * @param string|null                             $value
-     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Sales_Model_Order                  $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean                                 $isExport
      *
@@ -601,6 +602,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $interval            = $now->diff($origDate);
         $isConfirmed         = $this->_isRowConfirmed($row);
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         if ($isConfirmed ||
@@ -626,7 +628,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Checks if the row has been fully confirmed.
      *
-     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Sales_Model_Order $row
      *
      * @return boolean
      */
@@ -637,6 +639,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $statusses = explode(',', $confirmStatus);
         foreach ($statusses as $status) {
@@ -698,6 +701,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($status) {
@@ -760,6 +764,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($phase) {
@@ -1367,6 +1372,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
+            /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
             $column = $block->getColumn($columnName);
 
             if (!$column) {
@@ -1661,6 +1667,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
+        /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
         $column = $block->getColumn($sort);
         if (!$column) {
             return $this;

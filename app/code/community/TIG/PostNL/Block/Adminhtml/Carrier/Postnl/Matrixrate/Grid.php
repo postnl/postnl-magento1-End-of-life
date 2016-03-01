@@ -56,6 +56,7 @@ class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Matrixrate_Grid
      */
     protected function _prepareCollection()
     {
+        /** @var TIG_PostNL_Model_Carrier_Resource_Matrixrate_Collection $collection */
         $collection = Mage::getResourceModel('postnl_carrier/matrixrate_collection');
         $collection->setWebsiteFilter($this->getWebsiteId());
 

@@ -385,7 +385,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             try {
                 switch ($fileType) {
                     case 'php':
-                        $conn   = $this->getConnection();
+                        /** @noinspection PhpIncludeInspection */
                         $result = include $fileName;
                         break;
                     case 'sql':

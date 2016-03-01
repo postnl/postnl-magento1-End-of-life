@@ -79,6 +79,7 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
             return $this->_serviceModel;
         }
 
+        /** @var TIG_PostNL_Model_Payment_Service $serviceModel */
         $serviceModel = Mage::getModel('postnl_payment/service');
 
         $this->setServiceModel($serviceModel);

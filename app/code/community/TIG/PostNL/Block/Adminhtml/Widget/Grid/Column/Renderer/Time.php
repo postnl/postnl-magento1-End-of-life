@@ -51,6 +51,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
      */
     protected function _getFormat()
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $format = $this->getColumn()->getFormat();
         if (!$format) {
             if (is_null(self::$_format)) {
@@ -79,6 +80,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
     {
         $data = $this->_getValue($row);
         if (!$data) {
+            /** @noinspection PhpVoidFunctionResultUsedInspection */
             return $this->getColumn()->getDefault();
         }
 
@@ -89,6 +91,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
+            /** @noinspection PhpVoidFunctionResultUsedInspection */
             return $this->getColumn()->getDefault();
         }
         return $data;

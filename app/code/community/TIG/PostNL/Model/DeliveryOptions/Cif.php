@@ -356,6 +356,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Checks whether sunday sorting is allowed for this storeview.
      *
+     * @param $country
+     *
      * @return string
      */
     protected function _getSundaySortingAllowed($country)

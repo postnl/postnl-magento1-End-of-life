@@ -171,7 +171,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *
          * @var $labelModel TIG_PostNL_Model_Core_Label
          */
-        $labelModel = Mage::app()->getConfig()->getModelClassName('postnl_core/label');
+        /** @noinspection PhpParamsInspection */
+        $labelModel    = Mage::app()->getConfig()->getModelClassName('postnl_core/label');
         $tempLabelName = $labelModel::TEMP_LABEL_FILENAME;
 
         $helper->cronLog('Attempting to read temp label files from %s.', $tempLabelsDirectory);
@@ -419,9 +420,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
-        $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
-        $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
+        $confirmedStatus          = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
+        $deliveredStatus          = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
 
         /**
          * Get all postnl shipments with a barcode, that are confirmed and are not yet delivered.
@@ -516,6 +518,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
@@ -659,6 +662,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * @var $cifAbstractModelClassName TIG_PostNL_Model_Core_Cif_Abstract
          */
+        /** @noinspection PhpParamsInspection */
         $cifAbstractModelClassName = Mage::getConfig()->getModelClassName('postnl_core/cif_abstract');
         foreach ($errorNumbers as $errorNumber) {
             if ($errorNumber != $cifAbstractModelClassName::SHIPMENT_NOT_FOUND_ERROR_NUMBER) { // Collo not found error
@@ -730,6 +734,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
@@ -861,6 +866,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
@@ -1010,6 +1016,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         /**

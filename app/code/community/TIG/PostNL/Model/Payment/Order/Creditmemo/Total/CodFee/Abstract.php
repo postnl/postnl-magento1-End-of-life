@@ -64,6 +64,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
             return $taxCalculation;
         }
 
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
         $taxCalculation = Mage::getSingleton('tax/calculation');
 
         $this->setTaxCalculation($taxCalculation);

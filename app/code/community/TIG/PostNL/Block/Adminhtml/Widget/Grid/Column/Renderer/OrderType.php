@@ -51,6 +51,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
         /**
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $column = $this->getColumn();
 
         /**

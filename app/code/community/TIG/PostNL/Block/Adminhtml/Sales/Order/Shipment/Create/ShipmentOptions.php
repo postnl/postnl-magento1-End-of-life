@@ -92,6 +92,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
 
         $this->setPostnlOrder($postnlOrder);

@@ -41,6 +41,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns extends Mage_Adminhtml_Block_Sale
     /**
      * Constructor to set the title, block group and controller names as well as to remove the add button.
      */
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct()
     {
         $this->_blockGroup = 'postnl_adminhtml';

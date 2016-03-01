@@ -171,6 +171,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * replace the collection as the default collection has a bug preventing it from being reset.
          * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether.
          */
+        /** @var TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection */
         $collection = Mage::getResourceModel('postnl/order_shipment_grid_collection');
         $collection->setSelect($select)
                    ->setPageSize($currentCollection->getPageSize())
@@ -500,6 +501,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             /**
              * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
              */
+            /** @noinspection PhpParamsInspection */
             $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
 
             $block->addColumnAfter(
@@ -631,6 +633,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $after
             );
 
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $after = 'return_phase'; //Defined in case of future additions to the grid.
         }
 
@@ -722,6 +725,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $origDate            = new DateTime($origValue, new DateTimeZone('UTC'));
         $now                 = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
         $interval            = $now->diff($origDate);
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED
@@ -767,6 +771,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments)
@@ -851,6 +856,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($row->getData($column->getIndex())) {
@@ -1095,6 +1101,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
+            /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
             $column = $block->getColumn($columnName);
 
             if (!$column) {

@@ -65,6 +65,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
         /**
          * Check if any data is available
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $values = $row->getData($this->getColumn()->getIndex());
         if (is_null($values) || $values === '') {
             return parent::render($row);
@@ -75,6 +76,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         $values = explode(',', $values);
 

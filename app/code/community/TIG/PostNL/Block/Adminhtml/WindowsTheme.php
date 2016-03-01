@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                 hasIsOldMagento()
- * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento()
+ * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento($value)
  */
 class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml_Template
 {

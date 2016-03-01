@@ -50,6 +50,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
     {
         $serviceModel = $this->_serviceModel;
         if (!$serviceModel) {
+            /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
             $serviceModel = Mage::getModel('postnl_core/service_shipment');
             $this->setServiceModel($serviceModel);
         }

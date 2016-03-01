@@ -49,6 +49,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Translate
     public function render(Varien_Object $row)
     {
         $helper = Mage::helper('postnl');
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $value = $row->getData($this->getColumn()->getIndex());
 
         return $helper->__($value);

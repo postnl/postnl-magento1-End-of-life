@@ -55,6 +55,7 @@ class TIG_PostNL_Block_Adminhtml_IntegrityNotification extends TIG_PostNL_Block_
     {
         $collection = $this->_collection;
         if (!$collection) {
+            /** @var TIG_PostNL_Model_Core_Resource_Integrity_Collection $collection */
             $collection = Mage::getResourceModel('postnl_core/integrity_collection');
             $this->setCollection($collection);
         }

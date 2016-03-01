@@ -65,7 +65,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
         /**
          * Check if any data is available.
          */
-        $values      = $row->getData($this->getColumn()->getIndex());
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $values = $row->getData($this->getColumn()->getIndex());
         if (is_null($values)) {
             return Mage::helper('postnl')->__('No shipments found');
         }
@@ -73,6 +74,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         $values = explode(',', $values);
 
