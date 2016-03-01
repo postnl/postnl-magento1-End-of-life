@@ -600,6 +600,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleVersion()
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $version = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
 
         return $version;
@@ -1948,9 +1949,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * @var Varien_Simplexml_Element $sectionGroup
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $sectionGroup = $section->groups->$group;
 
+        /** @noinspection PhpUndefinedFieldInspection */
         $label      = (string) $sectionGroup->fields->$field->label;
+        /** @noinspection PhpUndefinedFieldInspection */
         $groupLabel = (string) $sectionGroup->label;
         $groupName  = $sectionGroup->getName();
 
@@ -2236,6 +2240,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * @var Varien_Simplexml_Element $moduleConfig
          */
         $moduleConfig = $config->getModuleConfig($moduleName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $codePool = (string) $moduleConfig->codePool;
         $path = $config->getOptions()->getCodeDir()
               . DS
@@ -2395,6 +2400,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the Enterprise_Enterprise extension is installed.
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         if (Mage::getConfig()->getNode('modules')->Enterprise_Enterprise) {
             return true;
         }
@@ -2470,7 +2476,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getErrorUrl($errorCode)
     {
         $error = Mage::getConfig()->getNode('tig/errors/' . $errorCode);
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($error !== false && $error->url) {
+            /** @noinspection PhpUndefinedFieldInspection */
             return (string) $error->url;
         }
 
@@ -2664,6 +2672,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              */
             $error = Mage::getConfig()->getNode('tig/errors/' . $code);
             if ($error !== false) {
+                /** @noinspection PhpUndefinedFieldInspection */
                 $link = (string) $error->url;
             }
         }
@@ -2677,6 +2686,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the specified error was found and no message was supplied, get the error's default message.
          */
         if ($error && !$message) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $message = (string) $error->message;
         }
 
@@ -2694,6 +2704,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the specified error was found and no message type was supplied, get the error's default type.
          */
         if ($error && !$messageType) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $messageType = (string) $error->type;
         }
 

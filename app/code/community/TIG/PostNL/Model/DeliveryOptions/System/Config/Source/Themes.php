@@ -58,6 +58,7 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_Themes extends Varie
         foreach ($config->children() as $name => $child) {
             $child = $this->_translateConfig($child);
 
+            /** @noinspection PhpUndefinedFieldInspection */
             $themes[] = array(
                 'label' => (string) $child->label,
                 'value' => $name,

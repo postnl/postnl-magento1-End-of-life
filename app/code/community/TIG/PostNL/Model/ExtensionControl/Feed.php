@@ -99,7 +99,9 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
 
         $feedXml = $this->getFeedData();
 
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
+            /** @noinspection PhpUndefinedFieldInspection */
             foreach ($feedXml->channel->item as $item) {
                 $feedData[] = array(
                     'severity'      => (int) $item->severity,

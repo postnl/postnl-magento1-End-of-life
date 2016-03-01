@@ -174,6 +174,7 @@ $matrixrateData = array(
  * values for existing products. We've also moved several config settings, so we need to copy the previous settings
  * there. Otherwise the existing configuration will be lost.
  */
+/** @noinspection PhpDeprecationInspection */
 $installer->setOrderId()
           ->setShipmentType()
           ->setIsBuspakje()

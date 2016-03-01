@@ -82,6 +82,21 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
     protected $_scope = 0;
 
     /**
+     * @var TIG_PostNL_Helper_Data
+     */
+    protected $_helper;
+
+    /**
+     * @var TIG_PostNL_Helper_CIF
+     */
+    protected $_cifHelper;
+
+    /**
+     * @var TIG_PostNL_Helper_Adminhtml
+     */
+    protected $_adminHelper;
+
+    /**
      * Constructor function which will set some values which will be needed later.
      */
     protected function _construct()

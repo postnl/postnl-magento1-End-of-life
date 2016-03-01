@@ -98,6 +98,7 @@ if (file_exists($xmlLocation)) {
         // Load the XML
         $xml = simplexml_load_file($xmlLocation);
         if ($xml) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $xml->modules->TIG_PostNL->active = 'false';
             // Suppress errors in case of the file not being writable after all (which should not happen)
             $writable = @file_put_contents($xmlLocation, $xml->asXML());

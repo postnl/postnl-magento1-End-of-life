@@ -38,7 +38,8 @@
  */
 ?>
 <?php return $this; /** @todo fix the customize link so it works with the new configuration design */ ?>
-<?php $_helper = $this->helper('postnl'); ?>
+<?php /** @noinspection PhpUnreachableStatementInspection */
+$_helper = $this->helper('postnl'); ?>
 <span id="postnl_customize_grid_link">
     <a href="<?php echo $this->getUrl('adminhtml/system_config/edit', array('section' => 'postnl', 'fieldset' => 'cif_labels_and_confirming', '_secure' => true, '_fragment' => 'shipment_grid_columns')); ?>" target="_blank"><?php echo $_helper->__('Customize this grid.'); ?></a>
 </span>

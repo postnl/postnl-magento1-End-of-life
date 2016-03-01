@@ -48,6 +48,7 @@
 <?php $_canChangeParcelCount = $this->canChangeParcelCount(); ?>
 <?php $_canChangeProductCode = $this->canChangeProductCode(); ?>
 <?php $_isBelgium            = $this->isBelgium(); ?>
+<?php /** @var TIG_PostNL_Helper_Cif $_cifHelper */ ?>
 <?php $_cifHelper            = $this->helper('postnl/cif'); ?>
 <?php $_isDomesticShipment   = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
 <?php if($_canChangeProductCode): ?>

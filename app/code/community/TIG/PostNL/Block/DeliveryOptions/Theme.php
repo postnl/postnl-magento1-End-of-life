@@ -97,6 +97,7 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         /**
          * @var Varien_Simplexml_Element $files
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $files = $theme->files;
         if (!$files) {
             return '';
@@ -142,6 +143,7 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         /**
          * @var Varien_Simplexml_Element $files
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $files = $theme->files;
         if (!$files) {
             return $cssFiles;

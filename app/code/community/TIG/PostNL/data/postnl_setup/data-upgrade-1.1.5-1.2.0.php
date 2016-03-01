@@ -79,6 +79,7 @@ $requiredAclResources = array(
  * prevent merchants from being unable to process shipments as before, we need to add the new resources to the existing
  * admin roles.
  */
+/** @noinspection PhpDeprecationInspection */
 $installer->resetWebserviceVersions($settingsToReset)
           ->addSupportedProductCode('3553')
           ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true)

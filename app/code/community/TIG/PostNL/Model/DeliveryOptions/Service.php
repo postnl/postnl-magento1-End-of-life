@@ -292,6 +292,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
             /** @var Mage_Sales_Model_Quote_Address $pakjeGemakAddress */
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            /** @noinspection PhpParamsInspection */
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setCity($address['city'])
                               ->setCountryId($address['countryCode'])

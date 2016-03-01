@@ -120,7 +120,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE);
 
         return $displayMode;
     }

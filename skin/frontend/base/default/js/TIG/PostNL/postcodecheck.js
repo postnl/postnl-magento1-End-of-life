@@ -215,17 +215,17 @@ PostnlPostcodecheck = new Class.create({
             this.inProgressAborted = false;
         }
 
-        var request = new Ajax.PostnlRequest(postcodecheckUrl,{
-            method: 'post',
-            parameters: {
+        this.inProgressRequest = new Ajax.PostnlRequest(postcodecheckUrl, {
+            method       : 'post',
+            parameters   : {
                 postcode    : postcode,
                 housenumber : housenumber,
                 isAjax      : true
             },
-            onCreate : function() {
+            onCreate     : function () {
                 document.fire('postnl:postcodeCheckStart');
             },
-            onSuccess: function(response) {
+            onSuccess    : function (response) {
                 var spinner = $('postnl_postcodecheck_spinner_' + addressType);
 
                 if (response.responseText == 'error') {
@@ -284,7 +284,7 @@ PostnlPostcodecheck = new Class.create({
 
                 document.fire('postnl:postcodeCheckSuccess');
             },
-            onFailure: function() {
+            onFailure    : function () {
                 if (postcodeCheck.inProgressAborted) {
                     return;
                 }
@@ -299,16 +299,15 @@ PostnlPostcodecheck = new Class.create({
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
             },
-            onTimeout: function() {
+            onTimeout    : function () {
                 $('postnl_address_error_' + addressType).show();
                 postcodeCheck.changePostcodeCheckDisabledFields(false);
 
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
             },
-            timeoutDelay: postcodeCheck.timeoutDelay
+            timeoutDelay : postcodeCheck.timeoutDelay
         });
-        this.inProgressRequest = request;
 
         return true;
     },

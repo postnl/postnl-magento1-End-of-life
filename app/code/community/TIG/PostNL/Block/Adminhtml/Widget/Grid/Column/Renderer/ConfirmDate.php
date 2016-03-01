@@ -133,6 +133,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
                 $data = Mage::app()->getLocale()
                             ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
             } else {
+                /** @noinspection PhpUndefinedClassInspection */
                 $data = Mage::getSingleton('core/locale')
                             ->date($value, Zend_Date::ISO_8601, null, false)->toString($format);
             }

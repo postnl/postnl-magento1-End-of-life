@@ -124,6 +124,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getFrontendClass($element)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $frontendClass = (string)$this->getGroup($element)->frontend_class;
         return 'section-config' . (empty($frontendClass) ? '' : (' ' . $frontendClass));
     }
@@ -168,6 +169,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getFieldsetCss($element = null)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $configCss = (string)$this->getGroup($element)->fieldset_css;
         return 'config collapseable' . ($configCss ? ' ' . $configCss : '');
     }

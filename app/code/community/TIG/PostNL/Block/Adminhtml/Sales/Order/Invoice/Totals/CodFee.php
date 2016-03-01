@@ -76,7 +76,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
         }
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($invoice->getStoreId());
+
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $baseLabel = $helper->getPostnlCodFeeLabel($invoice->getStoreId());
 
         if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
             $label = $baseLabel;
@@ -85,6 +88,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
             }
 
             $total = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $total->setLabel($label)
                   ->setValue($fee)
                   ->setBaseValue($baseFee)
@@ -100,6 +104,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
             }
 
             $totalInclTax = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalInclTax->setLabel($label)
                          ->setValue($fee + $invoice->getPostnlCodFeeTax())
                          ->setBaseValue($baseFee + $invoice->getBasePostnlCodFeeTax())
@@ -118,7 +123,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE);
 
         return $displayMode;
     }

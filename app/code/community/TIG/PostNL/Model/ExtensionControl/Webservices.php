@@ -296,6 +296,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $magentoVersion = Mage::getVersion();
         $moduleConfig = Mage::getConfig()->getModuleConfig('TIG_PostNL');
+        /** @noinspection PhpUndefinedFieldInspection */
         $moduleVersion = (string) $moduleConfig->version;
 
         /**

@@ -111,8 +111,6 @@ MijnpakketLogin.prototype = {
     },
 
     /**
-     * @param {{}} mijnpakketData
-     *
      * @returns {MijnpakketLogin}
      */
     setFormPopulate : function(formPopulate) {

@@ -223,11 +223,9 @@ PostnlMassActionFilter.prototype = {
             return false;
         }
 
-        if (defaultCheckbox.checked) {
-            return true;
-        }
+        return !!defaultCheckbox.checked;
 
-        return false;
+
     },
 
     isBuspakjeCheckboxChecked : function() {
@@ -237,11 +235,9 @@ PostnlMassActionFilter.prototype = {
             return false;
         }
 
-        if (buspakjeCheckbox.checked) {
-            return true;
-        }
+        return !!buspakjeCheckbox.checked;
 
-        return false;
+
     },
 
     defaultCheckboxChange : function() {
