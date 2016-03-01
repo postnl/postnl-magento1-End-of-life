@@ -264,7 +264,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         $configPassword = trim($configPassword);
-        $decryptedPassword = Mage::helper('core')->decrypt($configPassword);
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $decryptedPassword = $coreHelper->decrypt($configPassword);
         $password = sha1($decryptedPassword);
 
         return $password;
@@ -599,6 +601,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     {
         $logException = true;
 
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
         $cifHelper = Mage::helper('postnl/cif');
         $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
 
