@@ -63,7 +63,7 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
             ),
             array(
                 'value' => 2,
-                'label' => $helper->__('Cool Products'),
+                'label' => $helper->__('Cooled Products'),
             ),
         );
 

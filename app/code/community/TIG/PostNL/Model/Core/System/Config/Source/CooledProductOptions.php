@@ -45,7 +45,7 @@
         protected $_options = array(
             array(
                 'value'             => '3084',
-                'label'             => 'Cool Products',
+                'label'             => 'Cooled Products',
                 'isExtraCover'      => false,
                 'isAvond'           => true,
                 'isCod'             => false,

@@ -442,7 +442,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '3084' => array(
             'value'             => '3084',
-            'label'             => 'Cool Products',
+            'label'             => 'Cooled Products',
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isSunday'          => true,

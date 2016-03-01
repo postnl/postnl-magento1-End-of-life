@@ -2295,9 +2295,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $shippingDestination = $shippingAddress->getCountryId();
-
-        if ($shippingDestination == 'BE') {
+        if ($shippingAddress->getCountryId() == 'BE') {
             return true;
         }
 
