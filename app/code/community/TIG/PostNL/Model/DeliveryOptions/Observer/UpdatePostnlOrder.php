@@ -476,6 +476,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         if ($domesticCountry == $orderCountry) {
             $allowSameDay = ($postnlOrder->isSameDayDelivery() || $postnlOrder->isFood());
 
+            $helper->setUseFoodCutOffTime($postnlOrder->isFood());
+
             $deliveryDate = $helper->getDeliveryDate($deliveryDate, $order->getStoreId(), $allowSameDay);
             $confirmDate = $helper->getShippingDateFromDeliveryDate(clone $deliveryDate, $order->getStoreId());
         }

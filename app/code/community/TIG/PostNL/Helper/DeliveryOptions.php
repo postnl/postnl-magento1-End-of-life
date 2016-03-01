@@ -664,10 +664,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
 
-        if ($helper->isPastCutOff($today, $storeId)) {
-            $today->add(new DateInterval('P1D'));
-        }
-
         foreach ($timeframes as $key => $timeFrame) {
             $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
@@ -701,7 +697,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  * Reset the indices of the TimeframeTimeFrame's array.
                  */
                 $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
-            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && !$this->canUseSameDayDelivery(true)) {
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d')) {
                 /**
                  * If same day delivery it not allowed, remove the time frame.
                  */
@@ -748,7 +744,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the quote is a food quote, every delivery option should be of the type 'Food'.
              */
-            if ($this->canUseFoodDelivery(false)) {
+            if ($this->canUseFoodDelivery(true)) {
                 $isFood = $this->quoteIsFood();
                 if ($isFood) {
                     $foodType = $this->getQuoteFoodType();
