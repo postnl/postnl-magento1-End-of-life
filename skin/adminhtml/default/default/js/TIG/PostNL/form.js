@@ -475,8 +475,8 @@ FormElementDependenceController.prototype = {
      *         ...
      *     }
      * }
-     * @param object elementsMap
-     * @param object config
+     * @param {{}} elementsMap
+     * @param {{}} config
      */
     initialize : function (elementsMap, config)
     {
@@ -509,8 +509,8 @@ FormElementDependenceController.prototype = {
     /**
      * Define whether target element should be toggled and show/hide its row
      *
-     * @param object e - event
-     * @param string idTo - id of target element
+     * @param {{}} e - event
+     * @param {string} idTo - id of target element
      * @param valuesFrom - ids of master elements and reference values
      * @return
      */

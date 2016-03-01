@@ -165,6 +165,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * @var Mage_Sales_Model_Resource_Order_Shipment_Collection $currentCollection
          */
         $currentCollection = $block->getCollection();
+        /** @noinspection PhpUndefinedClassInspection */
         $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
 
         /**

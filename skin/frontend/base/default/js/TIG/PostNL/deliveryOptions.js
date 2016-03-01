@@ -1043,9 +1043,7 @@ PostnlDeliveryOptions.prototype = {
             formattedMonth = '0' + formattedMonth.toString();
         }
 
-        var formattedDate = date.getDate() + '-' + formattedMonth + '-' + date.getFullYear();
-
-        return formattedDate
+        return date.getDate() + '-' + formattedMonth + '-' + date.getFullYear()
     },
 
     /**
@@ -4726,7 +4724,7 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     /**
      * @param {string} day
-     * @param {} openingHours
+     * @param openingHours
      * @returns {string}
      */
     getOpeningHoursRow : function(day, openingHours) {
@@ -5554,11 +5552,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         var today = new Date();
         var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
 
-        if (formattedToday == timeframeDate) {
-            return true;
-        }
-
-        return false;
+        return formattedToday == timeframeDate;
     },
 
     /**

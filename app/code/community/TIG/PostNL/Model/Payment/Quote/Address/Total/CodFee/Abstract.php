@@ -236,8 +236,8 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
      * Process model configuration array.
      * This method can be used for changing models apply sort order
      *
-     * @param   array $config
-     * @param   store $store
+     * @param   array                                 $config
+     * @param   null|int|string|Mage_Core_Model_Store $store
      * @return  array
      */
     public function processConfigArray($config, $store)

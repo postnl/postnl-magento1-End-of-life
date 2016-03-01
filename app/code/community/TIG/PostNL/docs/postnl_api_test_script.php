@@ -245,6 +245,7 @@ try {
                 file_put_contents('result_' . $resultItem->shipment_id . '.pdf', base64_decode($resultItem->label));
             }
         } elseif (isset($resultArray->label)) {
+            /** @noinspection PhpUndefinedFieldInspection */
             file_put_contents('result_' . $resultArray->shipment_id . '.pdf', base64_decode($resultArray->label));
         }
     }

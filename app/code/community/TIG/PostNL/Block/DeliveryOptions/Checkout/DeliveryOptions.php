@@ -723,6 +723,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         /**
          * @var Varien_Simplexml_Element $files
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $useCufon = (string) $theme->use_cufon;
         if (!$useCufon) {
             return false;

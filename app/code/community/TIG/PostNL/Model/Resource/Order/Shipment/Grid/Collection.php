@@ -38,6 +38,7 @@
  */
 class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection
 {
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
      *
@@ -50,14 +51,21 @@ class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sale
         $this->_renderFilters();
 
         $countSelect = clone $this->getSelect();
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::ORDER);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::COLUMNS);
 
+        /** @noinspection PhpUndefinedClassInspection */
         if(count($this->getSelect()->getPart(Zend_Db_Select::GROUP)) > 0) {
+            /** @noinspection PhpUndefinedClassInspection */
             $countSelect->reset(Zend_Db_Select::GROUP);
             $countSelect->distinct(true);
+            /** @noinspection PhpUndefinedClassInspection */
             $group = $this->getSelect()->getPart(Zend_Db_Select::GROUP);
             $countSelect->columns("COUNT(DISTINCT ".implode(", ", $group).")");
         } else {

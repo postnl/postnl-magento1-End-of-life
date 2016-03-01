@@ -486,6 +486,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Open a new pdf object and assign some basic values.
          */
+        /** @noinspection PhpUndefinedClassInspection */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
         $pdf->SetTitle('PostNL Shipping Labels');
@@ -535,6 +536,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Open a new pdf object and assign some basic values.
          */
+        /** @noinspection PhpUndefinedClassInspection */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
         $pdf->SetTitle('PostNL Packingslip');
@@ -591,6 +593,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $label;
     }
 
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Adds multiple labels to the pdf
      *
@@ -631,6 +634,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $pdf;
     }
 
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Adds a label to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object. Each
      * label type has it's own properties and size. For some we need to add another A4-size page first, for others we

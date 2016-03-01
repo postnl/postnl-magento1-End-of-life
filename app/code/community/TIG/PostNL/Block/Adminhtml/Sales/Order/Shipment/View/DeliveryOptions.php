@@ -110,7 +110,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $shipment = $this->getShipment();
 
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->loadByShipment($shipment);
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->loadByShipment($shipment);
 
         $this->setPostnlShipment($postnlShipment);
         return $postnlShipment;
@@ -146,7 +148,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $shipment = $this->getPostnlShipment();
 
-        $productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($shipment);
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $productOptions = $helper->getProductOptionsForShipment($shipment);
 
         $this->setProductOptions($productOptions);
         return $productOptions;

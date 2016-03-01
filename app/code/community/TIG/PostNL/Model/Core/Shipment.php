@@ -855,7 +855,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 throw new TIG_PostNL_Exception(
                     $this->getHelper()->__(
                         'Unable to create a shipment for order #%s, because GlobalPack is currently disabled.',
-                        $this->getOrderId()
+                        $this->getOrder()->getIncrementId()
                     ),
                     'POSTNL-0240'
                 );

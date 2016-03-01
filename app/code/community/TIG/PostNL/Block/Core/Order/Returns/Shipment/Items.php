@@ -53,6 +53,7 @@ class TIG_PostNL_Block_Core_Order_Returns_Shipment_Items extends Mage_Sales_Bloc
         }
 
         $order = Mage::registry('current_order');
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $postnlShipmentCollection */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter('order_id', array('eq' => $order->getid()));
 

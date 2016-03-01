@@ -275,6 +275,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
          * Get the error from the extension's config.xml
          */
         $error = Mage::getConfig()->getNode('tig/errors/POSTNL-0114');
+        /** @noinspection PhpUndefinedFieldInspection */
         $link = (string) $error->url;
 
         /**

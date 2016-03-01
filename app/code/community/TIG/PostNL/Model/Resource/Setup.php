@@ -235,6 +235,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $moduleConfig = $this->_moduleConfig;
 
         $dbVer = $resource->getDbVersion($this->_resourceName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $configVer = (string) $moduleConfig->version;
 
         $this->setDbVer($dbVer);
@@ -251,6 +252,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function applyDataUninstall()
     {
         $dataVer   = $this->_getResource()->getDataVersion($this->_resourceName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $configVer = (string)$this->_moduleConfig->version;
 
         if ($dataVer !== false) {
@@ -891,6 +893,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($stores as $store) {
             $scopeId = $store->getId();
 
+            /** @noinspection PhpDeprecationInspection */
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
@@ -904,12 +907,14 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($websites as $website) {
             $scopeId = $website->getId();
 
+            /** @noinspection PhpDeprecationInspection */
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
          * Finally, try to move the config setting for the default scope.
          */
+        /** @noinspection PhpDeprecationInspection */
         $this->moveConfigSettingForScope(
             $fromXpath,
             $toXpath,

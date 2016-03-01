@@ -46,6 +46,7 @@ class TIG_PostNL_Model_Carrier_Resource_Tablerate_Collection
     protected function _construct()
     {
         $this->_init('postnl_carrier/tablerate');
+        /** @noinspection PhpDeprecationInspection */
         $this->_shipTable       = $this->getMainTable();
         $this->_countryTable    = $this->getTable('directory/country');
         $this->_regionTable     = $this->getTable('directory/country_region');

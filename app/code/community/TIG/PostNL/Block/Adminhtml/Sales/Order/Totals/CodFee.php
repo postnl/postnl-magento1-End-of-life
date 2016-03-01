@@ -110,7 +110,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE);
 
         return $displayMode;
     }
