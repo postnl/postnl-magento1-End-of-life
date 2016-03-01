@@ -515,9 +515,6 @@ PostnlDeliveryOptions.prototype = {
             case 'automaat':
                 imageName = 'automaat';
                 break;
-            case 'kariboo':
-                imageName = 'kariboo';
-                break;
             default:
                 imageName = 'default';
                 break;
@@ -2100,9 +2097,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.getName();
         }
 
-        if (this.getDeliveryOptions().country == 'BE') {
-            name = 'kariboo';
-        } else if (typeof location.DeliveryOptions != 'undefined'
+        if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
         ) {
             name = 'automaat';
@@ -2136,10 +2131,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         var anchor = new google.maps.Point(17, 46);
-        if (this.getDeliveryOptions().country == 'BE') {
-            name = 'kariboo';
-            anchor = new google.maps.Point(42, 78);
-        } else if (typeof location.DeliveryOptions != 'undefined'
+        if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
             ) {
             name = 'automaat';
@@ -4663,95 +4655,64 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {string}
      */
     getOpeningHoursHtml : function() {
-        var html;
+        var html = '';
 
         /**
          * Add the opening hours for every day of the week.
          */
         var openingHours = this.getOpeningHours();
-        var closedText = Translator.translate('Closed');
 
         /**
          * Monday
          */
-        html = '<tr>';
-        html += '<th>' + Translator.translate('Mo') + '</th>';
-        if (openingHours.Monday && openingHours.Monday.string && openingHours.Monday.string.join() != '') {
-            html += '<td>' + (openingHours.Monday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Mo', openingHours.Monday);
 
         /**
          * Tuesday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Tu') + '</th>';
-        if (openingHours.Tuesday && openingHours.Tuesday.string && openingHours.Tuesday.string.join() != '') {
-            html += '<td>' + (openingHours.Tuesday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Tu', openingHours.Tuesday);
 
         /**
          * Wednesday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('We') + '</th>';
-        if (openingHours.Wednesday && openingHours.Wednesday.string && openingHours.Wednesday.string.join() != '') {
-            html += '<td>' + (openingHours.Wednesday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('We', openingHours.Wednesday);
 
         /**
          * Thursday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Th') + '</th>';
-        if (openingHours.Thursday && openingHours.Thursday.string && openingHours.Thursday.string.join() != '') {
-            html += '<td>' + (openingHours.Thursday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Th', openingHours.Thursday);
 
         /**
          * Friday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Fr') + '</th>';
-        if (openingHours.Friday && openingHours.Friday.string && openingHours.Friday.string.join() != '') {
-            html += '<td>' + (openingHours.Friday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Fr', openingHours.Friday);
 
         /**
          * Saturday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Sa') + '</th>';
-        if (openingHours.Saturday && openingHours.Saturday.string && openingHours.Saturday.string.join() != '') {
-            html += '<td>' + (openingHours.Saturday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Sa', openingHours.Saturday);
 
         /**
          * Sunday
          */
+        html += this.getOpeningHoursRow('Su', openingHours.Sunday);
+
+        return html;
+    },
+
+    /**
+     * @param {string} day
+     * @param {} openingHours
+     * @returns {string}
+     */
+    getOpeningHoursRow : function(day, openingHours) {
+        var html = '';
         html += '<tr>';
-        html += '<th>' + Translator.translate('Su') + '</th>';
-        if (openingHours.Sunday && openingHours.Sunday.string && openingHours.Sunday.string.join() != '') {
-            html += '<td>' + (openingHours.Sunday.string.join('<br />')).replace('-', ' - ') + '</td>';
+        html += '<th>' + Translator.translate(day) + '</th>';
+        if (openingHours && openingHours.string && openingHours.string.join() != '') {
+            html += '<td>' + (openingHours.string.join('<br />')).replace(/-/g, ' - ') + '</td>';
         } else {
-            html += '<td>' + closedText + '</td>';
+            html += '<td>' + Translator.translate('Closed') + '</td>';
         }
         html += '</tr>';
 
@@ -4809,12 +4770,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         var html = '<li class="location" id="' + id + '">';
         html += '<div class="content">';
 
-        var imageName;
-        if (this.getDeliveryOptions().country == 'BE') {
-            imageName = 'kariboo';
-        } else {
-            imageName = this.getName();
-        }
+        var imageName = this.getName();
 
         var image = this.getDeliveryOptions().getImageBasUrl()
                   + '/tmb_'
