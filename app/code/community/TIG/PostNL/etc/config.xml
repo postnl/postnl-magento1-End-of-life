@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -270,6 +270,7 @@
                         <postnl_allow_po_locations/>
                         <postnl_allow_timeframes/>
                         <postnl_allow_pakketautomaat/>
+                        <postnl_product_type/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -573,6 +574,12 @@
                         <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
                         <method>saveOptions</method>
                     </checkout_shipping_method_save_options>
+                    <!-- Recollect quote totals. -->
+                    <checkout_shipping_method_recollect_quote_totals>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>recollectQuoteTotals</method>
+                    </checkout_shipping_method_recollect_quote_totals>
                 </observers>
             </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
             <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
@@ -583,6 +590,12 @@
                         <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
                         <method>saveOptions</method>
                     </checkout_shipping_method_save_options>
+                    <!-- Recollect quote totals. -->
+                    <checkout_shipping_method_recollect_quote_totals>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>recollectQuoteTotals</method>
+                    </checkout_shipping_method_recollect_quote_totals>
                 </observers>
             </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
             <controller_action_predispatch_gomage_checkout_onepage_ajax>
@@ -781,6 +794,7 @@
                 <handling_type>F</handling_type> <!-- Fixed -->
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <foodspecificerrmsg>Food shipments can only be delivered within the Netherlands.</foodspecificerrmsg> <!-- Food method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->
@@ -858,6 +872,7 @@
                 <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
                 <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
@@ -880,6 +895,13 @@
                 <enable_sameday_delivery>0</enable_sameday_delivery> <!-- Disable same day delivery -->
                 <sameday_delivery_fee>0</sameday_delivery_fee> <!-- Same Day Delivery cost 0 {base currency} extra -->
                 <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
+                <enable_food_delivery>0</enable_food_delivery> <!-- Disable food delivery -->
+                <food_delivery_default_product_type>0</food_delivery_default_product_type> <!-- By default products are considered non-food. -->
+                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
+                <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
+                <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
+                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
@@ -895,6 +917,8 @@
                 <mijnpakket_login_btn_test_base_url>tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
+                <default_food_product_option>3083</default_food_product_option> <!-- Food Delivery -->
+                <default_cooled_product_option>3084</default_cooled_product_option> <!-- Cooled Food delivery -->
                 <ajax_timeout>5</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
             </delivery_options>
             <cif>
@@ -911,6 +935,7 @@
                 <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
                 <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
                 <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
+                <house_number_required_countries>NL</house_number_required_countries>
             </cif>
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
@@ -1051,13 +1076,14 @@
                 <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
-                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828,4970,4971,4972,4973,4974,4975,4976</supported_product_options> <!-- all possible options except for EPS BE only -->
+                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828,4970,4971,4972,4973,4974,4975,4976,4932</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <default_product_option>3085</default_product_option> <!-- standard shipment -->
                 <use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
                 <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
                 <alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
                 <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
                 <default_pakjegemak_product_option>3544</default_pakjegemak_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_pakjegemak_be_product_option>4932</default_pakjegemak_be_product_option> <!-- Post Office (Belgium) -->
                 <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
@@ -1116,22 +1142,24 @@
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
             <postnl>
-                <enterprise>1.12,1.13,1.14</enterprise>
-                <community>1.7,1.8,1.9</community>
-                <php>5.3,5.4</php>
+                <php>5.3,5.4,5.5,5.6,7.0</php>
+                <magento>
+                    <enterprise>1.12,1.13,1.14</enterprise>
+                    <community>1.7,1.8,1.9</community>
+                </magento>
                 <!-- Compatibility with other extensions -->
                 <extensions>
-                    <Idev_OneStepCheckout>4.0,4.1</Idev_OneStepCheckout>
+                    <Idev_OneStepCheckout>4.0,4.1,4.5</Idev_OneStepCheckout>
                     <Bpost_ShippingManager>4.2.8</Bpost_ShippingManager>
                     <GoMage_Checkout>0.0.5.8</GoMage_Checkout>
-                    <Picqer_PostNL>1.0</Picqer_PostNL>
+                    <Picqer_PostNL>1.0,1.1</Picqer_PostNL>
                 </extensions>
             </postnl>
         </compatibility>
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -2380,6 +2408,21 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0237>
+            <POSTNL-0238>
+                <message>Location Code and Retail Network ID are required for post office locations.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0238>
+            <POSTNL-0239>
+                <message>House number is required for the destination country (%s).</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0239>
+            <POSTNL-0240>
+                <message>Unable to create a shipment for order #%s, because GlobalPack is currently disabled.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0240>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

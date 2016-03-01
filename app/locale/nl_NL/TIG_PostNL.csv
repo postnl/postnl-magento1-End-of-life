@@ -784,11 +784,11 @@ TIG_PostNL::Choose printing start position,Kies printer startpositie
 TIG_PostNL::When printing multiple labels simultaneously you may choose where the printer will start printing. All fields marked orange will be used. The printer will start at position 1 on all pages after the first.,"Wanneer u meerdere labels tegelijk afdrukt, kunt u aangeven waar de printer moet beginnen op de pagina. De printer zal voor alle pagina's na de eerste op positie 1 beginnen."
 TIG_PostNL::Click on the field where you would like the printer to start. All orange coloured fields will be used as long as you have selected sufficient shipments to fill these fields.,"Klik op een veld om deze te selecteren als de startpositie van de printer. Alle oranje gekleurde velden zullen gevuld worden, mits u voldoende zendingen geselcteerd heeft."
 TIG_PostNL::Show on the map,Toon op de kaart
-TIG_PostNL::Magento Community Edition version,Magento Community editie versie
-TIG_PostNL::Magento Enterprise Edition version,Magento Enterprise editie versie
+TIG_PostNL::Magento Community Edition,Magento Community Editie
+TIG_PostNL::Magento Enterprise Edition,Magento Enterprise Editie
 TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout versie
 TIG_PostNL::choose a different shipping address,kies een ander verzendadres
-TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party versie compatibiliteit
+"TIG_PostNL::PHP, Magento & 3rd party version compatibility","PHP, Magento & 3rd party versie compatibiliteit"
 TIG_PostNL::PostNL - Confirm Shipment,PostNL - Zending voormelden
 TIG_PostNL::Always stay informed? Click %shere%s to create a PostNL account based on your order details.,Altijd op de hoogte? Klik %shier%s om direct een PostNL account aan te maken op basis van uw bestelling.
 TIG_PostNL::Track your shipment's current status and whereabouts,Volg de actuele status van uw pakket
@@ -851,7 +851,7 @@ TIG_PostNL::Order item #%s could not be invoiced.,Order item #%s kon niet gefact
 TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling mist."
 TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling niet gefactureerd kan worden."
 TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgetreden tijdens het aanmaken van een factuur voor deze zending.
-TIG_PostNL::No valid shipment type found for shipment #%s,Geen valide zending gevonden voor zending #%s.
+TIG_PostNL::No valid shipment type found for order #%s,Geen valide zending gevonden voor bestelling #%s.
 TIG_PostNL::Print packing slips,Print pakbonnen
 TIG_PostNL::PostNL - Print packing slips,PostNL - Print pakbonnen
 TIG_PostNL::Products,Producten
@@ -1263,7 +1263,7 @@ TIG_PostNL::Type `uninstall` in the box to proceed,Type `uninstall` in het veld 
 TIG_PostNL::Uninstall,Deïnstalleer
 TIG_PostNL::Warning: this action cannot be undone!,Let op: deze handeling kan niet ongedaan gemaakt worden!
 TIG_PostNL::You did not enter the correct verification text. Try again.,U heeft niet de correcte verificatie-tekst ingevoerd. Probeer het opnieuw.
-"TIG_PostNL::If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href='http://servicedesk.tig.nl/hc/nl/articles/208889777-GoMage-LightCheckout-Adresinstellingen' target='_blank'>here</a>","Als u de Gomage Lightcheckout extensie gebruikt in combinatie met de Postcodecheck van PostNL, worden de straat-instellingen van de Gomage Lightcheckout extensie worden genegeerd.<br/>U kunt <a href=""http://servicedesk.tig.nl/hc/nl/articles/208889777-GoMage-LightCheckout-Adresinstellingen"" target=""_blank"">hier</a> meer informatie vinden over de instellingen."
+TIG_PostNL::If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href='http://servicedesk.tig.nl/hc/nl/articles/208889777-GoMage-LightCheckout-Adresinstellingen' target='_blank'>here</a>,"Als u de Gomage Lightcheckout extensie gebruikt in combinatie met de Postcodecheck van PostNL, worden de straat-instellingen van de Gomage Lightcheckout extensie worden genegeerd.<br/>U kunt <a href='http://servicedesk.tig.nl/hc/nl/articles/208889777' target=""""_blank"""">hier</a> meer informatie vinden over de instellingen."
 TIG_PostNL::You have enabled PostNL delivery options and GoMage LightCheckout's Delivery Date functionality for the same shipping methods. Unfortunately these two functionalities conflict. Please disable one of these features.,U heeft zowel de PostNL bezorgopties als de GoMage LightCheckout Leveringsdatum functionaliteit geactiveerd. Deze twee functionaliteiten kunnen helaas niet samenwerken. Schakel s.v.p. één van deze functionaliteiten uit.
 "TIG_PostNL::[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href=""http://kb.tig.nl/topic/"" target=""blank"">Click here for more information from the TIG knowledgebase.</a>","[POSTNL-0222] Waarschuwing: mogelijk conflict tussen PostNL en GoMage LightCheckout. <a href=""http://kb.tig.nl/topic/"" target=""blank"">Klik hier voor meer informatie in de TIG knowledgebase.</a>"
 "TIG_PostNL::Are you sure you wish to disable the PostNL extension?\n\nWarning: this action cannot be undone!\n\nThe following changes will be made:\n- the extension will be disabled in the app/etc/modules/TIG_PostNL.xml file\n- the PostNL product attributes will be removed from the webshop\n\nThe following will be preserved: \n- All data pertaining to existing orders and shipments\n- All PostNL configuration settings\n- All PostNL code files.\n\nFor questions regarding this process and how to re-install the PostNL extension, please contact the TIG servicedesk.",Weet u zeker dat u de PostNL extensie wilt uitschakelen?\n\nWaarschuwing: dit kan niet ongedaan gemaakt worden!\n\nDe volgende veranderingen zullen gemaakt worden:\n- de extensie zal worden uitgeschakeld in het app/etc/modules/TIG_PostNL.xml bestand\n- de PostNL product attributen zullen worden verwijderd van de webshop\n\nHet volgende zal worden bewaard: \n- Alle data betreffende bestaande orders en verzendingen\n- Alle PostNL configuratie instellingen\n- Alle PostNL code bestanden\n\nVoor vragen betreffende dit proces en het herinstalleren van de PostNL extensie kunt u contact opnemen met de TIG servicedesk.
@@ -1338,10 +1338,45 @@ TIG_PostNL::PakjeGemak (COD),PakjeGemak (rembours)
 TIG_PostNL::Evening Delivery (COD),Avondbezorging (rembours)
 TIG_PostNL::Early Pickup (COD),Extra Vroeg Ophalen (rembours)
 TIG_PostNL::Monday Delivery,Maandagbezorging
-"TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.",Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
+TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten. Let op: maandagbezorging geldt alleen voor huisadressen. Postkantoor bezorgingen worden niet op maandag geleverd.
 TIG_PostNL::Name,Naam
 TIG_PostNL::Vat,Btw
 TIG_PostNL::Only use this if you have problems with special characters on your PostNL packing slip.,Gebruik dit alleen als u problemen ervaart met het tonen van speciale tekens binnen de PostNL pakbon.
 "TIG_PostNL::This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.","Dit zorgt ervoor dat de PostNL pakbon gebruik maakt van hetzelfde font als de Magento pakbon. Hoewel dit er visueel slechter uit kan zien, kan dit ook problemen met bepaalde speciale tekens verhelpen."
 TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
 TIG_PostNL::Same day delivery will only work if your shipping duration is set to 0 days in either the config or for applicaple products.,Dezelfde dag bezorgd zal enkel getoond worden wanneer de overkomstduur ingesteld staat op 0 dagen in de configuratie of voor geselecteerde producten.
+TIG_PostNL::Post Office (Belgium),Postkantoor (België)
+TIG_PostNL::Location Code and Retail Network ID are required for post office locations.,Location Code en Retail Network ID zijn verplicht voor postkantoor locaties.
+TIG_PostNL::Belgium,België
+TIG_PostNL::Enable post office locations for Belgium,Activeer postkantoor locaties voor België
+TIG_PostNL::Maximum number of delivery days for Belgium,Maximum aantal bezorgdagen voor België
+TIG_PostNL::Enable PostNL delivery options in Belgium,Activeer PostNL bezorgopties voor België
+TIG_PostNL::House number is required for the destination country (%s).,Huisnummer is verplicht voor het land van bestemming (%s).
+TIG_PostNL::PostNL delivery options in Belgium,PostNL bezorgopties in België
+TIG_PostNL::Enable delivery days for Belgium,Activeer bezorgdagen voor België
+TIG_PostNL::Enable monday delivery for Belgium,Activeer maandagbezorging voor België
+TIG_PostNL::today cooled,vandaag gekoeld verstuurd
+TIG_PostNL::cooled delivery,gekoeld verstuurd
+TIG_PostNL::Food Delivery Options,Food Bezorging Opties
+TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Products. Please consult your PostNL account manager for more information about activating this service for your account.,Food bezorging kan gebruikt worden voor het verzenden van zowel KW artikelen als gekoelde producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
+TIG_PostNL::Food Delivery,Food Bezorging
+TIG_PostNL::Cooled Food Delivery,Gekoeld Food Bezorging
+TIG_PostNL::Food shipments can only be delivered within the Netherlands.,Versproducten kunnen enkel verstuurd worden naar locaties in Nederland.
+TIG_PostNL::Non-Food,Non-Food
+TIG_PostNL::Dry & Groceries,Vers Ongekoeld
+TIG_PostNL::Cooled Products,Vers Gekoeld
+TIG_PostNL::The domestic country is not set to NL. Please keep in mind that Food Delivery is only available in the Netherlands.,Het verzendland staat op het moment niet ingesteld op Nederland. Houdt er rekening mee dat Food bezorging enkel mogelijk is bij verzendingen binnen Nederland.
+"TIG_PostNL::You have enabled food delivery, but have not yet enabled a Food product code. Please enable a Food product code in Advanced -> User Settings.","U heeft Food delivery geactiveerd, maar nog geen Food productopties geactiveerd. Hierdoor zal het in de frontend niet mogelijk zijn om een Food bestelling aan te maken. Activeer de Food productopties in Geavanceerd -> Gebruikersinstellingen."
+TIG_PostNL::You currently selected the options to ship to multiple countries. It seems that these countries also include non-domestic countries. Please keep in mind that Food deliveries can only be shipped to the Netherlands.,Volgens de instellingen is het op het moment mogelijk om te verzenden naar landen buiten Nederland. Houdt er rekening mee dat het enkel mogelijk is om Food bestellingen binnen Nederland te versturen.
+TIG_PostNL::Enable food delivery,Activeer Food bezorging
+TIG_PostNL::Default product type,Default producttype
+TIG_PostNL::This value is used to determine the product type of newly created products.,Deze waarde wordt gebruikt om het producttype van nieuw aangemaakte producten te bepalen.
+TIG_PostNL::This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.,Dit heeft enkel effect op nieuw aangemaakte producten. Voor bestaande producten is het noodzakelijk om deze handmatig naar het gewenste producttype aan te passen.
+TIG_PostNL::Warnings:,Let op:
+TIG_PostNL::Activate food delivery for your customers.,Activeer food bezorging voor uw klanten.
+TIG_PostNL::PHP,PHP
+TIG_PostNL::Post Office Belgium options,Postkantoor België opties
+TIG_PostNL::Letter Box Parcel options,Brievenbuspakje opties
+TIG_PostNL::Cooled Delivery Options,Gekoeld versturen opties
+"TIG_PostNL::Unable to create a shipment for order #%s, because GlobalPack is currently disabled.","Kan geen zending aanmaken voor bestelling #%s, omdat GlobalPack momenteel uitgeschakeld is."
+TIG_PostNL::You cannot manually confirm GlobalPack shipments. Please use the 'print label & confirm' massaction instead.,Het is niet mogelijk om GlobalPack zendingen handmatig voor te melden. Gebruik s.v.p. de 'print label & meld voor' massa-actie.

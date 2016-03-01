@@ -279,6 +279,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'pakjegemak_options',
         ),
+        '4932' => array(
+            'value'             => '4932',
+            'label'             => 'Post Office',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_be_options',
+        ),
         '4952' => array(
             'value'             => '4952',
             'label'             => 'EU Pack Special Consumer (incl. signature)',
@@ -417,6 +428,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'standard_options',
         ),
+        '3083' => array(
+            'value'             => '3083',
+            'label'             => 'Dry & Groceries',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'food_options',
+        ),
+        '3084' => array(
+            'value'             => '3084',
+            'label'             => 'Cooled Products',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'cooled_options',
+        ),
     );
 
     /**
@@ -425,11 +460,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     protected $_groups = array(
         'standard_options'       => 'Domestic options',
         'pakjegemak_options'     => 'Post Office options',
+        'pakjegemak_be_options'  => 'Post Office Belgium options',
         'eu_options'             => 'EU options',
         'global_options'         => 'Global options',
         'pakketautomaat_options' => 'Parcel Dispenser options',
         'buspakje_options'       => 'Letter Box Parcel options',
         'sunday_options'         => 'Sunday options',
+        'food_options'           => 'Food Delivery Options',
+        'cooled_options'         => 'Cooled Delivery Options',
     );
 
     /**

@@ -87,6 +87,8 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
         /**
          * Create a new postnl shipment entity.
+         *
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId());
@@ -123,6 +125,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
             if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
                 $postnlShipment->setExpectedDeliveryTimeEnd($postnlOrder->getExpectedDeliveryTimeEnd());
+            }
+
+            if ($postnlOrder->hasPgLocationCode()) {
+                $postnlShipment->setPgLocationCode($postnlOrder->getPgLocationCode());
+            }
+
+            if ($postnlOrder->hasPgRetailNetworkId()) {
+                $postnlShipment->setPgRetailNetworkId($postnlOrder->getPgRetailNetworkId());
             }
         }
 

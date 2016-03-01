@@ -33,52 +33,21 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_CheckForWarningBox
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
-     * Gets the hidden notifications for the current admin user.
-     *
-     * @return array
+     * @var string
      */
-    public function getHiddenNotifications()
-    {
-        if (!$this->isAdmin()) {
-            return array();
-        }
-
-        /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        if (!$adminUser) {
-            return array();
-        }
-
-        $extra = $adminUser->getExtra();
-        if (empty($extra['postnl']['hidden_notification'])) {
-            return array();
-        }
-
-        return $extra['postnl']['hidden_notification'];
-    }
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_check_for_warningbox';
 
     /**
-     * Returns either the store id of the current scope, or returns 0 for global level scope.
+     * Template file used
      *
-     * @return int|mixed
-     * @throws Mage_Core_Exception
+     * @var string
      */
-    public function getCurrentScope()
-    {
-        $storeId = 0;
-
-        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
-        if (strlen($code)) {
-            $storeId = Mage::getModel('core/store')->load($code)->getId();
-        }
-
-        return $storeId;
-    }
-
+    protected $_template = 'TIG/PostNL/system/config/form/field/check_for_warning_box.phtml';
 }

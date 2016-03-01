@@ -103,6 +103,28 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_POSTCODE_NL_EXTENSION_ACTIVE = 'postcodenl_api/config/enabled';
 
     /**
+     * Extension code of the OneStepCheckout extension.
+     *
+     * @todo move all OSC specific code to a separate OSC-helper class.
+     */
+    const ONESTEPCHECKOUT_EXTENSION_CODE = 'Idev_OneStepCheckout';
+
+    /**
+     * Xpath to the OneStepCheckout extension's enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_EXTENSION_ACTIVE = 'onestepcheckout/general/rewrite_checkout_links';
+
+    /**
+     * Xpath to the OneStepCheckout extension's Google Places enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED = 'onestepcheckout/googleplaces/enabled';
+
+    /**
+     * Xpath to the OneStepCheckout extension's Delivery Date enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED = 'onestepcheckout/delivery/enabled_date';
+
+    /**
      * @var null|string|int
      */
     protected $_oscStreetFieldSortOrder = null;
@@ -447,6 +469,81 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         return false;
+    }
+
+    /**
+     * Checks if the OneStepCheckout extension is installed and active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkOneStepCheckoutActive($storeId = null)
+    {
+        if (!Mage::helper('core')->isModuleEnabled(self::ONESTEPCHECKOUT_EXTENSION_CODE)) {
+            return false;
+        }
+
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $oneStepCheckoutEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_EXTENSION_ACTIVE, $storeId);
+        if (!$oneStepCheckoutEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if OneStepCheckout's Google Places functionality is active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkGooglePlacesActive($storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->checkOneStepCheckoutActive($storeId)) {
+            return false;
+        }
+
+        $googlePlacesEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED, $storeId);
+        if (!$googlePlacesEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the OSC delivery date functionality is active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkOscDeliveryDateActive($storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->checkOneStepCheckoutActive($storeId)) {
+            return false;
+        }
+
+        $oscDeliveryDateEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED, $storeId);
+        if (!$oscDeliveryDateEnabled) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

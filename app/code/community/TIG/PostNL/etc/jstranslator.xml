@@ -150,4 +150,10 @@
     <post_office_address translate="message" module="postnl">
         <message>Post Office Address</message>
     </post_office_address>
+    <today_cooled translate="message" module="postnl">
+        <message>today cooled</message>
+    </today_cooled>
+    <cooled_delivery translate="message" module="postnl">
+        <message>cooled delivery</message>
+    </cooled_delivery>
 </jstranslator>

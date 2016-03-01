@@ -73,6 +73,11 @@ var $PDFVersion;         // PDF version number
 *                               Public methods                                 *
 *                                                                              *
 *******************************************************************************/
+function __construct($orientation='P', $unit='mm', $size='A4')
+{
+	$this->FPDF($orientation, $unit, $size);
+}
+
 function FPDF($orientation='P', $unit='mm', $size='A4')
 {
 	// Some checks

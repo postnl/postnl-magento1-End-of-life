@@ -299,7 +299,8 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $request->setBaseSubtotalInclTax(
             $shippingAddress->getBaseSubtotalInclTax() + $shippingAddress->getBaseExtraTaxAmount()
         );
-        $request->setParcelType('regular');
+
+        $request->setParcelType('pakje_gemak');
 
         $rawResult = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
         if (!$rawResult) {

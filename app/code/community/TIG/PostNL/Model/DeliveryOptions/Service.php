@@ -123,10 +123,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
     /**
      * @param StdClass[] $timeframes
+     * @param string     $destinationCountry
      *
-     * @return StdClass[]|false
+     * @return false|StdClass[]
      */
-    public function filterTimeframes($timeframes)
+    public function filterTimeframes($timeframes, $destinationCountry = 'NL')
     {
         /**
          * If the time frames are not an array, something has gone wrong.
@@ -137,7 +138,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry);
     }
 
     /**
@@ -237,8 +238,12 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
         $deliveryDate->setTimezone($utcTimeZone);
 
-        $deliveryDateClone = clone $deliveryDate;
-        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+        if ($data['type'] == 'Food' || $data['type'] == 'Cooledfood') {
+            $confirmDate = $deliveryDate;
+        } else {
+            $deliveryDateClone = clone $deliveryDate;
+            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+        }
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -263,7 +268,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                         ->setProductCode(3553)
                         ->setMobilePhoneNumber($data['number']);
         } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
-            $postnlOrder->setIsPakjeGemak(true);
+            $postnlOrder->setIsPakjeGemak(true)
+                        ->setPgLocationCode($data['locationCode'])
+                        ->setPgRetailNetworkId($data['retailNetworkId']);
         }
 
         /**

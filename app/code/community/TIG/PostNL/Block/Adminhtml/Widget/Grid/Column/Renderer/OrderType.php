@@ -79,12 +79,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
 
             $renderedValues = array();
             foreach ($types as $key => $type) {
-                $rowDummy = new Varien_Object(
-                    array(
-                        'id'           => $row->getId(),
-                        'product_code' => $productCodes[$key],
-                    )
-                );
+                $rowDummy = clone $row;
+                $rowDummy->setData('product_code', $productCodes[$key]);
 
                 $renderedValue = $this->getShipmentTypeRenderedValue($type, $rowDummy);
                 $renderedValue = $this->_addOptionComments($renderedValue, $row);

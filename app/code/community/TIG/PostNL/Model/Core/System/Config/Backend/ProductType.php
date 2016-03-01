@@ -36,49 +36,47 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_Model_Config_Data
 {
+
+    const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
+
+    const PRODUCTY_TYPE_NON_FOOD      = '0';
+    const PRODUCTY_TYPE_DRY_GROCERIES = '1';
+    const PRODUCTY_TYPE_COOL_PRODUCTS = '2';
+
+    protected $_validOptions = array(
+        self::PRODUCTY_TYPE_NON_FOOD,
+        self::PRODUCTY_TYPE_DRY_GROCERIES,
+        self::PRODUCTY_TYPE_COOL_PRODUCTS,
+    );
+
     /**
-     * Gets the hidden notifications for the current admin user.
-     *
-     * @return array
+     * Validate the value chosen by the user.
      */
-    public function getHiddenNotifications()
+    protected function _beforeSave()
     {
-        if (!$this->isAdmin()) {
-            return array();
-        }
+        $value = $this->getValue();
 
-        /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        if (!$adminUser) {
-            return array();
+        if (!in_array($value, $this->_validOptions)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__("Please enter a valid default value for PostNL product type."),
+                ''
+            );
         }
-
-        $extra = $adminUser->getExtra();
-        if (empty($extra['postnl']['hidden_notification'])) {
-            return array();
-        }
-
-        return $extra['postnl']['hidden_notification'];
     }
 
     /**
-     * Returns either the store id of the current scope, or returns 0 for global level scope.
-     *
-     * @return int|mixed
-     * @throws Mage_Core_Exception
+     * The product attribute's default value needs to be updated to the chosen value.
      */
-    public function getCurrentScope()
+    protected function _afterSave()
     {
-        $storeId = 0;
+        $value = $this->getValue();
 
-        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
-        if (strlen($code)) {
-            $storeId = Mage::getModel('core/store')->load($code)->getId();
-        }
+        /** @var Mage_Eav_Model_Entity_Attribute $attributeModel */
+        $attributeModel = Mage::getModel('eav/entity_attribute')
+            ->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_PRODUCT_TYPE);
 
-        return $storeId;
+        $attributeModel->setDefaultValue($value)->save();
     }
-
 }

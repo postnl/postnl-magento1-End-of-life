@@ -162,7 +162,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             $this->_setDates($postnlOrder, $order);
         }
 
-
         /**
          * Update the PostNL order.
          */
@@ -287,8 +286,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * may have been saved.
          */
         $shippingAddress = $quote->getShippingAddress();
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         if (!$shippingAddress
-            || $shippingAddress->getCountryId() != 'NL'
+            || $shippingAddress->getCountryId() != $domesticCountry
             || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
 
         ) {
@@ -315,6 +315,29 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->setOptions($postnlOptions)
                     ->validateOptions()
                     ->save();
+
+        return $this;
+    }
+
+    /**
+     * Recollect quote totals.
+     *
+     * @return $this
+     *
+     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
+     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
+     *
+     * @observer checkout_shipping_method_recollect_quote_totals
+     */
+    public function recollectQuoteTotals()
+    {
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quote->setTotalsCollectedFlag(false);
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->collectTotals();
+        $quote->save();
 
         return $this;
     }
@@ -355,14 +378,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order is being shipped to a domestic country.
+         * Check if this order has a shipping address.
          */
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$shippingAddress
-            || $shippingAddress->getCountryId() != $domesticCountry
-        ) {
+        if (!$shippingAddress) {
             return false;
         }
 
@@ -390,7 +410,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     {
         $postnlOrder->setQuoteId($order->getQuoteId())
                     ->setOrderId($order->getId())
-                    ->setType($postnlOrder::TYPE_OVERDAG)
+                    ->setType($this->_getOrderType($postnlOrder, $order))
                     ->setIsActive(0)
                     ->setIsCanceled(0)
                     ->setShipmentCosts(0)
@@ -402,6 +422,29 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->save();
 
         return $this;
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param Mage_Sales_Model_Order      $order
+     *
+     * @return mixed
+     */
+    protected function _getOrderType(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
+            switch ($helper->getQuoteFoodType($order->getQuote())) {
+                case 1:
+                    return $postnlOrder::TYPE_FOOD;
+                case 2:
+                    return $postnlOrder::TYPE_COOLED_FOOD;
+            }
+        }
+
+        return $postnlOrder::TYPE_OVERDAG;
     }
 
     /**
@@ -431,8 +474,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $orderCountry = $order->getShippingAddress()->getCountryId();
 
         if ($domesticCountry == $orderCountry) {
-            $helper->getDeliveryDate($deliveryDate, $order->getStoreId());
-            $helper->getShippingDate($confirmDate, $order->getStoreId());
+            $allowSameDay = ($postnlOrder->isSameDayDelivery() || $postnlOrder->isFood());
+
+            $deliveryDate = $helper->getDeliveryDate($deliveryDate, $order->getStoreId(), $allowSameDay);
+            $confirmDate = $helper->getShippingDateFromDeliveryDate(clone $deliveryDate, $order->getStoreId());
         }
 
         $postnlOrder->setDeliveryDate($deliveryDate->getTimestamp())

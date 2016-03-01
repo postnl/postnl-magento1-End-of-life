@@ -47,6 +47,7 @@
 <?php $_changelogUrl          = $this->getChangelogUrl(); ?>
 <?php $_kbUrl                 = $this->getKbUrl(); ?>
 <?php $_stability             = $this->getStability(); ?>
+<?php $_compatibility         = $this->getCompatibility(); ?>
 <tr>
     <td>
         <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion()); if ($_stability != 'stable') { echo ' - ' . $_stability; } ?></h2>
@@ -67,16 +68,33 @@
                     </div>
 
                     <div class="text-box">
-                        <h3><?php echo $this->__('Magento & 3rd party version compatibility');?></h3>
-                        <ul>
-                            <li><?php echo $this->__('Magento Community Edition version');?> v1.7, v1.8 &amp; v1.9</li>
-                            <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.12, v1.13 &amp; v1.14</li>
-                        </ul>
-                        <ul>
-                            <li><?php echo $this->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
-                            <li><?php echo $this->__("GoMage's Checkout version");?> v0.0.5.8</li>
-                            <li><?php echo $this->__("Picqer's PostNL add-on version");?> v1.0</li>
-                        </ul>
+                        <h3><?php echo $this->__('PHP, Magento & 3rd party version compatibility');?></h3>
+                        <?php if (!empty($_compatibility['php'])): ?>
+                            <?php $_phpCompatibility = $this->formatCompatibleVersion($_compatibility['php']); ?>
+                            <ul>
+                                <li><?php echo $this->__('PHP');?> <?php echo $_phpCompatibility; ?></li>
+                            </ul>
+                        <?php endif; ?>
+                        <?php if (!empty($_compatibility['magento'])): ?>
+                            <ul>
+                                <?php if (!empty($_compatibility['magento']['community'])): ?>
+                                    <?php $_magentoCommunityCompatibility = $this->formatCompatibleVersion($_compatibility['magento']['community']); ?>
+                                    <li><?php echo $this->__('Magento Community Edition');?> <?php echo $_magentoCommunityCompatibility; ?></li>
+                                <?php endif; ?>
+                                <?php if (!empty($_compatibility['magento']['enterprise'])): ?>
+                                <?php $_magentoEnterpriseCompatibility = $this->formatCompatibleVersion($_compatibility['magento']['enterprise']); ?>
+                                    <li><?php echo $this->__('Magento Enterprise Edition');?> <?php echo $_magentoEnterpriseCompatibility; ?></li>
+                                <?php endif; ?>
+                            </ul>
+                        <?php endif; ?>
+                        <?php if (!empty($_compatibility['extensions'])): ?>
+                            <ul>
+                                <?php foreach ($_compatibility['extensions'] as $_compatibleExtension => $_compatibleVersions):?>
+                                    <?php $_compatibleVersions = $this->formatCompatibleVersion($_compatibleVersions); ?>
+                                    <li><?php echo $this->getCompatibleExtensionLabel($_compatibleExtension); ?> <?php echo $_compatibleVersions; ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
                         <ul>
                             <li><?php echo $this->__('We cannot guarantee compatibility with non supported extensions and versions of Magento.'); ?></li>
                         </ul>
