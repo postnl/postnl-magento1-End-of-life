@@ -671,6 +671,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Checks whether the fallback timeframe should be shown or not.
+     *
+     * @return boolean
+     */
+    public function canUseFallBackTimeframe()
+    {
+        $canUseFallBackTimeframe = Mage::helper('postnl/deliveryOptions')->canUseFallBackTimeframe();
+        return $canUseFallBackTimeframe;
+    }
+
+    /**
      * Checks whether google streetview is allowed.
      *
      * @return boolean

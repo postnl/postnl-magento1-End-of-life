@@ -205,6 +205,7 @@ PostnlDeliveryOptions.prototype = {
             allowDeliveryDays         : true,
             allowTimeframes           : true,
             allowEveningTimeframes    : false,
+            allowFallBackTimeFrame    : true,
             allowPg                   : true,
             allowPge                  : false,
             allowPa                   : true,
@@ -983,6 +984,11 @@ PostnlDeliveryOptions.prototype = {
             console.info('Showing default timeframe option.');
         }
 
+        if (!this.options.allowFallBackTimeFrame) {
+            this.showDefaultTimeframeNotAllowed();
+            return this;
+        }
+
         var fakeTimeframe = {
             From          : '09:00:00',
             To            : '18:00:00',
@@ -1010,6 +1016,24 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         return this;
+    },
+
+    showDefaultTimeframeNotAllowed : function() {
+        if (this.debug) {
+            console.info('Showing default timeframe option is not allowed');
+        }
+
+        if ($$('#carrier_postnl input')[0] != undefined) {
+            $$('#carrier_postnl input')[0].checked = false;
+            $$('#carrier_postnl input')[0].disabled = true;
+            $$('#carrier_postnl input')[0].style.display = 'none';
+            $$('#carrier_postnl label')[0].innerHTML = Translator.translate('Food products delivery is not possible for this postal code. Please choose a different address.');
+            $$('#carrier_postnl label')[0].addClassName('defaultTimeFrameNotAvailable');
+            $$('#carrier_postnl .postnl-container')[0].style.display = 'none';
+        } else {
+            $$('.postnl-container')[0].up(2).addClassName('defaultTimeFrameNotAvailable');
+            $$('.postnl-container')[0].up(2).innerHTML = Translator.translate('Food products delivery is not possible for this postal code. Please choose a different address.');
+        }
     },
 
     formatDate : function(date) {

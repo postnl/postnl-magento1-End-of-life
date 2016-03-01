@@ -228,6 +228,11 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_add_phonenumber .number-failed { padding-left:25px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_phonenumber_failed.png) 0 0 no-repeat; }
 /********** < Add Phone Number */
 
+/******* Hide default timeframe */
+
+.defaultTimeFrameNotAvailable { border-left: 5px solid #df280a; background-color: #faebe7; padding: 7px 10px 7px 20px; margin-bottom: 5px; max-width: 80%; }
+
+/***** < Hide default timeframe */
 /* ======================================================================================= */
 
 /* Fixes ================================================================================= */
