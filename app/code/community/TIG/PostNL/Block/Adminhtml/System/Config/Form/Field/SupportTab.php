@@ -82,6 +82,72 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     }
 
     /**
+     * @return array|Mage_Core_Model_Config_Element|string|false
+     */
+    public function getCompatibility()
+    {
+        $postnlConfig = Mage::app()->getConfig()->getNode('tig/compatibility/postnl');
+
+        if ($postnlConfig) {
+            $postnlConfig = $postnlConfig->asArray();
+        }
+
+        return $postnlConfig;
+    }
+
+    /**
+     * @param string $extensionKey
+     *
+     * @return string
+     */
+    public function getCompatibleExtensionLabel($extensionKey)
+    {
+        switch ($extensionKey) {
+            case 'Idev_OneStepCheckout':
+                $label = "Idev's OneStepCheckout";
+                break;
+            case 'Bpost_ShippingManager':
+                $label = "Bpost Shipping Manager";
+                break;
+            case 'GoMage_Checkout':
+                $label = "GoMage's Checkout";
+                break;
+            case 'Picqer_PostNL':
+                $label = "Picqer's PostNL add-on";
+                break;
+            default:
+                $label = $extensionKey;
+                break;
+        }
+
+        return $label;
+    }
+
+    /**
+     * @param $versions
+     *
+     * @return string
+     */
+    public function formatCompatibleVersion($versions)
+    {
+        $versionString = '';
+        $versions = explode(',', $versions);
+
+        $count = count($versions);
+        foreach (array_values($versions) as $index => $version) {
+            if ($index > 0 && $index < $count) {
+                $versionString .= ', ';
+            } elseif ($index > 0) {
+                $versionString .= ' & ';
+            }
+
+            $versionString .= 'v' . $version;
+        }
+
+        return $versionString;
+    }
+
+    /**
      * @return string
      */
     public function getPostnlRegisterUrl()

@@ -447,6 +447,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'monday'              => $helper->__('Monday Delivery'),
                 'sameday'             => $helper->__('Same Day Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
+                'food'                => $helper->__('Food Delivery'),
+                'cooledfood'          => $helper->__('Cooled Food Delivery'),
             ),
         );
 
@@ -982,6 +984,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_pg_be_options'])) {
+                $config['postnl_pg_be_options'] = array(
+                    'name'   => 'product_options[pg_be_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pg_be_options'],
+                );
+            }
+
             if (!empty($options['postnl_pge_options'])) {
                 $config['postnl_pge_options'] = array(
                     'name'   => 'product_options[pge_options]',
@@ -1090,6 +1101,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getProductOptions()
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $optionsModel */
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
         $options = array(
             'postnl_domestic_options' => $optionsModel->getOptions(
@@ -1113,6 +1125,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'   => 'pakjegemak_options',
                     'isCod'   => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_pg_be_options' => $optionsModel->getOptions(
+                array(
+                    'group'         => 'pakjegemak_be_options',
+                    'isCod'         => false,
+                    'isBelgiumOnly' => true,
                 ),
                 false,
                 true
@@ -1521,6 +1542,34 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         if ($filterCond == 'eu') {
             $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
             $collection->addFieldToFilter('country_id', array('in', $euCountries));
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to cooled food, only return postnlorders of the type 'Cooledfood'.
+         */
+        if ($filterCond == 'cooledfood') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Cooledfood'),
+                )
+            );
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to food, only return postnlorders of the type 'Food'.
+         */
+        if ($filterCond == 'food') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Food'),
+                )
+            );
 
             return $this;
         }

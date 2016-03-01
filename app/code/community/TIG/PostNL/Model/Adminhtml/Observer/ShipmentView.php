@@ -146,6 +146,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         if (!$postnlShipment->isConfirmed()
             && $postnlShipment->canConfirm()
+            && !$postnlShipment->isGlobalShipment() //@todo remove this check once PostNl fixes the issue with
+                                                    // GlobalPack confirmations
             && $confirmAllowed
         ) {
             $confirmUrl = $this->getConfirmUrl($shipment->getId());

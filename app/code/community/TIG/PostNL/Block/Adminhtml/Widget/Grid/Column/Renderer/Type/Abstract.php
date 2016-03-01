@@ -50,6 +50,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     const PAYMENT_METHOD_COLUMN       = 'payment_method';
     const OPTIONS_COLUMN              = 'options';
     const DELIVERY_DATE_COLUMN        = 'delivery_date';
+    const COUNTRY_ID_COLUMN           = 'country_id';
 
     /**
      * Renders a type column for a shipment type.
@@ -65,65 +66,75 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label         = '';
         $comment       = false;
+        /** @noinspection PhpParamsInspection */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass */
+        $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         switch ($type) {
-            case 'domestic':
+            case $postnlShipmentClass::SHIPMENT_TYPE_DOMESTIC:
                 $label = $helper->__('Domestic');
                 break;
-            case 'domestic_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_DOMESTIC_COD:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('COD');
                 break;
-            case 'avond':
+            case $postnlShipmentClass::SHIPMENT_TYPE_AVOND:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery');
                 break;
-            case 'avond_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_AVOND_COD:
                 $label   = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery') . ' + ' . $helper->__('COD');
                 break;
-            case 'pg':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PG:
                 $label = $helper->__('Post Office');
+
+                if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
+                    $comment = $helper->__('Belgium');
+                    $type .= '_be';
+                }
                 break;
-            case 'pg_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PG_COD:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('COD');
                 break;
-            case 'pge':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PGE:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('Early Pickup');
                 break;
-            case 'pge_cod':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PGE_COD:
                 $label   = $helper->__('Post Office');
                 $comment = $helper->__('Early Pickup') . ' + ' . $helper->__('COD');
                 break;
-            case 'pa':
+            case $postnlShipmentClass::SHIPMENT_TYPE_PA:
                 $label = $helper->__('Parcel Dispenser');
                 break;
-            case 'pa_cod':
-                $label   = $helper->__('Parcel Dispenser');
-                $comment = $helper->__('COD');
-                break;
-            case 'eps':
+            case $postnlShipmentClass::SHIPMENT_TYPE_EPS:
                 $label = $helper->__('EPS');
                 break;
-            case 'globalpack':
+            case $postnlShipmentClass::SHIPMENT_TYPE_GLOBALPACK:
                 $label = $helper->__('GlobalPack');
                 break;
-            case 'buspakje':
+            case $postnlShipmentClass::SHIPMENT_TYPE_BUSPAKJE:
                 $label = $helper->__('Letter Box Parcel');
 
                 if ($row->getData(self::PRODUCT_CODE_COLUMN) == '2928') {
                     $comment = $helper->__('Extra');
                 }
                 break;
-            case 'sunday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_SUNDAY:
                 $label = $helper->__('Sunday Delivery');
                 break;
-            case 'monday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_MONDAY:
                 $label = $helper->__('Monday Delivery');
                 break;
-            case 'sameday':
+            case $postnlShipmentClass::SHIPMENT_TYPE_SAMEDAY:
                 $label = $helper->__('Same Day Delivery');
+                break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_FOOD:
+                $label = $helper->__('Food Delivery');
+                break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_COOLED:
+                $label = $helper->__('Cooled Food Delivery');
                 break;
         }
 
@@ -201,10 +212,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getMondayRenderedValue($row, $value);
         } elseif ($optionType == 'Sameday') {
             return $this->_getSameDayRenderedValue($row);
+        } elseif ($optionType == 'Food') {
+            return $this->_getFoodRenderedValue($row);
+        } elseif ($optionType == 'Cooledfood') {
+            return $this->_getCooledfoodRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            return $this->_getPgRenderedValue($row);
+            return $this->_getPgRenderedValue($row, $value);
         }
 
         /**
@@ -301,10 +316,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      * Render this column for a PGE shipment.
      *
      * @param Varien_Object $row
+     * @param string        $value
      *
      * @return string
      */
-    protected function _getPgRenderedValue(Varien_Object $row)
+    protected function _getPgRenderedValue(Varien_Object $row, $value)
     {
         $helper = Mage::helper('postnl');
 
@@ -317,10 +333,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             $type .= '_cod';
         }
 
+        if ($value == 'BE') {
+            $type .= '_be';
+        }
+
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
         if ($isCod) {
             $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+        }
+
+        if ($value == 'BE') {
+            $renderedValue .= '<br /><em>' . $helper->__('Belgium') . '</em>';
         }
 
         return $renderedValue;
@@ -374,6 +398,44 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label = $helper->__('Same Day Delivery');
         $type  = 'sameday';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a food delivery shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getFoodRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Food Delivery');
+        $type = 'food';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a cooled food delivery shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getCooledfoodRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Cooled Food Delivery');
+        $type = 'cooledfood';
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 

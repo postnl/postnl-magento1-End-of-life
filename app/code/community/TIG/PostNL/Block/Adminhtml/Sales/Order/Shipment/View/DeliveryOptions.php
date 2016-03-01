@@ -181,6 +181,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
                 $shipmentType = $this->__('Post Office');
+
+                if ($postnlShipment->isBelgiumShipment()) {
+                    $this->setSubType($this->__('Belgium'));
+                }
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG_COD:
                 $shipmentType = $this->__('Post Office');
@@ -215,6 +219,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
                 $shipmentType = $this->__('Same Day Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_FOOD:
+                $shipmentType = $this->__('Food Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_COOLED:
+                $shipmentType = $this->__('Cooled Food Delivery');
                 break;
         }
 

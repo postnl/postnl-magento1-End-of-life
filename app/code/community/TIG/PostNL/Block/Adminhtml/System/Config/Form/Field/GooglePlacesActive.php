@@ -36,49 +36,22 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GooglePlacesActive
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
 {
-    /**
-     * Gets the hidden notifications for the current admin user.
-     *
-     * @return array
-     */
-    public function getHiddenNotifications()
-    {
-        if (!$this->isAdmin()) {
-            return array();
-        }
-
-        /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        if (!$adminUser) {
-            return array();
-        }
-
-        $extra = $adminUser->getExtra();
-        if (empty($extra['postnl']['hidden_notification'])) {
-            return array();
-        }
-
-        return $extra['postnl']['hidden_notification'];
-    }
 
     /**
-     * Returns either the store id of the current scope, or returns 0 for global level scope.
+     * Get whether OSC is installed and enabled and Google places is active.
      *
-     * @return int|mixed
-     * @throws Mage_Core_Exception
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return int
      */
-    public function getCurrentScope()
+    protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
-        $storeId = 0;
+        $extensionEnabled = Mage::helper('postnl/addressValidation')
+            ->checkGooglePlacesActive(Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
-        if (strlen($code)) {
-            $storeId = Mage::getModel('core/store')->load($code)->getId();
-        }
-
-        return $storeId;
+        return (int) $extensionEnabled;
     }
-
 }

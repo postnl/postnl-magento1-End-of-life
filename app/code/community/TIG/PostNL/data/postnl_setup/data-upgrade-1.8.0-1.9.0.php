@@ -36,49 +36,18 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
-{
-    /**
-     * Gets the hidden notifications for the current admin user.
-     *
-     * @return array
-     */
-    public function getHiddenNotifications()
-    {
-        if (!$this->isAdmin()) {
-            return array();
-        }
 
-        /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        if (!$adminUser) {
-            return array();
-        }
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-        $extra = $adminUser->getExtra();
-        if (empty($extra['postnl']['hidden_notification'])) {
-            return array();
-        }
-
-        return $extra['postnl']['hidden_notification'];
-    }
-
-    /**
-     * Returns either the store id of the current scope, or returns 0 for global level scope.
-     *
-     * @return int|mixed
-     * @throws Mage_Core_Exception
-     */
-    public function getCurrentScope()
-    {
-        $storeId = 0;
-
-        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
-        if (strlen($code)) {
-            $storeId = Mage::getModel('core/store')->load($code)->getId();
-        }
-
-        return $storeId;
-    }
-
-}
+$installer->addSupportedProductCode(
+        array(
+            '4932',
+            '3083',
+            '3084',
+        )
+    )
+    ->setUseConfigShippingDuration()
+    ->clearConfigCache();

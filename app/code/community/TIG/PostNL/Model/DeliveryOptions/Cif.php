@@ -55,12 +55,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Config options used by the getDeliveryDate service.
      */
-    const XPATH_SHIPPING_DURATION      = 'postnl/cif_labels_and_confirming/shipping_duration';
-    const XPATH_CUTOFF_TIME            = 'postnl/cif_labels_and_confirming/cutoff_time';
-    const XPATH_ALLOW_SUNDAY_SORTING   = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_SUNDAY_CUTOFF_TIME     = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
-    const XPATH_DELIVERY_DAYS_NUMBER   = 'postnl/delivery_options/delivery_days_number';
-    const XPATH_ENABLE_SUNDAY_DELIVERY = 'postnl/delivery_options/enable_sunday_delivery';
+    const XPATH_SHIPPING_DURATION       = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options/allow_sunday_sorting_be';
+    const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
+    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options/delivery_days_number_be';
+    const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
      * Check if the module is set to test mode
@@ -119,14 +121,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
-        $options = $this->_getDeliveryDateOptionsArray($shippingDuration);
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'PostalCode'                 => $postcode,
                 'ShippingDate'               => $date->format('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
-                'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
+                'AllowSundaySorting'         => $this->_getSundaySortingAllowed($country),
                 'CutOffTimes'                => $CutOffTimes,
                 'Options'                    => $options,
                 'CountryCode'                => $country,
@@ -161,7 +163,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @param array $data
      *
-     * @return StdClass[]
+     * @return StdClass[]|false
      *
      * @throws TIG_PostNL_Exception
      */
@@ -177,16 +179,25 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $startDate = $data['deliveryDate'];
 
         /**
-         * To calculate the end date we need to number of days we want to display minus 1.
+         * To calculate the end date we need to number of days we want to display.
          */
         $storeId = Mage::app()->getStore()->getId();
-        $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
-        $maximumNumberOfDeliveryDays--;
+
+        if ($data['country'] == 'BE') {
+            $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER_BE, $storeId);
+        } else {
+            $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+
+            /**
+             * For other countries we need the days minus 1.
+             */
+            $maximumNumberOfDeliveryDays--;
+        }
 
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
-        $options = $this->_getDeliveryTimeframesOptionsArray();
+        $options = $this->_getDeliveryTimeframesOptionsArray($data['country']);
 
         $soapParams = array(
             'Timeframe' => array(
@@ -195,7 +206,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
                 'CountryCode'   => $data['country'],
                 'StartDate'     => $startDate,
                 'EndDate'       => $endDate->format('d-m-Y'),
-                'SundaySorting' => $this->_getSundaySortingAllowed(),
+                'SundaySorting' => $this->_getSundaySortingAllowed($data['country']),
                 'Options'       => $options
             ),
             'Message' => $this->_getMessage('')
@@ -210,11 +221,16 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $soapParams
         );
 
-        if (!isset($response->Timeframes)
-            || !isset($response->Timeframes->Timeframe)
-        ) {
+        if (empty($response->Timeframes)) {
+            return false;
+        }
+
+        if (!isset($response->Timeframes->Timeframe)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid response for getDeliveryTimeframes request: %s', $response),
+                Mage::helper('postnl')->__(
+                    'Invalid response for getDeliveryTimeframes request: %s',
+                    var_export($response, true)
+                ),
                 'POSTNL-0122'
             );
         }
@@ -342,11 +358,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @return string
      */
-    protected function _getSundaySortingAllowed()
+    protected function _getSundaySortingAllowed($country)
     {
         $storeId = $this->getStoreId();
 
         $allowSundaySorting = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        if ($country == 'BE') {
+            $allowSundaySorting  = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         if ($allowSundaySorting === true) {
             return 'true';
         }
@@ -450,7 +470,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         /**
          * Add flag to identify if Sunday Sorting is allowed
          */
-        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed();
+        $location['AllowSundaySorting'] = $this->_getSundaySortingAllowed($data['country']);
 
         return $location;
     }
@@ -484,27 +504,41 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * Builds array of time frame options, to be sent in the GetTimeframes request.
      * These options determine which delivery timeframes should be requested.
      *
+     * @param $country
+     *
      * @return array
      */
-    protected function _getDeliveryTimeframesOptionsArray()
+    protected function _getDeliveryTimeframesOptionsArray($country)
     {
         $storeId = $this->getStoreId();
-
-        $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        if ($helper->canUseSameDayDelivery()) {
+        /**
+         * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
+         */
+        if ($country == 'NL' && $helper->canUseFoodDelivery(true)) {
+            $options = array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+            );
+
+            return $options;
+        }
+
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
+
+        if ($country == 'NL' && $helper->canUseSameDayDelivery()) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
         }
 
-        if ($helper->canUseEveningTimeframes()) {
+        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        if ($sundayDelivery) {
+        if ($country == 'NL' && $sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
@@ -517,11 +551,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * important to prevent certain dates from being unavailable. The order used in this method is (depending on the
      * extension's config): sunday > daytime > evening.
      *
-     * @param null $shippingDuration
+     * @param null   $shippingDuration
+     * @param string $country
      *
      * @return array
      */
-    protected function _getDeliveryDateOptionsArray($shippingDuration = null)
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL')
     {
         $storeId = $this->getStoreId();
 
@@ -534,18 +569,18 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $shippingDuration = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
         }
 
-        if ($sameDayDelivery && $shippingDuration == 0) {
+        if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        if ($sundayDelivery) {
+        if ($country == 'NL' && $sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
         $options[] = self::DOMESTIC_DELIVERY_OPTION;
 
-        if ($helper->canUseEveningTimeframes()) {
+        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 

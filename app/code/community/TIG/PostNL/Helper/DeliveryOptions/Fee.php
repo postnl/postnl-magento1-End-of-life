@@ -349,15 +349,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $registryKey .= '_incl';
         }
 
-        /**
-         * If the current order is not a buspakje order, the fee is 0.
-         */
-        if (!$this->isBuspakjeConfigApplicableToQuote()) {
-            Mage::register($registryKey, 0);
-
-            return 0;
-        }
-
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
@@ -378,8 +369,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         }
 
         if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
+            $store = $this->getQuote()->getStore();
 
             $price = $store->convertPrice($price, false, false);
         }

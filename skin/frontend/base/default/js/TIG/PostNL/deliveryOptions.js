@@ -821,7 +821,8 @@ PostnlDeliveryOptions.prototype = {
         if (responseText == 'not_allowed'
             || responseText == 'invalid_data'
             || responseText == 'error'
-            ) {
+            || responseText == 'empty_response'
+        ) {
             this.showDefaultTimeframe();
 
             return false;
@@ -949,11 +950,21 @@ PostnlDeliveryOptions.prototype = {
 
             if (fullAddressArray[0] == '') {
                 if(useBillingForShipping == 1) {
-                    var street  = $('virtual:billing:street1').getValue();
-                    var houseNr = $('virtual:billing:street2').getValue();
+                    if ($('virtual:billing:street1')) {
+                        var street  = $('virtual:billing:street1').getValue();
+                        var houseNr = $('virtual:billing:street2').getValue();
+                    } else {
+                        var street = $('billing:street0').getValue();
+                        var houseNr = $('billing:street1').getValue();
+                    }
                 } else {
-                    var street  = $('virtual:shipping:street1').getValue();
-                    var houseNr = $('virtual:shipping:street2').getValue();
+                    if ($('virtual:shipping:street1')) {
+                        var street = $('shipping:street0').getValue();
+                        var houseNr = $('shipping:street1').getValue();
+                    } else {
+                        var street  = $('virtual:shipping:street1').getValue();
+                        var houseNr = $('virtual:shipping:street2').getValue();
+                    }
                 }
 
                 $$('.postnl-container #postnl_add_moment .location-name')[0].update(street + ' ' + houseNr);
@@ -1028,6 +1039,11 @@ PostnlDeliveryOptions.prototype = {
     getLocations : function(postcode, housenumber, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
+        }
+
+        if (!this.isPaAllowed() && !this.isPgAllowed()) {
+            this.hideLocations();
+            return this;
         }
 
         if (this.locationsRequest !== false) {
@@ -1589,10 +1605,12 @@ PostnlDeliveryOptions.prototype = {
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            var address            = selectedOption.getAddress();
-            address['Name']        = selectedOption.getName();
-            address['PhoneNumber'] = selectedOption.getPhoneNumber();
-            params['address']      = Object.toJSON(address);
+            var address               = selectedOption.getAddress();
+            address['Name']           = selectedOption.getName();
+            address['PhoneNumber']    = selectedOption.getPhoneNumber();
+            params['address']         = Object.toJSON(address);
+            params['locationCode']    = Object.toJSON(selectedOption.locationCode);
+            params['retailNetworkId'] = Object.toJSON(selectedOption.retailNetworkID);
         }
 
         if (selectedType == 'PA') {
@@ -2112,6 +2130,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.Name;
         }
 
+        var anchor = new google.maps.Point(17, 46);
         if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
             ) {
@@ -2127,7 +2146,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         var image = imageBase + '/drp_' + imageName + '.png';
 
         return {
-            anchor : new google.maps.Point(17, 46),
+            anchor : anchor,
             url    : image
         };
     },
@@ -3927,6 +3946,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     openingHours         : null,
     locationCode         : null,
     date                 : null,
+    retailNetworkID      : null,
 
     deliveryOptions      : null,
     type                 : [],
@@ -3951,6 +3971,15 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {void}
      */
     initialize : function(location, deliveryOptions, type) {
+        var deliveryDate = deliveryOptions.getDeliveryDate();
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (deliveryDate == formattedToday) {
+            today.setTime(today.getTime() + 86400000);
+            deliveryDate = PostnlDeliveryOptions.prototype.formatDate(today);
+        }
+
         this.address           = location.Address;
         this.distance          = location.Distance;
         this.latitude          = location.Latitude;
@@ -3959,8 +3988,9 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryOptions.getDeliveryDate();
+        this.date              = deliveryDate;
         this.isEveningLocation = location.isEvening;
+        this.retailNetworkID   = location.RetailNetworkID;
 
         this.deliveryOptions   = deliveryOptions;
 
@@ -4625,95 +4655,64 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {string}
      */
     getOpeningHoursHtml : function() {
-        var html;
+        var html = '';
 
         /**
          * Add the opening hours for every day of the week.
          */
         var openingHours = this.getOpeningHours();
-        var closedText = Translator.translate('Closed');
 
         /**
          * Monday
          */
-        html = '<tr>';
-        html += '<th>' + Translator.translate('Mo') + '</th>';
-        if (openingHours.Monday && openingHours.Monday.string && openingHours.Monday.string.join() != '') {
-            html += '<td>' + (openingHours.Monday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Mo', openingHours.Monday);
 
         /**
          * Tuesday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Tu') + '</th>';
-        if (openingHours.Tuesday && openingHours.Tuesday.string && openingHours.Tuesday.string.join() != '') {
-            html += '<td>' + (openingHours.Tuesday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Tu', openingHours.Tuesday);
 
         /**
          * Wednesday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('We') + '</th>';
-        if (openingHours.Wednesday && openingHours.Wednesday.string && openingHours.Wednesday.string.join() != '') {
-            html += '<td>' + (openingHours.Wednesday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('We', openingHours.Wednesday);
 
         /**
          * Thursday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Th') + '</th>';
-        if (openingHours.Thursday && openingHours.Thursday.string && openingHours.Thursday.string.join() != '') {
-            html += '<td>' + (openingHours.Thursday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Th', openingHours.Thursday);
 
         /**
          * Friday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Fr') + '</th>';
-        if (openingHours.Friday && openingHours.Friday.string && openingHours.Friday.string.join() != '') {
-            html += '<td>' + (openingHours.Friday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Fr', openingHours.Friday);
 
         /**
          * Saturday
          */
-        html += '<tr>';
-        html += '<th>' + Translator.translate('Sa') + '</th>';
-        if (openingHours.Saturday && openingHours.Saturday.string && openingHours.Saturday.string.join() != '') {
-            html += '<td>' + (openingHours.Saturday.string.join('<br />')).replace('-', ' - ') + '</td>';
-        } else {
-            html += '<td>' + closedText + '</td>';
-        }
-        html += '</tr>';
+        html += this.getOpeningHoursRow('Sa', openingHours.Saturday);
 
         /**
          * Sunday
          */
+        html += this.getOpeningHoursRow('Su', openingHours.Sunday);
+
+        return html;
+    },
+
+    /**
+     * @param {string} day
+     * @param {} openingHours
+     * @returns {string}
+     */
+    getOpeningHoursRow : function(day, openingHours) {
+        var html = '';
         html += '<tr>';
-        html += '<th>' + Translator.translate('Su') + '</th>';
-        if (openingHours.Sunday && openingHours.Sunday.string && openingHours.Sunday.string.join() != '') {
-            html += '<td>' + (openingHours.Sunday.string.join('<br />')).replace('-', ' - ') + '</td>';
+        html += '<th>' + Translator.translate(day) + '</th>';
+        if (openingHours && openingHours.string && openingHours.string.join() != '') {
+            html += '<td>' + (openingHours.string.join('<br />')).replace(/-/g, ' - ') + '</td>';
         } else {
-            html += '<td>' + closedText + '</td>';
+            html += '<td>' + Translator.translate('Closed') + '</td>';
         }
         html += '</tr>';
 
@@ -4771,9 +4770,11 @@ PostnlDeliveryOptions.Location = new Class.create({
         var html = '<li class="location" id="' + id + '">';
         html += '<div class="content">';
 
+        var imageName = this.getName();
+
         var image = this.getDeliveryOptions().getImageBasUrl()
                   + '/tmb_'
-                  + this.getDeliveryOptions().getImageName(this.getName())
+                  + this.getDeliveryOptions().getImageName(imageName)
                   + '.png';
         html += '<img src="' + image + '" class="location-icon" alt="' + this.getName() + '" />';
         html += '<span class="overflow-protect">';
@@ -5281,6 +5282,12 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             case 'Sameday' :
                 this.type = 'Sameday';
                 break;
+            case 'Food' :
+                this.type = 'Food';
+                break;
+            case 'Cooledfood' :
+                this.type = 'Cooledfood';
+                break;
             default :
                 this.type = 'Overdag';
                 break;
@@ -5353,7 +5360,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed() && this.getDeliveryOptions().country != 'BE') {
             spanClass += ' no-display';
         }
         html += '<span class="' + spanClass + '">';
@@ -5369,8 +5376,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         spanClass = 'option-time';
         var openingHours = '';
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
-            spanClass    += ' no-timeframe-buspakje';
+            spanClass += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
+        } else if (this.getDeliveryOptions().country == 'BE') {
+            spanClass    += ' no-timeframe-buspakje';
+
+            var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
+            if (date.getDay() == 6) {
+                openingHours += '08:30 - 18:00';
+            } else {
+                openingHours += '08:30 - 21:30';
+            }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()
         ) {
@@ -5494,7 +5510,35 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
         }
 
+        if (this.type == 'Food') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('evening') + '</span>';
+            }
+        }
+
+        if (this.type == 'Cooledfood') {
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today cooled') + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('cooled delivery') + '</span>';
+            }
+        }
+
         return comment;
+    },
+
+    isTimeFrameToday : function() {
+        var timeframeDate = this.date;
+        var today = new Date();
+        var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
+
+        if (formattedToday == timeframeDate) {
+            return true;
+        }
+
+        return false;
     },
 
     /**

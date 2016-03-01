@@ -36,49 +36,49 @@
  * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
+    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
     /**
-     * Gets the hidden notifications for the current admin user.
+     * Retrieve all attribute options
      *
      * @return array
      */
-    public function getHiddenNotifications()
+    public function getAllOptions()
     {
-        if (!$this->isAdmin()) {
-            return array();
+        if ($this->_options) {
+            return $this->_options;
         }
 
-        /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        if (!$adminUser) {
-            return array();
-        }
+        $helper = Mage::helper('postnl');
 
-        $extra = $adminUser->getExtra();
-        if (empty($extra['postnl']['hidden_notification'])) {
-            return array();
-        }
+        $options = array(
+            array(
+                'label' => $helper->__('Non-Food'),
+                'value' => 0,
+            ),
+            array(
+                'value' => 1,
+                'label' => $helper->__('Dry & Groceries'),
+            ),
+            array(
+                'value' => 2,
+                'label' => $helper->__('Cooled Products'),
+            ),
+        );
 
-        return $extra['postnl']['hidden_notification'];
+        $this->_options = $options;
+
+        return $options;
     }
 
     /**
-     * Returns either the store id of the current scope, or returns 0 for global level scope.
+     * Function referencing getAllOptions to be used in the PostNL configuration.
      *
-     * @return int|mixed
-     * @throws Mage_Core_Exception
+     * @return array
      */
-    public function getCurrentScope()
+    public function toOptionArray()
     {
-        $storeId = 0;
-
-        $code = Mage::getSingleton('adminhtml/config_data')->getStore();
-        if (strlen($code)) {
-            $storeId = Mage::getModel('core/store')->load($code)->getId();
-        }
-
-        return $storeId;
+        return $this->getAllOptions();
     }
-
 }

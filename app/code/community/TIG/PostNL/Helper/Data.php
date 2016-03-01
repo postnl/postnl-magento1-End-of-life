@@ -958,6 +958,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * Orders to Belgium are never letter box parcels.
+         */
+        if ($this->isBe($quote)) {
+            return false;
+        }
+
+        /**
          * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
          * option rules will apply.
          */
@@ -975,6 +982,80 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         Mage::register($registryKey, $fits);
         return $fits;
+    }
+
+    /**
+     * Checks if the current quote is classified as a food quote, and saves the result in the cache.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return boolean
+     */
+    public function quoteIsFood(Mage_Sales_Model_Quote $quote = null)
+    {
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'postnl_quote_is_food' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        $quoteFoodType = (bool) $this->getQuoteFoodType($quote);
+
+        Mage::register($registryKey, $quoteFoodType);
+        return $quoteFoodType;
+    }
+
+    /**
+     * Returns the food Type of the provided quote.
+     *
+     * Cool products are leading. So if we find a cooled products, the entire quote is marked as Cool Products.
+     * If there is a Dry & Groceries product, but no Cooled Product, the quote is marked as Dry & Groceries.
+     * If neither of above is found, the quote is marked as Non-Food.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return int
+     *  0 = Non-Food
+     *  1 = Dry & Groceries
+     *  2 = Cool Products
+     */
+    public function getQuoteFoodType(Mage_Sales_Model_Quote $quote = null)
+    {
+        if (!$quote) {
+            $quote = $this->getQuote();
+        }
+
+        $quoteItems = $quote->getAllItems();
+
+        $foodType = 0;
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        foreach ($quoteItems as $quoteItem) {
+
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS) {
+                $foodType = $postnlProductType;
+                break;
+            }
+
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES) {
+                $foodType = $postnlProductType;
+            }
+        }
+
+        return $foodType;
     }
 
     /**
@@ -2034,6 +2115,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
+        if ($this->isFoodOrder($order)) {
+            return false;
+        }
+
         /**
          * Loop through all confirmed shipments. If at least one of them is able to print return labels, return true.
          */
@@ -2041,6 +2126,51 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             if ($postnlShipment->canPrintReturnLabels()) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determines if the order contains food products.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool
+     */
+    public function isFoodOrder($order)
+    {
+        $orderItems = $order->getAllItems();
+
+        foreach ($orderItems as $orderItem) {
+            $postnlProductType = $orderItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType) {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Check if the provided quote or order is being shipped to Belgium.
+     *
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote $object
+     *
+     * @return bool
+     */
+    public function isBe($object)
+    {
+        if (!($object instanceof Mage_Sales_Model_Order) && !($object instanceof Mage_Sales_Model_Quote)) {
+            throw new InvalidArgumentException("The object parameter must be an instance of an order or a quote.");
+        }
+
+        $shippingAddress = $object->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        if ($shippingAddress->getCountryId() == 'BE') {
+            return true;
         }
 
         return false;
