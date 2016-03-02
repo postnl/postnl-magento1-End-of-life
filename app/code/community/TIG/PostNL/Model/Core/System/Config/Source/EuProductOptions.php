@@ -62,6 +62,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     {
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if ($helper->canUseEpsBEOnlyOption()) {
             if (!$asFlatArray) {

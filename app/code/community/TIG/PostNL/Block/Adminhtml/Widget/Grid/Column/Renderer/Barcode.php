@@ -62,7 +62,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
          * The shipment was not shipped using PostNL
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
@@ -81,6 +83,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
          * Check if any data is available.
          */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (!$value) {
             $value = Mage::helper('postnl')->__('No barcode available.');
@@ -104,7 +107,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
             'postcode'    => $postcode,
         );
 
-        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData, false, true);
+        $barcodeUrl = $helper->getBarcodeUrl($value, $destinationData, false, true);
 
         $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
 

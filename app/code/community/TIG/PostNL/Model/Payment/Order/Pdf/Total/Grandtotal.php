@@ -61,13 +61,17 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
         if (method_exists($this, '_getCalculatedTaxes')) {
             $taxClassAmount = $this->_getCalculatedTaxes();
         } else {
-            $taxClassAmount = Mage::helper('tax')->getCalculatedTaxes($this->getOrder());
+            /** @var Mage_Tax_Helper_Data $taxHelper */
+            $taxHelper = Mage::helper('tax');
+            $taxClassAmount = $taxHelper->getCalculatedTaxes($this->getOrder());
         }
 
         if (method_exists($this, '_getShippingTax')) {
             $shippingTax = $this->_getShippingTax();
         } else {
-            $shippingTax = Mage::helper('tax')->getShippingTax($this->getOrder());
+            /** @var Mage_Tax_Helper_Data $taxHelper */
+            $taxHelper = Mage::helper('tax');
+            $shippingTax = $taxHelper->getShippingTax($this->getOrder());
         }
 
         $taxClassAmount = array_merge($taxClassAmount, $shippingTax);
@@ -75,7 +79,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
         /**
          * Add the COD fee tax info.
          */
-        $taxClassAmount = Mage::helper('postnl/payment')->addPostnlCodFeeTaxInfo(
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $taxClassAmount = $helper->addPostnlCodFeeTaxInfo(
             $taxClassAmount,
             $this->getSource(),
             $this->getOrder()
@@ -137,7 +143,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
         }
 
         $rates = Mage::getModel('tax/sales_order_tax')->getCollection()->loadByOrder($this->getOrder())->toArray();
-        $fullInfo = Mage::getSingleton('tax/calculation')->reproduceProcess($rates['items']);
+        /** @var Mage_Tax_Model_Calculation $calculationModel */
+        $calculationModel = Mage::getSingleton('tax/calculation');
+        $fullInfo = $calculationModel->reproduceProcess($rates['items']);
         return $fullInfo;
     }
 }
