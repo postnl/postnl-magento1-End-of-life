@@ -142,6 +142,7 @@ class TIG_PostNL_Model_ExtensionControl_Config
             );
         }
 
+        /** @var Mage_Core_Model_Config_Data $configData */
         $configData = Mage::getModel('core/config_data')
                           ->load($xpath, 'path');
 

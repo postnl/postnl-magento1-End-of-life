@@ -72,6 +72,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
         $options = $element->getValues();
 
         $addInheritCheckbox = false;
+        $checkboxLabel = '';
         if ($element->getCanUseWebsiteValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = $this->__('Use Website');
@@ -81,6 +82,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
             $checkboxLabel = $this->__('Use Default');
         }
 
+        $inherit = '';
         if ($addInheritCheckbox) {
             $inherit = $element->getInherit()==1 ? 'checked="checked"' : '';
             if ($inherit) {

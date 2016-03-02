@@ -49,6 +49,7 @@ class TIG_PostNL_Model_Core_Observer_Cache
      */
     public function cleanCache()
     {
+        /** @var TIG_PostNL_Model_Core_Cache $cache */
         $cache = Mage::getSingleton('postnl_core/cache');
         $cache->cleanCache();
 

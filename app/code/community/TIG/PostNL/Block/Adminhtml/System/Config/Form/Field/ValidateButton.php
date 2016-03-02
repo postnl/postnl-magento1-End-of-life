@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ValidateButton setElement(Varien_Data_Form_Element_Abstract $element)
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ValidateButton
     extends Mage_Adminhtml_Block_System_Config_Form_Field
@@ -51,6 +53,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ValidateButton
     {
         $this->setElement($element);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                      ->setId($element->getHtmlId())
                      ->setType('button')
@@ -72,6 +75,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ValidateButton
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $element->unsScope()
                 ->unsCanUseWebsiteValue()
                 ->unsCanUseDefaultValue();

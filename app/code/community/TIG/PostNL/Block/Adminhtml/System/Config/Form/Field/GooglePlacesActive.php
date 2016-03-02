@@ -49,8 +49,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GooglePlacesActive
      */
     protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
-        $extensionEnabled = Mage::helper('postnl/addressValidation')
-            ->checkGooglePlacesActive(Mage_Core_Model_App::ADMIN_STORE_ID);
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        $extensionEnabled = $helper->checkGooglePlacesActive(Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return (int) $extensionEnabled;
     }

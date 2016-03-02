@@ -46,7 +46,9 @@ class TIG_PostNL_Model_Payment_System_Config_Source_CodFeeTaxClass
      */
     public function toOptionArray()
     {
-        $options = Mage::getModel('tax/class_source_product')->toOptionArray();
+        /** @var Mage_Tax_Model_Class_Source_Product $source */
+        $source = Mage::getModel('tax/class_source_product');
+        $options = $source->toOptionArray();
 
         return $options;
     }

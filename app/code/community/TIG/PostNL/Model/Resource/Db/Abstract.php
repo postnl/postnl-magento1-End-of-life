@@ -48,10 +48,13 @@ abstract class TIG_PostNL_Model_Resource_Db_Abstract extends Mage_Core_Model_Res
     protected function _prepareDataForSave(Mage_Core_Model_Abstract $object)
     {
         $currentTime = Varien_Date::now();
+        /** @noinspection PhpUndefinedMethodInspection */
         if ((!$object->getId() || $object->isObjectNew()) && !$object->getCreatedAt()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $object->setCreatedAt($currentTime);
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $object->setUpdatedAt($currentTime);
 
         $data = parent::_prepareDataForSave($object);

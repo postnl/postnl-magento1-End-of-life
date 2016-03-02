@@ -1,4 +1,5 @@
 <?php
+
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -45,7 +46,9 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
      */
     protected function _renderFields($fields)
     {
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, 'checkout')) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, 'checkout')) {
             return parent::_renderFields($fields);
         }
 
@@ -64,10 +67,10 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
                             continue;
                         } elseif ($field_code == 'street') {
                             $html .= $this->getChild('postnl_billing_postcodecheck')
-                                        ->setAddressType('billing')
-                                        ->setAddress($this->getAddress())
-                                        ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
-                                        ->toHtml();
+                                          ->setAddressType('billing')
+                                          ->setAddress($this->getAddress())
+                                          ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
+                                          ->toHtml();
                             continue;
                         }
 
@@ -87,7 +90,19 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
                             $template = $this->default_address_template;
                         }
 
-                        $_html .= '<div class="field field-' . $field_code . ' ' . ($i % 2 == 0 ? ' field-first ' : ' field-last ') . '">' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)->setTemplate($template)->addData($data)->toHtml() . '</div>';
+                        /** @noinspection PhpUndefinedMethodInspection */
+                        $_html .= '<div class="field field-'
+                            . $field_code
+                            . ' '
+                            . ($i % 2 == 0 ? ' field-first ' : ' field-last ')
+                            . '">'
+                            . $this->getLayout(
+                                )->createBlock('gomage_checkout/onepage_' . $this->prefix)
+                                ->setTemplate($template)
+                                ->addData(
+                                    $data
+                                )->toHtml()
+                            . '</div>';
 
                         $row_class[] = $field_code;
 
@@ -105,10 +120,10 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
                         continue;
                     } elseif ($field_code == 'street') {
                         $html .= $this->getChild('postnl_billing_postcodecheck')
-                            ->setAddressType('billing')
-                            ->setAddress($this->getAddress())
-                            ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
-                            ->toHtml();
+                                      ->setAddressType('billing')
+                                      ->setAddress($this->getAddress())
+                                      ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
+                                      ->toHtml();
                         continue;
                     }
 
@@ -121,7 +136,6 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
                         'input_id'       => $this->prefix . '_' . $field_code,
                     );
 
-
                     if ($this->getConfigData('address_fields/' . $field_code) == 'req') {
                         $data['is_required'] = true;
                     }
@@ -130,7 +144,9 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Billing extends Go
                         $template = $this->default_address_template;
                     }
 
-                    $html .= '<li>' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)->setTemplate($template)->addData($data)->toHtml() . '</li>';
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $html .= '<li>' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)
+                                           ->setTemplate($template)->addData($data)->toHtml() . '</li>';
                 }
 
             }

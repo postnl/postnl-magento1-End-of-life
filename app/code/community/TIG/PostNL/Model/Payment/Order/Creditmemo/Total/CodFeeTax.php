@@ -50,13 +50,16 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
     {
         $order = $creditmemo->getOrder();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $feeTax     = $creditmemo->getPostnlCodFeeTax();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFeeTax = $creditmemo->getBasePostnlCodFeeTax();
 
         /**
          * If a creditmemo already has a fee tax, we only need to update the totals.
          */
         if ($feeTax && $baseFeeTax) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $creditmemo->setPostnlCodFeeTax($feeTax)
                        ->setBasePostnlCodFeeTax($baseFeeTax)
                        ->setTaxAmount($creditmemo->getTaxAmount() + $feeTax)
@@ -64,6 +67,7 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
                        ->setGrandTotal($creditmemo->getGrandTotal() + $feeTax)
                        ->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFeeTax);
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $order->setPostnlCodFeeTaxRefunded($order->getPostnlCodFeeTaxRefunded() + $feeTax)
                   ->setBasePostnlCodFeeTaxRefunded($order->getBasePostnlCodFeeTaxRefunded() + $baseFeeTax);
 
@@ -73,7 +77,9 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
         /**
          * If the creditmemo has a fee, but no fee tax, we need to calculate the fee tax.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $creditmemo->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
         if ($fee && $baseFee) {
@@ -81,15 +87,18 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
              * First we need to determine what percentage of the fee is being refunded. We need to refund the same
              * percentage of fee tax.
              */
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalBaseFee = $order->getBasePostnlCodFee();
             $ratio        = $baseFee / $totalBaseFee;
 
             /**
              * Calculate the fee and base fee tax based on the same ratio.
              */
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalBaseFeeTax = $order->getBasePostnlCodFeeTax();
             $baseFeeTax      = $totalBaseFeeTax * $ratio;
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalFeeTax = $order->getPostnlCodFeeTax();
             $feeTax      = $totalFeeTax * $ratio;
 
@@ -97,20 +106,26 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
              * If the total amount refunded exceeds the available fee tax amount, we have a rounding error. Modify the
              * fee tax amounts accordingly.
              */
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalBaseFeeTax = $baseFeeTax - $order->getBasePostnlCodFeeTax()
                                            - $order->getBasePostnlCodFeeTaxRefunded();
+
             if ($totalBaseFeeTax < 0.0001 && $totalBaseFeeTax > -0.0001) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $baseFeeTax = $order->getBasePostnlCodFeeTax() - $order->getBasePostnlCodFeeTaxRefunded();
             }
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalFeeTax = $feeTax - $order->getPostnlCodFeeTax() - $order->getPostnlCodFeeTaxRefunded();
             if ($totalFeeTax < 0.0001 && $totalFeeTax > -0.0001) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $feeTax = $order->getPostnlCodFeeTax() - $order->getPostnlCodFeeTaxRefunded();
             }
 
             /**
              * Update the creditmemo totals.
              */
+            /** @noinspection PhpUndefinedMethodInspection */
             $creditmemo->setPostnlCodFeeTax($feeTax)
                        ->setBasePostnlCodFeeTax($baseFeeTax)
                        ->setTaxAmount($creditmemo->getTaxAmount() + $feeTax)
@@ -118,6 +133,7 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
                        ->setGrandTotal($creditmemo->getGrandTotal() + $feeTax)
                        ->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFeeTax);
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $order->setPostnlCodFeeTaxRefunded($order->getPostnlCodFeeTaxRefunded() + $feeTax)
                   ->setBasePostnlCodFeeTaxRefunded($order->getBasePostnlCodFeeTaxRefunded() + $baseFeeTax);
 

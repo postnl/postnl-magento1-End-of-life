@@ -283,7 +283,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      * @param string $feeType
      *
      * @return string
-     * @todo add default with throw new exception
      */
     protected function _getFeeRegistryKey($feeType)
     {
@@ -300,6 +299,8 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $registryKey = 'postnl_express_fee';
                 break;
+            default:
+                throw new InvalidArgumentException("Invalid feeType supplied.");
         }
 
         return $registryKey;
@@ -309,7 +310,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      * @param string $feeType
      *
      * @return string
-     * @todo add default with throw new exception
      */
     protected function _getFeeConfigXpath($feeType)
     {
@@ -326,6 +326,8 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $xpath = self::XPATH_PAKJEGEMAK_EXPRESS_FEE;
                 break;
+            default:
+                throw new InvalidArgumentException("Invalid feeType supplied.");
         }
 
         return $xpath;
@@ -352,7 +354,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
-            $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+            /** @var TIG_PostNL_Helper_Carrier $carierHelper */
+            $carierHelper = Mage::helper('postnl/carrier');
+            $pakjeGemakShippingRates = $carierHelper->getParcelShippingRate($this->getQuote());
             if (!$pakjeGemakShippingRates) {
                 return 0;
             }
@@ -501,7 +505,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         $quote = $this->getQuote();
         $store = $quote->getStore();
 
-        $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
+        /** @var Mage_Tax_Helper_Data $helper */
+        $helper = Mage::helper('tax');
+        $shippingPrice  = $helper->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
 
         if ($convert) {
             $shippingPrice = $store->convertPrice($shippingPrice, $formatted, false);

@@ -47,16 +47,13 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      * @param Enterprise_Logging_Model_Event $eventModel
      *
      * @return boolean
-     *
-     * @deprecated v1.7.0
      */
     public function postDispatchSaveMassAction(/** @noinspection PhpUnusedParameterInspection */
         $config, $eventModel)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         $request = Mage::app()->getRequest();
         if ($request->getParam('shipment_ids')) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $eventModel->setInfo(
                 Mage::helper('enterprise_logging')->implodeValues($request->getParam('shipment_ids'))
             );
@@ -65,6 +62,7 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
         }
 
         if ($request->getParam('order_ids')) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $eventModel->setInfo(
                 Mage::helper('enterprise_logging')->implodeValues($request->getParam('order_ids'))
             );
@@ -82,14 +80,10 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
      * @param Enterprise_Logging_Model_Event $eventModel
      *
      * @return boolean
-     *
-     * @deprecated v1.7.0
      */
     public function postDispatchAction(/** @noinspection PhpUnusedParameterInspection */
         $config, $eventModel)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         return true;
     }
 }

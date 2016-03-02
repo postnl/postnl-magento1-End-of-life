@@ -45,7 +45,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function printLabelAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('print_label')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -75,7 +76,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -85,7 +86,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 );
             }
 
-            $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                 $shipment->getStoreId()
             );
 
@@ -100,8 +101,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $this->_checkForWarnings();
 
             /**
-             * merge the labels and print them
+             * Merge the labels and print them.
              */
+            /** @var TIG_PostNL_Model_Core_Label $labelModel */
             $labelModel = Mage::getModel('postnl_core/label');
             $output = $labelModel->createPdf($labels);
 
@@ -109,7 +111,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $this->_preparePdfResponse($filename, $output);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -141,7 +145,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function printReturnLabelAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed(array('print_label', 'print_return_label'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -171,7 +176,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -201,8 +206,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $this->_checkForWarnings();
 
             /**
-             * merge the labels and print them
+             * Merge the labels and print them.
              */
+            /** @var TIG_PostNL_Model_Core_Label $labelModel */
             $labelModel = Mage::getModel('postnl_core/label');
             $output = $labelModel->createPdf($labels);
 
@@ -210,7 +216,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $this->_preparePdfResponse($filename, $output);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -243,7 +251,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function printPackingSlipAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Data $helper */
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed(array('print_label', 'print_packing_slip'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -272,7 +282,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             $shipment = $this->_loadShipment($shipmentId, true);
 
-            $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                 $shipment->getStoreId()
             );
 
@@ -281,7 +291,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             $pdf = new Zend_Pdf();
             $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
-            Mage::getModel('postnl_core/packingSlip')->createPdf($shipmentLabels, $shipment, $pdf);
+
+            /** @var TIG_PostNL_Model_Core_PackingSlip $packingSlipModel */
+            $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
+            $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             $output = $pdf->render();
 
             /**
@@ -293,7 +306,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $this->_preparePdfResponse($filename, $output);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -323,7 +338,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function confirmAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('confirm')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -353,7 +369,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -368,7 +384,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             $this->_confirmShipment($shipment);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -415,7 +433,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function statusHistoryAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('view_complete_status')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -432,7 +451,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
         /**
          * Get the postnl shipments' status history updated at timestamp and a reference timestamp of 15 minutes ago
          */
-        $currentTimestamp = Mage::getModel('core/date')->gmtTimestamp();
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $currentTimestamp = $dateModel->gmtTimestamp();
         $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
         $statusHistoryUpdatedAt = $postnlShipment->getStatusHistoryUpdatedAt();
 
@@ -451,7 +472,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 /**
                  * This request may return a valid exception when the shipment could not be found
                  */
-                Mage::helper('postnl')->logException($e);
+                $helper->logException($e);
             }
         }
 
@@ -468,7 +489,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function sendTrackAndTraceAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('send_track_and_trace')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -498,7 +520,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -511,7 +533,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
             $postnlShipment->sendTrackAndTraceEmail(true, true);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -549,7 +573,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function sendReturnLabelEmailAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('send_return_label_email')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -579,7 +604,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -592,7 +617,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
             $postnlShipment->sendReturnLabelEmail();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -630,7 +657,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function resetConfirmationAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if (!$this->_checkIsAllowed(array('reset_confirmation', 'delete_labels'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
@@ -660,7 +688,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -673,7 +701,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
             $postnlShipment->resetConfirmation(true, true)->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -712,7 +742,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
     public function removeLabelsAction()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('delete_labels')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -740,7 +771,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -755,7 +786,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                            ->setLabelsPrinted(false)
                            ->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -793,7 +826,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function convertToBuspakjeAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
@@ -822,7 +856,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -848,7 +882,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             }
             $postnlShipment->convertToBuspakje()->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -886,7 +922,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function convertToPackageAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if (!$this->_checkIsAllowed(array('convert_to_package', 'delete_labels'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
@@ -915,7 +952,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -941,7 +978,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             }
             $postnlShipment->convertToPackage()->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -979,7 +1018,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function changeProductCodeAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if (!$this->_checkIsAllowed(array('change_product_code'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
@@ -1008,7 +1048,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -1037,7 +1077,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $postnlShipment->changeProductCode($productOption)->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1075,7 +1117,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function changeParcelCountAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if (!$this->_checkIsAllowed(array('change_parcel_count'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
@@ -1104,7 +1147,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+            if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -1133,7 +1176,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $postnlShipment->changeParcelCount($parcelCount)->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1187,7 +1232,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massCreateShipmentsAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('create_shipment')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -1295,7 +1341,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massFullPostnlFlowAction($type = 'label')
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
 
         $fullFlowAclResources = array(
             'create_shipment',
@@ -1320,7 +1367,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             $this->_fullPostnlFlow($type);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1354,7 +1403,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
     public function massFullPostnlFlowWithPackingSlipAction()
     {
         if (!$this->_checkIsAllowed(array('print_packing_slips'))) {
-            Mage::helper('postnl')->addSessionMessage(
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->addSessionMessage(
                 'adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
             );
@@ -1378,6 +1429,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     protected function _fullPostnlFlow($type = 'label')
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $orderIds = $this->_getOrderIds();
@@ -1386,7 +1438,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
          * If the buspakje calculation mode is set to 'automatic', we should check if each order could be a buspakje.
          * Otherwise all shipments will be marked as regular package shipments.
          */
-        if (Mage::helper('postnl/deliveryOptions')->getBuspakjeCalculationMode() == 'automatic') {
+        if ($helper->getBuspakjeCalculationMode() == 'automatic') {
             $isBuspakje = -1;
         } else {
             $isBuspakje = 0;
@@ -1453,8 +1505,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
          */
         /** @noinspection PhpParamsInspection */
         $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
         if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-            && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+            && !$cifHelper->allowInfinitePrinting()
         ) {
             throw new TIG_PostNL_Exception(
                 $this->__('You can print a maximum of 200 labels at once.'),
@@ -1511,7 +1565,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massPrintLabelsAndConfirmAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed(array('print_label', 'confirm'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -1533,8 +1588,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-                && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+                && !$cifHelper->allowInfinitePrinting()
             ) {
                 throw new TIG_PostNL_Exception(
                     $this->__('You can print a maximum of 200 labels at once.'),
@@ -1559,14 +1616,14 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                         $shipment->getStoreId()
                     );
 
                     $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                    $cifHelper->parseCifException($e);
 
                     $helper->logException($e);
                     $this->getServiceModel()->addWarning(
@@ -1615,8 +1672,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             }
 
             /**
-             * The label wills be base64 encoded strings. Convert these to a single pdf
+             * The label wills be base64 encoded strings. Convert these to a single pdf.
              */
+            /** @var TIG_PostNL_Model_Core_Label $label */
             $label = Mage::getModel('postnl_core/label');
 
             if ($this->getRequest()->getPost('print_start_pos')) {
@@ -1654,7 +1712,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massPrintPackingSlipsAndConfirmAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed(array('print_label', 'confirm', 'print_packing_slips'))) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -1675,8 +1734,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-                && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+                && !$cifHelper->allowInfinitePrinting()
             ) {
                 throw new TIG_PostNL_Exception(
                     $this->__('You can print a maximum of 200 labels at once.'),
@@ -1699,7 +1760,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 $output = $this->_getMassPackingSlipsOutput($shipments);
                 $this->_checkForWarnings();
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                Mage::helper('postnl/cif')->parseCifException($e);
+                $cifHelper->parseCifException($e);
 
                 $helper->logException($e);
                 $this->getServiceModel()->addWarning(
@@ -1778,7 +1839,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massPrintLabelsAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('print_label')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -1797,8 +1859,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-                && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+                && !$cifHelper->allowInfinitePrinting()
             ) {
                 throw new TIG_PostNL_Exception(
                     $this->__('You can print a maximum of 200 labels at once.'),
@@ -1823,7 +1887,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                         $shipment->getStoreId()
                     );
 
@@ -1868,8 +1932,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             }
 
             /**
-             * The label wills be base64 encoded strings. Convert these to a single pdf
+             * The label wills be base64 encoded strings. Convert these to a single pdf.
              */
+            /** @var TIG_PostNL_Model_Core_Label $label */
             $label = Mage::getModel('postnl_core/label');
 
             if ($this->getRequest()->getPost('print_start_pos')) {
@@ -1882,7 +1947,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
             $this->_preparePdfResponse($fileName, $output);
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->parseCifException($e);
 
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1918,7 +1985,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massPrintPackingSlipsAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('print_label')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -1934,6 +2002,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             } else {
                 $orderIds = $this->_getOrderIds();
 
+                /** @var Mage_Sales_Model_Resource_Order_Shipment_Collection $shipmentCollection */
                 $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection')
                                           ->addFieldToSelect('entity_id')
                                           ->addFieldToFilter('order_id', array('in', $orderIds));
@@ -1960,8 +2029,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             /** @noinspection PhpParamsInspection */
             $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
             if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-                && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+                && !$cifHelper->allowInfinitePrinting()
             ) {
                 throw new TIG_PostNL_Exception(
                     $this->__('You can print a maximum of 200 labels at once.'),
@@ -1982,6 +2053,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             /**
              * Get the packing slip model.
              */
+            /** @var TIG_PostNL_Model_Core_PackingSlip $packingSlipModel */
             $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
 
             /**
@@ -2014,14 +2086,14 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                         );
                     }
 
-                    $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                         $shipment->getStoreId()
                     );
 
                     $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
                     $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                    $cifHelper->parseCifException($e);
 
                     $helper->logException($e);
                     $this->getServiceModel()->addWarning(
@@ -2075,8 +2147,10 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             $output = $pdf->render();
 
+            /** @var Mage_Core_Model_Date $dateModel */
+            $dateModel = Mage::getSingleton('core/date');
             $fileName = 'PostNL Packing Slips-'
-                      . date('Ymd-His', Mage::getSingleton('core/date')->timestamp())
+                      . date('Ymd-His', $dateModel->timestamp())
                       . '.pdf';
 
             $this->_preparePdfResponse($fileName, $output);
@@ -2109,7 +2183,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massConfirmAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('confirm')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -2137,7 +2212,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 try {
                     $this->_confirmShipment($shipment);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                    /** @var TIG_PostNL_Helper_Cif $cifHelper */
+                    $cifHelper = Mage::helper('postnl/cif');
+                    $cifHelper->parseCifException($e);
 
                     $helper->logException($e);
                     $this->getServiceModel()->addWarning(
@@ -2214,7 +2291,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massCreateParcelwareExportAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (!$this->_checkIsAllowed('create_parcelware_export')) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                 $this->__('The current user is not allowed to perform this action.')
@@ -2238,7 +2316,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
             $parcelwareExportModel = Mage::getModel('postnl_parcelware/export');
             $csvContents = $parcelwareExportModel->exportShipments($shipments);
 
-            $timestamp = date('Ymd_His', Mage::getModel('core/date')->timestamp());
+            /** @var Mage_Core_Model_Date $dateModel */
+            $dateModel = Mage::getModel('core/date');
+            $timestamp = date('Ymd_His', $dateModel->timestamp());
 
             $this->_prepareDownloadResponse("PostNL_Parcelware_Export_{$timestamp}.csv", $csvContents);
             return $this;
@@ -2266,7 +2346,8 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
      */
     public function massUpdateShippingStatusAction()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
 
         try {
             $shipmentIds = $this->_getShipmentIds();
@@ -2292,7 +2373,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 try {
                     $this->_updateShippingStatus($shipment);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
+                    /** @var TIG_PostNL_Helper_Cif $cifHelper */
+                    $cifHelper = Mage::helper('postnl/cif');
+                    $cifHelper->parseCifException($e);
 
                     $helper->logException($e);
                     $this->getServiceModel()->addWarning(

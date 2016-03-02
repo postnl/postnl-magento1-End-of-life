@@ -45,7 +45,8 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
      */
     public function updateStatistics()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Webservices $helper */
+        $helper = Mage::helper('postnl/webservices');
 
         /**
          * Check if the PostNL module is active.
@@ -57,7 +58,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         /**
          * Check if the extension may send statistics to the extension control system.
          */
-        if (!Mage::helper('postnl/webservices')->canSendStatistics()) {
+        if (!$helper->canSendStatistics()) {
             return $this;
         }
 
@@ -69,6 +70,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         try {
             $helper->cronLog('Updating shop statistics.');
 
+            /** @var TIG_PostNL_Model_ExtensionControl_Webservices $webservices */
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $webservices->updateStatistics();
         } catch (Exception $e) {
@@ -87,7 +89,8 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
      */
     public function checkFeedUpdate()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Webservices $helper */
+        $helper = Mage::helper('postnl/webservices');
 
         /**
          * Check if the PostNL module is active.
@@ -99,7 +102,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         /**
          * Check if the extension may send statistics to the extension control system.
          */
-        if (!Mage::helper('postnl/webservices')->canReceiveUpdates()) {
+        if (!$helper->canReceiveUpdates()) {
             return $this;
         }
 
@@ -110,13 +113,16 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         /**
          * Get the feed.
          */
+        /** @var TIG_PostNL_Model_ExtensionControl_Feed $feed */
         $feed = Mage::getModel('postnl_extensioncontrol/feed');
         $feedXml = $feed->getFeedData();
 
         /**
          * Parse the feed.
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $items = (array) $feedXml->channel;
             $items = array_reverse((array) $items['item']);
 
@@ -140,7 +146,9 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
 
             $helper->cronLog('Parsing retrieved data.');
             if ($feedData) {
-                Mage::getModel('adminnotification/inbox')->parse(array_reverse($feedData));
+                /** @var Mage_AdminNotification_Model_Inbox $inbox */
+                $inbox = Mage::getModel('adminnotification/inbox');
+                $inbox->parse(array_reverse($feedData));
             }
 
         }
@@ -159,7 +167,8 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
      */
     public function updateSettings()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Webservices $helper */
+        $helper = Mage::helper('postnl/webservices');
 
         /**
          * Check if the PostNL module is active.
@@ -176,10 +185,13 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         try {
             $helper->cronLog('Updating shop config settings.');
 
+            /** @var TIG_PostNL_Model_ExtensionControl_Webservices $webservices */
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $settings = $webservices->updateConfigSettings();
 
-            Mage::getModel('postnl_extensioncontrol/config')->saveConfigSettings($settings);
+            /** @var TIG_PostNL_Model_ExtensionControl_Config $webservices */
+            $config = Mage::getModel('postnl_extensioncontrol/config');
+            $config->saveConfigSettings($settings);
         } catch (Exception $e) {
             $helper->cronLog('An error occurred: ' . $e->getMessage());
             $helper->logException($e);
