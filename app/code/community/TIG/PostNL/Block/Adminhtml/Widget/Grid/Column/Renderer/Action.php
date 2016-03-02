@@ -58,6 +58,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     public function render(Varien_Object $row)
     {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $actions = $this->getColumn()->getActions();
         if (empty($actions) || !is_array($actions)) {
             return '&nbsp;';
@@ -122,9 +123,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (isset($action['is_postnl'])
             && $action['is_postnl']
-            && !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+            && !$helper->isPostnlShippingMethod($shippingMethod)
         ) {
             unset($action['is_postnl']);
             return false;

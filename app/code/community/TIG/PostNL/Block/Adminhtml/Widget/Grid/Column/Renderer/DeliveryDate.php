@@ -56,16 +56,20 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
     public function render(Varien_Object $row)
     {
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        $domesticCountry = $helper->getDomesticCountry();
         if ($row->getData(self::COUNTRY_ID_COLUMN) != $domesticCountry) {
             return Mage::helper('postnl')->__('N/A');
         }
 
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
 
         /**
@@ -81,10 +85,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
             $deliveryDate = new DateTime($value, new DateTimeZone('UTC'));
         }
 
-        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $timeZone = $helper->getStoreTimeZone($row->getData('store_id'), true);
         $deliveryDate = $deliveryDate->setTimezone($timeZone)->format('Y-m-d H:i:s');
 
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $row->setData($this->getColumn()->getIndex(), $deliveryDate);
 
         /**

@@ -53,8 +53,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateExport
             'website' => $buttonBlock->getRequest()->getParam('website')
         );
 
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
         $onClick = 'setLocation(\''
-                 . Mage::helper('adminhtml')->getUrl("adminhtml/postnlAdminhtml_config/exportTablerates", $params)
+                 . $helper->getUrl("adminhtml/postnlAdminhtml_config/exportTablerates", $params)
                  . 'conditionName/\' + $(\'carriers_postnl_condition_name\').value + \'/tablerates.csv\' )';
 
         $data = array(
@@ -65,7 +67,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateExport
             'class'   => 'scalable postnl-button',
         );
 
-        $html = $buttonBlock->setData($data)->toHtml();
+        $buttonBlock->setData($data);
+        $html = $buttonBlock->toHtml();
 
         return $html;
     }

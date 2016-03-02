@@ -56,7 +56,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
         }
 
         $configEditBlock = false;
-        $contentBlocks = Mage::getSingleton('core/layout')->getBlock('content')->getChild();
+        /** @var Mage_Core_Model_Layout $layout */
+        $layout = Mage::getSingleton('core/layout');
+        $contentBlocks = $layout->getBlock('content')->getChild();
 
         /**
          * @var Mage_Core_Block_Abstract                $block
@@ -73,6 +75,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         if (!$helper->checkIsPostnlActionAllowed('download_logs')) {

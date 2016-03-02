@@ -53,6 +53,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
     {
         $this->setElement($element);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $elementOriginalData = $element->getOriginalData();
 
         /**
@@ -69,6 +70,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
          * @var Varien_Data_Form_Element_Fieldset $container
          */
         $currentStepRel = '';
+        /** @noinspection PhpUndefinedMethodInspection */
         $container = $element->getContainer();
         if ($container) {
             $currentStepRel = $container->getHtmlId();
@@ -82,6 +84,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
         $button = $this->getLayout()
                      ->createBlock('adminhtml/widget_button');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $html = $button->setType('button')
                        ->setId($element->getHtmlId())
                        ->setClass('scalable postnl-button')
@@ -104,16 +107,20 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
     {
         $html = '<td class="label"></td>';
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getTooltip()) {
             $html .= '<td class="value with-tooltip">';
             $html .= $this->_getElementHtml($element);
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= '<div class="field-tooltip"><div>' . $element->getTooltip() . '</div></div>';
         } else {
             $html .= '<td class="value">';
             $html .= $this->_getElementHtml($element);
         };
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getComment()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<p class="note"><span>'.$element->getComment().'</span></p>';
         }
 
@@ -122,8 +129,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
         $html.= '<td class="scope-label"></td>';
 
         $html.= '<td class="">';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getHint()) {
             $html.= '<div class="hint" >';
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<div style="display: none;">' . $element->getHint() . '</div>';
             $html.= '</div>';
         }

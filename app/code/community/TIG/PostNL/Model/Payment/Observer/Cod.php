@@ -59,6 +59,7 @@ class TIG_PostNL_Model_Payment_Observer_Cod
         /**
          * @var TIG_PostNL_Model_Core_Shipment $shipment
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $shipment = $observer->getShipment();
 
         /**
@@ -81,6 +82,7 @@ class TIG_PostNL_Model_Payment_Observer_Cod
          */
         $paymentMethod = $order->getPayment()->getMethod();
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
         $helper = Mage::helper('postnl/payment');
         $codPaymentMethods = $helper->getCodPaymentMethods();
         if (!in_array($paymentMethod, $codPaymentMethods)) {
@@ -96,7 +98,9 @@ class TIG_PostNL_Model_Payment_Observer_Cod
         }
 
         try {
-            Mage::getModel('postnl_core/service')->registerInvoiceFromShipment($shipment->getShipment());
+            /** @var TIG_PostNL_Model_Core_Service $serviceModel */
+            $serviceModel = Mage::getModel('postnl_core/service');
+            $serviceModel->registerInvoiceFromShipment($shipment->getShipment());
             $order->addStatusHistoryComment(
                 $helper->__("This order has been automatically invoiced by the PostNL COD payment method.")
             );
@@ -128,14 +132,16 @@ class TIG_PostNL_Model_Payment_Observer_Cod
          * @var Mage_Sales_Model_Order_Shipment $shipment
          * @var Mage_Sales_Model_Order $order
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $shipment = $observer->getShipment();
-        $order = $shipment->getOrder();
+        $order    = $shipment->getOrder();
 
         /**
          * Check if the order was placed using a PostNL COD payment method.
          */
         $paymentMethod = $order->getPayment()->getMethod();
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
         $helper = Mage::helper('postnl/payment');
         $codPaymentMethods = $helper->getCodPaymentMethods();
         if (!in_array($paymentMethod, $codPaymentMethods)) {

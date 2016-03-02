@@ -57,7 +57,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
          * The shipment was not shipped using PostNL
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
@@ -65,6 +67,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
          * Check if any data is available
          */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (is_null($value) || $value === '') {
             return parent::render($row);

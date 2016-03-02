@@ -54,6 +54,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
             return $this->_options;
         }
 
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
         $helper = Mage::helper('postnl/addressValidation');
         $lineCount = $helper->getAddressLineCount();
 

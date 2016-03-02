@@ -59,6 +59,7 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
         /**
          * Get the last execution time from the cron_schedule table
          */
+        /** @var Mage_Core_Model_Resource $coreResource */
         $coreResource = Mage::getSingleton('core/resource');
         $readConnection = $coreResource->getConnection('core_read');
 
@@ -112,7 +113,9 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
          */
         $utcTimeZone = new DateTimeZone('UTC');
         $currentTime = new DateTime('now', $utcTimeZone);
-        $currentTime->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $currentTime->setTimestamp($dateModel->gmtTimestamp());
 
         $oneHourAgo        = $currentTime->sub(new DateInterval('PT1H'));
         $lastExecutionTime = new DateTime($lastExecutionTime, $utcTimeZone);

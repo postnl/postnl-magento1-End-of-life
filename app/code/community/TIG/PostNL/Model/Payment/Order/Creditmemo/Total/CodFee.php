@@ -57,7 +57,9 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
     {
         $order = $creditmemo->getOrder();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $creditmemo->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
         /**
@@ -74,7 +76,11 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
          * If we are currently in the backend and logged in, we need to check the POST parameters to see if any fee
          * amount is to be refunded.
          */
-        if (Mage::helper('postnl')->isAdmin() && Mage::getSingleton('admin/session')->isLoggedIn()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        if ($helper && $session->isLoggedIn()) {
             /**
              * This is unfortunately the only way to determine the fee amount that needs to be refunded without
              * rewriting a core class. If anybody knows of a better way, please let us know at
@@ -97,7 +103,9 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
          * If none of the above are true, we are creating a new creditmemo and need to show the fee amounts that may be
          * refunded (if any).
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
 
         if ($fee && $baseFee) {
@@ -120,11 +128,13 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
     protected function _updateCreditmemoTotals(Mage_Sales_Model_Order_Creditmemo $creditmemo,
                                                Mage_Sales_Model_Order $order, $fee, $baseFee)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $creditmemo->setPostnlCodFee($fee)
                    ->setBasePostnlCodFee($baseFee)
                    ->setGrandTotal($creditmemo->getGrandTotal() + $fee)
                    ->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFee);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setPostnlCodFeeRefunded($order->getPostnlCodFeeRefunded() + $fee)
               ->setBasePostnlCodFeeRefunded($order->getBasePostnlCodFeeRefunded() + $baseFee);
 
@@ -160,9 +170,13 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
         /**
          * Get the order's COD fee amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $orderFee             = $order->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $orderFeeRefunded     = $order->getPostnlCodFeeRefunded();
+        /** @noinspection PhpUndefinedMethodInspection */
         $orderBaseFee         = $order->getBasePostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $orderBaseFeeRefunded = $order->getBasePostnlCodFeeRefunded();
 
         /**
@@ -196,11 +210,13 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
         /**
          * Update the creditmemo totals with the new amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $creditmemo->setPostnlCodFee($fee)
                    ->setBasePostnlCodFee($baseFee)
                    ->setGrandTotal($creditmemo->getGrandTotal() + $fee)
                    ->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFee);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setPostnlCodFeeRefunded($orderFeeRefunded + $fee)
               ->setBasePostnlCodFeeRefunded($orderBaseFeeRefunded + $baseFee);
 

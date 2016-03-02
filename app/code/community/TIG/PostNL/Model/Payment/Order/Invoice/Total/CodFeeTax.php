@@ -58,7 +58,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFeeTax extends Mage_Sales_
         /**
          * Get the COD fee tax amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $feeTax     = $order->getPostnlCodFeeTax();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFeeTax = $order->getBasePostnlCodFeeTax();
 
         /**
@@ -71,6 +73,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFeeTax extends Mage_Sales_
         /**
          * Add the COD fee tax amounts to the invoice.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $invoice->setPostnlCodFeeTax($feeTax)
                 ->setBasePostnlCodFeeTax($baseFeeTax)
                 ->setTaxAmount($invoice->getTaxAmount() + $feeTax)
@@ -79,6 +82,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFeeTax extends Mage_Sales_
         /**
          * For all versions except 1.13.0.X and 1.8.0.X we need to add the COD fee tax to the grand total amounts.
          */
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if (
             ($helper->isEnterprise()
@@ -99,6 +103,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFeeTax extends Mage_Sales_
         /**
          * Update the order's COD fee tax amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setPostnlCodFeeTaxInvoiced($feeTax)
               ->setBasePostnlCodFeeTaxInvoiced($baseFeeTax);
 

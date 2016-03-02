@@ -53,8 +53,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_MatrixrateExport
             'website' => $buttonBlock->getRequest()->getParam('website')
         );
 
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
         $onClick = 'setLocation(\''
-                 . Mage::helper('adminhtml')->getUrl("adminhtml/postnlAdminhtml_config/exportMatrixrates", $params)
+                 . $helper->getUrl("adminhtml/postnlAdminhtml_config/exportMatrixrates", $params)
                  . '\')';
 
         $data = array(
@@ -65,7 +67,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_MatrixrateExport
             'class'   => 'scalable postnl-button',
         );
 
-        $html = $buttonBlock->setData($data)->toHtml();
+        $buttonBlock->setData($data);
+        $html = $buttonBlock->toHtml();
 
         return $html;
     }

@@ -38,6 +38,7 @@
  *
  * @method TIG_PostNL_Model_Core_Shipment getPostnlShipment()
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory setUseAjax($value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -97,7 +98,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
      */
     protected function _prepareColumns()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
 
         $this->addColumn(
             'date',
@@ -125,7 +127,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
         );
 
         $postnlShipment = $this->getPostnlShipment();
-        if (Mage::helper('postnl/cif')->isReturnsEnabled() && $postnlShipment->hasReturnLabelsPrinted()) {
+
+        if ($helper->isReturnsEnabled() && $postnlShipment->hasReturnLabelsPrinted()) {
             $this->addColumn(
                 'shipment_type',
                 array(
