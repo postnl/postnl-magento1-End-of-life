@@ -55,12 +55,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
     {
         /** @var Mage_Sales_Model_Order $row */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper = Mage::helper('postnl/carrier');
+        if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
 
         $value = new DateTime($value, new DateTimeZone('UTC'));
@@ -69,6 +73,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          * Update the row's value for the decorator later.
          */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
         $adminTimeZone = $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID, true);
@@ -125,25 +130,30 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          */
         $format = $this->_getFormat();
 
-        $timeZone = Mage::helper('postnl')->getStoreTimeZone($row->getData('store_id'), true);
+        $timeZone = $helper->getStoreTimeZone($row->getData('store_id'), true);
         $value = $value->setTimezone($timeZone)->format('Y-m-d H:i:s');
         try {
             /** @noinspection PhpVoidFunctionResultUsedInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             if($this->getColumn()->getGmtoffset()) {
                 $data = Mage::app()->getLocale()
                             ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
             } else {
+                /** @var Mage_Core_Model_Locale $localeModel */
+                $localeModel = Mage::getSingleton('core/locale');
                 /** @noinspection PhpUndefinedClassInspection */
-                $data = Mage::getSingleton('core/locale')
-                            ->date($value, Zend_Date::ISO_8601, null, false)->toString($format);
+                $data = $localeModel->date($value, Zend_Date::ISO_8601, null, false)->toString($format);
             }
         } catch (Exception $e) {
             /** @noinspection PhpVoidFunctionResultUsedInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             if($this->getColumn()->getTimezone()) {
                 $data = Mage::app()->getLocale()
                             ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
             } else {
-                $data = Mage::getSingleton('core/locale')->date($value, null, null, false)->toString($format);
+                /** @var Mage_Core_Model_Locale $localeModel */
+                $localeModel = Mage::getSingleton('core/locale');
+                $data = $localeModel->date($value, null, null, false)->toString($format);
             }
         }
         return $data;

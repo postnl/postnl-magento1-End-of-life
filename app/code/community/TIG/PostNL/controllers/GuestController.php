@@ -52,7 +52,9 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
      */
     protected function _loadValidOrder($orderId = null)
     {
-        return Mage::helper('sales/guest')->loadValidOrder();
+        /** @var Mage_Sales_Helper_Guest $helper */
+        $helper = Mage::helper('sales/guest');
+        return $helper->loadValidOrder();
     }
 
     /**
@@ -68,11 +70,11 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
             return false;
         }
 
-        /**
-         * @var Mage_Sales_Model_Order $order
-         */
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::registry('current_order');
-        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
+        /** @var Mage_Sales_Model_Order_Config $config */
+        $config = Mage::getSingleton('sales/order_config');
+        $availableStates = $config->getVisibleOnFrontStates();
 
         if ($postnlShipment->getId()
             && $postnlShipment->isConfirmed()

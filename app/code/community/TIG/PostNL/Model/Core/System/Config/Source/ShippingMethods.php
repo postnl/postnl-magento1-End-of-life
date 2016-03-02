@@ -52,10 +52,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
     {
         $methods = array();
 
-        /**
-         * @var Mage_Shipping_Model_Carrier_Abstract $carrierModel
-         */
-        $carriers = Mage::getSingleton('shipping/config')->getAllCarriers();
+        /** @var Mage_Shipping_Model_Config $config */
+        $config = Mage::getSingleton('shipping/config');
+        $carriers = $config->getAllCarriers();
+        /** @var Mage_Shipping_Model_Carrier_Abstract|Mage_Shipping_Model_Carrier_Interface $carrierModel */
         foreach ($carriers as $carrierCode => $carrierModel) {
             if ($isActiveOnlyFlag && !$carrierModel->isActive()) {
                 continue;
@@ -67,7 +67,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
                     continue;
                 }
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $helper->logException($e);
                 continue;
             }
 
@@ -99,10 +101,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
     {
         $methods = array();
 
-        /**
-         * @var Mage_Shipping_Model_Carrier_Abstract $carrierModel
-         */
-        $carriers = Mage::getSingleton('shipping/config')->getAllCarriers();
+        /** @var Mage_Shipping_Model_Config $config */
+        $config = Mage::getSingleton('shipping/config');
+        $carriers = $config->getAllCarriers();
+        /** @var Mage_Shipping_Model_Carrier_Abstract|Mage_Shipping_Model_Carrier_Interface $carrierModel */
         foreach ($carriers as $carrierCode => $carrierModel) {
             if ($isActiveOnlyFlag && !$carrierModel->isActive()) {
                 continue;

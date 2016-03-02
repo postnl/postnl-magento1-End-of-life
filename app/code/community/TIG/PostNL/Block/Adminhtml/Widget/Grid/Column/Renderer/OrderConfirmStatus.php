@@ -58,7 +58,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
          * The shipment was not shipped using PostNL
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
@@ -66,6 +68,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
          * Check if any data is available.
          */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $values = $row->getData($this->getColumn()->getIndex());
         if (is_null($values)) {
             return Mage::helper('postnl')->__('No shipments found');
@@ -81,28 +84,24 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
         $labels = array();
         foreach ($values as $value) {
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('Confirmed');
+                $labels[] = $helper->__('Confirmed');
 
                 continue;
             }
 
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('Unconfirmed');
+                $labels[] = $helper->__('Unconfirmed');
 
                 continue;
             }
 
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('Confirmation Expired');
+                $labels[] = $helper->__('Confirmation Expired');
                 continue;
             }
 
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('No Confirmation Required');
+                $labels[] = $helper->__('No Confirmation Required');
                 continue;
             }
         }

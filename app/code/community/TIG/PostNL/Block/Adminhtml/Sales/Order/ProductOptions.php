@@ -59,8 +59,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
             return $this->_getData('extra_cover_product_options');
         }
 
-        $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                              ->getExtraCoverOptions(true);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $sourceModel */
+        $sourceModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        $productOptions = $sourceModel->getExtraCoverOptions(true);
 
         $this->setExtraCoverProductOptions($productOptions);
         return $productOptions;
@@ -77,8 +78,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
             return $this->_getData('globalpack_product_option');
         }
 
-        $globalPackProductOption = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
-                                       ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $sourceModel */
+        $sourceModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        $globalPackProductOption = $sourceModel->getAvailableOptions();
 
         if (empty($globalPackProductOption)) {
             return '';
@@ -96,7 +98,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
      */
     public function getShipmentTypes()
     {
-        $shipmentTypes = Mage::helper('postnl/cif')->getShipmentTypes();
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $shipmentTypes = $helper->getShipmentTypes();
 
         return $shipmentTypes;
     }
@@ -110,7 +114,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return '';
         }
 

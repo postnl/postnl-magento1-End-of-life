@@ -55,6 +55,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * @var Mage_Sales_Model_Order $order
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $order = $observer->getOrder();
 
         /**

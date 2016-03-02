@@ -58,7 +58,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFee extends Mage_Sales_Mod
         /**
          * Get the COD fee amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $order->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $order->getBasePostnlCodFee();
 
         /**
@@ -74,11 +76,13 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFee extends Mage_Sales_Mod
         $grandTotal = $invoice->getGrandTotal();
         $baseGrandTotal = $invoice->getBaseGrandTotal();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $invoice->setPostnlCodFee($fee)
                 ->setBasePostnlCodFee($baseFee)
                 ->setGrandTotal($grandTotal + $fee)
                 ->setBaseGrandTotal($baseGrandTotal + $baseFee);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $order->setPostnlCodFeeInvoiced($fee)
               ->setBasePostnlCodFeeInvoiced($baseFee);
 

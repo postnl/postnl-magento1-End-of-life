@@ -55,6 +55,7 @@ class TIG_PostNL_Model_Checkout_Observer_Order
          * @var Mage_Sales_Model_Order          $order
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $order = $observer->getOrder();
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getId(), 'order_id');
 

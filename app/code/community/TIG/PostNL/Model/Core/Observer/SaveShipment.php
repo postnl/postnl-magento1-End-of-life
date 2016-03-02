@@ -54,7 +54,9 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
         /**
          * Check if the PostNL module is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -63,6 +65,7 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
          *
          * @var Mage_Core_Controller_Varien_Front $controller
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $controller      = $observer->getControllerAction();
         $shippingOptions = $controller->getRequest()->getParam('postnl');
 

@@ -58,9 +58,12 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $postnlShipment = $observer->getShipment();
 
         $orderId = $postnlShipment->getOrderId();
+
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($orderId, 'order_id');
         if (!$postnlOrder->getId() || !$postnlOrder->getToken()) {
@@ -68,6 +71,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
         }
 
         try {
+            /** @var TIG_PostNL_Model_Checkout_Cif $cif */
             $cif = Mage::getModel('postnl_checkout/cif');
             $result = $cif->updateOrder($postnlOrder);
 
@@ -78,6 +82,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
                 );
             }
         } catch (TIG_PostNL_Exception $e) {
+            /** @var TIG_PostNL_Helper_Data $helper */
             $helper = Mage::helper('postnl');
             $helper->addSessionMessage(
                 'adminhtml/session',
@@ -87,6 +92,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
             );
             return $this;
         } catch (Exception $e) {
+            /** @var TIG_PostNL_Helper_Data $helper */
             $helper = Mage::helper('postnl');
             $helper->addSessionMessage(
                 'adminhtml/session',

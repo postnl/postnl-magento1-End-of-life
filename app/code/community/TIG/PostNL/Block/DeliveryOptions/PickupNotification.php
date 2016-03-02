@@ -53,7 +53,9 @@ class TIG_PostNL_Block_DeliveryOptions_PickupNotification extends TIG_PostNL_Blo
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if (!$helper->isDeliveryOptionsEnabled()) {
             return '';
         }
 
