@@ -63,7 +63,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          *
          * Unfortunately there is no unique event for this block.
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block             = $observer->getBlock();
         $shipmentViewClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_VIEW_BLOCK_NAME);
 
         /**
@@ -73,6 +74,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -118,6 +120,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function addPostnlButtons(Mage_Adminhtml_BLock_Sales_Order_Shipment_View $block,
                                      Mage_Sales_Model_Order_Shipment $shipment)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**

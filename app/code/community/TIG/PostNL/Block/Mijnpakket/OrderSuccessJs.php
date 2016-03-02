@@ -60,6 +60,7 @@ class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checko
      */
     protected function _tohtml()
     {
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
         $helper = Mage::helper('postnl/mijnpakket');
         if (!$helper->canShowMijnpakketNotification()) {
             return '';

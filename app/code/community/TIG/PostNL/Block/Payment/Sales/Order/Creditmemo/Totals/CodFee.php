@@ -62,9 +62,12 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
          * @var Mage_Sales_Model_Order_Creditmemo $creditmemo
          */
         $parent     = $this->getParentBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
         $creditmemo = $parent->getCreditmemo();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $creditmemo->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
         if ($fee < 0.01 || $baseFee < 0.01) {
@@ -72,7 +75,9 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
         }
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($creditmemo->getStoreId());
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $baseLabel = $helper->getPostnlCodFeeLabel($creditmemo->getStoreId());
 
         if ($displayMode === self::DISPLAY_MODE_EXCL
             || $displayMode === self::DISPLAY_MODE_BOTH
@@ -84,6 +89,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
             }
 
             $total = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $total->setLabel($label)
                   ->setValue($fee)
                   ->setBaseValue($baseFee)
@@ -102,6 +108,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
             }
 
             $totalInclTax = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalInclTax->setLabel($label)
                          ->setValue($fee + $creditmemo->getPostnlCodFeeTax())
                          ->setBaseValue($baseFee + $creditmemo->getBasePostnlCodFeeTax())
@@ -134,7 +141,9 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
+        /** @var Mage_Tax_Helper_Data $helper */
+        $helper = Mage::helper('tax');
+        $taxLabel = $helper->getIncExcText($inclTax);
 
         return $taxLabel;
     }

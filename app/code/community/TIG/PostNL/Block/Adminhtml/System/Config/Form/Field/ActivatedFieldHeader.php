@@ -63,6 +63,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivatedFieldHeader
         }
 
         $element = $this->getElement();
+        /** @noinspection PhpUndefinedMethodInspection */
         $label = $element->getLabel();
 
         $section = $this->getRequest()->getParam('section');
