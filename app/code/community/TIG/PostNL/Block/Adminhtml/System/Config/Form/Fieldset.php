@@ -37,6 +37,9 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * This entire class is extended from Magento's core class for backwards compatibility on Magento 1.6.
+ *
+ * @method Varien_Data_Form_Element_Abstract getElement()
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset setElement(Varien_Data_Form_Element_Abstract $element)
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
 {
@@ -49,6 +52,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getHeaderCommentHtml($element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $comment = $element->getComment();
         if (!$comment) {
             return '';
@@ -74,7 +78,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
         $this->setElement($element);
         $html = $this->_getHeaderHtml($element);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         foreach ($element->getSortedElements() as $field) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= $field->toHtml();
         }
 
@@ -91,6 +97,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getHeaderHtml($element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getIsNested()) {
             $html = '<tr class="nested"><td colspan="4"><div class="' . $this->_getFrontendClass($element) . '">';
         } else {
@@ -102,6 +109,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
         $html .= '<input id="'.$element->getHtmlId() . '-state" name="config_state[' . $element->getId()
             . ']" type="hidden" value="' . (int)$this->_getCollapseState($element) . '" />';
         $html .= '<fieldset class="' . $this->_getFieldsetCss($element) . '" id="' . $element->getHtmlId() . '">';
+        /** @noinspection PhpUndefinedMethodInspection */
         $html .= '<legend>' . $element->getLegend() . '</legend>';
 
         $html .= $this->_getHeaderCommentHtml($element);
@@ -140,7 +148,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
         if (is_null($element)) {
             $element = $this->getElement();
         }
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element && $element->getGroup() instanceof Mage_Core_Model_Config_Element) {
+            /** @noinspection PhpUndefinedMethodInspection */
             return $element->getGroup();
         }
 
@@ -155,6 +165,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getHeaderTitleHtml($element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         return '<div class="entry-edit-head collapseable" ><a id="' . $element->getHtmlId()
         . '-head" rel="' . $element->getHtmlId() . '-head" href="#" onclick="Fieldset.toggleCollapse(\''
         . $element->getHtmlId() . '\', \'' . $this->getUrl('*/*/state') . '\'); return false;">'
@@ -187,6 +198,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
         $html = '</tbody></table>';
         $html .= '</fieldset>' . $this->_getExtraJs($element, $tooltipsExist);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getIsNested()) {
             $html .= '</div></td></tr>';
         } else {
@@ -208,7 +220,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
     {
         $id = $element->getHtmlId();
         $js = "Fieldset.applyCollapse('{$id}');";
-        return Mage::helper('adminhtml/js')->getScript($js);
+
+        /** @var Mage_Adminhtml_Helper_Js $helper */
+        $helper = Mage::helper('adminhtml/js');
+        return $helper->getScript($js);
     }
 
     /**
@@ -219,10 +234,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      */
     protected function _getCollapseState($element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getExpanded() !== null) {
             return 1;
         }
-        $extra = Mage::getSingleton('admin/session')->getUser()->getExtra();
+
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $extra = $session->getUser()->getExtra();
         if (isset($extra['configState'][$element->getId()])) {
             return $extra['configState'][$element->getId()];
         }

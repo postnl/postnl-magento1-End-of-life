@@ -45,6 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
      */
     public function toOptionArray()
     {
+        /** @var  Mage_Catalog_Model_Resource_Product_Attribute_Collection $attributes */
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection')
                           ->addFieldToSelect(array('attribute_code', 'frontend_label'))
                           ->addFieldToFilter('frontend_label', array('notnull' => true));
@@ -56,6 +57,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
          * @var Mage_Catalog_Model_Entity_Attribute $attribute
          */
         foreach ($attributes as $attribute) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $label = $attribute->getFrontendLabel();
             if (empty($label)) {
                 continue;

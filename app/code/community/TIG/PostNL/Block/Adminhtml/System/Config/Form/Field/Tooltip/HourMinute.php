@@ -46,10 +46,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Tooltip_HourMinute ext
     protected function _toHtml()
     {
         $element = $this->getElement();
+
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
         /** @noinspection PhpUndefinedFieldInspection */
         $tooltipText = $this->__(
             $element->tooltip,
-            Mage::helper('postnl')->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID)
+            $helper->getStoreTimeZone(Mage_Core_Model_App::ADMIN_STORE_ID)
         );
 
         return $tooltipText;
