@@ -159,4 +159,11 @@
             )
         )
         ->installMatrixRates($matrixRateData)
+        ->updateAttributeData(
+            array(
+                'postnl_shipping_duration' => array(
+                    'default_value' => -1,
+                ),
+            )
+        )
         ->clearConfigCache();

@@ -1719,6 +1719,45 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         return $this;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return $this
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateAttributeData(array $data)
+    {
+        foreach ($data as $attributeCode => $attributeData) {
+            /**
+             * Load the attribute by the specified attribute code.
+             */
+            /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+            $attribute = Mage::getResourceModel('catalog/product')->getAttribute($attributeCode);
+            if (!$attribute || !$attribute->getId()) {
+                /**
+                 * If the attribute could not be found, throw an exception.
+                 */
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                throw new TIG_PostNL_Exception(
+                    $helper->__('No attribute found with attribute code %s.', $attributeCode),
+                    'POSTNL-0241'
+                );
+            }
+
+            /**
+             * Set the specified attribute data.
+             */
+            foreach ($attributeData as $key => $value) {
+                $attribute->setDataUsingMethod($key, $value);
+            }
+
+            $attribute->save();
+        }
+
+        return $this;
+    }
 
     /**
      * Prepare attribute values to save.
