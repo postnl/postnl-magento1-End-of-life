@@ -45,7 +45,9 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
      */
     public function toOptionArray()
     {
-        $paymentMethods = Mage::getSingleton('payment/config')->getActiveMethods();
+        /** @var Mage_Payment_Model_Config $config */
+        $config = Mage::getSingleton('payment/config');
+        $paymentMethods = $config->getActiveMethods();
 
         $storeId = Mage::app()->getStore()->getId();
 

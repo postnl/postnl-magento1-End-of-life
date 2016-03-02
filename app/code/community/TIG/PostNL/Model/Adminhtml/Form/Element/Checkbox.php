@@ -35,6 +35,12 @@
  *
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean getChecked()
+ * @method string  getLabel()
+ * @method boolean getRequired()
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox setChecked($checked)
  */
 class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_Element_Checkbox
 {

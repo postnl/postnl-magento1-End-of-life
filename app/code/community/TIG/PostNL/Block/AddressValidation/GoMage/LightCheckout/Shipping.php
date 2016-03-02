@@ -41,7 +41,9 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
 {
     protected function _renderFields($fields)
     {
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, 'checkout')) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, 'checkout')) {
             return parent::_renderFields($fields);
         }
 
