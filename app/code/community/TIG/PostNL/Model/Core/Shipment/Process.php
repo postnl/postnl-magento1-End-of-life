@@ -60,14 +60,14 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      */
     protected function _getLockFile()
     {
-        if ($this->_lockFile !== null) {
+        if ($this->_lockFile) {
             return $this->_lockFile;
         }
 
         $varDir = Mage::getConfig()->getVarDir('locks');
         $file = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
 
-        if (is_file($file)) {
+        if (is_file($file) && is_writable($file)) {
             if($this->_lockIsExpired()){
                 unlink($file);//remove file
                 $this->_lockFile = fopen($file, 'x');//create new lock file

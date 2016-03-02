@@ -1,4 +1,5 @@
 <?php
+
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -59,10 +60,10 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
                             continue;
                         } elseif ($field_code == 'street') {
                             $html .= $this->getChild('postnl_shipping_postcodecheck')
-                                        ->setAddressType('shipping')
-                                        ->setAddress($this->getAddress())
-                                        ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
-                                        ->toHtml();
+                                          ->setAddressType('shipping')
+                                          ->setAddress($this->getAddress())
+                                          ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
+                                          ->toHtml();
                             continue;
                         }
 
@@ -82,7 +83,19 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
                             $template = $this->default_address_template;
                         }
 
-                        $_html .= '<div class="field field-' . $field_code . ' ' . ($i % 2 == 0 ? ' field-first ' : ' field-last ') . '">' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)->setTemplate($template)->addData($data)->toHtml() . '</div>';
+                        /** @noinspection PhpUndefinedMethodInspection */
+                        $_html .= '<div class="field field-'
+                            . $field_code
+                            . ' '
+                            . ($i % 2 == 0 ? ' field-first ' : ' field-last ')
+                            . '">'
+                            . $this->getLayout()
+                                ->createBlock('gomage_checkout/onepage_' . $this->prefix)
+                                ->setTemplate($template)
+                                ->addData(
+                                    $data
+                                )->toHtml()
+                            . '</div>';
 
                         $row_class[] = $field_code;
 
@@ -100,10 +113,10 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
                         continue;
                     } elseif ($field_code == 'street') {
                         $html .= $this->getChild('postnl_shipping_postcodecheck')
-                            ->setAddressType('shipping')
-                            ->setAddress($this->getAddress())
-                            ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
-                            ->toHtml();
+                                      ->setAddressType('shipping')
+                                      ->setAddress($this->getAddress())
+                                      ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
+                                      ->toHtml();
                         continue;
                     }
 
@@ -116,7 +129,6 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
                         'input_id'       => $this->prefix . '_' . $field_code,
                     );
 
-
                     if ($this->getConfigData('address_fields/' . $field_code) == 'req') {
                         $data['is_required'] = true;
                     }
@@ -125,7 +137,9 @@ class TIG_PostNL_Block_AddressValidation_GoMage_LightCheckout_Shipping extends G
                         $template = $this->default_address_template;
                     }
 
-                    $html .= '<li>' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)->setTemplate($template)->addData($data)->toHtml() . '</li>';
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $html .= '<li>' . $this->getLayout()->createBlock('gomage_checkout/onepage_' . $this->prefix)
+                                           ->setTemplate($template)->addData($data)->toHtml() . '</li>';
                 }
 
             }
