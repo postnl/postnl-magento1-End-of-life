@@ -52,6 +52,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
     protected function _getFormat()
     {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $format = $this->getColumn()->getFormat();
         if (!$format) {
             if (is_null(self::$_format)) {
@@ -61,7 +62,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
                     );
                 }
                 catch (Exception $e) {
-                    Mage::helper('postnl')->logException($e);
+                    /** @var TIG_PostNL_Helper_Data $helper */
+                    $helper = Mage::helper('postnl');
+                    $helper->logException($e);
                 }
             }
             $format = self::$_format;
@@ -81,6 +84,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
         $data = $this->_getValue($row);
         if (!$data) {
             /** @noinspection PhpVoidFunctionResultUsedInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             return $this->getColumn()->getDefault();
         }
 
@@ -89,9 +93,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
             $data = Mage::app()->getLocale()
                 ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             /** @noinspection PhpVoidFunctionResultUsedInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             return $this->getColumn()->getDefault();
         }
         return $data;
