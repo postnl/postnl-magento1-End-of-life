@@ -102,6 +102,7 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
         /**
          * Get the translated label of the supported options field.
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $supportedOptionsLabel = (string) $sections->postnl
                                                    ->groups
                                                    ->cif_product_options
