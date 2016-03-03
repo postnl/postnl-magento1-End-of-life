@@ -73,6 +73,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_CountryArray
     public function renderExport(Varien_Object $row)
     {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getDataUsingMethod($this->getColumn()->getIndex());
 
         $formattedCountryArray = array();

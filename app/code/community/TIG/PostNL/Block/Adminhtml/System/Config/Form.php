@@ -199,11 +199,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             }
 
             $fieldset = new Varien_Data_Form_Element_Fieldset($fieldsetConfig);
+            /** @noinspection PhpUndefinedMethodInspection */
             $fieldset->setId($section->getName() . '_' . $group->getName())
-                ->setRenderer($fieldsetRenderer)
-                ->setGroup($group);
+                     ->setRenderer($fieldsetRenderer)
+                     ->setGroup($group);
 
             if ($parentElement) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $fieldset->setIsNested(true);
                 $parentElement->addElement($fieldset);
             } else {
@@ -227,6 +229,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         'POSTNL-0095'
                     );
                 }
+                /** @noinspection PhpUndefinedMethodInspection */
                 foreach ($cloneModel->getPrefixes() as $prefix) {
                     $this->initFields($fieldset, $group, $section, $prefix['field'], $prefix['label']);
                 }
@@ -279,6 +282,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     continue;
                 }
 
+                /** @noinspection PhpUndefinedMethodInspection */
                 if ((string)$element->getAttribute('type') == 'group') {
                     $this->_initGroup($fieldset->getForm(), $element, $section, $fieldset);
                     continue;
@@ -289,6 +293,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  */
                 $path = (string)$element->config_path;
                 if (empty($path)) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $path = $section->getName() . '/' . $group->getName() . '/' . $fieldPrefix . $element->getName();
                 } elseif (strrpos($path, '/') > 0) {
                     // Extend config data with new section group
@@ -311,7 +316,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  * backwards compatibility for those versions.
                  */
                 $version = Mage::getVersion();
-                $isEnterprise = Mage::helper('postnl')->isEnterprise();
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $isEnterprise = $helper->isEnterprise();
 
                 /**
                  * Get the minimum version requirement for the current Magento edition.
@@ -352,6 +359,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                 $helperName = $this->_configFields->getAttributeModule($section, $group, $element);
                 $fieldType  = (string)$element->frontend_type ? (string)$element->frontend_type : 'text';
+                /** @noinspection PhpUndefinedMethodInspection */
                 $name  = 'groups[' . $group->getName() . '][fields][' . $fieldPrefix.$element->getName() . '][value]';
                 $label =  Mage::helper($helperName)->__($labelPrefix) . ' '
                     . Mage::helper($helperName)->__((string)$element->label);
@@ -362,6 +370,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     if (!$model instanceof Mage_Core_Model_Config_Data) {
                         Mage::throwException('Invalid config field backend model: '.(string)$element->backend_model);
                     }
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $model->setPath($path)
                         ->setValue($data)
                         ->setWebsite($this->getWebsiteCode())
@@ -372,6 +381,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                 $comment = $this->_prepareFieldComment($element, $helperName, $data);
                 $tooltip = $this->_prepareFieldTooltip($element, $helperName);
+                /** @noinspection PhpUndefinedMethodInspection */
                 $id = $section->getName() . '_' . $group->getName() . '_' . $fieldPrefix . $element->getName();
 
                 if ($element->depends) {
@@ -388,6 +398,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         }
 
                         $dependentFieldNameValue = $dependent->getName();
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $dependentFieldGroup = $dependentFieldGroupName == $group->getName()
                             ? $group
                             : $this->_fieldsets[$dependentFieldGroupName]->getGroup();
@@ -468,6 +479,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 }
 
                 if (isset($element->autocomplete)) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setAutocomplete($element->autocomplete);
                 }
 
@@ -475,6 +487,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     && 'multiselect' === (string)$element->frontend_type
                     && isset($element->can_be_empty)
                 ) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setCanBeEmpty(true);
                 }
 
@@ -491,6 +504,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                     $sourceModel = Mage::getSingleton($factoryName);
                     if ($sourceModel instanceof Varien_Object) {
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $sourceModel->setPath($path);
                     }
                     if ($method) {
@@ -503,8 +517,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             }
                         }
                     } else {
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $optionArray = $sourceModel->toOptionArray($fieldType == 'multiselect');
                     }
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setValues($optionArray);
                 }
             }
@@ -561,6 +577,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         /** @noinspection PhpUndefinedFieldInspection */
         if ($element->tooltip_block) {
             /** @noinspection PhpUndefinedFieldInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             return $this->getLayout()
                         ->createBlock((string)$element->tooltip_block)
                         ->setElement($element)

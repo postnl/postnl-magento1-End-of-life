@@ -136,6 +136,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Radios extends Varien_
                 . $option['label']
                 . '</label>';
         } else if ($option instanceof Varien_Object) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= 'id="'
                 . $this->getHtmlId()
                 . $option->getValue()
@@ -150,12 +151,14 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Radios extends Varien_
                     )
                 );
 
+            /** @noinspection PhpUndefinedMethodInspection */
             if (in_array($option->getValue(), $selected)) {
                 $html .= ' checked="checked"';
             }
 
             $html .= ' />';
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= '<label class="inline" for="'
                 . $this->getHtmlId()
                 . $option->getValue()

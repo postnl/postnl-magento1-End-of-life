@@ -78,7 +78,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Create_Totals_CodFee extends Mage_A
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcTaxLabel($inclTax);
+        /** @var Mage_Tax_Helper_Data $taxHelper */
+        $taxHelper = Mage::helper('tax');
+        $taxLabel = $taxHelper->getIncExcTaxLabel($inclTax);
 
         return $taxLabel;
     }
@@ -92,13 +94,16 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Create_Totals_CodFee extends Mage_A
      */
     public function getValue($inclTax = false)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $address = $this->getTotal()->getAddress();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $exclTax = $address->getPostnlCodFee();
         if (!$inclTax) {
             return $exclTax;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $inclTax = $exclTax + $address->getPostnlCodFeeTax();
         return $inclTax;
     }

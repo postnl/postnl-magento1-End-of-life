@@ -100,7 +100,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled($this->getItem()->getStoreId())) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled($this->getItem()->getStoreId())) {
             $this->setTemplate(self::DEFAULT_TEMPLATE);
         }
 

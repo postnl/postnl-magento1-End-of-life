@@ -81,7 +81,9 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
      */
     public function getCheckoutUrl()
     {
-        $url = Mage::helper('checkout/url')->getCheckoutUrl();
+        /** @var Mage_Checkout_Helper_Url $helper */
+        $helper = Mage::helper('checkout/url');
+        $url = $helper->getCheckoutUrl();
 
         return $url;
     }
@@ -156,8 +158,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
      */
     public function canUsePostnlCheckout()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
+        /** @var TIG_PostNL_Helper_Checkout $helper */
         $helper = Mage::helper('postnl/checkout');
         $canUseCheckout = $helper->canUsePostnlCheckout($quote);
 
@@ -213,7 +218,9 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
      */
     public function getSrc($forceDisabled = false)
     {
-        if (Mage::helper('postnl/checkout')->isTestMode()) {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        if ($helper->isTestMode()) {
             $baseUrl = $this->getButtonTestBaseUrl();
         } else {
             $baseUrl = $this->getButtonLiveBaseUrl();;
@@ -245,7 +252,9 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
             return false;
         }
 
-        $pageUrl = Mage::helper('cms/page')->getPageUrl($instructionPage);
+        /** @var Mage_Cms_Helper_Page $helper */
+        $helper = Mage::helper('cms/page');
+        $pageUrl = $helper->getPageUrl($instructionPage);
         return $pageUrl;
     }
 
@@ -256,6 +265,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
      */
     protected function _toHtml()
     {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
         $helper = Mage::helper('postnl/checkout');
         if (!$helper->isCheckoutActive() && Mage::registry('postnl_checkout_logged') === null) {
             /**

@@ -82,7 +82,9 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
             return $this->_getData('is_test_mode');
         }
 
-        $isTestMode = Mage::helper('postnl/mijnpakket')->isTestMode();
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
+        $helper = Mage::helper('postnl/mijnpakket');
+        $isTestMode = $helper->isTestMode();
 
         $this->setIsTestMode($isTestMode);
         return $isTestMode;
@@ -140,7 +142,10 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
             return $this->_getData('saved_mijnpakket_data');
         }
 
-        $data = Mage::getSingleton('checkout/session')->getPostnlMijnpakketData();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $data = $session->getPostnlMijnpakketData();
 
         $this->setSavedMijnpakketData($data);
         return $data;
@@ -191,6 +196,7 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
      */
     public function isDebugEnabled()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $debugMode = $helper->getDebugMode();
 
@@ -208,6 +214,7 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
      */
     protected function _tohtml()
     {
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
         $helper = Mage::helper('postnl/mijnpakket');
         if (!$helper->canLoginWithMijnpakket()) {
             return '';

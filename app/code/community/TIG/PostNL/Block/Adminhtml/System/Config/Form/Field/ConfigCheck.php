@@ -166,6 +166,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function isCheckoutEnabled()
     {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
         $helper = Mage::helper('postnl/checkout');
 
         if (!$helper->isCheckoutActive()) {

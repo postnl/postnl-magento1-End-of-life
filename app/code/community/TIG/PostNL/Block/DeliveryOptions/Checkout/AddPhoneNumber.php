@@ -117,7 +117,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostN
             return $this->_getData('quote');
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         $this->setQuote($quote);
         return $quote;

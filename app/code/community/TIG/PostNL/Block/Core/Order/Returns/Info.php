@@ -72,6 +72,7 @@ class TIG_PostNL_Block_Core_Order_Returns_Info extends Mage_Sales_Block_Order_In
         /**
          * @var Mage_Cms_Block_Block $infoBlock
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $infoBlock = $this->getLayout()
                           ->createBlock('cms/block')
                           ->setBlockId($infoBlockId);

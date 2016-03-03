@@ -131,8 +131,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Create_CodFee extends Ma
     {
         $source = $this->getSource();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $feeAmount = $source->getBasePostnlCodFee();
         if ($this->getFeeIsInclTax()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $feeAmount += $source->getBasePostnlCodFeeTax();
         }
 
@@ -149,9 +151,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Create_CodFee extends Ma
     {
         $source = $this->getSource();
 
-        $label = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($source->getStoreId());
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $label = $helper->getPostnlCodFeeLabel($source->getStoreId());
 
-        $label .= ' ' . Mage::helper('tax')->getIncExcTaxLabel($this->getFeeIsInclTax());
+        /** @var Mage_Tax_Helper_Data $taxHelper */
+        $taxHelper = Mage::helper('tax');
+        $label .= ' ' . $taxHelper->getIncExcTaxLabel($this->getFeeIsInclTax());
 
         return $label;
     }
@@ -163,6 +169,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Create_CodFee extends Ma
      */
     protected function _toHtml()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         if (!$this->_source->getPostnlCodFee()) {
             return '';
         }
