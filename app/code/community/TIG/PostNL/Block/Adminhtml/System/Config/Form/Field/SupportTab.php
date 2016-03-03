@@ -66,7 +66,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     public function getVersion()
     {
-        $version =  Mage::helper('postnl')->getModuleVersion();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $version =  $helper->getModuleVersion();
 
         return $version;
     }
@@ -76,7 +78,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     public function getStability()
     {
-        $version = Mage::helper('postnl')->getModuleStability();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $version = $helper->getModuleStability();
 
         return $version;
     }
@@ -202,7 +206,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     public function getChangelogUrl()
     {
-        $url = Mage::helper('postnl')->getChangelogUrl();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $url = $helper->getChangelogUrl();
 
         return $url;
     }

@@ -106,7 +106,9 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
             return false;
         }
 
-        $confirmedAt = Mage::helper('core')->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $confirmedAt = $helper->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
 
         return $confirmedAt;
     }
@@ -162,7 +164,9 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return '';
         }
 

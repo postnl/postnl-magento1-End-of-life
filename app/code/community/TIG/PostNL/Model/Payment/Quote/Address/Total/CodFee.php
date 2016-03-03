@@ -87,9 +87,11 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         /**
          * First, reset the fee amounts to 0 for this address and the quote.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setPostnlCodFee(0)
                 ->setBasePostnlCodFee(0);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $quote->setPostnlCodFee(0)
               ->setBasePostnlCodFee(0);
 
@@ -98,6 +100,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
          */
         $paymentMethod = $quote->getPayment()->getMethod();
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
         $helper = Mage::helper('postnl/payment');
         $codPaymentMethods = $helper->getCodPaymentMethods();
         if (!in_array($paymentMethod, $codPaymentMethods)) {
@@ -120,9 +123,11 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         /**
          * Set the fee for the address and quote.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setPostnlCodFee($fee)
                 ->setBasePostnlCodFee($baseFee);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $quote->setPostnlCodFee($fee)
               ->setBasePostnlCodFee($baseFee);
 
@@ -144,6 +149,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
      */
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $amount = $address->getPostnlCodFee();
 
         if ($amount <= 0) {
@@ -158,13 +164,16 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         if (Mage::app()->getRequest()->getModuleName() == self::ONESTEPCHECKOUT_MODULE_NAME
             && Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_DISPLAY_TAX_INCLUDED, $storeId)
         ) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $amount += $address->getPostnlCodFeeTax();
         }
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
         $address->addTotal(
             array(
                 'code'  => $this->getCode(),
-                'title' => Mage::helper('postnl/payment')->getPostnlCodFeeLabel($storeId),
+                'title' => $helper->getPostnlCodFeeLabel($storeId),
                 'value' => $amount,
             )
         );

@@ -68,7 +68,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
         $totals = array();
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($this->getOrder()->getStoreId());
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $baseLabel = $helper->getPostnlCodFeeLabel($this->getOrder()->getStoreId());
 
         /**
          * Get the fee excl. tax.
@@ -109,7 +111,8 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
             /**
              * Get the amount incl. tax and format it.
              */
-            $amount = $this->getAmount() + $this->getSource()->getPostnlCodFeeTax();
+            /** @noinspection PhpUndefinedMethodInspection */
+            $amount          = $this->getAmount() + $this->getSource()->getPostnlCodFeeTax();
             $formattedAmount = $this->getOrder()->formatPriceTxt($amount);
             if ($this->getAmountPrefix()) {
                 $formattedAmount = $this->getAmountPrefix() . $formattedAmount;
@@ -158,7 +161,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax, $this->getOrder()->getStoreId());
+        /** @var Mage_Tax_Helper_Data $taxHelper */
+        $taxHelper = Mage::helper('tax');
+        $taxLabel = $taxHelper->getIncExcText($inclTax, $this->getOrder()->getStoreId());
 
         return $taxLabel;
     }

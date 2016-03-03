@@ -64,6 +64,7 @@ class TIG_PostNL_Model_Carrier_Resource_Tablerate extends Mage_Shipping_Model_Re
         }
 
         $csvFile = $_FILES['groups']['tmp_name']['postnl']['fields']['import']['value'];
+        /** @noinspection PhpUndefinedMethodInspection */
         $website = Mage::app()->getWebsite($object->getScopeId());
 
         $this->_importWebsiteId     = (int)$website->getId();

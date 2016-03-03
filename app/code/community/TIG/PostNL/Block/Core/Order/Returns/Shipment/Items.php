@@ -70,7 +70,9 @@ class TIG_PostNL_Block_Core_Order_Returns_Shipment_Items extends Mage_Sales_Bloc
      */
     public function getPrintLabelUrl($shipmentId)
     {
-        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        if ($session->isLoggedIn()) {
             $url = $this->getUrl('postnl/order/printReturnLabel', array('shipment_id' => $shipmentId));
         } else {
             $url = $this->getUrl('postnl/guest/printReturnLabel', array('shipment_id' => $shipmentId));

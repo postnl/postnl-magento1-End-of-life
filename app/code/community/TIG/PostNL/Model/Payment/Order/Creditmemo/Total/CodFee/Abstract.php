@@ -128,6 +128,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
         }
 
         $taxCalculation   = $this->getTaxCalculation();
+        /** @noinspection PhpUndefinedMethodInspection */
         $customerTaxClass = $order->getCustomerTaxClassId();
         $shippingAddress  = $order->getShippingAddress();
         $billingAddress   = $order->getBillingAddress();
@@ -139,6 +140,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
             $store
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setProductClassId($codTaxClass);
 
         return $request;
@@ -171,6 +173,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     protected function _getCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getPostnlCodFee();
         }
 
@@ -199,6 +202,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     protected function _getBaseCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getBasePostnlCodFee();
         }
 

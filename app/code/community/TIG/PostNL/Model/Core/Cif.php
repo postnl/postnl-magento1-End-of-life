@@ -838,17 +838,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getMessage($barcode, $extra = array())
     {
+        /** @var Mage_Core_Helper_Http $helper */
+        $helper = Mage::helper('core/http');
         $messageIdString = uniqid(
                 'postnl_'
-                . ip2long(Mage::helper('core/http')->getServerAddr())
+                . ip2long($helper->getServerAddr())
             )
             . $this->_getCustomerNumber()
             . $barcode
             . microtime();
 
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
         $message = array(
             'MessageID'        => md5($messageIdString),
-            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->gmtTimestamp()),
+            'MessageTimeStamp' => date('d-m-Y H:i:s', $dateModel->gmtTimestamp()),
         );
 
         if ($extra) {
@@ -914,8 +918,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * Get the parcel weight and then convert it to grams.
              */
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
             $parcelWeight = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $postnlShipment->getStoreId());
-            $parcelWeight = Mage::helper('postnl')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
+            $parcelWeight = $helper->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
 
             /**
              * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
@@ -938,7 +944,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Get and format this shipment's delivery date if available.
          */
         $deliveryDate = null;
-        if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryDays(false)) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
+        if ($deliveryOptionsHelper->canUseDeliveryDays(false)) {
             $deliveryDate = $postnlShipment->getDeliveryDate();
             if ($deliveryDate) {
                 $deliveryTime = new DateTime($deliveryDate, new DateTimeZone('UTC'));
@@ -1483,6 +1491,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getStreetData($address)
     {
+        /** @var TIG_PostNL_Helper_Cif $helper */
         $helper = Mage::helper('postnl/cif');
         $storeId = $this->getStoreId();
 
@@ -1567,10 +1576,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $itemCount = 0;
         $content = array();
 
-        /**
-         * @var Mage_Sales_Model_Order_Shipment_Item $item
-         */
+        /** @var Mage_Sales_Model_Resource_Order_Shipment_Item_Collection $items */
         $items = $shipment->getItemsCollection();
+        /** @var Mage_Sales_Model_Order_Shipment_Item $item */
         foreach ($items as $key => $item) {
             if ($item->isDeleted() || $item->getOrderItem()->getProductType() == 'bundle') {
                 $items->removeItemByKey($key);
@@ -1579,6 +1587,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $items = $this->_sortCustomsItems($items);
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -1643,7 +1652,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Sorts an array of shipment items based on a product attribute that is defined in the module configuration.
      *
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Item[] $items
+     * @param Mage_Sales_Model_Resource_Order_Shipment_Item_Collection $items
      *
      * @return array
      */
@@ -1665,6 +1674,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Get all products linked to the requested items.
          */
         $productIds = $items->getColumnValues('product_id');
+        /** @var Mage_Catalog_Model_Resource_Product_Collection $products */
         $products = Mage::getResourceModel('catalog/product_collection')
                         ->setStoreId($this->getStoreId())
                         ->addFieldToFilter('entity_id', array('in' => $productIds))
@@ -1677,6 +1687,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Get the attribute values of the requested sorting attribute.
          */
         $attributeValues = array();
+        /** @var Mage_Catalog_Model_Product $product */
         foreach ($products as $product) {
             $attributeValues[$product->getId()] = $product->getDataUsingMethod($sortingAttribute);
         }
@@ -1803,12 +1814,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customsValue = $product->getDataUsingMethod($customsValueAttribute);
 
         if (empty($customsValue)) {
+            /** @var Mage_Adminhtml_Helper_Data $adminhtmlhelper */
+            $adminhtmlhelper = Mage::helper('adminhtml');
             $productId = $shipmentItem->getProductId();
             /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs value for product <a href="%s" target="_blank">#%s</a>.',
-                    Mage::helper('adminhtml')->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
+                    $adminhtmlhelper->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
                     $productId
                 ),
                 'POSTNL-0092'
@@ -1841,12 +1854,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $description = $product->getDataUsingMethod($descriptionAttribute);
 
         if (empty($description)) {
+            /** @var Mage_Adminhtml_Helper_Data $adminhtmlhelper */
+            $adminhtmlhelper = Mage::helper('adminhtml');
             $productId = $shipmentItem->getProductId();
             /** @noinspection HtmlUnknownTarget */
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Missing customs description for product <a href="%s" target="_blank">#%s</a>.',
-                    Mage::helper('adminhtml')->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
+                    $adminhtmlhelper->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
                     $productId
                 ),
                 'POSTNL-0092'
@@ -2156,6 +2171,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * For custom references we need to replace several optional variables
          */
         if ($referenceType == 'custom') {
+            /** @var Mage_Core_Model_Store $store */
             $store = Mage::getModel('core/store')->load($storeId);
 
             $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);

@@ -70,7 +70,9 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
             return $this->_getData('is_test_mode');
         }
 
-        $isTestMode = Mage::helper('postnl/mijnpakket')->isTestMode();
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
+        $helper = Mage::helper('postnl/mijnpakket');
+        $isTestMode = $helper->isTestMode();
 
         $this->setIsTestMode($isTestMode);
         return $isTestMode;
@@ -133,6 +135,7 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
      */
     protected function _tohtml()
     {
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
         $helper = Mage::helper('postnl/mijnpakket');
         if (!$helper->canLoginWithMijnpakket()) {
             return '';

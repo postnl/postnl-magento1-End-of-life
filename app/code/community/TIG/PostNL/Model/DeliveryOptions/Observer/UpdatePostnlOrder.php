@@ -68,7 +68,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * Check if the order was placed using a PostNL shipping method.
          */
-        $orderIsPostnl = Mage::helper('postnl/carrier')->isPostnlShippingMethod($order->getShippingMethod());
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $orderIsPostnl = $helper->isPostnlShippingMethod($order->getShippingMethod());
 
         /**
          * If the order was placed using a PostNL shipping method, yet does not have a PostNL order object; create one.
@@ -137,7 +139,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
              * Check whether the shipping prices are entered with or without tax.
              */
             $includingTax = false;
-            if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+            /** @var Mage_Tax_Model_Config $config */
+            $config = Mage::getSingleton('tax/config');
+            if ($config->shippingPriceIncludesTax()) {
                 $includingTax = true;
             }
 
@@ -145,14 +149,17 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
              * Calculate the correct fee based on the order type.
              */
             if ($type == $postnlOrder::TYPE_PGE) {
-                $fee = Mage::helper('postnl/deliveryOptions_fee')
-                           ->getExpressFee(false, $includingTax, false);
+                /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+                $helper = Mage::helper('postnl/deliveryOptions_fee');
+                $fee = $helper->getExpressFee(false, $includingTax, false);
             } elseif ($type == $postnlOrder::TYPE_AVOND) {
-                $fee = Mage::helper('postnl/deliveryOptions')
-                           ->getEveningFee(false, $includingTax, false);
+                /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+                $helper = Mage::helper('postnl/deliveryOptions_fee');
+                $fee = $helper->getEveningFee(false, $includingTax, false);
             } elseif ($type == $postnlOrder::TYPE_SUNDAY) {
-                $fee = Mage::helper('postnl/deliveryOptions_fee')
-                    ->getSundayFee(false, $includingTax, false);
+                /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+                $helper = Mage::helper('postnl/deliveryOptions_fee');
+                $fee = $helper->getSundayFee(false, $includingTax, false);
             }
         }
 
@@ -195,6 +202,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          */
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
         if (!$quote || !$quote->getId()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $quote = $order->getQuote();
         }
 
@@ -227,7 +235,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * Convert the quote address to an order address and add it to the order.
          */
         $pakjeGemakAddress->load($pakjeGemakAddress->getId());
-        $orderAddress = Mage::getModel('sales/convert_quote')->addressToOrderAddress($pakjeGemakAddress);
+        /** @var Mage_Sales_Model_Convert_Quote $converter */
+        $converter = Mage::getModel('sales/convert_quote');
+        $orderAddress = $converter->addressToOrderAddress($pakjeGemakAddress);
 
         $order->addAddress($orderAddress)
               ->save();
@@ -256,8 +266,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      *
      * @return $this
      *
-     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
-     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
+     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod|controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
      *
      * @observer checkout_shipping_method_save_options
      *
@@ -265,7 +274,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      */
     public function saveOptions(Varien_Event_Observer $observer)
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         /**
          * Get the PostNL order associated with this quote.
@@ -287,10 +298,12 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * may have been saved.
          */
         $shippingAddress = $quote->getShippingAddress();
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $domesticCountry = $helper->getDomesticCountry();
         if (!$shippingAddress
             || $shippingAddress->getCountryId() != $domesticCountry
-            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+            || !$helper->isPostnlShippingMethod($shippingMethod)
 
         ) {
             $postnlOrder->setOptions(false)
@@ -299,9 +312,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             return $this;
         }
 
-        /**
-         * @var Mage_Core_Controller_Varien_Front $controller
-         */
+        /** @var Mage_Core_Controller_Varien_Front $controller */
+        /** @noinspection PhpUndefinedMethodInspection */
         $controller = $observer->getControllerAction();
         $options    = $controller->getRequest()->getParam('s_method_' . $shippingMethod, array());
         if (empty($options['postnl'])) {
@@ -332,9 +344,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      */
     public function recollectQuoteTotals()
     {
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $quote->setTotalsCollectedFlag(false);
         $quote->getShippingAddress()->setCollectShippingRates(true);
         $quote->collectTotals();
@@ -361,6 +375,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             return false;
         }
 
+        /** @var Mage_Sales_Model_Quote $quote */
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
 
         $utcTimeZone = new DateTimeZone('UTC');
@@ -391,7 +406,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * Check if the shipping method is a PostNL shipping method.
          */
         $shippingMethod = $order->getShippingMethod();
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
@@ -436,7 +453,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
+            /** @noinspection PhpUndefinedMethodInspection */
             switch ($helper->getQuoteFoodType($order->getQuote())) {
                 case 1:
                     return $postnlOrder::TYPE_FOOD;

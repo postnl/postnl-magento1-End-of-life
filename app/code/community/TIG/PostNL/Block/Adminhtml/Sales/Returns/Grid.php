@@ -58,6 +58,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         /** @var Mage_Sales_Model_Resource_Order_Shipment_Collection $collection */
         $collection = Mage::getResourceModel($this->_getCollectionClass());
 
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
         $select = $collection->getSelect();
@@ -141,6 +142,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
     protected function _prepareColumns()
     {
         $salesHelper = Mage::helper('sales');
+        /** @var TIG_PostNL_Helper_Cif $postnlHelper */
         $postnlHelper = Mage::helper('postnl/cif');
 
         $this->addColumn(
@@ -280,6 +282,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
         /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments.
                 $class = '';
@@ -326,7 +329,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
      */
     public function getRowUrl($row)
     {
-        if (!Mage::getSingleton('admin/session')->isAllowed('sales/order/shipment')) {
+        /** @var Mage_Admin_Model_Session $adminSession */
+        $adminSession = Mage::getSingleton('admin/session');
+        if (!$adminSession->isAllowed('sales/order/shipment')) {
             return false;
         }
 

@@ -53,6 +53,7 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
      */
     public function downloadLogs()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -70,7 +71,7 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
          * Get all log files in the log folder and a list of all logs that are allowed for this download.
          */
         $logs          = glob($logFolder . DS . '*.log');
-        $allowedLogs   = Mage::helper('postnl')->getLogFiles();
+        $allowedLogs   = $helper->getLogFiles();
 
         /**
          * Make sure each log is valid and put the valid logs in an array with the log's filename as the key. We need
@@ -150,9 +151,11 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
         /**
          * Get the path to the final zip file.
          */
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
         $zipPath = $logFolder
             . 'TIG_PostNL-logs-'
-            . date('Ymd-His', Mage::getSingleton('core/date')->timestamp())
+            . date('Ymd-His', $dateModel->timestamp())
             . '.zip';
 
         /**

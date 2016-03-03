@@ -181,6 +181,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      */
     public function isAvailable($quote = null)
     {
+        /** @var TIG_PostNL_Helper_Payment $helper */
         $helper = Mage::helper('postnl/payment');
 
         /**
@@ -216,7 +217,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
             $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
 
-            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+            $carrierHelper = Mage::helper('postnl/carrier');
+            if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
                 $helper->log(
                     $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
                 );
@@ -265,6 +268,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         /**
          * Check if the delivery type is not a Sunday Delivery, since COD is not available for Sunday delivery
          */
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getType() == 'Sunday') {
             $helper->log(
@@ -357,7 +361,10 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     {
         $title = parent::getTitle();
 
-        if (Mage::helper('postnl')->isAdmin()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if ($helper->isAdmin()) {
+            /** @var Mage_Adminhtml_Model_Session_Quote $adminSession */
             $adminSession = Mage::getSingleton('adminhtml/session_quote');
             if ($adminSession && $adminSession->getStore() !== null) {
                 $store = $adminSession->getStore();
@@ -365,6 +372,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
                 $store = Mage::app()->getStore();
             }
         } else {
+            /** @var Mage_Checkout_Model_Session $checkoutSession */
             $checkoutSession = Mage::getSingleton('checkout/session');
             if ($checkoutSession && $checkoutSession->getQuote()) {
                 $store = $checkoutSession->getQuote()->getStore();

@@ -67,6 +67,7 @@ abstract class TIG_PostNL_Controller_Adminhtml_Abstract extends Mage_Adminhtml_C
      */
     protected function _checkIsAllowed($actions = array())
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $isAllowed = $helper->checkIsPostnlActionAllowed($actions, false);
 

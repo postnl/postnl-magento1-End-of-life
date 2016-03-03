@@ -75,7 +75,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      */
     public function isTestMode($storeId = false)
     {
-        $testMode = Mage::helper('postnl/cif')->isTestMode($storeId);
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $testMode = $helper->isTestMode($storeId);
 
         return $testMode;
     }
@@ -100,9 +102,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getQuoteShippingDuration($quote);
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $shippingDuration = $helper->getQuoteShippingDuration($quote);
 
-        $date = new DateTime('now', Mage::helper('postnl')->getStoreTimeZone($quote->getStoreId(), true));
+        $date = new DateTime('now', $helper->getStoreTimeZone($quote->getStoreId(), true));
         $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
         /**
@@ -415,7 +419,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         if (isset($data['deliveryDate'])) {
             $location['DeliveryDate'] = $data['deliveryDate'];
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            /** @var Mage_Core_Model_Date $dateModel */
+            $dateModel = Mage::getModel('core/date');
+            $tomorrow = strtotime('tomorrow', $dateModel->timestamp());
             $location['DeliveryDate'] = date('d-m-Y', $tomorrow);
         }
 
@@ -486,6 +492,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         $deliveryOptions = array();
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
         if ($helper->canUsePakjeGemak()) {
             $deliveryOptions[] = self::PAKJEGEMAK_DELIVERY_OPTION;

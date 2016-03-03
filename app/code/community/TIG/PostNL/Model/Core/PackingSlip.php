@@ -264,10 +264,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     {
         $pdf = $this->_getPackingSlipPdf($postnlShipment);
 
-        $labelModel = Mage::getSingleton('postnl_core/label')
-                          ->setLabelSize('A4')
-                          ->setOutputMode('S')
-                          ->setLabelCounter(0);
+        /** @var TIG_PostNL_Model_Core_Label $labelModel */
+        $labelModel = Mage::getSingleton('postnl_core/label');
+        $labelModel = $labelModel->setLabelSize('A4')
+                                 ->setOutputMode('S')
+                                 ->setLabelCounter(0);
 
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
@@ -355,8 +356,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         /**
          * Create a dummy invoice for the totals at the bottom of the packing slip.
          */
-        $invoice  = Mage::getModel('postnl_core/service')->initInvoice($shipment, true);
-        $storeId  = $shipment->getStoreId();
+        /** @var TIG_PostNL_Model_Core_Service $serviceModel */
+        $serviceModel = Mage::getModel('postnl_core/service');
+        $invoice      = $serviceModel->initInvoice($shipment, true);
+        $storeId      = $shipment->getStoreId();
 
         /**
          * Set the store ID and configuration settings.
@@ -1264,8 +1267,9 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if ($commentType == 'static') {
             $commentText = $this->getStringHelper()->stripTags($this->getConfig('comment_text'));
         } else {
-            $commentsCollection = $shipment->getCommentsCollection()
-                                           ->addFieldToFilter('is_visible_on_front', array('eq' => 1));
+            /** @var Mage_Sales_Model_Resource_Order_Shipment_Comment_Collection $commentsCollection */
+            $commentsCollection = $shipment->getCommentsCollection();
+            $commentsCollection = $commentsCollection->addFieldToFilter('is_visible_on_front', array('eq' => 1));
 
             $commentsCollection->getSelect()
                                ->limit(1);

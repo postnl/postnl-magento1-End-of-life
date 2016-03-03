@@ -72,9 +72,11 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         /**
          * First, reset the fee amounts to 0 for this address and the quote.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setPostnlCodFeeTax(0)
                 ->setBasePostnlCodFeeTax(0);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $quote->setPostnlCodFeeTax(0)
               ->setBasePostnlCodFeeTax(0);
 
@@ -83,6 +85,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($address->getPostnlCodFee() < 0.0001 || $address->getBasePostnlCodFee() < 0.0001) {
             return $this;
         }
@@ -120,8 +123,9 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         /**
          * Get all taxes that were applied for this tax request.
          */
-        $appliedRates = Mage::getSingleton('tax/calculation')
-                            ->getAppliedRates($taxRequest);
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+        $appliedRates = $taxCalculation->getAppliedRates($taxRequest);
 
         /**
          * Save the newly applied taxes.
@@ -137,6 +141,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         /**
          * Update the total amounts.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setTaxAmount($address->getTaxAmount() + $feeTax)
                 ->setBaseTaxAmount($address->getBaseTaxAmount() + $baseFeeTax)
                 ->setPostnlCodFeeTax($feeTax)
@@ -149,6 +154,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             $address->addBaseTotalAmount('postnl_base_cod_fee_tax', $baseFeeTax);
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $quote->setPostnlCodFeeTax($feeTax)
               ->setBasePostnlCodFeeTax($baseFeeTax);
 

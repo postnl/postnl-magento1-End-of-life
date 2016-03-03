@@ -66,6 +66,7 @@ class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
     public function getInstructions()
     {
         if (is_null($this->_instructions)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $this->_instructions = $this->getMethod()->getInstructions();
         }
         return $this->_instructions;
@@ -89,6 +90,7 @@ class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
         /**
          * Check if the buspakje calculation mode is set to automatic.
          */
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $calculationMode = $helper->getBuspakjeCalculationMode();
         if ($calculationMode != 'automatic') {
@@ -98,7 +100,9 @@ class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
         /**
          * Check if the current quote fits as a letter box parcel.
          */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
         if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
             return true;
         }

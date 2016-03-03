@@ -67,7 +67,9 @@ class TIG_PostNL_Model_Checkout_Observer_Order
             $postnlOrder->cancel()
                         ->save();
         } catch (Exception $e) {
-            Mage::helper('postnl/checkout')->logException($e);
+            /** @var TIG_PostNL_Helper_Checkout $helper */
+            $helper = Mage::helper('postnl/checkout');
+            $helper->logException($e);
         }
 
         return $this;

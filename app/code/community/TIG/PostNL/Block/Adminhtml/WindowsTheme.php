@@ -64,7 +64,9 @@ class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml
         }
 
         $version = Mage::getVersion();
-        $isEnterprise = Mage::helper('postnl')->isEnterprise();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $isEnterprise = $helper->isEnterprise();
 
         /**
          * Get the minimum version requirement for the current Magento edition.
