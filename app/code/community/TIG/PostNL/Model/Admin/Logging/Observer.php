@@ -67,7 +67,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
             return $this;
         }
 
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
+        /** @var Enterprise_Logging_Model_Observer $loggingObserver */
+        $loggingObserver = Mage::getModel('enterprise_logging/observer');
+        $loggingObserver->controllerPostdispatch($observer);
 
         return $this;
     }

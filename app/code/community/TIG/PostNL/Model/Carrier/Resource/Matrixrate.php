@@ -62,6 +62,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         /**
          * Get the bound values for the select conditions.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $bind = array(
             ':website_id'  => (int) $request->getWebsiteId(),
             ':country_id'  => "%{$request->getDestCountryId()}%",
@@ -192,6 +193,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         $csvFile = $_FILES['groups']['tmp_name']['postnl']['fields']['matrix_import']['value'];
+        /** @noinspection PhpUndefinedMethodInspection */
         $website = Mage::app()->getWebsite($object->getScopeId());
 
         $this->_importWebsiteId     = (int)$website->getId();
@@ -257,9 +259,11 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $adapter->rollback();
             $io->streamClose();
 
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('An error occurred while importing the matrix rates.'),
+                $helper->__('An error occurred while importing the matrix rates.'),
                 'POSTNL-0195'
             );
         }
@@ -330,9 +334,11 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         } catch (Exception $e) {
             $adapter->rollback();
 
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('An error occurred while importing the matrix rates.'),
+                $helper->__('An error occurred while importing the matrix rates.'),
                 'POSTNL-0195'
             );
         }

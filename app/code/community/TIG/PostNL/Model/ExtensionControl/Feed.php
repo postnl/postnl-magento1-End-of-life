@@ -113,7 +113,9 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
             }
 
             if ($feedData) {
-                Mage::getModel('adminnotification/inbox')->parse(array_reverse($feedData));
+                /** @var Mage_AdminNotification_Model_Inbox $inbox */
+                $inbox = Mage::getModel('adminnotification/inbox');
+                $inbox->parse(array_reverse($feedData));
             }
 
         }

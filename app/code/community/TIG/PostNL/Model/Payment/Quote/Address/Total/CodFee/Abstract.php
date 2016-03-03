@@ -157,6 +157,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
             $store
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setProductClassId($codTaxClass);
 
         return $request;
@@ -189,6 +190,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getPostnlCodFee();
         }
 
@@ -217,6 +219,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getBaseCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getBasePostnlCodFee();
         }
 

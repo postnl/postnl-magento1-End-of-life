@@ -94,7 +94,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return $quote;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         $this->setQuote($quote);
         return $quote;
@@ -114,7 +116,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION);
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if ($deliveryDay == 1 && !$helper->canUseSundaySorting()) {
             $shippingDuration++;
         }
 

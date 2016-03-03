@@ -167,7 +167,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
         /**
          * Check if the shipping method used is allowed
          */
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
@@ -192,7 +194,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $shipmentIds = array($shipmentIds);
         }
 
+        /** @var TIG_PostNL_Helper_Carrier $helper */
         $helper                = Mage::helper('postnl/carrier');
+        /** @var Mage_Core_Model_Resource $resource */
         $resource              = Mage::getSingleton('core/resource');
         $postnlShippingMethods = $helper->getPostnlShippingMethods();
 
@@ -216,6 +220,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
          * Get the requested shipments. Only shipments that have been shipped using PostNL will be returned.
          */
         if ($loadPostnlShipments) {
+            /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $shipments */
             $shipments = Mage::getResourceModel('postnl_core/shipment_collection')
                              ->addFieldToFilter('shipment_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
@@ -235,6 +240,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
 
             $processedShipmentIds = $shipments->getColumnValues('shipment_id');
         } else {
+            /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $shipments */
             $shipments = Mage::getResourceModel('sales/order_shipment_collection')
                              ->addFieldToFilter('main_table.entity_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
@@ -266,7 +272,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
         /**
          * If any requested shipments were not found, it's because they were not shipped using PostNL.
          */
-        $adapter = Mage::getSingleton('core/resource')->getConnection('core_read');
+        $adapter = $resource->getConnection('core_read');
         foreach ($missingIds as $shipmentId) {
             /**
              * Get the shipment's increment ID. We need this, because many merchants do not know the difference between
@@ -334,8 +340,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
             );
         }
 
-        $shipment = Mage::getModel('sales/service_order', $order)
-                        ->prepareShipment($this->_getItemQtys($order));
+        /** @var Mage_Sales_Model_Service_Order $serviceModel */
+        $serviceModel = Mage::getModel('sales/service_order', $order);
+        $shipment = $serviceModel->prepareShipment($this->_getItemQtys($order));
 
         $shipment->register();
         $this->_saveShipment($shipment);
@@ -355,6 +362,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     public function createShipments(array $orderIds, $loadExisting = false, $registerExisting = true)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -485,7 +493,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
         /**
          * Check if printing return labels is allowed.
          */
-        if (!Mage::helper('postnl')->isReturnsEnabled($shipment->getStoreId())) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isReturnsEnabled($shipment->getStoreId())) {
             $includeReturnLabels = false;
         }
 
@@ -586,7 +596,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     public function confirmShipment($shipment)
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Load the PostNL shipment.
@@ -625,7 +636,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment->generateBarcodes();
         }
 
-        $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($shipment->getStoreId());
+        $printReturnLabel = $helper->isReturnsEnabled($shipment->getStoreId());
         if ($printReturnLabel && !$postnlShipment->hasReturnBarcode() && $postnlShipment->canGenerateReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }
@@ -739,7 +750,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     public function getMassLabelsOutput($shipments)
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Get the labels from CIF.
@@ -747,14 +759,14 @@ class TIG_PostNL_Model_Core_Service_Shipment
         $labels = array();
         foreach ($shipments as $shipment) {
             try {
-                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                     $shipment->getStoreId()
                 );
 
                 $shipmentLabels = $this->getLabels($shipment, true, $printReturnLabels);
                 $labels = array_merge($labels, $shipmentLabels);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                Mage::helper('postnl/cif')->parseCifException($e);
+                $helper->parseCifException($e);
 
                 $helper->logException($e);
                 $this->addWarning(
@@ -792,6 +804,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
         /**
          * The label wills be base64 encoded strings. Convert these to a single pdf.
          */
+        /** @var TIG_PostNL_Model_Core_Label $label */
         $label  = Mage::getModel('postnl_core/label');
         $output = $label->createPdf($labels);
 
@@ -809,11 +822,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     public function getMassPackingSlipsOutput($shipments)
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Get the packing slip model.
          */
+        /** @var TIG_PostNL_Model_Core_PackingSlip $packingSlipModel */
         $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
 
         /**
@@ -846,7 +861,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
                     );
                 }
 
-                $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                     $shipment->getStoreId()
                 );
 
@@ -859,7 +874,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
 
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                Mage::helper('postnl/cif')->parseCifException($e);
+                $helper->parseCifException($e);
 
                 $helper->logException($e);
                 $this->addWarning(
@@ -915,7 +930,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $orderIds = array($orderIds);
         }
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $postnlShippingMethods = $helper->getPostnlShippingMethods();
 
         /**
          * This regex will filter all non-postnl shipments.
@@ -966,7 +983,9 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment->generateBarcodes();
         }
 
-        $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($postnlShipment->getStoreId());
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
         if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }
@@ -1033,11 +1052,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     protected function _saveShipment($shipment)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $shipment->getOrder()->setIsInProcess(true);
-        Mage::getModel('core/resource_transaction')
-            ->addObject($shipment)
-            ->addObject($shipment->getOrder())
-            ->save();
+        /** @var Mage_Core_Model_Resource_Transaction $transaction */
+        $transaction = Mage::getModel('core/resource_transaction');
+        $transaction->addObject($shipment)
+                    ->addObject($shipment->getOrder())
+                    ->save();
 
         return $this;
     }
@@ -1053,6 +1074,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
      */
     protected function _checkIsAllowed($actions = array())
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $isAllowed = $helper->checkIsPostnlActionAllowed($actions, false);
 

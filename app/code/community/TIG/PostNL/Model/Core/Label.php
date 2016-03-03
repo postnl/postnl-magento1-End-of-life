@@ -486,11 +486,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Open a new pdf object and assign some basic values.
          */
-        /** @noinspection PhpUndefinedClassInspection */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->open();
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetTitle('PostNL Shipping Labels');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetAuthor('PostNL');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetCreator('PostNL');
 
         if (!is_array($labels)
@@ -536,11 +539,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Open a new pdf object and assign some basic values.
          */
-        /** @noinspection PhpUndefinedClassInspection */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->open();
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetTitle('PostNL Packingslip');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetAuthor('PostNL');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetCreator('PostNL');
 
         $pdf->addOrientedPage('P', 'A4');
@@ -614,7 +620,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * However, for safety reasons a limit of 200 is used. By default you shouldn't be able to select more than 200
          * in the shipment grid.
          */
-        if(count($labels) > self::MAX_LABEL_COUNT && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        if(count($labels) > self::MAX_LABEL_COUNT && !$helper->allowInfinitePrinting()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s',

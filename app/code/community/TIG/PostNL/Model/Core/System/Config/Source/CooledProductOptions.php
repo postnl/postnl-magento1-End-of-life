@@ -80,7 +80,9 @@
             );
 
             if (!$country) {
-                $country = Mage::helper('postnl')->getDomesticCountry();
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $country = $helper->getDomesticCountry();
             }
 
             if ($country) {

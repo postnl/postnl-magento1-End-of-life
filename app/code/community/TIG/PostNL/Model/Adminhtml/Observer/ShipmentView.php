@@ -74,8 +74,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             return $this;
         }
 
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
 
         /**
          * check if the extension is active
@@ -90,7 +90,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          * @var Mage_Sales_Model_Order_Shipment $shipment
          */
         $shipment = Mage::registry('current_shipment');
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+        if (!$helper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return $this;
         }
 
@@ -205,7 +205,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         if ($printReturnLabelAllowed
             && $postnlShipment->canPrintReturnLabels()
-            && Mage::helper('postnl')->isReturnsEnabled($postnlShipment->getStoreId())
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
         ) {
             $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
 
@@ -247,7 +247,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         if ($sendReturnLabelAllowed
             && $postnlShipment->canSendReturnLabelEmail()
-            && Mage::helper('postnl')->isReturnsEnabled($postnlShipment->getStoreId())
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
         ) {
             $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
 
@@ -393,7 +393,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getPrintShippingLabelUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/printLabel',
             array('shipment_id' => $shipmentId)
         );
@@ -410,7 +412,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getPrintReturnLabelUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/printReturnLabel',
             array('shipment_id' => $shipmentId)
         );
@@ -427,7 +431,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getPrintPackingSlipUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/printPackingSlip',
             array('shipment_id' => $shipmentId)
         );
@@ -444,7 +450,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getResetConfirmationUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/resetConfirmation',
             array('shipment_id' => $shipmentId)
         );
@@ -461,7 +469,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getRemoveLabelsUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/removeLabels',
             array('shipment_id' => $shipmentId)
         );
@@ -478,7 +488,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getResendTrackAndTraceUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/sendTrackAndTrace',
             array('shipment_id' => $shipmentId)
         );
@@ -495,7 +507,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getConfirmUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/confirm',
             array(
                 'shipment_id'    => $shipmentId,
@@ -515,7 +529,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getConvertToBuspakjeUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/convertToBuspakje',
             array(
                 'shipment_id'    => $shipmentId,
@@ -535,7 +551,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getConvertToPackageUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/convertToPackage',
             array(
                 'shipment_id'    => $shipmentId,
@@ -555,7 +573,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function getSendReturnLabelEmailUrl($shipmentId)
     {
-        $url = Mage::helper('adminhtml')->getUrl(
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/sendReturnLabelEmail',
             array(
                 'shipment_id'    => $shipmentId,

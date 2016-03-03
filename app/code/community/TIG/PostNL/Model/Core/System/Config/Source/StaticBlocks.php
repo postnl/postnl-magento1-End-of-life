@@ -114,6 +114,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StaticBlocks
 
             $blocksCollection->addStoreFilter($store);
         } elseif ($request->getParam('website')) {
+            /** @var Mage_Core_Model_Website $website */
             $website = Mage::getModel('core/website')->load($request->getParam('website'));
             $stores = $website->getStoreIds();
 

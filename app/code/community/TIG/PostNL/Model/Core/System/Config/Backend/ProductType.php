@@ -38,13 +38,15 @@
  */
 class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_Model_Config_Data
 {
-
     const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
 
     const PRODUCTY_TYPE_NON_FOOD      = '0';
     const PRODUCTY_TYPE_DRY_GROCERIES = '1';
     const PRODUCTY_TYPE_COOL_PRODUCTS = '2';
 
+    /**
+     * @var array
+     */
     protected $_validOptions = array(
         self::PRODUCTY_TYPE_NON_FOOD,
         self::PRODUCTY_TYPE_DRY_GROCERIES,
@@ -74,9 +76,10 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_
         $value = $this->getValue();
 
         /** @var Mage_Eav_Model_Entity_Attribute $attributeModel */
-        $attributeModel = Mage::getModel('eav/entity_attribute')
-            ->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_PRODUCT_TYPE);
+        $attributeModel = Mage::getModel('eav/entity_attribute');
+        $attributeModel->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_PRODUCT_TYPE);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $attributeModel->setDefaultValue($value)->save();
     }
 }

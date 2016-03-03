@@ -67,10 +67,13 @@ class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
         if (!$this->_depends) {
             return '';
         }
+
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
         return '<script type="text/javascript">'
             . 'var formElementDependenceController = new FormElementDependenceController('
             . $this->_getDependsJson()
-            . ($this->_configOptions ? ', ' . Mage::helper('core')->jsonEncode($this->_configOptions) : '')
+            . ($this->_configOptions ? ', ' . $helper->jsonEncode($this->_configOptions) : '')
             . '); </script>';
     }
 }

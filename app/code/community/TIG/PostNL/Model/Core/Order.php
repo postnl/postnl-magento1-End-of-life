@@ -511,6 +511,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             );
         }
 
+        /** @var TIG_PostNL_Model_Checkout_Cif $cif */
         $cif = Mage::getModel('postnl_checkout/cif');
         $cif->updateOrder($this, true);
 

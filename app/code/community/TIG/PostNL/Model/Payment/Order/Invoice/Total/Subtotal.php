@@ -101,6 +101,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
                 $includeShippingTax = false;
             }
 
+            /** @noinspection PhpUndefinedMethodInspection */
             if ($previousInvoice->getPostnlCodFeeTax()) {
                 $includeCodFeeTax = false;
             }
@@ -115,7 +116,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
         }
 
         if ($includeCodFeeTax) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $allowedSubtotalInclTax     -= $order->getPostnlCodFeeTax();
+            /** @noinspection PhpUndefinedMethodInspection */
             $baseAllowedSubtotalInclTax -= $order->getBasePostnlCodFeeTax();
         }
 

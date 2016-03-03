@@ -86,7 +86,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $storeId = $this->getStoreId();
         }
 
-        $testMode = Mage::helper('postnl/checkout')->isTestMode($storeId);
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        $testMode = $helper->isTestMode($storeId);
 
         return $testMode;
     }
@@ -146,7 +148,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     public function prepareOrder($quote = null)
     {
         if (is_null($quote)) {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            /** @var Mage_Checkout_Model_Session $session */
+            $session = Mage::getSingleton('checkout/session');
+            $quote = $session->getQuote();
         }
 
         if (!$quote) {
@@ -239,7 +243,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     public function readOrder($quote =  null)
     {
         if (is_null($quote)) {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            /** @var Mage_Checkout_Model_Session $session */
+            $session = Mage::getSingleton('checkout/session');
+            $quote = $session->getQuote();
         }
 
         if (!$quote) {
@@ -372,7 +378,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Get all payment method configuration options as well as an array of all payment method supported by PostNL
          */
         $paymentMethods = Mage::getStoreConfig(self::XPATH_CHECKOUT_PAYMENT_METHODS, $storeId);
-        $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        $postnlPaymentMethods = $helper->getCheckoutPaymentMethods();
 
         $allowedMethods = array();
         foreach ($paymentMethods as $method => $value) {
@@ -428,6 +436,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getCustomer()
     {
+        /** @var Mage_Customer_Model_Session $session */
         $session = Mage::getSingleton('customer/session');
         if (!$session->isLoggedIn()) {
             return false;
@@ -517,7 +526,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         $extRef        = $quote->getId();
-        $orderDate     = date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp());
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel     = Mage::getModel('core/date');
+        $orderDate     = date('d-m-Y H:i:s', $dateModel->timestamp());
         $subtotal      = round($baseSubtotalIncltax, 2);
         $shippingDate  = $orderDate;
         $shippingCosts = round($baseShippingAmount, 2);
@@ -657,6 +668,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
              $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
              $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
 
+             /** @var Mage_Core_Model_Store $store */
              $store = Mage::getModel('core/store')->load($storeId);
              $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
          }
@@ -707,11 +719,14 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $priceOverview   = Mage::getStoreConfigFlag(self::XPATH_ALLOW_PRICE_OVERVIEW, $storeId);
         $agreeConditions = Mage::getStoreConfigFlag(self::XPATH_AGREE_CONDITIONS, $storeId);
 
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+
         /**
          * If the module cannot use PakjeGemak, retail locations are not allowed in PostNL Checkout
          */
         if (!$retailLocation
-            || !Mage::helper('postnl')->canUsePakjeGemak()
+            || !$helper->canUsePakjeGemak()
         ) {
             $restrictions['NoRetailLocation'] = 'true';
         } else {
@@ -722,7 +737,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * If the module cannot use EPS, foreign addresses are not allowed in PostNL Checkout
          */
         if (!$foreignAddress
-            || !Mage::helper('postnl')->canUseEps()
+            || !$helper->canUseEps()
         ) {
             $restrictions['NoForeignAddress'] = 'true';
         } else {
@@ -811,8 +826,11 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
 
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+
         $webshopId = Mage::getStoreConfig(self::XPATH_WEBSHOP_ID, $storeId);
-        $webshopId = Mage::helper('core')->decrypt($webshopId);
+        $webshopId = $helper->decrypt($webshopId);
 
         $webshop = array(
             'IntRef' => $webshopId,

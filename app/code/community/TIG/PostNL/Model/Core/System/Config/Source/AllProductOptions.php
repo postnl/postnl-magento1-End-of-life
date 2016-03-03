@@ -481,6 +481,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      */
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if (!isset($flags['countryLimitation'])) {
             $domesticCountry = $helper->getDomesticCountry();
@@ -530,6 +531,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     {
         $options = $this->getGroupedOptions();
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if ($helper->canUseEpsBEOnlyOption()) {
             $options['eu_options']['value']['4955'] = array(

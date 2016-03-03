@@ -231,6 +231,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _filterAvailable(&$options)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
 
