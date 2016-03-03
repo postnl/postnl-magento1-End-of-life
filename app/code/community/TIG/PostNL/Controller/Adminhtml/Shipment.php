@@ -309,6 +309,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
      */
     protected function _addWarningMessages($warnings, $headerText = '')
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -384,7 +385,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
         /**
          * Add the warnings to the session.
          */
-        Mage::helper('postnl')->addSessionMessage('adminhtml/session', null, 'notice',
+        $helper->addSessionMessage('adminhtml/session', null, 'notice',
             $warningMessage
         );
 

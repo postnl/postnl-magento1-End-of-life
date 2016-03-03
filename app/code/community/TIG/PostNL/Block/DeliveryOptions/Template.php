@@ -98,8 +98,11 @@ abstract class TIG_PostNL_Block_DeliveryOptions_Template extends TIG_PostNL_Bloc
             return $this->_canUseDeliveryOptions;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
         $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
 

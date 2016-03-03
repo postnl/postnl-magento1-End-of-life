@@ -185,7 +185,9 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
      */
     public function canUseResponsive()
     {
-        return Mage::helper('postnl/deliveryOptions')->canUseResponsive();
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        return $helper->canUseResponsive();
     }
 
     /**
@@ -195,8 +197,11 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
      */
     protected function _toHtml()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
         if (!$helper->canUseDeliveryOptions($quote)) {
