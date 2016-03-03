@@ -131,6 +131,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function cleanTempLabels()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -242,6 +243,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function cleanOldLocks()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -290,7 +292,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Locks may only exist for 3600 seconds (1 hour) before being removed
          */
         $maxFileStorageTime = 3600;
-        $now = Mage::getModel('core/date')->gmtTimestamp();
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
+        $now = $dateModel->gmtTimestamp();
         $maxTimestamp = $now - $maxFileStorageTime; //1 hour ago
 
         $helper->cronLog("{$fileCount} locks found.");
@@ -331,6 +335,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function getBarcodes()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl/cif');
 
         /**
@@ -357,6 +362,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog("Getting barcodes for {$postnlShipmentCollection->getSize()} shipments.");
 
         $counter = 1000;
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             if (!$postnlShipment->getShipment(false)) {
                 continue;
@@ -406,6 +412,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function updateShippingStatus()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -461,6 +468,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Request a shipping status update
          */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
              * Attempt to update the shipping status. Continue with the next one if it fails.
@@ -488,7 +496,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             } catch (Exception $e) {
                 $postnlShipment->unlock();
 
-                Mage::helper('postnl')->logException($e);
+                $helper->logException($e);
             }
         }
 
@@ -504,6 +512,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function updateReturnStatus()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -598,6 +607,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Request a return status update
          */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
              * Attempt to update the return status. Continue with the next one if it fails.
@@ -627,7 +637,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             } catch (Exception $e) {
                 $postnlShipment->unlock();
 
-                Mage::helper('postnl')->logException($e);
+                $helper->logException($e);
             }
         }
 
@@ -647,6 +657,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     protected function _parseErrorCodes($e, $postnlShipment, $isReturnStatus = false)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -682,7 +693,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
             $yesterday = new DateTime('now', new DateTimeZone('UTC'));
-            $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+            /** @var Mage_Core_Model_Date $dateModel */
+            $dateModel = Mage::getSingleton('core/date');
+            $yesterday->setTimestamp($dateModel->gmtTimestamp())
                       ->sub(new DateInterval('P1D'));
 
             $yesterday = $yesterday->getTimestamp();
@@ -720,6 +733,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function expireConfirmation()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl/cif');
 
         /**
@@ -745,7 +759,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
         );
 
         $expireTimestamp = new DateTime('now', new DateTimeZone('UTC'));
-        $expireTimestamp->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
+        $expireTimestamp->setTimestamp($dateModel->gmtTimestamp())
                         ->sub(new DateInterval("P{$confirmationExpireDays}D"));
 
         $expireDate = $expireTimestamp->format('Y-m-d H:i:s');
@@ -794,6 +810,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Reset the shipments to 'unconfirmed' status
          */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
              * Attempt to reset the shipment to a pre-confirmed status
@@ -837,6 +854,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function sendTrackAndTraceEmail()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -870,14 +888,16 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
         $twentyMinutesAgo = new DateTime('now', new DateTimeZone('UTC'));
-        $twentyMinutesAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+        $twentyMinutesAgo->setTimestamp($dateModel->gmtTimestamp())
                          ->sub(new DateInterval('PT20M'));
 
         $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
 
         $oneDayAgo = new DateTime('now', new DateTimeZone('UTC'));
-        $oneDayAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+        $oneDayAgo->setTimestamp($dateModel->gmtTimestamp())
                   ->sub(new DateInterval('P1DT20M'));
 
         $oneDayAgo = $oneDayAgo->format('Y-m-d H:i:s');
@@ -959,6 +979,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Send the track and trace email for all shipments.
          */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             if (!$postnlShipment->getShipment(false)) {
                 continue;
@@ -1000,6 +1021,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function removeOldLabels()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -1022,6 +1044,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Get the label collection
          */
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection $labelsCollection */
         $labelsCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
 
         /**
@@ -1029,6 +1052,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         $labelsCollection->addFieldToSelect('label_id');
 
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
         $select = $labelsCollection->getSelect();
@@ -1112,6 +1136,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Delete the labels
          */
+        /** @var TIG_PostNL_Model_Core_Shipment_Label $label */
         foreach ($labelsCollection as $label) {
             $helper->cronLog("Deleting label #{$label->getId()}.");
             $label->delete();
@@ -1130,6 +1155,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function updateProductAttribute()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $helper->cronLog($helper->__('UpdateProductAttribute cron starting...'));
@@ -1166,6 +1192,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Get all products that need to be updated.
          */
+        /** @var Mage_Catalog_Model_Resource_Product_Collection $productCollection */
         $productCollection = Mage::getResourceModel('catalog/product_collection')
                                  ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
                                  ->addFieldToFilter(
@@ -1198,12 +1225,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 /**
                  * Update the attributes of these products.
                  */
-                Mage::getSingleton('catalog/product_action')
-                    ->updateAttributes(
-                        $allIds,
-                        $currentAttributeData[0],
-                        Mage_Core_Model_App::ADMIN_STORE_ID
-                    );
+                /** @var Mage_Catalog_Model_Product_Action $productAction */
+                $productAction = Mage::getSingleton('catalog/product_action');
+                $productAction->updateAttributes(
+                    $allIds,
+                    $currentAttributeData[0],
+                    Mage_Core_Model_App::ADMIN_STORE_ID
+                );
             } catch (Exception $e) {
                 /**
                  * If an error occurred not all products were processed, so the cron is not finished quite yet.
@@ -1264,11 +1292,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
 
-        Mage::getModel('core/config_data')
-            ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
-            ->setValue(null)
-            ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
-            ->save();
+        /** @var Mage_Core_Model_Config_Data $configData */
+        $configData = Mage::getModel('core/config_data')
+                          ->load(TIG_PostNL_Model_Resource_Setup::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path');
+        $configData->setValue(null)
+                   ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
+                   ->save();
 
         Mage::app()->getCacheInstance()->cleanType('config');
 
@@ -1283,6 +1312,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function updateDateTimeZone()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $helper->cronLog($helper->__('UpdateDateTimeZone cron starting...'));
@@ -1327,11 +1357,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 Mage_Core_Model_App::ADMIN_STORE_ID
             );
 
-            Mage::getModel('core/config_data')
-                ->load(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path')
-                ->setValue(null)
-                ->setPath(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')
+                              ->load(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path');
+            $configData->setValue(null)
+                       ->setPath(TIG_PostNL_Model_Resource_Setup::UPDATE_DATE_TIME_ZONE_STRING_PATH)
+                       ->save();
         }
 
         Mage::getConfig()->saveConfig(
@@ -1364,8 +1395,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipments->addFieldToFilter('entity_id', array('in' => $ids));
         $postnlShipments->getSelect()->limit(100);
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipments as $postnlShipment) {
             $helper->cronLog($helper->__('Updating shipment ID: %s', $postnlShipment->getId()));
 
@@ -1434,8 +1467,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlOrders->addFieldToFilter('entity_id', array('in' => $ids));
         $postnlOrders->getSelect()->limit(100);
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         foreach ($postnlOrders as $postnlOrder) {
             $helper->cronLog($helper->__('Updating order ID: %s', $postnlOrder->getId()));
 
@@ -1497,6 +1532,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function integrityCheck()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -1508,6 +1544,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog($helper->__('IntegrityCheck cron starting...'));
 
+        /** @var TIG_PostNL_Model_Core_Service_IntegrityCheck $integrityCheckModel */
         $integrityCheckModel = Mage::getModel('postnl_core/service_integrityCheck');
         try {
             $errors = $integrityCheckModel->integrityCheck();
