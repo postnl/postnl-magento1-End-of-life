@@ -171,6 +171,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             )
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         return $conversionObject->getConversionArray();
     }
 
@@ -301,6 +302,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
              * Send a ping request to see if the PostNL Checkout service is available
              */
             try {
+                /** @var TIG_PostNL_Model_Checkout_Cif $cif */
                 $cif = Mage::getModel('postnl_checkout/cif');
                 $result = $cif->ping();
             } catch (Exception $e) {

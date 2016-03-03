@@ -188,7 +188,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return true;
         }
 
-        $addressLines = Mage::helper('postnl/addressValidation')->getAddressLineCount($storeId);
+        $addressLines = $this->getAddressLineCount($storeId);
         if ($addressLines < 2) {
             $this->_useSplitStreet[$storeId] = false;
             return false;
@@ -366,6 +366,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      */
     public function getAttributeValidationClass($attribute)
     {
+        /** @var Mage_Customer_Helper_Address $addressHelper */
         $addressHelper = Mage::helper('customer/address');
         if (is_callable(array($addressHelper, 'getAttributeValidationClass'))) {
             return $addressHelper->getAttributeValidationClass($attribute);
@@ -593,8 +594,9 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             if ($request->getParam('store')) {
                 $lineCount = Mage::getStoreConfig(self::XPATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
             } elseif ($request->getParam('website')) {
+                /** @var Mage_Core_Model_Website $website */
                 $website   = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
-                $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES, $website->getId());
+                $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES);
             } else {
                 $lineCount = Mage::getStoreConfig(
                     self::XPATH_COMMUNITY_STREET_LINES,
@@ -623,6 +625,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             if ($request->getParam('store')) {
                 $storeId = $request->getParam('store');
             } elseif ($request->getParam('website')) {
+                /** @var Mage_Core_Model_Website $website */
                 $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
                 $storeId = $website->getDefaultStore()->getId();
             } else {
@@ -630,7 +633,9 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             }
         }
 
-        $lineCount = Mage::helper('customer/address')->getStreetLines($storeId);
+        /** @var Mage_Customer_Helper_Address $addressHelper */
+        $addressHelper = Mage::helper('customer/address');
+        $lineCount = $addressHelper->getStreetLines($storeId);
         return $lineCount;
     }
 

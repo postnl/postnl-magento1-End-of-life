@@ -321,6 +321,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getStandardProductCodes($flat = true, $destination = false)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $standardProductCodes */
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
 
         $productCodes = $standardProductCodes->getAvailableOptions($flat, $destination);
@@ -338,6 +339,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getStandardCodProductCodes($flat = true, $destination = false)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $standardProductCodes */
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
 
         $productCodes = $standardProductCodes->getAvailableCodOptions($flat, $destination);
@@ -354,8 +356,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getAvondProductCodes($flat = true)
     {
-        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondOptions($flat);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $productCodes */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $productCodes->getAvailableAvondOptions($flat);
     }
 
     /**
@@ -367,8 +370,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getAvondCodProductCodes($flat = true)
     {
-        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondCodOptions($flat);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $productCodes */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $productCodes->getAvailableAvondCodOptions($flat);
     }
 
     /**
@@ -381,6 +385,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getPakjeGemakProductCodes($flat = true, $destination = false)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
 
         if ($destination == 'BE') {
@@ -399,6 +404,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getPakjeGemakCodProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
         return $pakjeGemakProductCodes->getAvailableCodOptions($flat);
     }
@@ -412,6 +418,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getPgeProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
         return $pakjeGemakProductCodes->getAvailablePgeOptions($flat);
     }
@@ -425,6 +432,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getPgeCodProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
         return $pakjeGemakProductCodes->getAvailablePgeCodOptions($flat);
     }
@@ -438,6 +446,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getPakketautomaatProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakketautomaatProductOptions $pakketautomaatProductCodes */
         $pakketautomaatProductCodes = Mage::getSingleton(
             'postnl_core/system_config_source_pakketautomaatProductOptions'
         );
@@ -453,6 +462,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getEuProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euProductCodes */
         $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
         return $euProductCodes->getAvailableOptions($flat);
     }
@@ -466,6 +476,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getGlobalProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_GlobalpackShipmentType $globalProductCodes */
         $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
         return $globalProductCodes->getAvailableOptions($flat);
     }
@@ -479,6 +490,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getBuspakjeProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BuspakjeProductOptions $buspakjeProductCodes */
         $buspakjeProductCodes = Mage::getSingleton('postnl_core/system_config_source_buspakjeProductOptions');
         return $buspakjeProductCodes->getAvailableOptions($flat);
     }
@@ -492,6 +504,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getSundayProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_SundayProductOptions $sundayProductCodes */
         $sundayProductCodes = Mage::getSingleton('postnl_core/system_config_source_sundayProductOptions');
         return $sundayProductCodes->getAvailableOptions($flat);
     }
@@ -505,8 +518,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getSameDayProductCodes($flat = true)
     {
-        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableSameDayOptions($flat);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $productCodes */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $productCodes->getAvailableSameDayOptions($flat);
     }
 
     /**
@@ -516,6 +530,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getFoodProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_FoodProductOptions $foodProductCodes */
         $foodProductCodes = Mage::getSingleton('postnl_core/system_config_source_foodProductOptions');
         return $foodProductCodes->getAvailableSameDayOptions($flat);
     }
@@ -527,6 +542,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getCooledProductCodes($flat = true)
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_CooledProductOptions $cooledProductCodes */
         $cooledProductCodes = Mage::getSingleton('postnl_core/system_config_source_cooledProductOptions');
         return $cooledProductCodes->getAvailableSameDayOptions($flat);
     }
@@ -663,6 +679,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getProductOptionsForShipment($shipment)
     {
         if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
             $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
             $tempPostnlShipment->setShipment($shipment);
         } else {
@@ -692,6 +709,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isPakjeGemakShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -718,6 +736,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isPakketautomaatShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -744,6 +763,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isAvondShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -770,6 +790,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isDomesticShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -796,6 +817,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isEuShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -822,6 +844,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isGlobalShipment();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -848,6 +871,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isCod();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -872,6 +896,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isSunday();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -896,6 +921,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $shipment->isMonday();
         }
 
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
@@ -912,6 +938,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getDefaultProductOptionForShipment($shipment)
     {
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipment($shipment);
 
@@ -963,6 +990,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getParcelCount($shipment)
     {
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipment($shipment);
 
@@ -1042,6 +1070,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function postnlShipmentExists($shipmentId)
     {
+        /** @var Mage_Core_Model_Resource $coreResource */
         $coreResource = Mage::getSingleton('core/resource');
         $readAdapter = $coreResource->getConnection('core_read');
 
@@ -1075,6 +1104,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function barcodeExists($barcode)
     {
+        /** @var Mage_Core_Model_Resource $coreResource */
         $coreResource = Mage::getSingleton('core/resource');
         $readAdapter = $coreResource->getConnection('core_read');
 
@@ -1138,7 +1168,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $splitStreet = Mage::helper('postnl/addressValidation')->useSplitStreet($storeId);
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        $splitStreet = $helper->useSplitStreet($storeId);
 
         /**
          * Website uses multi-line address mode
@@ -1197,6 +1229,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     protected function _getMultiLineStreetData($storeId, $address)
     {
+        /** @var TIG_PostNL_Helper_AddressValidation $addressHelper */
         $addressHelper = Mage::helper('postnl/addressValidation');
 
         $streetnameField = $addressHelper->getStreetnameField($storeId);

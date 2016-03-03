@@ -104,7 +104,9 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
         /**
          * MijnPakket login is only available if delivery options are enabled.
          */
-        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if (!$helper->isDeliveryOptionsEnabled()) {
             return false;
         }
 
@@ -127,7 +129,9 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
             return $cache->getPostnlMijnpakketCanShowNotification();
         }
 
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if (!$helper->canUseDeliveryOptions()) {
             return false;
         }
 

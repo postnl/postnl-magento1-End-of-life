@@ -140,7 +140,9 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     {
         $value = (string) $value;
 
-        $encrypted = Mage::helper('core')->encrypt($value);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $encrypted = $helper->encrypt($value);
 
         return $encrypted;
     }

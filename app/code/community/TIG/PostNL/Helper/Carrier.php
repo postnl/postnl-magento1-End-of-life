@@ -281,9 +281,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         /**
          * Need for shipping methods that use insurance based on price of physical products.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $packagePhysicalValue = $shippingAddress->getBaseVirtualAmount();
         $request->setPackagePhysicalValue($packagePhysicalValue);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setFreeMethodWeight($shippingAddress->getFreeMethodWeight());
 
         $request->setStoreId($store->getId());
@@ -294,12 +296,15 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
          */
         $request->setBaseCurrency($store->getBaseCurrency());
         $request->setPackageCurrency($store->getCurrentCurrency());
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setLimitCarrier($shippingAddress->getLimitCarrier());
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setBaseSubtotalInclTax(
             $shippingAddress->getBaseSubtotalInclTax() + $shippingAddress->getBaseExtraTaxAmount()
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setParcelType('pakje_gemak');
 
         $rawResult = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
@@ -311,17 +316,25 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         /**
          * Convert the raw result from the database to a shipping rate result object.
          */
+        /** @var TIG_PostNL_Model_Carrier_Postnl $carrier */
         $carrier = Mage::getModel('postnl_carrier/postnl');
+        /** @var Mage_Shipping_Model_Rate_Result $result */
         $result  = Mage::getModel('shipping/rate_result');
+        /** @var Mage_Shipping_Model_Rate_Result_Method $method */
         $method  = Mage::getModel('shipping/rate_result_method');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $method->setCarrier('postnl');
+        /** @noinspection PhpUndefinedMethodInspection */
         $method->setCarrierTitle($carrier->getConfigData('title'));
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $method->setMethod('flatrate');
+        /** @noinspection PhpUndefinedMethodInspection */
         $method->setMethodTitle($carrier->getConfigData('name'));
 
         $method->setPrice($rawResult['price']);
+        /** @noinspection PhpUndefinedMethodInspection */
         $method->setCost(0);
 
         $result->append($method);
@@ -419,10 +432,13 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         } elseif (is_object($destination) && $destination instanceof Varien_Object) {
+            /** @noinspection PhpUndefinedMethodInspection */
             if (!$destination->getCountry()) {
                 throw new InvalidArgumentException('Destination must contain a country code.');
             }
+            /** @noinspection PhpUndefinedMethodInspection */
             $countryCode = $destination->getCountry();
+            /** @noinspection PhpUndefinedMethodInspection */
             $postcode    = str_replace(' ', '', $destination->getPostcode());
         } else {
             throw new InvalidArgumentException('Destination must be an array or an instance of Varien_Object.');

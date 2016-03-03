@@ -95,7 +95,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
                 $method,
                 $soapParams
             );
-            
+
             /** @var TIG_PostNL_Helper_AddressValidation $helper */
             $helper = Mage::helper('postnl/addressValidation');
             $helper->logCendrisCall($client);

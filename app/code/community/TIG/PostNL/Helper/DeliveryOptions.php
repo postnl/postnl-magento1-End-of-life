@@ -278,7 +278,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getEveningFee($formatted, $includingTax, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getEveningFee($formatted, $includingTax, $convert);
     }
 
     /**
@@ -296,7 +299,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getExpressFee($formatted, $includingTax, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getExpressFee($formatted, $includingTax, $convert);
     }
 
     /**
@@ -315,7 +321,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -334,7 +343,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -353,7 +365,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getOptionFee($option, $formatted, $includingTax, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getOptionFee($option, $formatted, $includingTax, $convert);
     }
 
     /**
@@ -533,12 +548,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $shippingAddress = null;
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
         if ($postnlOrder->getOrder()) {
             $shippingAddress = $postnlOrder->getOrder()->getShippingAddress();
         } elseif ($postnlOrder->getQuote()) {
             $shippingAddress = $postnlOrder->getQuote()->getShippingAddress();
-        } elseif (Mage::getSingleton('checkout/session')->getQuote()) {
-            $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
+        } elseif ($session->getQuote()) {
+            $shippingAddress = $session->getQuote()->getShippingAddress();
         }
 
         /**
@@ -572,8 +589,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($productCode) {
             $deliveryOptionsInfo['product_code'] = $productCode;
 
-            $allProductOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                     ->getOptions(array(), true);
+            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $productOptionsModel */
+            $productOptionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+            $allProductOptions = $productOptionsModel->getOptions(array(), true);
 
             if (array_key_exists($productCode, $allProductOptions)) {
                 $deliveryOptionsInfo['product_option'] = $allProductOptions[$productCode];
@@ -801,9 +819,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If no quote was specified, try to load the quote.
          */
         if (!$quote && $this->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+            /** @var Mage_Adminhtml_Model_Session_Quote $session */
+            $session = Mage::getSingleton('adminhtml/session_quote');
+            $quote = $session->getQuote();
         } elseif(!$quote) {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            /** @var Mage_Checkout_Model_Session $session */
+            $session = Mage::getSingleton('checkout/session');
+            $quote = $session->getQuote();
         }
 
         if (!$quote) {
@@ -814,6 +836,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Send a SOAP request to PostNL to get the earliest possible delivery date.
          */
         try {
+            /** @var TIG_PostNL_Model_DeliveryOptions_Cif $cif */
             $cif      = Mage::getModel('postnl_deliveryoptions/cif');
             $response = $cif->setStoreId(Mage::app()->getStore()->getId())
                             ->getDeliveryDate($postcode, $quote);
@@ -864,9 +887,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If no quote was specified, try to load the quote.
          */
         if (!$quote && $this->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+            /** @var Mage_Adminhtml_Model_Session_Quote $session */
+            $session = Mage::getSingleton('adminhtml/session_quote');
+            $quote = $session->getQuote();
         } elseif(!$quote) {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            /** @var Mage_Checkout_Model_Session $session */
+            $session = Mage::getSingleton('checkout/session');
+            $quote = $session->getQuote();
         }
 
         if (!$quote) {
@@ -1038,6 +1065,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Get the shipping duration of all products.
          */
         $durationArray  = array();
+        /** @var Mage_Catalog_Model_Product $product */
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
@@ -1068,7 +1096,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-        return Mage::helper('postnl/deliveryOptions_fee')->getPriceWithTax($price, $includingTax, $formatted, $convert);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getPriceWithTax($price, $includingTax, $formatted, $convert);
     }
 
     /**
@@ -1453,8 +1484,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if any PGE product options are available.
          */
-        $pgeOptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
-                          ->getAvailablePgeOptions($storeId);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pgeOptionsModel */
+        $pgeOptionsModel = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions');
+        $pgeOptions = $pgeOptionsModel->getAvailablePgeOptions($storeId);
 
         $allowed = false;
         if (!empty($pgeOptions)) {
@@ -1697,8 +1729,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if any pakketautomaat product options are available.
          */
-        $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
-                                     ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakketautomaatProductOptions $pakketautomaatOptionsModel */
+        $pakketautomaatOptionsModel = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions');
+        $pakketautomaatOptions = $pakketautomaatOptionsModel->getAvailableOptions();
 
         $allowed = false;
         if (!empty($pakketautomaatOptions)) {
@@ -2088,8 +2121,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $eveningOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
-                              ->getAvailableAvondOptions($storeId);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $eveningOptionsModel */
+        $eveningOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
+        $eveningOptions = $eveningOptionsModel->getAvailableAvondOptions($storeId);
 
         $allowed = false;
         if (!empty($eveningOptions)) {
@@ -2256,7 +2290,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $allowed = $this->_canUseSameDayDelivery();
 
         if ($allowed && $checkCutOffTime) {
-            $isPastCutOff = Mage::helper('postnl/date')->isPastCutOff(
+            /** @var TIG_PostNL_Helper_Date $helper */
+            $helper = Mage::helper('postnl/date');
+            $isPastCutOff = $helper->isPastCutOff(
                 new DateTime('now', new DateTimeZone('UTC')),
                 Mage::app()->getStore()->getId(),
                 'sameday'
@@ -2592,7 +2628,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $stockItem = $product->getStockItem();
 
             if (!$stockItem) {
-                $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+                /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
+                $stockItem = Mage::getModel('cataloginventory/stock_item');
+                $stockItem->loadByProduct($product);
             }
 
             $itemQty = $item->getParentItem() ? $item->getParentItem()->getQty() : $item->getQty();
@@ -3087,8 +3125,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if any valid product options are available.
          */
-        $statedAddressOnlyOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')
-                                        ->getOptions(array('statedAddressOnly' => true), true, true);
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $statedAddressOnlyOptionsModel */
+        $statedAddressOnlyOptionsModel = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $statedAddressOnlyOptions = $statedAddressOnlyOptionsModel->getOptions(
+            array(
+                'statedAddressOnly' => true
+            ),
+            true,
+            true
+        );
 
         if (empty($statedAddressOnlyOptions)) {
             return false;
@@ -3294,7 +3339,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * N.B. The PostNL shipping methods are not dependant on the selected store view.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $postnlShippingMethods = $helper->getPostnlShippingMethods();
 
         $conflictingShippingMethods = array_intersect($goMageDeliveryDateShippingMethods, $postnlShippingMethods);
         if (empty($conflictingShippingMethods)) {
