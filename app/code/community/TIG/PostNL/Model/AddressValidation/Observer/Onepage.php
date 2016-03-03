@@ -109,7 +109,8 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
          *
          * @var Mage_Checkout_Block_Onepage_Billing $block
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block      = $observer->getBlock();
         $blockClass = $this->getBillingAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
@@ -121,9 +122,11 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         }
 
         /**
-         * Check if the extension is active
+         * Check if the extension is active.
          */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 
@@ -153,7 +156,8 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
          *
          * @var Mage_Checkout_Block_Onepage_Shipping $block
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block      = $observer->getBlock();
         $blockClass = $this->getShippingAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
@@ -167,7 +171,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Check if the extension is active
          */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 

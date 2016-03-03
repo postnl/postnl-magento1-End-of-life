@@ -132,7 +132,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         try {
             $result = $cendris->getAdresxpressPostcode($postcode, $housenumber);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody('error');
@@ -161,7 +163,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             'streetname' => $streetname,
         );
 
-        $response = Mage::helper('core')->jsonEncode($responseArray);
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $response = $coreHelper->jsonEncode($responseArray);
 
         /**
          * Return the result as a json response

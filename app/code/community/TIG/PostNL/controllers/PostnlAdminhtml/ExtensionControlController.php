@@ -117,7 +117,9 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             $this->_updateStatistics();
         }
 
-        Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $helper->saveConfigState(array('postnl_general' => 1));
 
         Mage::app()->cleanCache();
 
@@ -141,13 +143,17 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
     {
         $groups = $this->getRequest()->getParam('groups');
 
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getModel('core/config');
+
         /**
          * Get the last email address entered if available. Immediately save it as well.
          */
         $email = false;
         if (isset($groups['general']['fields']['email']['value'])) {
             $email = $groups['general']['fields']['email']['value'];
-            Mage::getModel('core/config')->saveConfig(self::XPATH_EMAIL, $email);
+
+            $config->saveConfig(self::XPATH_EMAIL, $email);
 
             /**
              * reinit configuration
@@ -156,7 +162,9 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             Mage::app()->reinitStores();
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Model_ExtensionControl_Webservices $webservice */
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
         try {
             /**
@@ -165,7 +173,9 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             $result = $webservice->activateWebshop($email);
 
             if (isset($result['settings']) && is_array($result['settings'])) {
-                Mage::getModel('postnl_extensioncontrol/config')->saveConfigSettings($result['settings']);
+                /** @var TIG_PostNL_Model_ExtensionControl_Config $extensionControlConfig */
+                $extensionControlConfig = Mage::getModel('postnl_extensioncontrol/config');
+                $extensionControlConfig->saveConfigSettings($result['settings']);
             }
         } catch (SoapFault $e) {
             /**
@@ -173,12 +183,12 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
              * single update statistics request.
              */
             if (isset($e->faultcode) && $e->faultcode == self::SHOP_ALREADY_REGISTERED_FAULTCODE) {
-                Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 1);
+                $config->saveConfig(self::XPATH_EMAIL, $email);
+                $config->saveConfig(self::XPATH_IS_ACTIVATED, 1);
 
                 return $this->_updateStatistics();
             }
 
-            $helper = Mage::helper('postnl');
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
             return $this;
@@ -189,7 +199,7 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             return $this;
         }
 
-        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 1);
+        $config->saveConfig(self::XPATH_IS_ACTIVATED, 1);
 
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
@@ -212,6 +222,12 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
     {
         $groups = $this->getRequest()->getParam('groups');
 
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getModel('core/config');
+
+        /** @var TIG_PostNL_Helper_Webservices $helper */
+        $helper = Mage::helper('postnl/webservices');
+
         /**
          * If either the unique key or the private key were just entered without saving the config first, we need to
          * encrypt and save them.
@@ -229,7 +245,7 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             if (isset($generalFields['active']['value'])) {
                 $active = $generalFields['active']['value'];
                 if (!empty($active)) {
-                    Mage::getModel('core/config')->saveConfig(self::XPATH_ACTIVE, $active);
+                    $config->saveConfig(self::XPATH_ACTIVE, $active);
 
                     $configChanged = true;
                 }
@@ -244,8 +260,8 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
                     /**
                      * Encrypt and save the unique key
                      */
-                    $encryptedUniqueKey = Mage::helper('postnl/webservices')->encryptValue($uniqueKey);
-                    Mage::getModel('core/config')->saveConfig(
+                    $encryptedUniqueKey = $helper->encryptValue($uniqueKey);
+                    $config->saveConfig(
                         self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY,
                         $encryptedUniqueKey
                     );
@@ -263,8 +279,8 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
                     /**
                      * Encrypt and save the private key
                      */
-                    $encryptedPrivateKey = Mage::helper('postnl/webservices')->encryptValue($privateKey);
-                    Mage::getModel('core/config')->saveConfig(
+                    $encryptedPrivateKey = $helper->encryptValue($privateKey);
+                    $config->saveConfig(
                         self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY,
                         $encryptedPrivateKey
                     );
@@ -294,8 +310,6 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             $privateKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
         }
 
-        $helper = Mage::helper('postnl');
-
         if (!$uniqueKey || !$privateKey) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0008', 'notice',
                 $this->__('Please fill in your unique and private keys and try again.')
@@ -307,6 +321,7 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
          * Try to update the shop's statistics once in order to fully activate the extension
          */
         try {
+            /** @var TIG_PostNL_Model_ExtensionControl_Webservices $webservices */
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $webservices->updateStatistics(true);
         } catch (Exception $e) {
@@ -316,7 +331,7 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
             return $this;
         }
 
-        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
+        $config->saveConfig(self::XPATH_IS_ACTIVATED, 2);
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The extension has been successfully registered!')
@@ -352,9 +367,13 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
      */
     protected function _resetActivation()
     {
-        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 0);
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getModel('core/config');
+        $config->saveConfig(self::XPATH_IS_ACTIVATED, 0);
 
-        Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $helper->saveConfigState(array('postnl_general' => 1));
 
         Mage::app()->cleanCache();
 
@@ -381,10 +400,13 @@ class TIG_PostNL_PostnlAdminhtml_ExtensionControlController extends TIG_PostNL_C
 
         // Set session message that we've been successful
         $title = $this->__('The PostNL extension has been successfully uninstalled.');
-        Mage::helper('postnl')->addSessionMessage('core/session', 'POSTNL-0223', 'success', $title);
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $helper->addSessionMessage('core/session', 'POSTNL-0223', 'success', $title);
 
-        $message = Mage::helper('postnl')->getSessionMessage('POSTNL-0223', 'success', $title);
+        $message = $helper->getSessionMessage('POSTNL-0223', 'success', $title);
 
+        /** @var TIG_PostNL_Model_Admin_Inbox $inbox */
         $inbox = Mage::getModel('postnl_admin/inbox');
         $inbox->addNotice($message, $title)
               ->save();

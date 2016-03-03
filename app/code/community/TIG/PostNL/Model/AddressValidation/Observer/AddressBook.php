@@ -89,7 +89,8 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
          *
          * @var Mage_Customer_Block_Address_Edit $block
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block      = $observer->getBlock();
         $blockClass = $this->getAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
@@ -99,7 +100,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
         /**
          * Check if the extension is active
          */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 

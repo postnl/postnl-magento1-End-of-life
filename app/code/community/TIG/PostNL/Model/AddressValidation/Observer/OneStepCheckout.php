@@ -96,7 +96,8 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
          *
          * @var Idev_OneStepCheckout_Block_Fields $block
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block      = $observer->getBlock();
         $blockClass = $this->getAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
@@ -108,14 +109,16 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
         }
 
         /**
-         * Check if the extension is active
+         * Check if the extension is active.
          */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        if (!$helper->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 
         /**
-         * Get the blocks alias and alter it's template based on this
+         * Get the blocks alias and alter it's template based on this.
          */
         $blockAlias = $block->getBlockAlias();
         switch ($blockAlias) {

@@ -145,7 +145,9 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
          * Decrypt and then hash the password.
          */
         $password = trim($password);
-        $password = sha1(Mage::helper('core')->decrypt($password));
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $password = sha1($helper->decrypt($password));
 
         /**
          * Put all credentials into an array.
@@ -160,11 +162,10 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
 
         /**
          * Load the CIF model and set to test mode to false.
-         *
-         * @var TIG_PostNL_Model_Core_Cif $cif
          */
-        $cif = Mage::getModel('postnl_core/cif')
-                   ->setTestMode($testMode);
+        /** @var TIG_PostNL_Model_Core_Cif $cif */
+        $cif = Mage::getModel('postnl_core/cif');
+        $cif->setTestMode($testMode);
 
         /**
          * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings
