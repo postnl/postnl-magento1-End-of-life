@@ -116,6 +116,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Prepare to create a new export file.
          */
+        /** @var Varien_Io_File $io */
         $io = Mage::getModel('varien/io_file');
 
         /**
@@ -175,6 +176,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     public function getCsvData($postnlShipments)
     {
+        /** @var TIG_PostNL_Helper_Parcelware $helper */
         $helper = Mage::helper('postnl/parcelware');
         $autoConfirmEnabled = $helper->isAutoConfirmEnabled();
 
@@ -244,6 +246,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getShipmentData($postnlShipment, $parcelCount = false, $count = false)
     {
+        /** @var TIG_PostNL_Helper_Parcelware $helper */
         $helper = Mage::helper('postnl/parcelware');
 
         /**
@@ -267,7 +270,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Get the current GMT timestamp as a point of reference
          */
-        $now = Mage::getModel('core/date')->gmtTimestamp();
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $now = $dateModel->gmtTimestamp();
 
         /**
          * Get the confirm and delivery dates for this shipment
@@ -478,7 +483,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     {
         $productCode = $postnlShipment->getProductCode();
 
-        $combiLabelProductCodes = Mage::helper('postnl/cif')->getCombiLabelProductCodes();
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $combiLabelProductCodes = $helper->getCombiLabelProductCodes();
         if (in_array($productCode, $combiLabelProductCodes)) {
             $productCode = array_search($productCode, $combiLabelProductCodes);
         }
@@ -550,8 +557,10 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          * Add information about the contents of the shipment
          */
         $itemCount = 0;
+        /** @noinspection PhpParamsInspection */
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -605,7 +614,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     protected function _getParcelwareShipmentType(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
         $shipmentType = $postnlShipment->getGlobalpackShipmentType();
-        $numericShipmentTypes = Mage::helper('postnl/cif')->getNumericShipmentTypes();
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $numericShipmentTypes = $helper->getNumericShipmentTypes();
 
         if (array_key_exists($shipmentType, $numericShipmentTypes)) {
             $shipmentType = $numericShipmentTypes[$shipmentType];

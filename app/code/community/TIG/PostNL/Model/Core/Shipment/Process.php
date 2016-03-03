@@ -78,7 +78,9 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             $this->_lockFile = fopen($file, 'x');
         }
 
-        fwrite($this->_lockFile, date('r', Mage::getModel('core/date')->gmtTimestamp()));
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        fwrite($this->_lockFile, date('r', $dateModel->gmtTimestamp()));
 
         return $this->_lockFile;
     }
@@ -191,7 +193,9 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             return false;
         }
 
-        $fiveMinAgo = Mage::getModel('core/date')->gmtTimestamp();
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $fiveMinAgo = $dateModel->gmtTimestamp();
 
         $contents   = file_get_contents($file);
         $lockTime   = strtotime($contents);

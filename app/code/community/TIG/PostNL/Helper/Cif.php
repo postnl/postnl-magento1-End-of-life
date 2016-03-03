@@ -270,7 +270,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @var array
      */
     protected $_returnLabelTypes = array(
-        'Return Label'
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
     );
 
     /**

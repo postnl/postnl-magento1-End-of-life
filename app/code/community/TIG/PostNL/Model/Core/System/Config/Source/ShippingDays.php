@@ -45,6 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingDays
      */
     public function toOptionArray()
     {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
         $labelSizes = array(
             array(

@@ -189,7 +189,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $settings = $webservices->updateConfigSettings();
 
-            /** @var TIG_PostNL_Model_ExtensionControl_Config $webservices */
+            /** @var TIG_PostNL_Model_ExtensionControl_Config $config */
             $config = Mage::getModel('postnl_extensioncontrol/config');
             $config->saveConfigSettings($settings);
         } catch (Exception $e) {

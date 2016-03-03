@@ -110,8 +110,10 @@ class TIG_PostNL_Model_Core_Service_IntegrityCheck
      */
     public function validatePostnlOrderIntegrity()
     {
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
+        /** @var TIG_PostNL_Model_Core_Resource_Order_Collection $postnlOrderCollection */
         $postnlOrderCollection = Mage::getResourceModel('postnl_core/order_collection')
                                      ->addFieldToSelect(array('entity_id', 'quote_id', 'order_id'));
 
@@ -139,6 +141,7 @@ class TIG_PostNL_Model_Core_Service_IntegrityCheck
             )
         );
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         foreach ($postnlOrderCollection as $postnlOrder) {
             if ($postnlOrder->hasOrderId()) {
                 $this->_validateOrderId($postnlOrder);
@@ -159,8 +162,10 @@ class TIG_PostNL_Model_Core_Service_IntegrityCheck
      */
     public function validatePostnlShipmentIntegrity()
     {
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $postnlShipmentCollection */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection')
                                      ->addFieldToSelect(array('entity_id', 'shipment_id', 'order_id'));
 
@@ -188,6 +193,7 @@ class TIG_PostNL_Model_Core_Service_IntegrityCheck
             )
         );
 
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentCollection as $postnlShipment) {
             if ($postnlShipment->hasOrderId()) {
                 $this->_validateOrderId($postnlShipment);

@@ -77,11 +77,13 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
             return true;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
          * Get the system.xml configuration.
          */
+        /** @var Mage_Adminhtml_Model_Config $configFields */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
 

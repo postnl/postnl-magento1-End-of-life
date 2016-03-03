@@ -87,9 +87,11 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
      */
     protected function _afterSave()
     {
+        /** @var Mage_Core_Model_Config_Data $alternativeSenderCountry */
         $alternativeSenderCountry = Mage::getModel('core/config_data')
                                         ->load(self::XPATH_ALTERNATIVE_SENDER_COUNTRY, 'path');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $alternativeSenderCountry->setData($this->getData())
                                  ->setPath(self::XPATH_ALTERNATIVE_SENDER_COUNTRY)
                                  ->save();

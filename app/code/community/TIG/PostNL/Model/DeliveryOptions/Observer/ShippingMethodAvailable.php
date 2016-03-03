@@ -79,8 +79,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * Check if delivery options are available for the current quote.
          */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
 
         $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
         return $this->_canUseDeliveryOptions;
@@ -216,14 +221,16 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      */
     protected function _resetPostnlOrder()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         /**
          * Remove shipment costs from the PostNL order associated with the current quote.
-         *
-         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
+        $postnlOrder = Mage::getModel('postnl_core/order');
+        $postnlOrder->loadByQuote($quote);
         if ($postnlOrder->getId() && !$postnlOrder->hasOrderId()) {
             $postnlOrder->setIsActive(false)
                         ->setShipmentCosts(0)
@@ -259,27 +266,21 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      */
     protected function _addDeliveryOptionBlocks(Mage_Checkout_Block_Onepage_Shipping_Method_Available $block)
     {
-        /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $firstChild
-         */
+        /** @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $deliveryOptionsBlock */
         $deliveryOptionsBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_deliveryOptions',
             'postnl.osc.delivery.options'
         );
         $deliveryOptionsBlock->setTemplate('TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml');
 
-        /**
-         * @var Mage_Core_Block_Template $addLocationBlock
-         */
+        /** @var Mage_Core_Block_Template $addLocationBlock */
         $addLocationBlock = $block->getLayout()->createBlock(
             'core/template',
             'postnl.osc.add.location'
         );
         $addLocationBlock->setTemplate('TIG/PostNL/delivery_options/addlocation.phtml');
 
-        /**
-         * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $addPhoneNumberBlock
-         */
+        /** @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $addPhoneNumberBlock */
         $addPhoneNumberBlock = $block->getLayout()->createBlock(
             'postnl_deliveryoptions/checkout_addPhoneNumber',
             'postnl.add.phonenumber'

@@ -134,13 +134,17 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
                 $response = $client->$method();
             }
 
-            Mage::helper('postnl/webservices')->logWebserviceCall($client);
+            /** @var TIG_PostNL_Helper_Webservices $helper */
+            $helper = Mage::helper('postnl/webservices');
+            $helper->logWebserviceCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
              * Only Soap exceptions are caught. Other exceptions must be caught by the caller.
              */
-            Mage::helper('postnl/webservices')->logWebserviceException($e);
+            /** @var TIG_PostNL_Helper_Webservices $helper */
+            $helper = Mage::helper('postnl/webservices');
+            $helper->logWebserviceException($e);
 
             throw $e;
         }
