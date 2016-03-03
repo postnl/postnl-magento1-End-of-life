@@ -164,7 +164,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus extend
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return '';
         }
 

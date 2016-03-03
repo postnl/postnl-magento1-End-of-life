@@ -83,6 +83,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
         /**
          * For Magento 1.6 and 1.11 we need to add another css file.
          */
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $isEnterprise = $helper->isEnterprise();
 
@@ -116,7 +117,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
         /**
          * Get the current admin user and it's saved extra data.
          */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var Mage_Admin_Model_User $adminUser */
+        $adminUser = $session->getUser();
         $extra     = $adminUser->getExtra();
 
         /**

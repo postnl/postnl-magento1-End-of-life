@@ -118,7 +118,9 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
     {
         $messages = $this->_getTranslateData();
 
-        $json = Mage::helper('core')->jsonEncode($messages);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $json = $helper->jsonEncode($messages);
         return $json;
     }
 
@@ -201,6 +203,7 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
      */
     protected function _toHtml()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if (!$helper->isEnterprise() && version_compare(Mage::getVersion(), '1.7.0.0', '>=')) {
             return '';

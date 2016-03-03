@@ -147,6 +147,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      */
     protected function _checkDisableAction($row, $action)
     {
+        /** @var TIG_PostNL_Helper_Cif $helper */
         $helper = Mage::helper('postnl/cif');
         /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');

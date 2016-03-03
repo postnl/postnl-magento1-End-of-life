@@ -267,7 +267,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         /**
          * Check if the current user is allowed to perform this action.
          */
-        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_product_code'))) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->checkIsPostnlActionAllowed(array('change_product_code'))) {
             return false;
         }
 
@@ -360,7 +362,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         /**
          * Check if the current user is allowed to perform this action.
          */
-        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
             return false;
         }
 
@@ -414,6 +418,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             'timezone_differ'           => false,
         );
 
+        /** @var Mage_Core_Model_Date $dateModel */
         $dateModel = Mage::getSingleton('core/date');
         $utcTimeZone = new DateTimeZone('UTC');
 

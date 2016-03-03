@@ -137,7 +137,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
+        /** @var Mage_Tax_Helper_Data $helper */
+        $helper = Mage::helper('tax');
+        $taxLabel = $helper->getIncExcText($inclTax);
 
         return $taxLabel;
     }

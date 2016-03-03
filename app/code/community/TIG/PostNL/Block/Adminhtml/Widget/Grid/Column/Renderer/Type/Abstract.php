@@ -164,6 +164,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $out = '';
         if ($column->hasData('display')) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $out .= " style='display:{$column->getDisplay()};'";
         }
 
@@ -196,6 +197,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      */
     public function getOrderTypeRenderedValue($value, Varien_Object $row)
     {
+        /** @var TIG_PostNL_Helper_Cif $helper */
         $helper = Mage::helper('postnl/cif');
 
         /**
@@ -454,11 +456,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      */
     protected function _getDomesticRenderedValue(Varien_Object $row, $destination, $label = null)
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
 
         if (!$label) {
-            $label = $helper->__('Domestic');
+            $label = $deliveryOptionsHelper->__('Domestic');
         }
         $type  = 'domestic';
 
@@ -477,7 +479,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
                 if ($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
-                    $label = $helper->__('Letter Box Parcel');
+                    $label = $deliveryOptionsHelper->__('Letter Box Parcel');
                     $type  = 'buspakje';
 
                     return "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -488,19 +490,19 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
         if ($isCod) {
-            $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+            $renderedValue .= '<br /><em>' . $deliveryOptionsHelper->__('COD') . '</em>';
         } elseif ($destination == 'NL') {
             /**
              * If the buspakje calculation mode is set to manual, we can only inform the merchant that this might be a
              * buspakje.
              */
             $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
-            if (Mage::helper('postnl/deliveryOptions')->fitsAsBuspakje($orderItems)) {
+            if ($deliveryOptionsHelper->fitsAsBuspakje($orderItems)) {
                 $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
                 $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
                 if ($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
-                    $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                    $renderedValue .= '<br /><em>(' . $deliveryOptionsHelper->__('possibly letter box parcel') . ')</em>';
                 }
             }
         }
@@ -552,7 +554,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $isCod = false;
         $paymentMethod = $row->getData(self::PAYMENT_METHOD_COLUMN);
 
-        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $codPaymentMethods = $helper->getCodPaymentMethods();
         if (in_array($paymentMethod, $codPaymentMethods)) {
             $isCod = true;
         }

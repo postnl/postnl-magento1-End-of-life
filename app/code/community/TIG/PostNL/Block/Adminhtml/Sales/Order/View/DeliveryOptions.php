@@ -85,7 +85,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
 
         $order = $this->getOrder();
 
-        $postnlOrder = Mage::getModel('postnl_core/order')->loadByOrder($order);
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
+        $postnlOrder = Mage::getModel('postnl_core/order');
+        $postnlOrder->loadByOrder($order);
 
         $this->setPostnlOrder($postnlOrder);
         return $postnlOrder;
@@ -101,14 +103,17 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
         $order       = $this->getOrder();
         $postnlOrder = $this->getPostnlOrder();
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+
         $paymentMethod = $order->getPayment()->getMethod();
-        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+        $codPaymentMethods = $helper->getCodPaymentMethods();
         if (in_array($paymentMethod, $codPaymentMethods)) {
             $this->setIsCod(true);
         }
 
         $countryId = $order->getShippingAddress()->getCountryId();
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        $domesticCountry = $helper->getDomesticCountry();
 
         $shipmentType = false;
         switch ($postnlOrder->getType()) {
@@ -163,7 +168,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             return $shipmentType;
         }
 
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
+        $euCountries = $cifHelper->getEuCountries();
         if (in_array($countryId, $euCountries)) {
             $shipmentType = $this->__('EPS');
 
@@ -261,6 +268,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             'timezone_differ'           => false,
         );
 
+        /** @var Mage_Core_Model_Date $dateModel */
         $dateModel = Mage::getSingleton('core/date');
         $utcTimeZone = new DateTimeZone('UTC');
 
