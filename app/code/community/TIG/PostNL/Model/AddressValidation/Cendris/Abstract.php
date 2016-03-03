@@ -95,8 +95,10 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
                 $method,
                 $soapParams
             );
-
-            Mage::helper('postnl/addressValidation')->logCendrisCall($client);
+            
+            /** @var TIG_PostNL_Helper_AddressValidation $helper */
+            $helper = Mage::helper('postnl/addressValidation');
+            $helper->logCendrisCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
@@ -105,7 +107,9 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
             if (!isset($client)) {
                 $client = false;
             }
-            Mage::helper('postnl/addressValidation')->logCendrisException($e, $client);
+            /** @var TIG_PostNL_Helper_AddressValidation $helper */
+            $helper = Mage::helper('postnl/addressValidation');
+            $helper->logCendrisException($e, $client);
 
             throw $e;
         }

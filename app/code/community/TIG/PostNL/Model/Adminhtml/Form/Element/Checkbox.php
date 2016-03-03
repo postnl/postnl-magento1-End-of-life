@@ -64,6 +64,7 @@ class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_
         $html .= '<input id="'.$this->getHtmlId().'_checkbox" name="'.$this->getName()
             .'_checkbox" value="'.$this->getEscapedValue().'" '.$this->serialize($this->getHtmlAttributes()).'/>'."\n";
 
+        /** @noinspection JSUnresolvedVariable */
         $html .= '<script type="text/javascript">' . PHP_EOL
                . '//<![CDATA[' . PHP_EOL
                . '$("'.$this->getHtmlId().'_checkbox").observe("click", '
