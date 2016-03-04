@@ -58,7 +58,7 @@
 <?php $_isMonday              = (bool) $_cifHelper->isMondayShipment($_shipment); ?>
 <?php $_parcelCount           = $this->getParcelCount(); ?>
 <div id="postnl_product_options">
-    <?php if (Mage::helper('postnl')->canUseBuspakje()
+    <?php if ($_cifHelper->canUseBuspakje()
         && $_isDomesticShipment
         && !$_isCod
         && !$_isPakjeGemak
