@@ -132,6 +132,7 @@ try {
         /**
          * Login and get a session ID for future API calls.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $sessionId = $cli->login($username, $apiKey);
 
         /**
@@ -181,6 +182,7 @@ try {
         /**
          * Login and get a session ID for future API calls.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $sessionId = $cli->login(array('username' => $username, 'apiKey' => $apiKey));
 
         /**
