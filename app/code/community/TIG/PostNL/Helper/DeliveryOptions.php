@@ -676,6 +676,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL')
     {
+        /**
+         * Retrieves required config values.
+         */
+        $sundayDelivery = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
 
@@ -732,15 +738,34 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                         unset($timeframes[$key]);
                     }
                 } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::MONDAY) {
-                    foreach (
-                        $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
+                    /**
+                     * If:
+                     * - Sunday delivery is not active
+                     * - Sunday sorting (monday delivery) IS active
+                     * - Today is saturday
+                     * - We are after the cut-off time
+                     *
+                     * Then monday is not a valid delivery day.
+                     */
+                    if (
+                        !$sundayDelivery &&
+                        $sundaySorting &&
+                        $today->format('N') == TIG_PostNL_Helper_Date::SATURDAY &&
+                        $helper->isPastCutOff($today, $storeId)
                     ) {
-                        if ($timeframeTimeframe->Options->string[0] == 'Daytime' && $destinationCountry == 'NL') {
-                            $timeframes[$key]
-                                ->Timeframes
-                                ->TimeframeTimeFrame[$timeframeTimeframeKey]
-                                ->Options
-                                ->string[0] = 'Monday';
+                        unset($timeframes[$key]);
+                    } else {
+                        foreach (
+                            $timeFrame->Timeframes->TimeframeTimeFrame as $timeframeTimeframeKey => $timeframeTimeframe
+                        ) {
+                            if ($timeframeTimeframe->Options->string[0] == 'Daytime' && $destinationCountry == 'NL') {
+                                $timeframes[$key]
+                                    ->Timeframes
+                                    ->TimeframeTimeFrame[$timeframeTimeframeKey]
+                                    ->Options
+                                    ->string[0]
+                                    = 'Monday';
+                            }
                         }
                     }
                 } elseif ($timeFrameDay == TIG_PostNL_Helper_Date::TUESDAY) {
