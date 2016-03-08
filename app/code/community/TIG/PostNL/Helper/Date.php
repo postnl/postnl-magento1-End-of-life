@@ -182,13 +182,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                  * If:
                  * - Today is saturday
                  * - We are after the cut-off time
-                 * - Sunday delivery if not active
+                 * - Sunday delivery is not active
                  * - Sunday sorting (monday delivery) IS active
                  *
                  * Then monday is not a valid delivery day.
                  */
                 $today = new DateTime('now', new DateTimeZone('UTC'));
-                if ($today->format('N') == '6' && $this->isPastCutOff($today, $storeId)) {
+                if ($today->format('N') == self::SATURDAY && $this->isPastCutOff($today, $storeId)) {
                     $this->_validDeliveryDays[self::MONDAY] = 0;
                 }
             } elseif (!$sundaySorting
