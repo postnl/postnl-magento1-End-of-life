@@ -763,8 +763,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                                     ->Timeframes
                                     ->TimeframeTimeFrame[$timeframeTimeframeKey]
                                     ->Options
-                                    ->string[0]
-                                    = 'Monday';
+                                    ->string[0] = 'Monday';
                             }
                         }
                     }
