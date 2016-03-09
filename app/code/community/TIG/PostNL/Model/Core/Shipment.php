@@ -4278,15 +4278,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Add a comment to the order and shipment that the track & trace email has been sent.
          */
-        /** @noinspection PhpUndefinedMethodInspection */
-        $order->addStatusHistoryComment(
+        /** @var Mage_Sales_Model_Order_Status_History $orderHistory */
+        $orderHistory = $order->addStatusHistoryComment(
                   $helper->__(
                       'PostNL track & trace email has been sent for shipment #%s.',
                       $shipment->getIncrementId()
                   )
-              )
-              ->setIsCustomerNotified(1)
-              ->save();
+              );
+        $orderHistory->setIsCustomerNotified(1);
+        $orderHistory->save();
 
         $shipment->addComment(
                      $helper->__('PostNL track & trace email has been sent.'),
@@ -4713,15 +4713,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Add a comment to the order and shipment that the return label email has been sent.
          */
-        /** @noinspection PhpUndefinedMethodInspection */
-        $order->addStatusHistoryComment(
-                  $helper->__(
-                      'PostNL return label email has been sent for shipment #%s.',
-                      $shipment->getIncrementId()
-                  )
-              )
-              ->setIsCustomerNotified(1)
-              ->save();
+        /** @var Mage_Sales_Model_Order_Status_History $orderHistory */
+        $orderHistory = $order->addStatusHistoryComment(
+            $helper->__(
+                'PostNL return label email has been sent for shipment #%s.',
+                $shipment->getIncrementId()
+            )
+        );
+        $orderHistory->setIsCustomerNotified(1);
+        $orderHistory->save();
 
         $shipment->addComment(
                      $helper->__('PostNL return label email has been sent.'),
