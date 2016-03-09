@@ -440,6 +440,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
+         * Add the street if available.
+         */
+        if (isset($data['street'])) {
+            $location['Street'] = $data['street'];
+        }
+
+        /**
          * Add coordinates if both a latitude and longitude are available.
          */
         if (isset($data['lat']) && isset($data['long'])) {

@@ -1298,8 +1298,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
 
+            $street = $postData['street'];
+            $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
+            if (!$streetValidator->isValid($street)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid street supplied for getNearestLocations request: %s',
+                        $street
+                    ),
+                    'POSTNL-0242'
+                );
+            }
+
             $data = array(
                 'postcode'     => $postcode,
+                'street'       => $street,
                 'country'      => $country,
                 'deliveryDate' => $deliveryDate,
             );
