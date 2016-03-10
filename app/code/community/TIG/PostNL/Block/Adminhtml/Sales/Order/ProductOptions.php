@@ -78,15 +78,15 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
             return $this->_getData('globalpack_product_option');
         }
 
-        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $sourceModel */
-        $sourceModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions $sourceModel */
+        $sourceModel = Mage::getModel('postnl_core/system_config_source_globalProductOptions');
         $globalPackProductOption = $sourceModel->getAvailableOptions();
 
         if (empty($globalPackProductOption)) {
             return '';
         }
 
-        $optionValue = $globalPackProductOption[0]['value'];
+        $optionValue = current($globalPackProductOption)['value'];
         $this->setGlobalpackProductOption($optionValue);
         return $optionValue;
     }
