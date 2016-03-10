@@ -49,6 +49,7 @@
 <?php $_deliveryDate                   = $this->getDeliveryDate(); ?>
 <?php $_streetData                     = $this->getStreetData(); ?>
 <?php $_housenumber                    = $_streetData['housenumber']; ?>
+<?php $_street                         = $_streetData['streetname']; ?>
 
 <?php $_canAddLocation                 = true; ?>
 <?php $_canUseResponsive               = $this->canUseResponsive(); ?>
@@ -192,6 +193,7 @@
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
         postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
         housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
+        street             : '<?php echo $this->escapeHtml($_street); ?>',
         country            : '<?php echo $this->escapeHtml($_country); ?>',
         deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,
