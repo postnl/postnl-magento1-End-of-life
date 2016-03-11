@@ -1927,6 +1927,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.fullAddress = fullAddress;
         this.debug = debug;
 
+        var country = this.getDeliveryOptions().getCountry();
         var mapOptions = this.getMapOptions();
 
         this.map = new google.maps.Map($('map-div'), mapOptions);
@@ -1946,7 +1947,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             $('search_field'),
             {
                 componentRestrictions : {
-                    country : 'nl'
+                    country : country
                 },
                 types : [
                     'establishment',
