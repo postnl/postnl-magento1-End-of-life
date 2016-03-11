@@ -165,7 +165,7 @@
     <?php endfor; ?>
 
     document.observe('dom:loaded', function() {
-        var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
+        window.postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
             '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
             '<?php echo $_addressType; ?>',
             '<?php echo $_addressType; ?>:country_id',

@@ -590,54 +590,49 @@
         var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
         var url_set_methods  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
 
-        /**
-         * These fields' values are used to determine available delivery options.
-         */
-        if (!$('virtual:billing:street' + streetnameField) && !$('virtual:shipping:street' + streetnameField)) {
-            var fieldsToObserve = [
-                'virtual:billing:street' + streetnameField,
-                'billing:street' + streetnameField,
-                'virtual:shipping:street' + streetnameField,
-                'shipping:street' + streetnameField,
-                'billing:postcode',
-                'shipping:postcode'
-            ];
+        var fieldsToObserve = [
+            'virtual:billing:street' + streetnameField,
+            'billing:street' + streetnameField,
+            'virtual:shipping:street' + streetnameField,
+            'shipping:street' + streetnameField,
+            'billing:postcode',
+            'shipping:postcode'
+        ];
 
-            if (streetnameField != housenumberField) {
-                fieldsToObserve = fieldsToObserve.concat([
-                    'virtual:billing:street' + housenumberField,
-                    'billing:street' + housenumberField,
-                    'virtual:shipping:street' + housenumberField,
-                    'shipping:street' + housenumberField
-                ]);
+        if (streetnameField != housenumberField) {
+            fieldsToObserve = fieldsToObserve.concat([
+                'virtual:billing:street' + housenumberField,
+                'billing:street' + housenumberField,
+                'virtual:shipping:street' + housenumberField,
+                'shipping:street' + housenumberField
+            ]);
+        }
+
+        /**
+         * Reload available delivery options with new address data.
+         */
+        fieldsToObserve.each(function(field) {
+            var element = $(field);
+            if (!element) {
+                return;
             }
 
-            /**
-             * Reload available delivery options with new address data.
-             */
-            fieldsToObserve.each(function(field) {
-                var element = $(field);
-                if (!element) {
-                    return;
+            element.stopObserving('change');
+            element.observe('change', function() {
+                if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                    deliveryOptions.timeframeRequest.transport.abort();
                 }
 
-                element.stopObserving('change');
-                element.observe('change', function() {
-                    if (deliveryOptions && deliveryOptions.timeframeRequest) {
-                        deliveryOptions.timeframeRequest.transport.abort();
-                    }
-
-                    get_save_billing_function(url_save_billing, url_set_methods, true)();
-                });
+                get_save_billing_function(url_save_billing, url_set_methods, true)();
             });
+        });
 
-            /**
-             * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
-             */
-            document.stopObserving('postnl:postcodeCheckStart');
-            document.observe('postnl:postcodeCheckStart', function() {
-                $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
-            });
+        if (typeof postcodeCheckbilling != 'undefined') {
+            postcodeCheckbilling.init();
+        }
+
+        if (typeof postcodeCheckshipping != 'undefined') {
+            postcodeCheckshipping.init();
         }
 
         /**
