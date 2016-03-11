@@ -618,13 +618,6 @@
             }
 
             element.stopObserving('change');
-            element.observe('change', function() {
-                if (deliveryOptions && deliveryOptions.timeframeRequest) {
-                    deliveryOptions.timeframeRequest.transport.abort();
-                }
-
-                get_save_billing_function(url_save_billing, url_set_methods, true)();
-            });
         });
 
         if (typeof postcodeCheckbilling != 'undefined') {
@@ -634,6 +627,21 @@
         if (typeof postcodeCheckshipping != 'undefined') {
             postcodeCheckshipping.init();
         }
+
+        fieldsToObserve.each(function(field) {
+            var element = $(field);
+            if (!element) {
+                return;
+            }
+
+            element.observe('change', function() {
+                if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                    deliveryOptions.timeframeRequest.transport.abort();
+                }
+
+                get_save_billing_function(url_save_billing, url_set_methods, true)();
+            });
+        });
 
         /**
          * Open the delivery options popup.
