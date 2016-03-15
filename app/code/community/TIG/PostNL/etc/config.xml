@@ -797,7 +797,7 @@
                 <foodspecificerrmsg>Food shipments can only be delivered within the Netherlands.</foodspecificerrmsg> <!-- Food method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
-                <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->
+                <showmethod>1</showmethod> <!-- Show the shipping method if unavailable -->
                 <sort_order>0</sort_order> <!-- First method shown -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
