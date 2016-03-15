@@ -167,7 +167,7 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Form_FoodWarnings extends Mage_Co
         $available = false;
 
         foreach ($foodProductOptions as $productCode => $foodProductOption) {
-            if ($availableProductOptions[$productCode]) {
+            if (!empty($availableProductOptions[$productCode])) {
                 $available = true;
                 break;
             }
