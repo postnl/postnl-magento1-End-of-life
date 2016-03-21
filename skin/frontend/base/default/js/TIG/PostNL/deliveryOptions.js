@@ -4730,7 +4730,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     getOpeningHoursRow : function(day, openingHours) {
         var html = '';
         html += '<tr>';
-        html += '<th>' + Translator.translate(day) + '</th>';
+        html += '<th valign="top">' + Translator.translate(day) + '</th>';
         if (openingHours && openingHours.string && openingHours.string.join() != '') {
             html += '<td>' + (openingHours.string.join('<br />')).replace(/-/g, ' - ') + '</td>';
         } else {

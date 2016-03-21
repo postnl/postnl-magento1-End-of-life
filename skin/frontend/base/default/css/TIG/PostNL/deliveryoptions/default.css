@@ -201,9 +201,9 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_add_location .location-details .left .location-address { font-size:12px; line-height:18px; display:block; width:141px; }
 #postnl_add_location .location-details .left .location-info { float:none; text-align:left; text-decoration:none; line-height:18px; width:141px; display:block; margin-top:20px; }
 #postnl_add_location .location-details .right { float:right; width:151px; padding-left:14px; border-left:1px solid #d1d3d3; }
-#postnl_add_location .location-details .right .business-hours { line-height:18px; }
-#postnl_add_location .location-details .right .business-hours tbody th { width:36px; padding:2px; }
-#postnl_add_location .location-details .right .business-hours tbody td { padding:2px; }
+#postnl_add_location .location-details .right .business-hours { line-height:18px; font-size: 12px; }
+#postnl_add_location .location-details .right .business-hours tbody th { width:36px; padding:2px; font-size: 12px; }
+#postnl_add_location .location-details .right .business-hours tbody td { padding:2px; font-size: 12px; }
 /* Button Set */
 #postnl_add_location .button-set { padding:7px 43px 7px 17px; margin:0 -17px; }
 /********** < Add Location */
