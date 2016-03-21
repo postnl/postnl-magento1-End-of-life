@@ -50,6 +50,7 @@
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
+<?php $_street        = $_streetData['streetname']; ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
 
@@ -251,6 +252,7 @@
 
     var postcode;
     var housenumber;
+    var street;
     var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
 
     /**
@@ -278,11 +280,12 @@
 
         postcode    = getPostnlPostcode(billingOrShipping);
         housenumber = getPostnlHousenumber(billingOrShipping);
+        street      = getPostnlStreet(billingOrShipping);
 
         /**
          * If we don't have a postcode or house number, we cant retrieve the available time frames and locations.
          */
-        if (!postcode || !housenumber) {
+        if (!postcode || !housenumber || !street) {
             return;
         }
 
@@ -296,7 +299,7 @@
         /**
          * Start the delivery options script.
          */
-        startDeliveryOptions(postcode, housenumber, fullAddress);
+        startDeliveryOptions(postcode, housenumber, street, fullAddress);
 
         /**
          * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
@@ -313,9 +316,10 @@
      *
      * @param {string} postcode
      * @param {int}    housenumber
+     * @param {string} street
      * @param {string} fullAddress
      */
-    function startDeliveryOptions(postcode, housenumber, fullAddress) {
+    function startDeliveryOptions(postcode, housenumber, street, fullAddress) {
         var options;
         var params;
         var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
@@ -327,6 +331,7 @@
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
             postcode           : postcode,
             housenumber        : housenumber,
+            street             : street,
             country            : '<?php echo $this->escapeHtml($_country); ?>',
             deliveryDate       : '<?php echo $_deliveryDate; ?>',
             imageBaseUrl       : baseUrl,
@@ -526,6 +531,55 @@
     }
 
     /**
+     * @param {string} billingOrShipping
+     *
+     * @returns {string|int}
+     */
+    function getPostnlStreet(billingOrShipping) {
+        var street = '<?php echo $_street; ?>';
+        var addressSelectField;
+
+        if (billingOrShipping == 'billing') {
+            addressSelectField = $('billing-address-select');
+        } else {
+            addressSelectField = $('shipping-address-select');
+        }
+
+        /**
+         * If we don't have a street and no preset address is chosen, get the street from the street address field.
+         */
+        if (!street
+            || (
+                (!addressSelectField || addressSelectField.getValue() == '')
+                && street != $(billingOrShipping + ':street' + streetnameField).getValue()
+            )
+        ) {
+            var streetFieldValue = $(billingOrShipping + ':street' + streetnameField).getValue();
+
+            if (streetFieldValue) {
+                street = streetFieldValue;
+            }
+        }
+
+        /**
+         * If we still don't have a street, get it from the streetname field.
+         */
+        if (!street) {
+            var streetname = $(billingOrShipping + ':street' + streetnameField).getValue();
+            var streetnameRegex = /([a-zA-Z]+)/;
+
+            var streetnameArray = streetname.match(streetnameRegex);
+            if (!streetnameArray || streetnameArray.length < 1) {
+                throw "Unable to parse streetname";
+            }
+
+            street = streetnameArray[0];
+        }
+
+        return street;
+    }
+
+    /**
      * Register a bunch of OSC specific observers
      */
     function registerOscObservers() {
@@ -536,55 +590,58 @@
         var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
         var url_set_methods  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
 
-        /**
-         * These fields' values are used to determine available delivery options.
-         */
-        if (!$('virtual:billing:street' + streetnameField) && !$('virtual:shipping:street' + streetnameField)) {
-            var fieldsToObserve = [
-                'virtual:billing:street' + streetnameField,
-                'billing:street' + streetnameField,
-                'virtual:shipping:street' + streetnameField,
-                'shipping:street' + streetnameField,
-                'billing:postcode',
-                'shipping:postcode'
-            ];
+        var fieldsToObserve = [
+            'virtual:billing:street' + streetnameField,
+            'billing:street' + streetnameField,
+            'virtual:shipping:street' + streetnameField,
+            'shipping:street' + streetnameField,
+            'billing:postcode',
+            'shipping:postcode'
+        ];
 
-            if (streetnameField != housenumberField) {
-                fieldsToObserve = fieldsToObserve.concat([
-                    'virtual:billing:street' + housenumberField,
-                    'billing:street' + housenumberField,
-                    'virtual:shipping:street' + housenumberField,
-                    'shipping:street' + housenumberField
-                ]);
+        if (streetnameField != housenumberField) {
+            fieldsToObserve = fieldsToObserve.concat([
+                'virtual:billing:street' + housenumberField,
+                'billing:street' + housenumberField,
+                'virtual:shipping:street' + housenumberField,
+                'shipping:street' + housenumberField
+            ]);
+        }
+
+        /**
+         * Reload available delivery options with new address data.
+         */
+        fieldsToObserve.each(function(field) {
+            var element = $(field);
+            if (!element) {
+                return;
             }
 
-            /**
-             * Reload available delivery options with new address data.
-             */
-            fieldsToObserve.each(function(field) {
-                var element = $(field);
-                if (!element) {
-                    return;
+            element.stopObserving('change');
+        });
+
+        if (typeof postcodeCheckbilling != 'undefined') {
+            postcodeCheckbilling.init();
+        }
+
+        if (typeof postcodeCheckshipping != 'undefined') {
+            postcodeCheckshipping.init();
+        }
+
+        fieldsToObserve.each(function(field) {
+            var element = $(field);
+            if (!element) {
+                return;
+            }
+
+            element.observe('change', function() {
+                if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                    deliveryOptions.timeframeRequest.transport.abort();
                 }
 
-                element.stopObserving('change');
-                element.observe('change', function() {
-                    if (deliveryOptions && deliveryOptions.timeframeRequest) {
-                        deliveryOptions.timeframeRequest.transport.abort();
-                    }
-
-                    get_save_billing_function(url_save_billing, url_set_methods, true)();
-                });
+                get_save_billing_function(url_save_billing, url_set_methods, true)();
             });
-
-            /**
-             * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
-             */
-            document.stopObserving('postnl:postcodeCheckStart');
-            document.observe('postnl:postcodeCheckStart', function() {
-                $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
-            });
-        }
+        });
 
         /**
          * Open the delivery options popup.
