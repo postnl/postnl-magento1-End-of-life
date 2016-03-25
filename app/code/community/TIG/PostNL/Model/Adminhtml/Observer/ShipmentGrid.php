@@ -183,6 +183,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $this->setCollection($collection);
         $this->setBlock($block);
+        $block->setCollection($collection);
 
         $this->_joinCollection($collection);
         $this->_modifyColumns($block);
@@ -190,7 +191,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
-        $block->setCollection($this->getCollection());
         return $this;
     }
 
