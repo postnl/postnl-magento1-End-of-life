@@ -1346,5 +1346,6 @@ TIG_PostNL::Only use this if you have problems with special characters on your P
 TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
 TIG_PostNL::Same day delivery will only work if your shipping duration is set to 0 days in either the config or for applicaple products.,Dezelfde dag bezorgd zal enkel getoond worden wanneer de overkomstduur ingesteld staat op 0 dagen in de configuratie of voor geselecteerde producten.
 TIG_PostNL::Activate Dutch products,Activeer Nederlandse producten
+TIG_PostNL::Use Dutch products,Gebruik Nederlandse producten
 TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,Als deze optie geactiveerd is kunt u voor zendingen naar Nederland gebruik maken van het Nederlandse PostNL productassortiment.
 TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is alleen beschikbaar wanneer u verstuurd vanuit Nederland.

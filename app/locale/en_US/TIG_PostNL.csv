@@ -1329,5 +1329,6 @@ TIG_PostNL::Same day delivery cut-off time,Same day delivery cut-off time
 TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.
 TIG_PostNL::N/A,N/A
 TIG_PostNL::Activate Dutch products,Activate Dutch products
+TIG_PostNL::Use Dutch products,Use Dutch products
 TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands
 TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is only available when shipping from the Netherlands.
