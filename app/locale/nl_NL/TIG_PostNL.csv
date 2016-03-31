@@ -1136,7 +1136,7 @@ TIG_PostNL::Checkout extension,Checkout extensie
 TIG_PostNL::Checkout settings,Checkout instellingen
 "TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions.","PostNL bezorgopties zijn enkel beschikbaar voor Magento's One Page Checkout, Idev's OneStepCheckout en de GoMage LightCheckout extensies."
 TIG_PostNL::Specify checkout extension,Specificeer checkout extensie
-TIG_PostNL::Checkout Settings,Checkout instellingen
+TIG_PostNL::Checkout settings (only active in the Netherlands),Checkout instellingen (enkel actief in Nederland)
 TIG_PostNL::As soon as possible,Eerst volgende mogelijkheid
 TIG_PostNL::The previous step has been saved successfully!,De vorige stap is succesvol opgeslagen!
 TIG_PostNL::These settings are only available on the 'global' and 'website' scopes.,Deze instellingen zijn enkel beschikbaar op de 'globaal' en 'website' niveaus.
@@ -1148,7 +1148,7 @@ TIG_PostNL::Use the button below to request help from the TIG servicedesk.,Gebru
 TIG_PostNL::Request help from the servicedesk,Stel een vraag aan de servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activatie
 TIG_PostNL::Shipment and order grids,Verzendingen -en bestellingenoverzicht
-TIG_PostNL::Delivery options,Bezorgopties
+TIG_PostNL::Delivery Options NL,Bezorgopties NL
 TIG_PostNL::Globalpack and barcode settings,Globalpack en barcode-instellingen
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technische instellingen
@@ -1345,3 +1345,6 @@ TIG_PostNL::Only use this if you have problems with special characters on your P
 "TIG_PostNL::This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.","Dit zorgt ervoor dat de PostNL pakbon gebruik maakt van hetzelfde font als de Magento pakbon. Hoewel dit er visueel slechter uit kan zien, kan dit ook problemen met bepaalde speciale tekens verhelpen."
 TIG_PostNL::PDF font compatibility mode,PDF font compatibiliteitsmodus
 TIG_PostNL::Same day delivery will only work if your shipping duration is set to 0 days in either the config or for applicaple products.,Dezelfde dag bezorgd zal enkel getoond worden wanneer de overkomstduur ingesteld staat op 0 dagen in de configuratie of voor geselecteerde producten.
+TIG_PostNL::Activate Dutch products,Activeer Nederlandse producten
+TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,Als deze optie geactiveerd is kunt u voor zendingen naar Nederland gebruik maken van het Nederlandse PostNL productassortiment.
+TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is alleen beschikbaar wanneer u verstuurd vanuit Nederland.

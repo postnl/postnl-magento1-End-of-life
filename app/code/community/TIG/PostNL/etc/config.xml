@@ -231,6 +231,15 @@
                     </postnl_cod_auto_invoice>
                 </observers>
             </postnl_shipment_setshippingphase_delivered>
+            <admin_system_config_changed_section_postnl>
+                <observers>
+                    <postnl_update_attributes>
+                        <type>model</type>
+                        <class>postnl_deliveryoptions/observer_updateConfig</class>
+                        <method>updateAttributes</method>
+                    </postnl_update_attributes>
+                </observers>
+            </admin_system_config_changed_section_postnl>
         </events>
         <template>
             <email>
