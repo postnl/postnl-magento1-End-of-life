@@ -616,7 +616,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleStability()
     {
-        $stability = (string) Mage::getConfig()->getXpath('tig/stability/postnl')[0];
+        $stability = Mage::getConfig()->getXpath('tig/stability/postnl');
+        $stability = (string) $stability[0];
 
         return $stability;
     }
