@@ -607,7 +607,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             $edition = 'community';
         }
 
-        $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
+        $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/magento/' . $edition);
         if ($supportedVersions === false) {
             $this->_addUnsupportedVersionMessage();
 
