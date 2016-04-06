@@ -1,8 +1,0 @@
-{
-  "require": {
-    "phpunit/phpunit-selenium": "dev-master",
-    "facebook/webdriver": "dev-master",
-    "phpunit/phpunit": "^5.2",
-    "vlucas/phpdotenv": "dev-master"
-  }
-}
