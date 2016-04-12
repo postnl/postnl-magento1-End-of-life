@@ -50,6 +50,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdateConfig {
     const ATTRIBUTE_CODE_POSTNL_PRODUCT_TYPE = 'postnl_product_type';
 
     /**
+     * The array that holds the attributes models.
+     *
+     * @var array
+     */
+    protected $attributes = array();
+
+    /**
      * Check if we need to show some product attributes. If not, hide them.
      *
      * @return $this
@@ -61,38 +68,68 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdateConfig {
         $country = Mage::getStoreConfig(self::XPATH_POSTNL_CIF_ADDRESS_COUNTRY);
         $use_dutch_products = Mage::getStoreConfig(self::XPATH_POSTNL_CIF_LABELS_AND_CONFIRMING_USE_DUTCH_PRODUCTS);
 
-        /** @var Mage_Eav_Model_Entity_Attribute $model */
-        $attributeModelBuspakje = Mage::getModel('eav/entity_attribute');
-        $attributeModelBuspakje->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_POSTNL_MAX_QTY_FOR_BUSPAKJE);
+        $xpaths = array(self::ATTRIBUTE_CODE_POSTNL_MAX_QTY_FOR_BUSPAKJE, self::ATTRIBUTE_CODE_POSTNL_PRODUCT_TYPE);
+        foreach ($xpaths as $xpath) {
+            $model = $this->getModel($xpath);
 
-        /** @var Mage_Eav_Model_Entity_Attribute $model */
-        $attributeModelPoductType = Mage::getModel('eav/entity_attribute');
-        $attributeModelPoductType->loadByCode(Mage_Catalog_Model_Product::ENTITY, self::ATTRIBUTE_CODE_POSTNL_PRODUCT_TYPE);
+            if ($model->getId() !== null) {
+                $this->attributes[] = $model;
+            }
+        }
 
         /**
          * If the domestic country is NL, always show the options.
          */
         if ($country == 'NL') {
-            $attributeModelBuspakje->setIsVisible(true);
-            $attributeModelPoductType->setIsVisible(true);
+            $this->setIsVisible(true);
         } else {
             /**
              * The country is not NL, and the option use_dutch_products is disabled. So hide this options.
              */
             if ($use_dutch_products == '0') {
-                $attributeModelBuspakje->setIsVisible(false);
-                $attributeModelPoductType->setIsVisible(false);
+                $this->setIsVisible(false);
             } else {
-                $attributeModelBuspakje->setIsVisible(true);
-                $attributeModelPoductType->setIsVisible(true);
+                $this->setIsVisible(true);
             }
         }
 
         /**
          * Too bad dataHasChangedFor returns false when setIsVisible is false.
          */
-        $attributeModelBuspakje->save();
-        $attributeModelPoductType->save();
+        foreach ($this->attributes as $attribute) {
+            $attribute->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Load a model by the xpath.
+     *
+     * @param $xpath
+     *
+     * @return Mage_Eav_Model_Entity_Attribute
+     * @throws Mage_Core_Exception
+     */
+    protected function getModel($xpath) {
+        /** @var Mage_Eav_Model_Entity_Attribute $model */
+        $model = Mage::getModel('eav/entity_attribute');
+        $model->loadByCode(Mage_Catalog_Model_Product::ENTITY, $xpath);
+
+        return $model;
+    }
+
+    /**
+     * Loop over the models and set the isVisible value.
+     *
+     * @param $value
+     *
+     * @return $this
+     */
+    protected function setIsVisible($value) {
+        foreach ($this->attributes as $attribute) {
+            $attribute->setIsVisible($value);
+        }
 
         return $this;
     }
