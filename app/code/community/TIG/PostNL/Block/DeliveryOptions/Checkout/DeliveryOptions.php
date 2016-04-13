@@ -293,21 +293,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getCountry()
     {
-        /**
-         * @todo make dynamic for BE support.
-         *
-         * Delivery options in Belgium are currently unstable and therefor not yet fully supported. Expect this to be
-         * added in a later release.
-         */
-        return 'NL';
+        $country = $this->getShippingAddress()->getCountryId();
 
-//        $country = $this->getShippingAddress()->getCountryId();
-//
-//        if (!$country) {
-//            $country = self::DEFAULT_SHIPPING_COUNTRY;
-//        }
-//
-//        return $country;
+        if (!$country) {
+            $country = self::DEFAULT_SHIPPING_COUNTRY;
+        }
+
+        return $country;
     }
 
     /**
