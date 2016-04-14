@@ -3039,7 +3039,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         return $allow;
     }
 
-    protected function canUseDutchProducts()
+    public function canUseDutchProducts()
     {
         if ($this->_canUseDutchProducts !== null) {
             return $this->_canUseDutchProducts;

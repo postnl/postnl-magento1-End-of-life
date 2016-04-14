@@ -360,10 +360,27 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$shippingAddress
-            || $shippingAddress->getCountryId() != $domesticCountry
+        if (
+            !$shippingAddress ||
+            $shippingAddress->getCountryId() != $domesticCountry
         ) {
-            return false;
+            /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+            $helper = Mage::helper('postnl/deliveryOptions');
+            $helper->setDomesticCountry($domesticCountry);
+            $canUseDutchProducts = $helper->canUseDutchProducts();
+
+            if (
+                $domesticCountry != 'BE' ||
+                $shippingAddress->getCountryId() != 'NL' ||
+                (
+                    $domesticCountry == 'BE' &&
+                    $shippingAddress->getCountryId() == 'NL' &&
+                    !$canUseDutchProducts
+                )
+            ) {
+                return false;
+            }
+
         }
 
         /**
