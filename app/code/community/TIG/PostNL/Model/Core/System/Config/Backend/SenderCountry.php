@@ -42,6 +42,8 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
      * Xpath to alternative sender country setting.
      */
     const XPATH_ALTERNATIVE_SENDER_COUNTRY = 'postnl/cif_address/alternative_sender_country';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS_BE = 'postnl/grid/supported_product_options_be';
 
     /**
      * @var array
@@ -93,6 +95,23 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
         $alternativeSenderCountry->setData($this->getData())
                                  ->setPath(self::XPATH_ALTERNATIVE_SENDER_COUNTRY)
                                  ->save();
+
+        /**
+         * If the country is changed from the Netherlands to Belgium or vice versa, we need to update the
+         * default selected product codes. Retrieve the default value and save them to the config.
+         */
+        if ($this->isValueChanged()) {
+            Mage::getConfig()->deleteConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS);
+
+            if ($this->getValue() == 'BE') {
+                $value = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE);
+
+                Mage::getModel('core/config')->saveConfig(
+                    self::XPATH_SUPPORTED_PRODUCT_OPTIONS,
+                    $value
+                );
+            }
+        }
 
         return parent::_afterSave();
     }

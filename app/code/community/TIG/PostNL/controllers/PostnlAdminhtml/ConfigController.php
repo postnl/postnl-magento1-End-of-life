@@ -50,6 +50,11 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
 
     /**
+     * XML path to the domestic country.
+     */
+    const XPATH_POSTNL_CIF_ADDRESS_COUNTRY = 'postnl/cif_address/country';
+
+    /**
      * @var boolean
      */
     protected $_isTestMode = false;
@@ -349,6 +354,8 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
                 return $this;
             }
 
+            $isDomesticCountryChanged = $this->_isDomesticCountryChanged();
+
             /**
              * custom save logic
              */
@@ -391,8 +398,13 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
                 $this->_saveCurrentWizardStep($nextStep);
             }
 
-            $this->getResponse()
-                 ->setBody('success');
+            if (!$isDomesticCountryChanged) {
+                $this->getResponse()
+                    ->setBody('success');
+            } else {
+                $this->getResponse()
+                    ->setBody('refresh');
+            }
         } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
 
@@ -539,5 +551,31 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
         }
 
         return true;
+    }
+
+    /**
+     * Check if the domestic country is changed. If that is the case we want to reload the page so all settings are
+     * adjusted for the correct domestic country.
+     */
+    protected function _isDomesticCountryChanged()
+    {
+        /**
+         * Xpath: postnl/GROUP/VALUE
+         */
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        list($section, $group, $field) = explode('/', self::XPATH_POSTNL_CIF_ADDRESS_COUNTRY);
+        $groups = $this->getRequest()->getPost('groups');
+
+        if (
+            array_key_exists($group, $groups) &&
+            array_key_exists($field, $groups[$group]['fields'])
+        ) {
+            $value = $groups[$group]['fields'][$field]['value'];
+            $configValue = Mage::getStoreConfig(self::XPATH_POSTNL_CIF_ADDRESS_COUNTRY);
+
+            return $value != $configValue;
+        }
+
+        return false;
     }
 }

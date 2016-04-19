@@ -319,6 +319,17 @@
                     return;
                 }
 
+                if (responseText == 'refresh') {
+                    /**
+                     * Change the hash to the next wizard pane. After the page reloads this will be shown.
+                     */
+                    window.location.hash = nextStepHash;
+
+                    window.location.reload(true);
+
+                    return;
+                }
+
                 /**
                  * If something went wrong, submit the entire config form as a fallback.
                  */

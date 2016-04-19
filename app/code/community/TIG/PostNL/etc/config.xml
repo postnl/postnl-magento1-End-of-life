@@ -1061,6 +1061,7 @@
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828,4970,4971,4972,4973,4974,4975,4976</supported_product_options> <!-- all possible options except for EPS BE only -->
+                <supported_product_options_be>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,4970,4971,4972,4973,4974,4975,4976,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2828,2928</supported_product_options_be> <!-- all possible options for BE -->
                 <default_product_option>3085</default_product_option> <!-- standard shipment -->
                 <use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
                 <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
