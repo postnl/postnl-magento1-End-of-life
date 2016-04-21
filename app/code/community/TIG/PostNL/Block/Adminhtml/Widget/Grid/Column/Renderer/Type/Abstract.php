@@ -208,9 +208,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         }
 
         /**
-         * Check if this order is domestic.
+         * Check if this order is domestic OR
+         * Check if this is a BE to NL shipment with the "use dutch products" option active.
          */
-        if ($value == $domesticCountry) {
+        if (
+            $value == $domesticCountry ||
+            (
+                $value == 'NL' &&
+                $domesticCountry == 'BE' &&
+                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts()
+            )
+        ) {
             return $this->_getDomesticRenderedValue($row, $value);
         }
 

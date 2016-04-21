@@ -68,21 +68,13 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         $options = $this->_options;
 
         /**
-         * The domestic country is BE, but the user selected to use dutch products. Sometimes this value is an array.
+         * The domestic country is BE, but the user selected to use dutch products.
          */
         if (
             array_key_exists('countryLimitation', $flags) &&
-            (
-                $flags['countryLimitation'] == 'BE' ||
-                $flags['countryLimitation'][0] == 'BE'
-            )
+            Mage::helper('postnl/DeliveryOptions')->canUseDutchProducts()
         ) {
-            $storeId = Mage::app()->getStore()->getId();
-            $configValue = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS, $storeId);
-
-            if ($configValue == '1') {
-                unset($flags['countryLimitation']);
-            }
+            unset($flags['countryLimitation']);
         }
 
         if (!empty($flags)) {

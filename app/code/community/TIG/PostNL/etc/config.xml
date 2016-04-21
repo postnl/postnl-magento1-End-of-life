@@ -233,6 +233,7 @@
             </postnl_shipment_setshippingphase_delivered>
             <admin_system_config_changed_section_postnl>
                 <observers>
+                    <!-- Disable product attributes when use dutch products is disabled -->
                     <postnl_update_attributes>
                         <type>model</type>
                         <class>postnl_deliveryoptions/observer_updateConfig</class>

@@ -1555,8 +1555,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Pakketautomaat is only available when sending from the Netherlands.
          */
-        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($senderCountry != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             return false;
         }
 
@@ -2044,7 +2043,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.
          */
-        $registryKey = 'can_use_delivery_options';
+        $registryKey = 'can_use_delivery_options_' . $this->getDomesticCountry();
         if ($quote && $quote->getId()) {
             $registryKey .= '_quote_id_' . $quote->getId();
         }
@@ -2424,7 +2423,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        if ($shippingAddress->getCountry() != 'NL' && $shippingAddress->getCountry() != 'BE') {
+        if ($shippingAddress->getCountry() != 'NL' /*&& $shippingAddress->getCountry() != 'BE'*/) {
             Mage::register($registryKey, false);
             return false;
         }
