@@ -1349,3 +1349,4 @@ TIG_PostNL::Activate Dutch products,Activeer Nederlandse producten
 TIG_PostNL::Use Dutch products,Gebruik Nederlandse producten
 TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,Als deze optie geactiveerd is kunt u voor zendingen naar Nederland gebruik maken van het Nederlandse PostNL productassortiment.
 TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is alleen beschikbaar wanneer u verstuurd vanuit Nederland.
+TIG_PostNL::Pay attention: The postcode check is only active in the Netherlands,Let op: De postcode check is alleen actief in Nederland
