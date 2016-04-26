@@ -3683,6 +3683,11 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         /**
+         * Update the frontend
+         */
+        deliveryOptions.saveOscOptions();
+
+        /**
          * Close the google maps interface window.
          */
         this.closeAddLocationWindow();
@@ -5208,6 +5213,21 @@ PostnlDeliveryOptions.Location = new Class.create({
         $$('#postnl_add_moment .option-list')[0].insert({
             bottom : html
         });
+
+        /**
+         * Add observers to display the tooltip on mouse over
+         */
+        var showOnMapAnchor = $('show_map_' + this.getLocationCode());
+
+        showOnMapAnchor.observe('click', function(event) {
+            event.stop();
+
+            this.getMap().openAddLocationWindow();
+
+            if (this.getMarker() !== false) {
+                this.getMap().selectMarker(this.getMarker(), true, true);
+            }
+        }.bind(this));
 
         return this;
     },
