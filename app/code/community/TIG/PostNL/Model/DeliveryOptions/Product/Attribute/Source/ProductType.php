@@ -81,4 +81,38 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
     {
         return $this->getAllOptions();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFlatColums()
+    {
+        $attributeCode = $this->getAttribute()->getAttributeCode();
+        $column = array(
+            'unsigned'  => false,
+            'default'   => null,
+            'extra'     => null
+        );
+
+        if (Mage::helper('core')->useDbCompatibleMode()) {
+            $column['type']     = 'int(11)';
+            $column['is_null']  = true;
+        } else {
+            $column['type']     = Varien_Db_Ddl_Table::TYPE_INTEGER;
+            $column['length']   = 1;
+            $column['nullable'] = true;
+            $column['comment']  = $attributeCode . ' column';
+        }
+
+        return array($attributeCode => $column);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFlatUpdateSelect($store)
+    {
+        return Mage::getResourceModel('eav/entity_attribute')
+            ->getFlatUpdateSelect($this->getAttribute(), $store);
+    }
 }
