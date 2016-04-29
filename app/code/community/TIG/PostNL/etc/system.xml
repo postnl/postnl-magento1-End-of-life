@@ -4801,6 +4801,28 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </default_product_option>
+                        <default_product_option_netherlands translate="label tooltip" module="postnl">
+                            <label>Default shipping option for the Netherlands</label>
+                            <tooltip>This option is only for shipments from Belgium to the Netherlands and may be overwritten.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptionsForTheNetherlands</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>115</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </default_product_option_netherlands>
                         <use_alternative_default translate="label tooltip" module="postnl">
                             <label>Use an alternative default option</label>
                             <tooltip>Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.</tooltip>

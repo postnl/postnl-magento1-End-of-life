@@ -147,7 +147,14 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             return $shipmentType;
         }
 
-        if ($countryId == $domesticCountry) {
+        if (
+            $countryId == $domesticCountry ||
+            (
+                $domesticCountry == 'BE' &&
+                $countryId == 'NL' &&
+                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts()
+            )
+        ) {
             $shipmentType = $this->__('Domestic');
 
             return $shipmentType;

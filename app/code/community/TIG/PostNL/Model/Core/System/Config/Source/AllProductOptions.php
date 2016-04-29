@@ -444,7 +444,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
         $helper = Mage::helper('postnl');
-        if (!isset($flags['countryLimitation'])) {
+        $canUseDutchProducts = Mage::helper('postnl/deliveryOptions')->canUseDutchProducts();
+        if (!isset($flags['countryLimitation']) && !$canUseDutchProducts) {
             $domesticCountry = $helper->getDomesticCountry();
             $flags['countryLimitation'] =  array(
                 $domesticCountry,

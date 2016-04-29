@@ -316,6 +316,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     }
 
     /**
+     * Get a list of available options. This is specific for the Netherlands only
+     *
+     * @return array
+     */
+    public function getAvailableOptionsForTheNetherlands()
+    {
+        return $this->getAvailableOptions(false, 'NL');
+    }
+
+    /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
      * @param boolean $flat

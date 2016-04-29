@@ -41,9 +41,10 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
     /**
      * Xpath to alternative sender country setting.
      */
-    const XPATH_ALTERNATIVE_SENDER_COUNTRY = 'postnl/cif_address/alternative_sender_country';
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
+    const XPATH_ALTERNATIVE_SENDER_COUNTRY   = 'postnl/cif_address/alternative_sender_country';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS    = 'postnl/grid/supported_product_options';
     const XPATH_SUPPORTED_PRODUCT_OPTIONS_BE = 'postnl/grid/supported_product_options_be';
+    const XPATH_USE_DUTCH_PRODUCTS           = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * @var array
@@ -104,7 +105,19 @@ class TIG_PostNL_Model_Core_System_Config_Backend_SenderCountry extends Mage_Cor
             Mage::getConfig()->deleteConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS);
 
             if ($this->getValue() == 'BE') {
-                $value = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE);
+                $canUseDutchProducts = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS);
+                if ($canUseDutchProducts) {
+                    $value = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS);
+                    $value .= ',' .Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE);
+
+                    $values = explode(',', $value);
+                    $values = array_unique($values);
+                    sort($values);
+
+                    $value = implode(',', $values);
+                } else {
+                    $value = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE);
+                }
 
                 Mage::getModel('core/config')->saveConfig(
                     self::XPATH_SUPPORTED_PRODUCT_OPTIONS,

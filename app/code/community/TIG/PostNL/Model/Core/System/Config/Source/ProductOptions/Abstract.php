@@ -67,16 +67,6 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     {
         $options = $this->_options;
 
-        /**
-         * The domestic country is BE, but the user selected to use dutch products.
-         */
-        if (
-            array_key_exists('countryLimitation', $flags) &&
-            Mage::helper('postnl/DeliveryOptions')->canUseDutchProducts()
-        ) {
-            unset($flags['countryLimitation']);
-        }
-
         if (!empty($flags)) {
             foreach ($options as $key => $option) {
                 if (!$this->_optionMatchesFlags($option, $flags)) {

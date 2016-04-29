@@ -1302,7 +1302,7 @@ TIG_PostNL::Belgium Deliver to stated address only + Return when not home,Belgi�
 TIG_PostNL::Belgium Return when not home,België Retour indien niet thuis
 TIG_PostNL::Belgium Signature on delivery + Deliver to stated address only + Return when not home,België Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Retour indien niet thuis
 TIG_PostNL::Belgium Signature on delivery + Return when not home,België Handtekening bij ontvangst + Retour indien niet thuis
-TIG_PostNL::Belgium COD + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium COD + Return when not home,België + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
@@ -1350,3 +1350,5 @@ TIG_PostNL::Use Dutch products,Gebruik Nederlandse producten
 TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,Als deze optie geactiveerd is kunt u voor zendingen naar Nederland gebruik maken van het Nederlandse PostNL productassortiment.
 TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Pay attention: The postcode check is only active in the Netherlands,Let op: De postcode check is alleen actief in Nederland
+TIG_PostNL::Default shipping option for the Netherlands,Standaard verzendoptie voor verzendingen naar Nederland
+TIG_PostNL::This option is only for shipments from Belgium to the Netherlands and may be overwritten.,Deze optie is alleen voor zendingen naar Nederland. Deze kan overschreven worden door handmatig een verzending aan te maken.
