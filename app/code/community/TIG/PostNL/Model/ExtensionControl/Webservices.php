@@ -209,7 +209,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $encryptedData = mcrypt_encrypt(
             MCRYPT_RIJNDAEL_256,
-            $mcryptKey,
+            $this->_padKey($mcryptKey),
             $serializedData,
             MCRYPT_MODE_CBC,
             $iv
@@ -1034,5 +1034,45 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $showShippingLabel = (bool) $website->getConfig(self::XPATH_SHOW_LABEL);
 
         return $showShippingLabel;
+    }
+
+    /**
+     * Pad the mcrypt key with zeros. Before PHP 5.6 this was the default. This is to provide backwards compatibility.
+     *
+     * @param $key
+     *
+     * @return bool|string
+     */
+    protected function _padKey($key){
+        if(strlen($key) > 32) {
+            return $key;
+        }
+
+        /**
+         * Valid key sizes.
+         */
+        $sizes = array(
+            16,
+            24,
+            32
+        );
+
+        /**
+         * loop through sizes and pad key
+         */
+        foreach($sizes as $s) {
+            while(strlen($key) < $s) {
+                $key = $key."\0";
+            }
+
+            /**
+             * Finish if the key matches a size
+             */
+            if(strlen($key) == $s) {
+                break;
+            }
+        }
+
+        return $key;
     }
 }
