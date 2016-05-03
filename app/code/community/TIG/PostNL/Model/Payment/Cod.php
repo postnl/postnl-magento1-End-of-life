@@ -185,6 +185,13 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         $helper = Mage::helper('postnl/payment');
 
         /**
+         * Check if this payment method is active.
+         */
+        if (!(bool)$this->getConfigData('active', $quote->getStoreId())) {
+            return false;
+        }
+
+        /**
          * Make sure the quote is available.
          */
         if (is_null($quote)) {
@@ -216,6 +223,13 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          */
         if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
             $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+
+            /**
+             * If the shipping method is not set, we won't check it.
+             */
+            if ($shippingMethod === null) {
+                return false;
+            }
 
             /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
             $carrierHelper = Mage::helper('postnl/carrier');
