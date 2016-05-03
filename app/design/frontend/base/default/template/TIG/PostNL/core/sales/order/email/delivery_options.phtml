@@ -46,7 +46,7 @@ $_helper = Mage::helper('postnl/deliveryOptions'); ?>
 <?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
 <?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
     <br />
-    <?php echo $_deliveryOptions['store_delivery_date']; ?>
+    <?php echo $this->formatDate($_deliveryOptions['store_delivery_date'], Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM); ?>
     <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
         &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php echo $_deliveryOptions['store_delivery_time_end']; ?>)
     <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
