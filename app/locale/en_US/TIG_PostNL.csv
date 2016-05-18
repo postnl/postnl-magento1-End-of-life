@@ -1335,3 +1335,9 @@ TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands
 TIG_PostNL::Pay attention: The postcode check is only active in the Netherlands,Pay attention: The postcode check is only active in the Netherlands
 TIG_PostNL::Default shipping option for the Netherlands,Default shipping option for the Netherlands
 TIG_PostNL::This option is only for shipments from Belgium to the Netherlands and may be overwritten.,This option is only for shipments from Belgium to the Netherlands and may be overwritten.
+TIG_POSTNL::The current PostNL Extension configuration requires you to set an Dutch address.,The current PostNL Extension configuration requires you to set an Dutch address.
+TIG_PostNL::Dutch address,Dutch address
+TIG_PostNL::Use a Dutch sender address when sending shipments to Dutch addresses.,Use a Dutch sender address when sending shipments to Dutch addresses.
+TIG_PostNL::Customer Number used for shipments to the Netherlands,Customer Number used for shipments to the Netherlands
+TIG_PostNL::Customer Code for shipments to the Netherlands,Customer Code for shipments to the Netherlands
+TIG_PostNL::Please enter your Dutch customer code and number.,Please enter your Dutch customer code and number.

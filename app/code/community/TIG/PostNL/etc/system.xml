@@ -760,10 +760,208 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </country>
+                        <dutch_address_header translate="label" module="postnl">
+                            <label>Dutch address</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_address_header>
+                        <use_dutch_address translate="label" module="postnl">
+                            <label>Use a Dutch sender address when sending shipments to Dutch addresses.</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </use_dutch_address>
+                        <dutch_address_firstname translate="label" module="postnl">
+                            <label>First Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_address_firstname>
+                        <dutch_address_lastname translate="label" module="postnl">
+                            <label>Last Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
+                        </dutch_address_lastname>
+                        <dutch_address_company translate="label" module="postnl">
+                            <label>Company</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
+                        </dutch_address_company>
+                        <dutch_address_department translate="label" module="postnl">
+                            <label>Department</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_address_department>
+                        <dutch_address_streetname translate="label" module="postnl">
+                            <label>Street</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>validate-alphanum-with-spaces postnl-validate-empty</validate>
+                        </dutch_address_streetname>
+                        <dutch_address_housenumber translate="label" module="postnl">
+                            <label>House Nr.</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>validate-digits postnl-validate-empty</validate>
+                        </dutch_address_housenumber>
+                        <dutch_address_housenumber_extension translate="label" module="postnl">
+                            <label>House Nr. Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_address_housenumber_extension>
+                        <dutch_address_postcode translate="label" module="postnl">
+                            <label>Postcode</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </dutch_address_postcode>
+                        <dutch_address_city translate="label" module="postnl">
+                            <label>City</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>240</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </dutch_address_city>
+                        <dutch_address_region translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <country>BE</country>
+                                <use_dutch_address>1</use_dutch_address>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_address_region>
                         <alternative_sender_address_header translate="label" module="postnl">
                             <label>Alternative sender address</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -773,7 +971,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -781,7 +979,7 @@
                         <alternative_sender_firstname translate="label" module="postnl">
                             <label>First Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -793,7 +991,7 @@
                         <alternative_sender_lastname translate="label" module="postnl">
                             <label>Last Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>170</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -805,7 +1003,7 @@
                         <alternative_sender_company translate="label" module="postnl">
                             <label>Company</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -816,7 +1014,7 @@
                         <alternative_sender_department translate="label" module="postnl">
                             <label>Department</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -827,7 +1025,7 @@
                         <alternative_sender_streetname translate="label" module="postnl">
                             <label>Street</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>200</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -840,7 +1038,7 @@
                         <alternative_sender_housenumber translate="label" module="postnl">
                             <label>House Nr.</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>210</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -853,7 +1051,7 @@
                         <alternative_sender_housenumber_extension translate="label" module="postnl">
                             <label>House Nr. Extension</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>220</sort_order>
+                            <sort_order>340</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -864,7 +1062,7 @@
                         <alternative_sender_postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>230</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -876,7 +1074,7 @@
                         <alternative_sender_city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>240</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -888,7 +1086,7 @@
                         <alternative_sender_region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>250</sort_order>
+                            <sort_order>370</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -899,7 +1097,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>380</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2707,10 +2905,48 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </public_webshop_id>
+                        <dutch_customer_number translate="label tooltip" module="postnl">
+                            <label>Customer Number used for shipments to the Netherlands</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits postnl-validate-empty</validate>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_customer_number>
+                        <dutch_customer_code translate="label tooltip" module="postnl">
+                            <label>Customer Code for shipments to the Netherlands</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
+                            <depends>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_dutch_products>
+                            </depends>
+                        </dutch_customer_code>
                         <validate_button translate="tooltip" module="postnl">
                             <tooltip><![CDATA[You can use this button to validate your account settings without saving the configuration. This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. <br />Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked.]]></tooltip>
                             <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2718,7 +2954,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2727,7 +2963,7 @@
                         <only_global_and_website_header translate="label" module="postnl">
                             <label><![CDATA[These settings are only available on the 'global' and 'website' scopes.]]></label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>1</show_in_store>
