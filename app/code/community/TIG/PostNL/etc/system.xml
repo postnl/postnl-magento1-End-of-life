@@ -2795,7 +2795,7 @@
                                 </country>
                             </depends>
                         </delivery_days_number_be>
-                        <enable_pakjegemak_be translate="label tooltip" module="postnl">
+                        <!--<enable_pakjegemak_be translate="label tooltip" module="postnl">
                             <label>Enable post office locations for Belgium</label>
                             <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
                             <frontend_type>checkbox</frontend_type>
@@ -2818,7 +2818,7 @@
                                     <value>NL</value>
                                 </country>
                             </depends>
-                        </enable_pakjegemak_be>
+                        </enable_pakjegemak_be>-->
                         <mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
