@@ -997,7 +997,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Only NL shipments support multi-colli shipments.
          */
-        if (!$postnlShipment->isDomesticShipment()) {
+        if ($postnlShipment->getShippingAddress()->getCountryId() != 'NL') {
             return 1;
         }
 

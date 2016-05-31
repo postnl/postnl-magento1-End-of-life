@@ -73,3 +73,8 @@ button.postnl-button { width:280px; margin-right:5px; }
 /* Fixes */
 .columns .form-list td.value.with-tooltip { width:350px; }
 .form-list td.value input.input-text, .form-list td.value textarea { width:330px; }
+
+#postnl_support table.contact td.icon { padding-left: 20px; background-position: center left; background-repeat: no-repeat; }
+.icon-nl { background-image: url(../../../images/TIG/PostNL/flags/nl.png); }
+.icon-nl { background-image: url(../../../images/TIG/PostNL/flags/nl.png); }
+.icon-website { background-image: url(../../../images/TIG/PostNL/website.png); }

@@ -1136,7 +1136,7 @@ TIG_PostNL::Checkout extension,Checkout extensie
 TIG_PostNL::Checkout settings,Checkout instellingen
 "TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions.","PostNL bezorgopties zijn enkel beschikbaar voor Magento's One Page Checkout, Idev's OneStepCheckout en de GoMage LightCheckout extensies."
 TIG_PostNL::Specify checkout extension,Specificeer checkout extensie
-TIG_PostNL::Checkout Settings,Checkout instellingen
+TIG_PostNL::Checkout settings (only active in the Netherlands),Checkout instellingen (enkel actief in Nederland)
 TIG_PostNL::As soon as possible,Eerst volgende mogelijkheid
 TIG_PostNL::The previous step has been saved successfully!,De vorige stap is succesvol opgeslagen!
 TIG_PostNL::These settings are only available on the 'global' and 'website' scopes.,Deze instellingen zijn enkel beschikbaar op de 'globaal' en 'website' niveaus.
@@ -1148,7 +1148,7 @@ TIG_PostNL::Use the button below to request help from the TIG servicedesk.,Gebru
 TIG_PostNL::Request help from the servicedesk,Stel een vraag aan de servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activatie
 TIG_PostNL::Shipment and order grids,Verzendingen -en bestellingenoverzicht
-TIG_PostNL::Delivery options,Bezorgopties
+TIG_PostNL::Delivery Options NL,Bezorgopties NL
 TIG_PostNL::Globalpack and barcode settings,Globalpack en barcode-instellingen
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technische instellingen
@@ -1302,7 +1302,7 @@ TIG_PostNL::Belgium Deliver to stated address only + Return when not home,Belgi�
 TIG_PostNL::Belgium Return when not home,België Retour indien niet thuis
 TIG_PostNL::Belgium Signature on delivery + Deliver to stated address only + Return when not home,België Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Retour indien niet thuis
 TIG_PostNL::Belgium Signature on delivery + Return when not home,België Handtekening bij ontvangst + Retour indien niet thuis
-TIG_PostNL::Belgium COD + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium COD + Return when not home,België + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
 TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
@@ -1385,3 +1385,16 @@ TIG_PostNL::You are currently using the PostNL postcode check in combination wit
 "TIG_PostNL::You are currenlty using both the delivery date functionality from OneStepCheckout and the PostNL Delivery Options. While these functionalities should work side by side without issues, this could be confusing to your clients.","U maakt op het moment gebruik van zowel de delivery date functionaliteit van OneStepCheckout als de PostNL Bezorgopties. Hoewel deze functionaliteiten zij aan zij zouden moeten kunnen werken zonder problemen, kan dit verwarring opleveren voor uw klanten."
 TIG_PostNL::Food products delivery is not possible for this postal code. Please choose a different address.,Er is geen bezorging van versproducten mogelijk op deze postcode. Kies een ander adres.
 TIG_PostNL::No attribute found with attribute code %s.,Geen attribuut gevonden met attribuutcode %s.
+TIG_PostNL::Activate Dutch products,Activeer Nederlandse producten
+TIG_PostNL::Use Dutch products,Gebruik Nederlandse producten
+TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,Als deze optie geactiveerd is kunt u voor zendingen naar Nederland gebruik maken van het Nederlandse PostNL productassortiment.
+TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is alleen beschikbaar wanneer u verstuurd vanuit Nederland.
+TIG_PostNL::Pay attention: The postcode check is only active in the Netherlands,Let op: De postcode check is alleen actief in Nederland
+TIG_PostNL::Default shipping option for the Netherlands,Standaard verzendoptie voor verzendingen naar Nederland
+TIG_PostNL::This option is only for shipments from Belgium to the Netherlands and may be overwritten.,Deze optie is alleen voor zendingen naar Nederland. Deze kan overschreven worden door handmatig een verzending aan te maken.
+TIG_PostNL::The current PostNL Extension configuration requires you to set an Dutch address.,De huidige PostNL extensie configuratie vereist dat er een Nederlands adres wordt ingesteld.
+TIG_PostNL::Dutch address,Nederlands adres
+TIG_PostNL::Use a Dutch sender address when sending shipments to Dutch addresses.,Gebruik een Nederlands afzenderadres voor zendingen naar Nederlandse adressen.
+TIG_PostNL::Customer Number used for shipments to the Netherlands,Klantnummer voor verzendingen naar Nederlandse adressen
+TIG_PostNL::Customer Code for shipments to the Netherlands,Klantcode voor verzendingen naar Nederlandse adressen
+TIG_PostNL::Please enter your Dutch customer code and number.,Vul uw Nederlandse klantnummer en klantcode in.

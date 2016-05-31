@@ -556,6 +556,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $n = 0;
         $responseWarnings = array();
         foreach ($warnings as $warning) {
+            if ($this->hasEpsCombiLabelWarning($warning)) {
+                continue;
+            }
+
             foreach ($warning->getElementsByTagName('Code') as $code) {
                 $responseWarnings[$n]['code'] = $code->nodeValue;
             }
@@ -584,6 +588,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         Mage::register('postnl_cif_warnings', $responseWarnings);
 
         return $this;
+    }
+
+    /**
+     * Check if the supplied warning has an EPS Combi Label warning. We don't want to show it so skip it.
+     *
+     * @param $warning
+     *
+     * @return bool
+     */
+    protected function hasEpsCombiLabelWarning($warning) {
+        foreach ($warning->getElementsByTagName('Code') as $code) {
+            if ($code->nodeValue == TIG_PostNL_Model_Core_Shipment::EPS_COMBI_LABEL_WARNING_CODE) {
+                return true;
+            }
+        }
     }
 
     /**

@@ -482,7 +482,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Try to tget the domestic country array from the cache.
+         * Try to get the domestic country array from the cache.
          */
         $cache = $this->getCache();
         if ($cache && $cache->hasDomesticCountry()) {

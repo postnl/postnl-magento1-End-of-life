@@ -46,6 +46,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_DELIVERY_OPTIONS_ACTIVE    = 'postnl/delivery_options/delivery_options_active';
     const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options/delivery_options_be_active';
+    const XPATH_USE_DUTCH_PRODUCTS         = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * Xpaths to various possible delivery option settings.
@@ -170,6 +171,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @var null
      */
     protected $_configMinQty = null;
+
+    /**
+     * @var null
+     */
+    protected $_canUseDutchProducts = null;
 
     /**
      * @return int
@@ -1408,10 +1414,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * PakjeGemak is only available when sending from the Netherlands.
+         * PakjeGemak is only available when sending using Dutch products.
          */
-        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($senderCountry != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             return false;
         }
 
@@ -1745,8 +1750,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Pakketautomaat is only available when sending from the Netherlands.
          */
-        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($senderCountry != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             return false;
         }
 
@@ -1816,7 +1820,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
             $storeId = Mage::app()->getStore()->getId();
@@ -2195,7 +2199,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
             $storeId = Mage::app()->getStore()->getId();
@@ -2345,12 +2349,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if ($this->getDomesticCountry() != 'NL'
-            || ($this->getQuote()
-                && $this->getQuote()->getShippingAddress()
-                && $this->getQuote()->getShippingAddress()->getCountryId() != 'NL'
-            )
-        ) {
+        if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
             $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
@@ -2380,7 +2379,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.
          */
-        $registryKey = 'can_use_delivery_options';
+        $registryKey = 'can_use_delivery_options_' . $this->getDomesticCountry();
         if ($quote && $quote->getId()) {
             $registryKey .= '_quote_id_' . $quote->getId();
         }
@@ -2398,7 +2397,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Delivery options are only available when shipping from the Netherlands.
          */
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -3403,6 +3402,40 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allow;
+    }
 
+    public function canUseDutchProducts()
+    {
+        if ($this->_canUseDutchProducts !== null) {
+            return $this->_canUseDutchProducts;
+        }
+
+        /**
+         * The Netherlands is always allowed.
+         */
+        if ($this->getDomesticCountry() == 'NL') {
+            $this->_canUseDutchProducts = true;
+            return $this->_canUseDutchProducts;
+        }
+
+        /**
+         * In some cases Belgium is also allowed. Other countries are never allowed.
+         */
+        if ($this->getDomesticCountry() != 'BE') {
+            $this->_canUseDutchProducts = false;
+            return $this->_canUseDutchProducts;
+        }
+
+        /**
+         * If the user enabled the option "Use dutch products", and is in Belgium, it is allowed to use Dutch products.
+         */
+        $use_dutch_products = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS, Mage::app()->getStore()->getId());
+        if ($use_dutch_products == '1') {
+            $this->_canUseDutchProducts = true;
+            return $this->_canUseDutchProducts;
+        }
+
+        $this->_canUseDutchProducts = false;
+        return $this->_canUseDutchProducts;
     }
 }

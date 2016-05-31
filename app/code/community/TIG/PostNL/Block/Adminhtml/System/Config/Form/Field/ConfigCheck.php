@@ -54,6 +54,14 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     const XPATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
 
     /**
+     * XML paths to check the Dutch products.
+     */
+    const XPATH_USE_DUTCH_PRODUCTS    = 'postnl/cif_labels_and_confirming/use_dutch_products';
+    const XPATH_USE_DUTCH_ADDRESS     = 'postnl/cif_address/use_dutch_address';
+    const XPATH_DUTCH_CUSTOMER_CODE   = 'postnl/cif/dutch_customer_code';
+    const XPATH_DUTCH_CUSTOMER_NUMBER = 'postnl/cif/dutch_customer_number';
+
+    /**
      * Template file used by this element.
      *
      * @var string
@@ -189,5 +197,47 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
         }
 
         return $configErrors;
+    }
+
+    /**
+     * Check if there is a dutch address needed.
+     *
+     * @return bool
+     */
+    public function needsDutchAddress()
+    {
+        $country = $this->helper('postnl')->getDomesticCountry();
+
+        if ($country == 'BE') {
+            $useDutchProducts = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS);
+            $useDutchAddress = Mage::getStoreConfig(self::XPATH_USE_DUTCH_ADDRESS);
+
+            if ($useDutchProducts == '1' && $useDutchAddress == '0') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the dutch customer code and customer number are entered.
+     *
+     * @return bool
+     */
+    public function needsDutchCustomerCodeOrNumber(){
+        $country = $this->helper('postnl')->getDomesticCountry();
+
+        if ($country == 'BE') {
+            $useDutchProducts = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS);
+            $dutchCustomerCode = Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_CODE);
+            $dutchCustomerNumber = Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_NUMBER);
+
+            if ($useDutchProducts == '1' && (empty($dutchCustomerCode) || empty($dutchCustomerNumber))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

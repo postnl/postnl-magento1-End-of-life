@@ -394,12 +394,31 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order has a shipping address.
+         * Check if this order is being shipped to a domestic country.
          */
+        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$shippingAddress) {
-            return false;
+        if (
+            !$shippingAddress ||
+            $shippingAddress->getCountryId() != $domesticCountry
+        ) {
+            /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+            $helper = Mage::helper('postnl/deliveryOptions');
+            $helper->setDomesticCountry($domesticCountry);
+            $canUseDutchProducts = $helper->canUseDutchProducts();
+
+            if (
+                $domesticCountry != 'BE' ||
+                $shippingAddress->getCountryId() != 'NL' ||
+                (
+                    $domesticCountry == 'BE' &&
+                    $shippingAddress->getCountryId() == 'NL' &&
+                    !$canUseDutchProducts
+                )
+            ) {
+                return false;
+            }
         }
 
         /**

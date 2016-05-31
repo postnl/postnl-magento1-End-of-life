@@ -608,7 +608,7 @@ TIG_PostNL::Connection timeout duration,Connection timeout duration
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.
 TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Show PostNL Checkout exclusively to users with a PostNL account
 TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.
-TIG_PostNL::Delivery Options,Delivery Options
+TIG_PostNL::Delivery Options NL,Delivery Options NL
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning."
 TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.
@@ -1130,7 +1130,7 @@ TIG_PostNL::Magento's One Page Checkout,Magento's One Page Checkout
 TIG_PostNL::Idev's OneStepCheckout,Idev's OneStepCheckout
 TIG_PostNL::Other,Other
 TIG_PostNL::Checkout extension,Checkout extension
-TIG_PostNL::Checkout settings,Checkout settings
+TIG_PostNL::Checkout settings (only active in the Netherlands),Checkout settings (only active in the Netherlands)
 "TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions.","PostNL delivery options are only available for Magento's One Page Checkout, Idev's OneStepCheckout and the GoMage LightCheckout extensions."
 TIG_PostNL::Specify checkout extension,Specify checkout extension
 TIG_PostNL::Checkout Settings,Checkout Settings
@@ -1328,3 +1328,16 @@ TIG_PostNL::Additional costs for sunday delivery in the store's base currency. T
 TIG_PostNL::Same day delivery cut-off time,Same day delivery cut-off time
 TIG_PostNL::Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.,Same day delivery will only be available when starting an order before this time. Please enter this time in the %s time zone.
 TIG_PostNL::N/A,N/A
+TIG_PostNL::Activate Dutch products,Activate Dutch products
+TIG_PostNL::Use Dutch products,Use Dutch products
+TIG_PostNL::If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands,If this option is activated then you can use the Dutch PostNL range of products for shipments to the Netherlands
+TIG_PostNL::PostNL Checkout is only available when shipping from the Netherlands.,PostNL Checkout is only available when shipping from the Netherlands.
+TIG_PostNL::Pay attention: The postcode check is only active in the Netherlands,Pay attention: The postcode check is only active in the Netherlands
+TIG_PostNL::Default shipping option for the Netherlands,Default shipping option for the Netherlands
+TIG_PostNL::This option is only for shipments from Belgium to the Netherlands and may be overwritten.,This option is only for shipments from Belgium to the Netherlands and may be overwritten.
+TIG_POSTNL::The current PostNL Extension configuration requires you to set an Dutch address.,The current PostNL Extension configuration requires you to set an Dutch address.
+TIG_PostNL::Dutch address,Dutch address
+TIG_PostNL::Use a Dutch sender address when sending shipments to Dutch addresses.,Use a Dutch sender address when sending shipments to Dutch addresses.
+TIG_PostNL::Customer Number used for shipments to the Netherlands,Customer Number used for shipments to the Netherlands
+TIG_PostNL::Customer Code for shipments to the Netherlands,Customer Code for shipments to the Netherlands
+TIG_PostNL::Please enter your Dutch customer code and number.,Please enter your Dutch customer code and number.

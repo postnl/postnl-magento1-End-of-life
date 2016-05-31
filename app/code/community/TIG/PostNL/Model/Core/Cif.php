@@ -63,7 +63,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Constants containing xpaths to cif configuration options.
      */
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
+    const XPATH_DUTCH_CUSTOMER_CODE         = 'postnl/cif/dutch_customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
+    const XPATH_DUTCH_CUSTOMER_NUMBER       = 'postnl/cif/dutch_customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
     const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif_globalpack_settings/global_barcode_range';
@@ -155,6 +157,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Collection'  => '04',
         'Return'      => '08',
         'Delivery'    => '09', // Post office address. For use with PakjeGemak.
+        'Dutch'       => '02',
     );
 
     /**
@@ -883,6 +886,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
 
             $customer = array_merge($customer, $additionalCustomerData);
+
+            /**
+             * This is an edge case:
+             *
+             * If the domestic country is BE, the shipment is being sent to Netherlands and the
+             * option "Use Dutch products" is enabled, we must fool CIF and return the alternative customer id,
+             * customer code and the Dutch alternative address.
+             */
+            if (
+                $this->getHelper()->getDomesticCountry() == 'BE' &&
+                $shipment->getShippingAddress()->getCountryId() == 'NL' &&
+                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts()
+            ) {
+                $customer['CustomerCode'] = $this->_getDutchCustomerCode();
+                $customer['CustomerNumber'] = $this->_getDutchCustomerNumber();
+                $customer['Address'] = $this->_getAddress('Dutch');
+            }
         }
 
         return $customer;
@@ -1145,7 +1165,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Determine which address to use. Currently only 'Sender', 'Alternative', 'PakjeGemak' and 'Receiver' are fully
+         * Determine which address to use. Currently only 'Sender', 'Alternative', 'PakjeGemak', 'Receiver' and 'Dutch' are fully
          * supported.
          */
         $streetData = false;
@@ -1225,6 +1245,37 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 $address = new Varien_Object($returnAddressData);
+                break;
+            case 'Dutch':
+                /**
+                 * Get all cif_address fields with the 'dutch_address_' prefix as an array and convert that to a
+                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
+                 */
+                $dutchAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+
+                $streetData = array(
+                    'streetname'           => $dutchAddress['dutch_address_streetname'],
+                    'housenumber'          => $dutchAddress['dutch_address_housenumber'],
+                    'housenumberExtension' => $dutchAddress['dutch_address_housenumber_extension'],
+                    'fullStreet'           => '',
+                );
+
+                $dutchAddressData = array();
+                foreach($dutchAddress as $field => $value) {
+                    if (strpos($field, 'dutch_address_') === false) {
+                        continue;
+                    }
+
+                    $dutchAddressData[substr($field, 14)] = $value;
+                }
+
+                /**
+                 * Dutch is mandatory.
+                 */
+                $dutchAddressData['country'] = 'NL';
+
+                $address = new Varien_Object($dutchAddressData);
                 break;
             case 'PakjeGemak': //no break
             case 'Receiver': //no break
@@ -1885,6 +1936,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * Gets the dutch customer code from system/config
+     *
+     * @return string
+     */
+    protected function _getDutchCustomerCode()
+    {
+        $storeId = $this->getStoreId();
+        $customerCode = (string) Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_CODE, $storeId);
+
+        return $customerCode;
+    }
+
+    /**
      * Gets the customer number from system/config
      *
      * @return string
@@ -1893,6 +1957,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $customerNumber = (string) Mage::getStoreConfig(self::XPATH_CUSTOMER_NUMBER, $storeId);
+
+        return $customerNumber;
+    }
+
+    /**
+     * Gets the dutch customer number from system/config
+     *
+     * @return string
+     */
+    protected function _getDutchCustomerNumber()
+    {
+        $storeId = $this->getStoreId();
+        $customerNumber = (string) Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_NUMBER, $storeId);
 
         return $customerNumber;
     }
