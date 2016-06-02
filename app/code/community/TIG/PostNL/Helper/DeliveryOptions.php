@@ -3404,6 +3404,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         return $allow;
     }
 
+    /**
+     * Check if we can use Dutch products.
+     *
+     * @return bool|null
+     */
     public function canUseDutchProducts()
     {
         if ($this->_canUseDutchProducts !== null) {
