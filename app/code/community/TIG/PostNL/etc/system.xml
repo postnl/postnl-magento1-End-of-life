@@ -2634,6 +2634,10 @@
                             <depends>
                                 <enable_food_delivery>1</enable_food_delivery>
                                 <delivery_options_active>1</delivery_options_active>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                             <sort_order>370</sort_order>
                         </food_delivery_warnings>
@@ -2676,6 +2680,10 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_food_delivery>1</enable_food_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </food_delivery_default_product_type>
                         <delivery_options_in_belgium_header translate="label" module="postnl">
