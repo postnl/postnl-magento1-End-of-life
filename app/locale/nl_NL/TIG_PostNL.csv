@@ -1398,3 +1398,5 @@ TIG_PostNL::Use a Dutch sender address when sending shipments to Dutch addresses
 TIG_PostNL::Customer Number used for shipments to the Netherlands,Klantnummer voor verzendingen naar Nederlandse adressen
 TIG_PostNL::Customer Code for shipments to the Netherlands,Klantcode voor verzendingen naar Nederlandse adressen
 TIG_PostNL::Please enter your Dutch customer code and number.,Vul uw Nederlandse klantnummer en klantcode in.
+TIG_PostNL::View the documentation.,Bekijk de documentatie.
+TIG_PostNL::Documentation,Documentatie

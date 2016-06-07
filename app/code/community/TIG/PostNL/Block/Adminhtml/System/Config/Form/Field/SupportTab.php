@@ -53,6 +53,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     const INSTALLATION_MANUAL_URL_XPATH = 'postnl/general/installation_manual_url';
     const USER_GUIDE_URL_XPATH          = 'postnl/general/user_guide_url';
     const KB_URL_XPATH                  = 'postnl/general/kb_url';
+    const POSTNL_DOCUMENTATION_URL      = 'postnl/general/postnl_documentation_url';
+    const CIT_SERVICEDESK_EMAIL         = 'postnl/general/cit_servicedesk_email';
 
     /**
      * Template file used
@@ -197,6 +199,26 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     public function getUserGuideUrl()
     {
         $url = Mage::getStoreConfig(self::USER_GUIDE_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostnlDocumentationUrl()
+    {
+        $url = Mage::getStoreConfig(self::POSTNL_DOCUMENTATION_URL, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCitServicedeskEmail()
+    {
+        $url = Mage::getStoreConfig(self::CIT_SERVICEDESK_EMAIL, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $url;
     }

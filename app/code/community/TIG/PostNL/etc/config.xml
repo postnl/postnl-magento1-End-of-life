@@ -826,6 +826,8 @@
                 <installation_manual_url>http://kb.tig.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
                 <user_guide_url>http://kb.tig.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
                 <kb_url>http://kb.tig.nl/forum/23046087</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
+                <postnl_documentation_url>http://www.postnl.nl/klantenservice/veelgestelde-vragen/versturen/verzendopties/wat-kan-ik-doen-als-ik-problemen-heb-met-de-magento-plugin.html?searchResult=position7</postnl_documentation_url>
+                <cit_servicedesk_email>citservicedesk@postnl.nl</cit_servicedesk_email>
             </general>
             <cif_address>
                 <firstname/>
