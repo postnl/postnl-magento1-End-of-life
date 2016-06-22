@@ -2634,9 +2634,13 @@
                             <depends>
                                 <enable_food_delivery>1</enable_food_delivery>
                                 <delivery_options_active>1</delivery_options_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                                 <country>
                                     <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
                             <sort_order>370</sort_order>
@@ -2660,9 +2664,13 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                                 <country>
                                     <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
                         </enable_food_delivery>
@@ -2680,9 +2688,13 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_food_delivery>1</enable_food_delivery>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                                 <country>
                                     <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
                         </food_delivery_default_product_type>
@@ -2700,9 +2712,13 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                                 <country>
                                     <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
                         </delivery_options_in_belgium_header>

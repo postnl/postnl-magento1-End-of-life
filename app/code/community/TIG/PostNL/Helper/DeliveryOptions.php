@@ -2261,7 +2261,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $storeId = Mage::app()->getStore()->getId();
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
 
-        if ($this->getDomesticCountry() == 'NL'
+        if ($this->canUseDutchProducts() == 'NL'
             && $foodDeliveryEnabled
             && $this->_getFoodProductOptionsAvailable($storeId)
         ) {
@@ -2397,7 +2397,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Delivery options are only available when shipping from the Netherlands.
          */
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2499,9 +2499,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0121',
                     'message' => $this->__(
-                                     'Delivery options are not allowed for one or more itme sin the cart based on the' .
-                                     ' configured stock options.'
-                                 ),
+                         'Delivery options are not allowed for one or more itme sin the cart based on the' .
+                         ' configured stock options.'
+                     ),
                 )
             );
             Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
@@ -2568,6 +2568,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 return false;
             }
+        }
+
+        if ($this->getDomesticCountry() != 'NL' && $quote->getShippingAddress()->getCountryId() != 'NL') {
+            return false;
         }
 
         return true;
