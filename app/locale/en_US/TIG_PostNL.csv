@@ -1141,7 +1141,7 @@ TIG_PostNL::Extension registration is only available on the 'global' scope.,Exte
 TIG_PostNL::Frequently asked questions.,Frequently asked questions.
 TIG_PostNL::FAQ,FAQ
 TIG_PostNL::Unable to find the answer you need using the links above?,Unable to find the answer you need using the links above?
-TIG_PostNL::Use the button below to request help from the TIG servicedesk.,Use the button below to request help from the TIG servicedesk.
+TIG_PostNL::Use the button below to request help from the PostNL servicedesk.,Use the button below to request help from the PostNL servicedesk.
 TIG_PostNL::Request help from the servicedesk,Request help from the servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activation
 TIG_PostNL::Shipment and order grids,Shipment and order grids
