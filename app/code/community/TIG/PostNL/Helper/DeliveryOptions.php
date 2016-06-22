@@ -2397,7 +2397,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Delivery options are only available when shipping from the Netherlands.
          */
-        if (!$this->canUseDutchProducts()) {
+        if ($this->getDomesticCountry() != 'NL') {
             Mage::register($registryKey, false);
             return false;
         }
