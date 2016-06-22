@@ -154,6 +154,8 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      */
     public function shouldValidatePostDataWithoutAnAddress($data, $success)
     {
+        $this->markTestSkipped('Skip this test');
+
         $controller = $this->_getInstance($data);
 
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');

@@ -71,5 +71,5 @@ chmod -R 777 "${PUBLIC_DIR}var/session";
 "${TOOLS}/phpunit" -c "${PUBLIC_DIR}/app/code/community/TIG/PostNL/Test/phpunit.xml"
 
 mysql -u${MAGENTO_DB_USER} ${MYSQLPASS} -h${MAGENTO_DB_HOST} -P${MAGENTO_DB_PORT} -e "DROP DATABASE IF EXISTS \`${MAGENTO_DB_NAME}\`;"
-#echo "Deleting ${BUILDENV}"
-#rm -rf "${BUILDENV}"
+echo "Deleting ${BUILDENV}"
+rm -rf "${BUILDENV}"
