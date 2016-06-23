@@ -769,10 +769,6 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <country>BE</country>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </dutch_address_header>
                         <use_dutch_address translate="label" module="postnl">
@@ -786,10 +782,6 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <country>BE</country>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </use_dutch_address>
                         <dutch_address_firstname translate="label" module="postnl">
@@ -802,10 +794,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </dutch_address_firstname>
                         <dutch_address_lastname translate="label" module="postnl">
@@ -818,10 +806,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
                         </dutch_address_lastname>
@@ -835,10 +819,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
                         </dutch_address_company>
@@ -852,10 +832,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </dutch_address_department>
                         <dutch_address_streetname translate="label" module="postnl">
@@ -868,10 +844,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>validate-alphanum-with-spaces postnl-validate-empty</validate>
                         </dutch_address_streetname>
@@ -885,10 +857,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>validate-digits postnl-validate-empty</validate>
                         </dutch_address_housenumber>
@@ -902,10 +870,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </dutch_address_housenumber_extension>
                         <dutch_address_postcode translate="label" module="postnl">
@@ -918,10 +882,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty</validate>
                         </dutch_address_postcode>
@@ -935,10 +895,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty</validate>
                         </dutch_address_city>
@@ -952,10 +908,6 @@
                             <depends>
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_dutch_products>
                             </depends>
                         </dutch_address_region>
                         <alternative_sender_address_header translate="label" module="postnl">
