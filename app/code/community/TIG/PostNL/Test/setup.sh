@@ -66,6 +66,15 @@ cd "${PUBLIC_DIR}"
 "${TOOLS}/n98-magerun" config:set dev/template/allow_symlink 1
 "${TOOLS}/n98-magerun" sys:setup:run
 
+if [ -z $ENABLE_FLAT_CATALOG ] || [ $ENABLE_FLAT_CATALOG == false ]; then
+    "${TOOLS}/n98-magerun" config:set catalog/frontend/flat_catalog_category 0
+    "${TOOLS}/n98-magerun" config:set catalog/frontend/flat_catalog_product 0
+else
+    "${TOOLS}/n98-magerun" config:set catalog/frontend/flat_catalog_category 1
+    "${TOOLS}/n98-magerun" config:set catalog/frontend/flat_catalog_product 1
+    "${TOOLS}/n98-magerun" index:reindex:all
+fi
+
 cd "${PUBLIC_DIR}/.modman/project";
 mkdir -p "${PUBLIC_DIR}var/session";
 chmod -R 777 "${PUBLIC_DIR}var/session";
