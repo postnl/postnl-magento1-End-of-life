@@ -81,4 +81,84 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $this->assertTrue(!$helper->canUseSundaySorting());
     }
+
+    public function testCanUseDutchProductsByCountryDataProvder()
+    {
+        return array(
+            array(
+                'country' => 'BE',
+                'shouldPass' => true,
+            ),
+            array(
+                'country' => 'NL',
+                'shouldPass' => true,
+            ),
+            array(
+                'country' => 'DE',
+                'shouldPass' => false,
+            ),
+        );
+    }
+
+    /**
+     * @param $country
+     * @param $shouldPass
+     *
+     * @dataProvider testCanUseDutchProductsByCountryDataProvder
+     */
+    public function testCanUseDutchProductsByCountry($country, $shouldPass)
+    {
+        $helper = $this->_getInstance();
+
+        $this->setProperty('_canUseDutchProducts', null);
+        $this->setProperty('_domesticCountry', $country);
+
+        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '1');
+
+        $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
+    }
+
+    public function testCanUseDutchProductsWhenDisabledProvder()
+    {
+        return array(
+            array(
+                'country' => 'BE',
+                'shouldPass' => false,
+            ),
+            array(
+                'country' => 'NL',
+                'shouldPass' => true,
+            ),
+            array(
+                'country' => 'DE',
+                'shouldPass' => false,
+            ),
+        );
+    }
+
+    /**
+     * @param $country
+     * @param $shouldPass
+     *
+     * @dataProvider testCanUseDutchProductsWhenDisabledProvder
+     */
+    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass)
+    {
+        $helper = $this->_getInstance();
+
+        $this->setProperty('_canUseDutchProducts', null);
+        $this->setProperty('_domesticCountry', $country);
+
+        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '0');
+
+        $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
+    }
+
+    public function testCanUseDutchProductsUsesCache()
+    {
+        $value = uniqid();
+        $this->setProperty('_canUseDutchProducts', $value);
+
+        $this->assertEquals($value, $this->_getInstance()->canUseDutchProducts());
+    }
 }
