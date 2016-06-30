@@ -807,7 +807,7 @@
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
                             </depends>
-                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
+                            <validate>postnl-validate-empty-group postnl-validate-group-dutch_sender_address</validate>
                         </dutch_address_lastname>
                         <dutch_address_company translate="label" module="postnl">
                             <label>Company</label>
@@ -820,7 +820,7 @@
                                 <country>BE</country>
                                 <use_dutch_address>1</use_dutch_address>
                             </depends>
-                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
+                            <validate>postnl-validate-empty-group postnl-validate-group-dutch_sender_address</validate>
                         </dutch_address_company>
                         <dutch_address_department translate="label" module="postnl">
                             <label>Department</label>
