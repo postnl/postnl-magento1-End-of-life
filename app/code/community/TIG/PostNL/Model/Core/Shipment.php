@@ -2801,7 +2801,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Return barcodes are only available for Dutch parcel shipments.
          */
-        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment() || $this->isFoodShipment()) {
+        if (
+            $this->getShippingAddress()->getCountryId() != 'NL' ||
+            !$this->isDomesticShipment() ||
+            $this->isBuspakjeShipment() ||
+            $this->isFoodShipment()
+        ) {
             return false;
         }
 
