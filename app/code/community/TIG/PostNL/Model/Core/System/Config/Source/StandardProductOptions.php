@@ -386,7 +386,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableNlCodOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => array(null, false)), $flat, true);
+        return $this->getOptions(array('isCod' => true, 'countryLimitation' => 'NL'), $flat, true);
     }
 
     /**
