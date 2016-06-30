@@ -121,7 +121,7 @@ class ShipmentTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
         $this->_getInstance()->setIsFoodShipment(false);
 
         $this->_getInstance()->setShipmentId(10);
-        $this->_getInstance()->setShipment([]);
+        $this->_getInstance()->setShipment(array());
 
         $this->_getInstance()->unsetReturnBarcode();
 
@@ -150,7 +150,7 @@ class ShipmentTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
         $this->_getInstance()->setIsFoodShipment(false);
 
         $this->_getInstance()->setShipmentId(10);
-        $this->_getInstance()->setShipment([]);
+        $this->_getInstance()->setShipment(array());
 
         $this->_getInstance()->unsetReturnBarcode();
 
