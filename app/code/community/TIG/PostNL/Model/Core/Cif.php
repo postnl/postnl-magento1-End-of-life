@@ -982,8 +982,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
             'CollectionTimeStampStart' => '',
-            'DownPartnerBarcode'       => '',
-            'DownPartnerID'            => '',
+            'DownPartnerBarcode'       => $postnlShipment->getDownPartnerBarcode(),
+            'DownPartnerID'            => $postnlShipment->getDownPartnerId(),
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Contacts'                 => array(
                 'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
