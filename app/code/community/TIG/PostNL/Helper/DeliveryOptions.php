@@ -2570,7 +2570,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
-        if ($this->getDomesticCountry() != 'NL' && $quote->getShippingAddress()->getCountryId() != 'NL') {
+        if (
+            $quote->getShippingAddress()->getCountryId() !== null &&
+            $quote->getShippingAddress()->getCountryId() != 'NL' &&
+            $this->getDomesticCountry() != 'NL'
+        ) {
             return false;
         }
 

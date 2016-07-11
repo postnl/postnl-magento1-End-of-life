@@ -38,6 +38,9 @@
  */
 class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
+    /**
+     * @return TIG_PostNL_Helper_DeliveryOptions
+     */
     protected function _getInstance()
     {
         return Mage::helper('postnl/deliveryOptions');
@@ -160,5 +163,63 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         $this->setProperty('_canUseDutchProducts', $value);
 
         $this->assertEquals($value, $this->_getInstance()->canUseDutchProducts());
+    }
+
+    public function testCanUseDeliveryOptionsForQuoteIsVirtual()
+    {
+        $helper = $this->_getInstance();
+        $quote = $this->getMock('Mage_Sales_Model_Quote');
+
+        $quote->expects($this->once())
+            ->method('isVirtual')
+            ->willReturn(true);
+
+        $this->assertFalse($helper->canUseDeliveryOptionsForQuote($quote));
+
+        $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
+        $this->assertEquals('POSTNL-0104', $error[0]['code']);
+    }
+
+    public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
+    {
+        $helper = $this->_getInstance();
+        $quote = $this->getMock('Mage_Sales_Model_Quote');
+
+        $quote->expects($this->once())
+            ->method('isVirtual')
+            ->willReturn(false);
+
+        $quote->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->setRegistryKey('is_buspakje_config_applicable_to_quote_1', true);
+
+        $this->assertFalse($helper->canUseDeliveryOptionsForQuote($quote));
+
+        $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
+        $this->assertEquals('POSTNL-0190', $error[0]['code']);
+    }
+
+    public function testCanUseDeliveryOptionsForQuoteIsBuspakjeEnabled()
+    {
+        $helper = $this->_getInstance();
+        $quote = $this->getMock('Mage_Sales_Model_Quote');
+
+        $quote->expects($this->once())
+            ->method('isVirtual')
+            ->willReturn(false);
+
+        $quote->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->setRegistryKey('is_buspakje_config_applicable_to_quote_1', true);
+        $this->setRegistryKey('can_show_options_for_buspakje_1', false);
+
+        $this->assertFalse($helper->canUseDeliveryOptionsForQuote($quote));
+
+        $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
+        $this->assertEquals('POSTNL-0190', $error[0]['code']);
     }
 }
