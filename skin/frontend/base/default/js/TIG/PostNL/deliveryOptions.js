@@ -586,9 +586,9 @@ PostnlDeliveryOptions.prototype = {
                                 );
                             } else {
                                 if (this.timeframes[0].getType() != 'Sameday') {
-                                    this.timeframes[0].select();
+                                    this.selectTimeframe(this.timeframes[0].element);
                                 } else {
-                                    this.timeframes[1].select();
+                                    this.selectTimeframe(this.timeframes[1].element);
                                 }
                             }
                         }
