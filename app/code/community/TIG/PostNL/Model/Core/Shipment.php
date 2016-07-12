@@ -109,7 +109,6 @@
  * @method int                            getReturnPhase()
  * @method string                         getPgLocationCode()
  * @method string                         getPgRetailNetworkId()
- * @method string                         getDownPartnerBarcode()
  * @method string                         getDownPartnerId()
  * @method string                         getDownPartnerLocation()
  *
@@ -159,7 +158,6 @@
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgLocationCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgRetailNetworkId(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setDownPartnerBarcode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setDownPartnerId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setDownPartnerLocation(string $value)
  *
@@ -3972,13 +3970,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _saveDownPartnerData($shipment)
     {
-        if (isset($shipment->DownPartnerBarcode)
-            && isset($shipment->DownPartnerID)
-            && !is_null($shipment->DownPartnerBarcode)
+        if (isset($shipment->DownPartnerID)
+            && isset($shipment->DownPartnerLocation)
             && !is_null($shipment->DownPartnerID)
+            && !is_null($shipment->DownPartnerLocation)
         ) {
             try {
-                $this->setDownPartnerBarcode($shipment->DownPartnerBarcode);
                 $this->setDownPartnerId($shipment->DownPartnerID);
                 $this->setDownPartnerLocation($shipment->DownPartnerLocation);
             } catch (Exception $e) {

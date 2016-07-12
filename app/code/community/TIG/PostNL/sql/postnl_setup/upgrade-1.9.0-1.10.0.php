@@ -52,30 +52,16 @@ $conn = $installer->getConnection();
 
 $tableName = $installer->getTable('postnl_core/shipment');
 
-if (!$conn->tableColumnExists($tableName, 'down_partner_barcode')) {
-    $conn->addColumn(
-        $tableName,
-        'down_partner_barcode',
-        array(
-            'type'   => Varien_Db_Ddl_Table::TYPE_VARCHAR,
-            'length' => '32',
-            'nullable' => true,
-            'comment' => 'Down Partner Barcode',
-            'after'    => 'track_and_trace_email_sent'
-        )
-    );
-}
-
 if (!$conn->tableColumnExists($tableName, 'down_partner_id')) {
     $conn->addColumn(
         $tableName,
         'down_partner_id',
         array(
-            'type'   => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+            'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length' => '32',
             'nullable' => true,
             'comment' => 'Down Partner ID',
-            'after'    => 'down_partner_barcode'
+            'after'    => 'track_and_trace_email_sent'
         )
     );
 }
@@ -85,7 +71,7 @@ if (!$conn->tableColumnExists($tableName, 'down_partner_location')) {
         $tableName,
         'down_partner_location',
         array(
-            'type'   => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+            'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length' => '32',
             'nullable' => true,
             'comment' => 'Down Partner Location',
