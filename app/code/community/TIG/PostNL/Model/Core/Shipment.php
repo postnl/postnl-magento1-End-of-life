@@ -109,6 +109,8 @@
  * @method int                            getReturnPhase()
  * @method string                         getPgLocationCode()
  * @method string                         getPgRetailNetworkId()
+ * @method string                         getDownPartnerId()
+ * @method string                         getDownPartnerLocation()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -156,6 +158,8 @@
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgLocationCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgRetailNetworkId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDownPartnerId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDownPartnerLocation(string $value)
  *
  * @method boolean                        hasBarcodeUrl()
  * @method boolean                        hasPostnlOrder()
@@ -3569,6 +3573,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0071'
             );
         }
+
+        $this->_saveDownPartnerData($shipment);
+
         $labels = $shipment->Labels->Label;
 
         /**
@@ -3954,6 +3961,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->unlock();
 
         return $this;
+    }
+
+    /**
+     * @param $shipment
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _saveDownPartnerData($shipment)
+    {
+        if (isset($shipment->DownPartnerID)
+            && isset($shipment->DownPartnerLocation)
+            && !is_null($shipment->DownPartnerID)
+            && !is_null($shipment->DownPartnerLocation)
+        ) {
+            try {
+                $this->setDownPartnerId($shipment->DownPartnerID);
+                $this->setDownPartnerLocation($shipment->DownPartnerLocation);
+            } catch (Exception $e) {
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Unable to save down partner data.'),
+                    'POSTNL-0245'
+                );
+            }
+        }
     }
 
     /**
