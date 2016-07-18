@@ -66,15 +66,15 @@ if (!$conn->tableColumnExists($tableName, 'down_partner_id')) {
     );
 }
 
-if (!$conn->tableColumnExists($tableName, 'down_partner_location')) {
+if (!$conn->tableColumnExists($tableName, 'down_partner_barcode')) {
     $conn->addColumn(
         $tableName,
-        'down_partner_location',
+        'down_partner_barcode',
         array(
             'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length' => '32',
             'nullable' => true,
-            'comment' => 'Down Partner Location',
+            'comment' => 'Down Partner Barcode',
             'after'    => 'down_partner_id'
         )
     );

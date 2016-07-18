@@ -110,7 +110,7 @@
  * @method string                         getPgLocationCode()
  * @method string                         getPgRetailNetworkId()
  * @method string                         getDownPartnerId()
- * @method string                         getDownPartnerLocation()
+ * @method string                         getDownPartnerBarcode()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -159,7 +159,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setPgLocationCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgRetailNetworkId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setDownPartnerId(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setDownPartnerLocation(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDownPartnerBarcode(string $value)
  *
  * @method boolean                        hasBarcodeUrl()
  * @method boolean                        hasPostnlOrder()
@@ -3971,13 +3971,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _saveDownPartnerData($shipment)
     {
         if (isset($shipment->DownPartnerID)
-            && isset($shipment->DownPartnerLocation)
+            && isset($shipment->DownPartnerBarcode)
             && !is_null($shipment->DownPartnerID)
-            && !is_null($shipment->DownPartnerLocation)
+            && !is_null($shipment->DownPartnerBarcode)
         ) {
             try {
                 $this->setDownPartnerId($shipment->DownPartnerID);
-                $this->setDownPartnerLocation($shipment->DownPartnerLocation);
+                $this->setDownPartnerBarcode($shipment->DownPartnerBarcode);
             } catch (Exception $e) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('Unable to save down partner data.'),
