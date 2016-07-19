@@ -1298,13 +1298,13 @@ TIG_PostNL::The sender country setting is only available on the 'global' scope.,
 TIG_PostNL::Please note: the country you select here will be used to determine whether certain shipping options (such as Belgium domestic) are available to you.,N.B. het land dat je selecteert zal gebruikt worden om te bepalen of sommige verzendopties (zoals België domestic) beschikbaar zijn.
 TIG_PostNL::The Netherlands,Nederland
 TIG_PostNL::Belgium,België
-TIG_PostNL::Belgium Deliver to stated address only + Return when not home,België lever alleen aan opgegeven adres + Retour indien niet thuis
-TIG_PostNL::Belgium Return when not home,België Retour indien niet thuis
-TIG_PostNL::Belgium Signature on delivery + Deliver to stated address only + Return when not home,België Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Retour indien niet thuis
-TIG_PostNL::Belgium Signature on delivery + Return when not home,België Handtekening bij ontvangst + Retour indien niet thuis
-TIG_PostNL::Belgium COD + Return when not home,België + Retour indien niet thuis + Lever alleen aan opgegeven adres
-TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
-TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + Retour indien niet thuis + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium Deliver to stated address only + Return when not home,België lever alleen aan opgegeven adres + na 2 aanbiedpogingen op afhaallocatie
+TIG_PostNL::Belgium Return when not home,België Burenbelevering + na 2 aanbiedpogingen op afhaallocatie
+TIG_PostNL::Belgium Signature on delivery + Deliver to stated address only + Return when not home,België Handtekening bij ontvangst + Lever alleen aan opgegeven adres + na 2 aanbiedpogingen op afhaallocatie
+TIG_PostNL::Belgium Signature on delivery + Return when not home,België Handtekening bij ontvangst + na 2 aanbiedpogingen op afhaallocatie
+TIG_PostNL::Belgium COD + Return when not home,België + na 2 aanbiedpogingen op afhaallocatie + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only,België Extra dekking (EUR 500) + na 2 aanbiedpogingen op afhaallocatie + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium COD + Extra cover (EUR 500) + Return when not home,België Extra dekking (EUR 500) + na 2 aanbiedpogingen op afhaallocatie + Lever alleen aan opgegeven adres
 TIG_PostNL::Default Belgium shipping option,Standaard België verzendoptie
 TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian domestic shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische binnenlandse zendingen.
 TIG_PostNL::Default Belgium COD shipping option,Standaard België rembours verzendoptie
