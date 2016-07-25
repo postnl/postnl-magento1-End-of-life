@@ -3581,7 +3581,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
-        if ($this->isEuShipment() && !$this->_isCombiLabelShipment()) {
+        if ($this->isEuShipment()) {
             $this->setProductCode($shipment->ProductCodeDelivery);
         }
 
