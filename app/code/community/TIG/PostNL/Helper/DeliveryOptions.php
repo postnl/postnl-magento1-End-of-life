@@ -45,18 +45,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Xpath to delivery options enabled config settings.
      */
     const XPATH_DELIVERY_OPTIONS_ACTIVE    = 'postnl/delivery_options/delivery_options_active';
-    const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options/delivery_options_be_active';
+    const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options_int/delivery_options_be_active';
     const XPATH_USE_DUTCH_PRODUCTS         = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * Xpaths to various possible delivery option settings.
      */
     const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
-    const XPATH_ENABLE_PAKJEGEMAK_BE            = 'postnl/delivery_options/enable_pakjegemak_be';
+    const XPATH_ENABLE_PAKJEGEMAK_BE            = 'postnl/delivery_options_int/enable_pakjegemak_be';
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
     const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
-    const XPATH_ENABLE_DELIVERY_DAYS_BE         = 'postnl/delivery_options/enable_delivery_days_be';
+    const XPATH_ENABLE_DELIVERY_DAYS_BE         = 'postnl/delivery_options_int/enable_delivery_days_be';
     const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
     const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
@@ -65,7 +65,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options/allow_sunday_sorting_be';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
     const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
