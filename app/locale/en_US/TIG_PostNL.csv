@@ -575,6 +575,8 @@ TIG_PostNL::available,available
 TIG_PostNL::evening,evening
 TIG_PostNL::Post Office,Post Office
 TIG_PostNL::Delivery Options,Delivery Options
+TIG_PostNL::Delivery Options NL,Delivery Options NL
+TIG_PostNL::Delivery Options INT,Delivery Options INT
 TIG_PostNL::Delivery,Delivery
 TIG_PostNL::or Pickup,or Pickup
 TIG_PostNL::Su,Su
@@ -608,7 +610,6 @@ TIG_PostNL::Connection timeout duration,Connection timeout duration
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.
 TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Show PostNL Checkout exclusively to users with a PostNL account
 TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.
-TIG_PostNL::Delivery Options NL,Delivery Options NL
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning."
 TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.
@@ -1145,7 +1146,6 @@ TIG_PostNL::Use the button below to request help from the PostNL servicedesk.,Us
 TIG_PostNL::Request help from the servicedesk,Request help from the servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activation
 TIG_PostNL::Shipment and order grids,Shipment and order grids
-TIG_PostNL::Delivery options,Delivery options
 TIG_PostNL::Globalpack and barcode settings,Globalpack and barcode settings
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technical settings
