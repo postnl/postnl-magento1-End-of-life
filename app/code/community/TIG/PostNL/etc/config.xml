@@ -884,7 +884,6 @@
                 <stock_options>in_stock</stock_options> <!-- Do not show delivery options if the order is not in stock -->
                 <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
-                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
                 <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
@@ -909,11 +908,6 @@
                 <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
                 <enable_food_delivery>0</enable_food_delivery> <!-- Disable food delivery -->
                 <food_delivery_default_product_type>0</food_delivery_default_product_type> <!-- By default products are considered non-food. -->
-                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
-                <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
-                <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
-                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
-                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
@@ -933,6 +927,14 @@
                 <default_cooled_product_option>3084</default_cooled_product_option> <!-- Cooled Food delivery -->
                 <ajax_timeout>5</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
             </delivery_options>
+            <delivery_options_int>
+                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
+                <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
+                <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
+                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
+            </delivery_options_int>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->

@@ -58,10 +58,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_SHIPPING_DURATION       = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options/allow_sunday_sorting_be';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
     const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
-    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options/delivery_days_number_be';
+    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options_int/delivery_days_number_be';
     const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**

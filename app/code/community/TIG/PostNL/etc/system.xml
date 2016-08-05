@@ -2879,10 +2879,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </delivery_options_in_belgium_header>
                         <delivery_options_be_active translate="label" module="postnl">
@@ -2900,10 +2896,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </delivery_options_be_active>
                         <enable_delivery_days_be translate="label tooltip" module="postnl">
@@ -2923,10 +2915,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </enable_delivery_days_be>
                         <allow_sunday_sorting_be translate="label comment tooltip" module="postnl">
@@ -2948,10 +2936,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </allow_sunday_sorting_be>
                         <delivery_days_number_be translate="label tooltip" module="postnl">
@@ -2971,10 +2955,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </delivery_days_number_be>
                         <enable_pakjegemak_be translate="label tooltip" module="postnl">
@@ -2994,10 +2974,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
                             </depends>
                         </enable_pakjegemak_be>
                         <save_and_continue translate="label" module="postnl">
