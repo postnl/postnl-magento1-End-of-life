@@ -36,16 +36,23 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Model_Core_System_Config_Source_AllProductOptionsTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
     /**
-     * @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
+     * @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions|null
      */
-    protected $_instance;
+    protected $_instance = null;
 
-    public function setUp()
+    /**
+     * @return TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
+     */
+    public function _getInstance()
     {
-        $this->_instance = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+        if ($this->_instance === null) {
+            $this->_instance = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        }
+
+        return $this->_instance;
     }
 
     public function hasPakjegemakBeProductCodesDataProvider()
@@ -61,15 +68,8 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
      */
     public function testHasPakjegemakBeProductCodes($productCode)
     {
-        $hasOption = false;
-        $options = $this->_instance->getOptions();
+        $options = $this->getProtectedPropertyValue('_options');
 
-        foreach ($options as $option) {
-            if ($option['value'] == $productCode) {
-                $hasOption = true;
-            }
-        }
-
-        $this->assertTrue($hasOption);
+        $this->assertArrayHasKey($productCode, $options);
     }
 }
