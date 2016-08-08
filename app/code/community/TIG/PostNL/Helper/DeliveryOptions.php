@@ -2572,14 +2572,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if (
             $quote->getShippingAddress()->getCountryId() !== null &&
-            !(
-                $quote->getShippingAddress()->getCountryId() == 'NL' &&
-                $this->getDomesticCountry() == 'NL'
-            ) &&
-            !(
-                $quote->getShippingAddress()->getCountryId() == 'BE' &&
-                $this->getDomesticCountry() == 'BE'
-            )
+            $quote->getShippingAddress()->getCountryId() == 'NL' &&
+            $this->getDomesticCountry() == 'NL' &&
+            $quote->getShippingAddress()->getCountryId() == 'BE' &&
+            $this->getDomesticCountry() == 'BE'
         ) {
             return false;
         }
