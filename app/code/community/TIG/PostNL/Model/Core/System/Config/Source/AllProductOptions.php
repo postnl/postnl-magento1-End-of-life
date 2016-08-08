@@ -539,8 +539,35 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
             }
 
-            ksort($options);
         }
+
+        if (
+            $helper->canUsePakjegemakBeNotInsured()
+            && (!isset($flags['isBelgiumOnly'])
+                || $flags['isBelgiumOnly'] == true
+            )
+            && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
+            )
+        ) {
+            if (!$asFlatArray) {
+                $options[] = array(
+                    'value'             => '4936',
+                    'label'             => $helper->__('Post Office (Belgium)'),
+                    'isBelgiumOnly'     => true,
+                    'isExtraCover'      => false,
+                    'isAvond'           => false,
+                    'isSunday'          => false,
+                    'isCod'             => false,
+                    'statedAddressOnly' => false,
+                    'group'             => 'pakjegemak_be_options'
+                );
+            } else {
+                $options['4936'] = $helper->__('Post Office (Belgium)');
+            }
+        }
+
+        ksort($options);
 
         return $options;
     }

@@ -66,6 +66,7 @@
  * @method boolean                     hasStoreTimeZones()
  * @method boolean                     hasValidDeliveryDaysArray()
  * @method boolean                     hasDomesticCountry()
+ * @method boolean                     hasPostnlCoreCanUsePakjegemakNotInsured()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -91,6 +92,7 @@
  * @method boolean                     getPostnlCoreCanUseBuspakje()
  * @method boolean                     getPostnlDeliveryOptionsCanUseDeliveryDays()
  * @method boolean                     getCanShowOnlyStatedAddressOption()
+ * @method boolean                     getPostnlCoreCanUsePakjegemakNotInsured()
  * @method array                       getPostnlShippingMethods()
  * @method array                       getMatchedPostnlShippingMethods()
  * @method boolean                     getCanUseResponsiveDeliveryOptions()
@@ -128,6 +130,7 @@
  * @method TIG_PostNL_Model_Core_Cache setStoreTimeZones(array $value)
  * @method TIG_PostNL_Model_Core_Cache setValidDeliveryDaysArray(array $value)
  * @method TIG_PostNL_Model_Core_Cache setDomesticCountry(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUsePakjegemakNotInsured(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

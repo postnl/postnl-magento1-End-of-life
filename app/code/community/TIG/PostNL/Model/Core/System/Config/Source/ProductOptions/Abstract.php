@@ -236,6 +236,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+        $canUsePakjegemakBeNotInsured = $helper->canUsePakjegemakBeNotInsured();
 
         $storeId = Mage::app()->getStore()->getId();
 
@@ -246,6 +247,10 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         $supportedOptionsArray = explode(',', $supportedOptions);
         if ($canUseEpsBEOnly) {
             $supportedOptionsArray[] = '4955';
+        }
+
+        if ($canUsePakjegemakBeNotInsured) {
+            $supportedOptionsArray[] = '4936';
         }
 
         foreach ($options as $key => $option) {

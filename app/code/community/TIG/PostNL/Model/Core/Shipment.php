@@ -245,29 +245,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Xpaths to default product options settings.
      */
-    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION             = 'postnl/grid/default_product_option';
-    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS = 'postnl/grid/default_product_option_netherlands';
-    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION         = 'postnl/cod/default_cod_product_option';
-    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION              = 'postnl/grid/default_evening_product_option';
-    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION          = 'postnl/cod/default_evening_cod_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION           = 'postnl/grid/default_pakjegemak_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION  = 'postnl/grid/default_pakjegemak_be_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION       = 'postnl/cod/default_pakjegemak_cod_product_option';
-    const XPATH_DEFAULT_PGE_PRODUCT_OPTION                  = 'postnl/grid/default_pge_product_option';
-    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION              = 'postnl/cod/default_pge_cod_product_option';
-    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION       = 'postnl/delivery_options/default_pakketautomaat_product_option';
-    const XPATH_DEFAULT_FOOD_PRODUCT_OPTION           = 'postnl/delivery_options/default_food_product_option';
-    const XPATH_DEFAULT_COOLED_PRODUCT_OPTION         = 'postnl/delivery_options/default_cooled_product_option';
-    const XPATH_DEFAULT_EU_PRODUCT_OPTION                   = 'postnl/grid/default_eu_product_option';
-    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION               = 'postnl/cif_globalpack_settings/default_global_product_option';
-    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION             = 'postnl/grid/default_buspakje_product_option';
-    const XPATH_USE_ALTERNATIVE_DEFAULT                     = 'postnl/grid/use_alternative_default';
-    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT              = 'postnl/grid/alternative_default_max_amount';
-    const XPATH_ALTERNATIVE_DEFAULT_OPTION                  = 'postnl/grid/alternative_default_option';
-    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION          = 'postnl/grid/default_stated_address_only_product_option';
-    const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION               = 'postnl/grid/default_sunday_product_option';
-    const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION              = 'postnl/grid/default_sameday_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION                  = 'postnl/grid/default_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS      = 'postnl/grid/default_product_option_netherlands';
+    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION              = 'postnl/cod/default_cod_product_option';
+    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION                   = 'postnl/grid/default_evening_product_option';
+    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION               = 'postnl/cod/default_evening_cod_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION                = 'postnl/grid/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION             = 'postnl/grid/default_pakjegemak_be_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION = 'postnl/grid/default_pakjegemak_be_not_insured_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION            = 'postnl/cod/default_pakjegemak_cod_product_option';
+    const XPATH_DEFAULT_PGE_PRODUCT_OPTION                       = 'postnl/grid/default_pge_product_option';
+    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION                   = 'postnl/cod/default_pge_cod_product_option';
+    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION            = 'postnl/delivery_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_FOOD_PRODUCT_OPTION                      = 'postnl/delivery_options/default_food_product_option';
+    const XPATH_DEFAULT_COOLED_PRODUCT_OPTION                    = 'postnl/delivery_options/default_cooled_product_option';
+    const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
+    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
+    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION                  = 'postnl/grid/default_buspakje_product_option';
+    const XPATH_USE_ALTERNATIVE_DEFAULT                          = 'postnl/grid/use_alternative_default';
+    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT                   = 'postnl/grid/alternative_default_max_amount';
+    const XPATH_ALTERNATIVE_DEFAULT_OPTION                       = 'postnl/grid/alternative_default_option';
+    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION               = 'postnl/grid/default_stated_address_only_product_option';
+    const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION                    = 'postnl/grid/default_sunday_product_option';
+    const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION                   = 'postnl/grid/default_sameday_product_option';
 
     /**
      * Xpath to weight per parcel config setting.
@@ -1224,7 +1225,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_PG:
-                if ($this->isBelgiumShipment()) {
+                if ($this->isBelgiumShipment() &&
+                    $this->getHelper()->canUsePakjegemakNotInsured($this->getStoreId())
+                ) {
+                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
+                } elseif ($this->isBelgiumShipment()) {
                     $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION;
                 } else {
                     $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;

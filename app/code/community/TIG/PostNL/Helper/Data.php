@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
 
     /**
+     * XPATH to the allow Pakjegemak not insured setting.
+     */
+    const XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED = 'postnl/cif_product_options/allow_pakjegemak_not_insured';
+
+    /**
      * XML path to weight unit used
      */
     const XPATH_WEIGHT_UNIT = 'postnl/packing_slip/weight_unit';
@@ -886,6 +891,35 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $epsBeOnlyOptionAllowed;
+    }
+
+    /**
+     * Checks if the productcode 4936 is allowed.
+     *
+     * @param bool $storeId
+     *
+     * @return bool
+     */
+    public function canUsePakjegemakBeNotInsured($storeId = false)
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUsePakjegemakNotInsured()) {
+            return $cache->getPostnlCoreCanUsePakjegemakNotInsured();
+        }
+
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $pakjegemakNotInsuredAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUsePakjegemakNotInsured($pakjegemakNotInsuredAllowed)
+                ->saveCache();
+        }
+
+        return $pakjegemakNotInsuredAllowed;
     }
 
     /**
