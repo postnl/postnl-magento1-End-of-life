@@ -3322,6 +3322,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $isActive = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
 
+        if (!$isActive) {
+            $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
+
+            $xpathDeliveryInt = 'XPATH_DELIVERY_OPTIONS_' . $shippingCountry . '_ACTIVE';
+            $xpathDeliveryIntVal = constant('self::' . $xpathDeliveryInt);
+            $isActive = Mage::getStoreConfigFlag($xpathDeliveryIntVal, $storeId);
+        }
+
         return $isActive;
     }
 
@@ -3450,6 +3458,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $use_dutch_products = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS, Mage::app()->getStore()->getId());
         if ($use_dutch_products == '1') {
+            $this->_canUseDutchProducts = true;
+            return $this->_canUseDutchProducts;
+        }
+
+        /**
+         * If both the user and buyer are in Belgium, it is allowed to use Dutch products.
+         */
+        $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
+        if ($shippingCountry == 'BE') {
             $this->_canUseDutchProducts = true;
             return $this->_canUseDutchProducts;
         }
