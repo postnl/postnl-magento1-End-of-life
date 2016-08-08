@@ -67,9 +67,45 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
         foreach ($options as $option) {
             if ($option['value'] == $productCode) {
                 $hasOption = true;
+                break;
             }
         }
 
         $this->assertTrue($hasOption);
+    }
+
+    public function hasPakjegemakNotInsuredDataProvider()
+    {
+        return array(
+            array(true, true),
+            array(false, false),
+            array(true, true, array('isBelgiumOnly' => true)),
+            array(true, false, array('isBelgiumOnly' => false)),
+            array(true, false, array('isExtraCover' => true)),
+            array(true, true, array('isExtraCover' => false)),
+            array(true, false, array('isCod' => true)),
+            array(true, true, array('isCod' => false)),
+            array(true, false, array('isPge' => true)),
+            array(true, true, array('isPge' => false)),
+        );
+    }
+
+    /**
+     * @dataProvider hasPakjegemakNotInsuredDataProvider
+     */
+    public function testHasPakjegemakNotInsured($enabled, $available, $flags = array())
+    {
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
+
+        $hasOption = false;
+        $options = $this->_instance->getOptions($flags);
+        foreach ($options as $option) {
+            if ($option['value'] == 4936) {
+                $hasOption = true;
+                break;
+            }
+        }
+
+        $this->assertEquals($available, $hasOption);
     }
 }
