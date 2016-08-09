@@ -2207,7 +2207,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $quote = $this->getQuote();
 
             $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING;
-            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
+            if (
+                $quote && $quote->getShippingAddress() &&
+                (
+                    $quote->getShippingAddress()->getCountryId() == 'BE' ||
+                    (!$quote->getShippingAddress()->getCountryId() && $this->getDomesticCountry() == 'BE')
+                )
+            ) {
                 $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
             }
 
@@ -3462,7 +3468,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If both the user and buyer are in Belgium, it is allowed to use Dutch products.
          */
         $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
-        if ($shippingCountry == 'BE') {
+        if (
+            $shippingCountry == 'BE' ||
+            (!$shippingCountry && $this->getDomesticCountry() == 'BE')
+        ) {
             $this->_canUseDutchProducts = true;
             return $this->_canUseDutchProducts;
         }
