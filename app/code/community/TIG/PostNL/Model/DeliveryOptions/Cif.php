@@ -447,6 +447,20 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
+         * Add the housenumber if available.
+         */
+        if (isset($data['housenumber'])) {
+            $location['HouseNr'] = $data['housenumber'];
+        }
+
+        /**
+         * Add the city if available.
+         */
+        if (isset($data['city'])) {
+            $location['City'] = $data['city'];
+        }
+
+        /**
          * Add coordinates if both a latitude and longitude are available.
          */
         if (isset($data['lat']) && isset($data['long'])) {

@@ -292,6 +292,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get the currently inserted shipping address's city.
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        $city = $this->getShippingAddress()->getCity();
+
+        return $city;
+    }
+
+    /**
      * Get the currently selected shipping address's country.
      *
      * @return string
