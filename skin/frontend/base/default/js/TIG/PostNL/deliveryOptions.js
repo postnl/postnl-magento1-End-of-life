@@ -130,6 +130,7 @@ PostnlDeliveryOptions.prototype = {
     postcode                 : null,
     housenumber              : null,
     street                   : null,
+    city                     : null,
     country                  : null,
     fullAddress              : null,
     deliveryDate             : null,
@@ -178,6 +179,7 @@ PostnlDeliveryOptions.prototype = {
             || !params.postcode
             || !params.housenumber
             || !params.street
+            || !params.city
             || !params.country
             || !params.deliveryDate
             || !params.imageBaseUrl
@@ -195,6 +197,7 @@ PostnlDeliveryOptions.prototype = {
         this.postcode           = params.postcode;
         this.housenumber        = params.housenumber;
         this.street             = params.street;
+        this.city               = params.city;
         this.country            = params.country;
         this.deliveryDate       = params.deliveryDate;
         this.imageBaseUrl       = params.imageBaseUrl;
@@ -311,6 +314,10 @@ PostnlDeliveryOptions.prototype = {
 
     getStreet : function() {
         return this.street;
+    },
+
+    getCity : function() {
+        return this.city;
     },
 
     getCountry : function() {
@@ -738,7 +745,7 @@ PostnlDeliveryOptions.prototype = {
                 .setParsedTimeframes(true)
                 .hideSpinner();
         }
-        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCountry(), this.getDeliveryDate());
+        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCity(), this.getCountry(), this.getDeliveryDate());
 
         return this;
     },
@@ -1061,12 +1068,13 @@ PostnlDeliveryOptions.prototype = {
      * @param {string} postcode
      * @param {int}    housenumber
      * @param {string} street
+     * @param {string} city
      * @param {string} country
      * @param {string} deliveryDate
      *
      * @return {PostnlDeliveryOptions}
      */
-    getLocations : function(postcode, housenumber, street, country, deliveryDate) {
+    getLocations : function(postcode, housenumber, street, city, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
         }
@@ -1092,6 +1100,7 @@ PostnlDeliveryOptions.prototype = {
                 housenumber  : housenumber,
                 street       : street,
                 deliveryDate : deliveryDate,
+                city         : city,
                 country      : country,
                 isAjax       : true
             },

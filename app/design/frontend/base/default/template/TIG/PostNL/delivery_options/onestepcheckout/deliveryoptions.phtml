@@ -51,6 +51,7 @@
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
 <?php $_street        = $_streetData['streetname']; ?>
+<?php $_city          = $this->getCity(); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
 
@@ -333,6 +334,7 @@
             housenumber        : housenumber,
             street             : street,
             country            : '<?php echo $this->escapeHtml($_country); ?>',
+            city               : '<?php echo $this->escapeHtml($_city); ?>',
             deliveryDate       : '<?php echo $_deliveryDate; ?>',
             imageBaseUrl       : baseUrl,
             fullAddress        : fullAddress

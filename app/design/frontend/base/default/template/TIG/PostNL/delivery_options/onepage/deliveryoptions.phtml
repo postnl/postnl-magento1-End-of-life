@@ -50,6 +50,7 @@
 <?php $_streetData                     = $this->getStreetData(); ?>
 <?php $_housenumber                    = $_streetData['housenumber']; ?>
 <?php $_street                         = $_streetData['streetname']; ?>
+<?php $_city                           = $this->getCity(); ?>
 
 <?php $_canAddLocation                 = true; ?>
 <?php $_canUseResponsive               = $this->canUseResponsive(); ?>
@@ -194,6 +195,7 @@
         postcode           : '<?php echo $this->escapeJavascriptHtml($_postcode); ?>',
         housenumber        : '<?php echo $this->escapeJavascriptHtml($_housenumber); ?>',
         street             : '<?php echo $this->escapeJavascriptHtml($_street); ?>',
+        city               : '<?php echo $this->escapeJavascriptHtml($_city); ?>',
         country            : '<?php echo $this->escapeJavascriptHtml($_country); ?>',
         deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,

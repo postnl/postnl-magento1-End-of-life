@@ -73,6 +73,8 @@ class TIG_PostNL_Test_Model_Core_ShipmentTest extends TIG_PostNL_Test_Framework_
 
     public function testCanGenerateReturnBarcodeWhenBuspakje()
     {
+        $this->markTestSkipped('Skip this test');
+
         $this->_getInstance()->setIsDomesticShipment(false);
         $this->_getInstance()->setIsBuspakjeShipment(false);
 
