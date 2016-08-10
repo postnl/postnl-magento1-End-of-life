@@ -2969,10 +2969,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'BE' || ($('postnl_cif_address_country').getValue() != 'BE' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
                             </depends>
                         </premium_delivery_options_int_header>
                         <premium_delivery_options_int_info translate="comment" module="postnl">
@@ -2989,10 +2985,6 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'BE' || ($('postnl_cif_address_country').getValue() != 'BE' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
                             </depends>
                         </premium_delivery_options_int_info>
                         <allow_sunday_sorting_be translate="label comment tooltip" module="postnl">
