@@ -123,16 +123,24 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     {
         return array(
             array(
-                'country' => 'BE',
-                'shouldPass' => false,
+                'country'          => 'BE',
+                'shouldPass'       => true,
+                'useDutchProducts' => 1,
             ),
             array(
-                'country' => 'NL',
-                'shouldPass' => true,
+                'country'          => 'BE',
+                'shouldPass'       => true,
+                'useDutchProducts' => 0,
             ),
             array(
-                'country' => 'DE',
-                'shouldPass' => false,
+                'country'          => 'NL',
+                'shouldPass'       => true,
+                'useDutchProducts' => 1,
+            ),
+            array(
+                'country'          => 'DE',
+                'shouldPass'       => false,
+                'useDutchProducts' => 0,
             ),
         );
     }
@@ -140,17 +148,29 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     /**
      * @param $country
      * @param $shouldPass
+     * @param $useDutchProducts
      *
      * @dataProvider testCanUseDutchProductsWhenDisabledProvder
      */
-    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass)
+    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
     {
         $helper = $this->_getInstance();
 
+        $quote = $this->getMock('Mage_Sales_Model_Quote', array('getCountryId', 'getShippingAddress'));
+
+        $quote->expects($this->any())
+            ->method('getShippingAddress')
+            ->willReturnSelf();
+
+        $quote->expects($this->any())
+            ->method('getCountryId')
+            ->willReturn($country);
+
+        $this->setProperty('_quote', $quote);
         $this->setProperty('_canUseDutchProducts', null);
         $this->setProperty('_domesticCountry', $country);
 
-        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '0');
+        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, $useDutchProducts);
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
     }
