@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
@@ -283,7 +283,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      * @param string $feeType
      *
      * @return string
-     * @todo add default with throw new exception
      */
     protected function _getFeeRegistryKey($feeType)
     {
@@ -300,6 +299,8 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $registryKey = 'postnl_express_fee';
                 break;
+            default:
+                throw new InvalidArgumentException("Invalid feeType supplied.");
         }
 
         return $registryKey;
@@ -309,7 +310,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      * @param string $feeType
      *
      * @return string
-     * @todo add default with throw new exception
      */
     protected function _getFeeConfigXpath($feeType)
     {
@@ -326,6 +326,8 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $xpath = self::XPATH_PAKJEGEMAK_EXPRESS_FEE;
                 break;
+            default:
+                throw new InvalidArgumentException("Invalid feeType supplied.");
         }
 
         return $xpath;
@@ -349,19 +351,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $registryKey .= '_incl';
         }
 
-        /**
-         * If the current order is not a buspakje order, the fee is 0.
-         */
-        if (!$this->isBuspakjeConfigApplicableToQuote()) {
-            Mage::register($registryKey, 0);
-
-            return 0;
-        }
-
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
-            $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+            /** @var TIG_PostNL_Helper_Carrier $carierHelper */
+            $carierHelper = Mage::helper('postnl/carrier');
+            $pakjeGemakShippingRates = $carierHelper->getParcelShippingRate($this->getQuote());
             if (!$pakjeGemakShippingRates) {
                 return 0;
             }
@@ -378,8 +373,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         }
 
         if ($convert) {
-            $quote = $this->getQuote();
-            $store = $quote->getStore();
+            $store = $this->getQuote()->getStore();
 
             $price = $store->convertPrice($price, false, false);
         }
@@ -511,7 +505,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         $quote = $this->getQuote();
         $store = $quote->getStore();
 
-        $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
+        /** @var Mage_Tax_Helper_Data $helper */
+        $helper = Mage::helper('tax');
+        $shippingPrice  = $helper->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
 
         if ($convert) {
             $shippingPrice = $store->convertPrice($shippingPrice, $formatted, false);

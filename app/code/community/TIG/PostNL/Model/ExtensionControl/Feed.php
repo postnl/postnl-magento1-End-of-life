@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
@@ -99,7 +99,9 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
 
         $feedXml = $this->getFeedData();
 
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
+            /** @noinspection PhpUndefinedFieldInspection */
             foreach ($feedXml->channel->item as $item) {
                 $feedData[] = array(
                     'severity'      => (int) $item->severity,
@@ -111,7 +113,9 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
             }
 
             if ($feedData) {
-                Mage::getModel('adminnotification/inbox')->parse(array_reverse($feedData));
+                /** @var Mage_AdminNotification_Model_Inbox $inbox */
+                $inbox = Mage::getModel('adminnotification/inbox');
+                $inbox->parse(array_reverse($feedData));
             }
 
         }

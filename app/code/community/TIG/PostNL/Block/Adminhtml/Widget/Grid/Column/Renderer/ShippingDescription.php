@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
@@ -58,13 +58,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
          * The shipment was not shipped using PostNL
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
         /**
          * Check if any data is available
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (is_null($value) || $value === '') {
             return parent::render($row);
@@ -93,7 +97,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
      */
     public function getProductCode(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $options = $this->getColumn()->getOptions();
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $showMissingOptionValues = (bool)$this->getColumn()->getShowMissingOptionValues();
 
         $value = '';

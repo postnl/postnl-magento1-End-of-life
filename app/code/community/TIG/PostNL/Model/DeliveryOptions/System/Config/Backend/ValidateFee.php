@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -69,9 +69,11 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
      */
     protected function _getMinFeeAmount()
     {
-        $feeLimit = Mage::helper('postnl/deliveryOptions_fee')->getFeeLimit(
+        /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        $feeLimit = $helper->getFeeLimit(
             $this->_feeType,
-            TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_LIMIT_MIN
+            $helper::FEE_LIMIT_MIN
         );
 
         return $feeLimit;
@@ -82,9 +84,11 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
      */
     protected function _getMaxFeeAmount()
     {
-        $feeLimit = Mage::helper('postnl/deliveryOptions_fee')->getFeeLimit(
+        /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        $feeLimit = $helper->getFeeLimit(
             $this->_feeType,
-            TIG_PostNL_Helper_DeliveryOptions_Fee::FEE_LIMIT_MAX
+            $helper::FEE_LIMIT_MAX
         );
 
         return $feeLimit;
@@ -99,7 +103,9 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
             return $this->_getData('is_including_tax');
         }
 
-        $includingTax = Mage::getSingleton('tax/config')->shippingPriceIncludesTax();
+        /** @var Mage_Tax_Model_Config $taxConfig */
+        $taxConfig = Mage::getSingleton('tax/config');
+        $includingTax = $taxConfig->shippingPriceIncludesTax();
 
         $this->setIsIncludingTax($includingTax);
         return $includingTax;
@@ -173,7 +179,9 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
          */
         $shippingAddress = $this->getMockShippingAddress();
 
-        $feeIncludingTax = Mage::helper('tax')->getShippingPrice($fee, true, $shippingAddress, null, 0);
+        /** @var Mage_Tax_Helper_Data $taxHelper */
+        $taxHelper = Mage::helper('tax');
+        $feeIncludingTax = $taxHelper->getShippingPrice($fee, true, $shippingAddress, null, 0);
         if ($feeIncludingTax > $maxFeeAmount || $feeIncludingTax < $minFeeAmount) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(

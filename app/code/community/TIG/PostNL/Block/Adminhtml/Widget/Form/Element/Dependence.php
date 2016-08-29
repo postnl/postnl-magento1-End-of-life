@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Form element dependencies mapper
@@ -67,10 +67,13 @@ class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
         if (!$this->_depends) {
             return '';
         }
+
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
         return '<script type="text/javascript">'
             . 'var formElementDependenceController = new FormElementDependenceController('
             . $this->_getDependsJson()
-            . ($this->_configOptions ? ', ' . Mage::helper('core')->jsonEncode($this->_configOptions) : '')
+            . ($this->_configOptions ? ', ' . $helper->jsonEncode($this->_configOptions) : '')
             . '); </script>';
     }
 }

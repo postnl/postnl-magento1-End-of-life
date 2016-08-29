@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Controller_Adminhtml_Config extends TIG_PostNL_Controller_Adminhtml_Abstract
@@ -56,11 +56,12 @@ class TIG_PostNL_Controller_Adminhtml_Config extends TIG_PostNL_Controller_Admin
     {
         $step = $this->_validateStep($step);
 
-        /**
-         * @var Mage_Admin_Model_User $adminUser
-         */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
-        $extra = $adminUser->getExtra();
+        /** @var Mage_Admin_Model_Session $adminSession */
+        $adminSession = Mage::getSingleton('admin/session');
+        /** @var Mage_Admin_Model_User $adminUser */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $adminUser = $adminSession->getUser();
+        $extra     = $adminUser->getExtra();
 
         $extra['postnl']['current_wizard_step'] = $step;
 

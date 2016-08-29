@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Payment_Service
@@ -103,11 +103,14 @@ class TIG_PostNL_Model_Payment_Service
          */
         foreach ($taxCollection as $tax) {
             foreach ($fullInfo as $key => $taxInfo) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 if ($tax->getTitle() == $taxInfo['title'] && $tax->getAmount() != $taxInfo['tax_amount']) {
                     /**
                      * Update the amounts.
                      */
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $fullInfo[$key]['tax_amount']      = $tax->getAmount();
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $fullInfo[$key]['base_tax_amount'] = $tax->getBaseAmount();
                 }
             }
@@ -136,6 +139,7 @@ class TIG_PostNL_Model_Payment_Service
                 /**
                  * Update an existing entry.
                  */
+                /** @noinspection PhpUndefinedMethodInspection */
                 if ($taxInfo['title'] == $tax->getTitle()) {
                     /** @noinspection PhpUndefinedMethodInspection */
                     $fullInfo[$key]['tax_amount']      += $source->getPostnlCodFeeTax();
@@ -149,10 +153,9 @@ class TIG_PostNL_Model_Payment_Service
             /**
              * Add a missing entry.
              */
+            /** @noinspection PhpUndefinedMethodInspection */
             $fullInfo[] = array(
-                /** @noinspection PhpUndefinedMethodInspection */
                 'tax_amount'      => $source->getPostnlCodFeeTax(),
-                /** @noinspection PhpUndefinedMethodInspection */
                 'base_tax_amount' => $source->getBasePostnlCodFeeTax(),
                 'title'           => $tax->getTitle(),
                 'percent'         => $tax->getPercent(),
@@ -174,11 +177,13 @@ class TIG_PostNL_Model_Payment_Service
     protected function _addPostnlCodFeeTaxInfoFromRequest($order, $fullInfo, $source)
     {
         $store = $order->getStore();
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
         $taxCalculation = Mage::getSingleton('tax/calculation');
 
         /**
          * Recalculate the tax request.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $customerTaxClass = $order->getCustomerTaxClassId();
         $shippingAddress  = $order->getShippingAddress();
         $billingAddress   = $order->getBillingAddress();
@@ -205,8 +210,9 @@ class TIG_PostNL_Model_Payment_Service
         /**
          * Get the applied rates.
          */
-        $appliedRates = Mage::getSingleton('tax/calculation')
-                            ->getAppliedRates($taxRequest);
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+        $appliedRates = $taxCalculation->getAppliedRates($taxRequest);
 
         if (!isset($appliedRates[0]['rates'][0]['title'])) {
             return $fullInfo;

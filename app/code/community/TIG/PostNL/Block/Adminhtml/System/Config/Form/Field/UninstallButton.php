@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton setElement(Varien_Data_Form_Element_Abstract $value)
@@ -56,6 +56,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
         $warningTitle = 'Uninstall PostNL Extension';
 
         $warningMessage = array();
+        /** @noinspection HtmlUnknownAttribute */
         $warningMessage[] = "<br><div class=\'module-message warning\'><h4>" . $this->__('Warning: this action cannot be undone!') ."</h4></div>";
         $warningMessage[] = $this->__('The following changes will be made:');
         $warningMessage[] = "<br>- " . $this->__('The extension will be disabled in the app/etc/modules/TIG_PostNL.xml file');
@@ -74,6 +75,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
         $confirmTitle = $this->__($warningTitle);
         $uninstallUrl = $this->getUrl('adminhtml/postnlAdminhtml_extensionControl/uninstall');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                      ->setId($element->getHtmlId())
                      ->setType('button')
@@ -95,6 +97,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_UninstallButton
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $element->setScopeLabel('');
         return parent::render($element);
     }

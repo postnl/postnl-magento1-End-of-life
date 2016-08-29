@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipment()
@@ -110,7 +110,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $shipment = $this->getShipment();
 
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->loadByShipment($shipment);
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->loadByShipment($shipment);
 
         $this->setPostnlShipment($postnlShipment);
         return $postnlShipment;
@@ -146,7 +148,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $shipment = $this->getPostnlShipment();
 
-        $productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($shipment);
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $productOptions = $helper->getProductOptionsForShipment($shipment);
 
         $this->setProductOptions($productOptions);
         return $productOptions;
@@ -181,6 +185,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG:
                 $shipmentType = $this->__('Post Office');
+
+                if ($postnlShipment->isBelgiumShipment()) {
+                    $this->setSubType($this->__('Belgium'));
+                }
                 break;
             case $postnlShipment::SHIPMENT_TYPE_PG_COD:
                 $shipmentType = $this->__('Post Office');
@@ -215,6 +223,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 break;
             case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
                 $shipmentType = $this->__('Same Day Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_FOOD:
+                $shipmentType = $this->__('Food Delivery');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_COOLED:
+                $shipmentType = $this->__('Cooled Food Delivery');
                 break;
         }
 
@@ -253,7 +267,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         /**
          * Check if the current user is allowed to perform this action.
          */
-        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_product_code'))) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->checkIsPostnlActionAllowed(array('change_product_code'))) {
             return false;
         }
 
@@ -346,7 +362,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         /**
          * Check if the current user is allowed to perform this action.
          */
-        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
             return false;
         }
 
@@ -400,6 +418,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             'timezone_differ'           => false,
         );
 
+        /** @var Mage_Core_Model_Date $dateModel */
         $dateModel = Mage::getSingleton('core/date');
         $utcTimeZone = new DateTimeZone('UTC');
 

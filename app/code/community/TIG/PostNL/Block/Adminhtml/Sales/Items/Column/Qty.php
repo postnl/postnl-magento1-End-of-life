@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_Block_Sales_Items_Column_Qty
@@ -100,7 +100,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled($this->getItem()->getStoreId())) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled($this->getItem()->getStoreId())) {
             $this->setTemplate(self::DEFAULT_TEMPLATE);
         }
 

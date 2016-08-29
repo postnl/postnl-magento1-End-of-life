@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_PackingSlip setStoreId(int $value)
@@ -220,9 +220,16 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _construct()
     {
-        $this->setHelper(Mage::helper('postnl'))
-             ->setCoreHelper(Mage::helper('core'))
-             ->setStringHelper(Mage::helper('core/string'));
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        /** @var Mage_Core_Helper_String $stringHelper */
+        $stringHelper = Mage::helper('core/string');
+
+        $this->setHelper($helper)
+             ->setCoreHelper($coreHelper)
+             ->setStringHelper($stringHelper);
     }
 
     /**
@@ -257,10 +264,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     {
         $pdf = $this->_getPackingSlipPdf($postnlShipment);
 
-        $labelModel = Mage::getSingleton('postnl_core/label')
-                          ->setLabelSize('A4')
-                          ->setOutputMode('S')
-                          ->setLabelCounter(0);
+        /** @var TIG_PostNL_Model_Core_Label $labelModel */
+        $labelModel = Mage::getSingleton('postnl_core/label');
+        $labelModel = $labelModel->setLabelSize('A4')
+                                 ->setOutputMode('S')
+                                 ->setLabelCounter(0);
 
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
@@ -348,8 +356,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         /**
          * Create a dummy invoice for the totals at the bottom of the packing slip.
          */
-        $invoice  = Mage::getModel('postnl_core/service')->initInvoice($shipment, true);
-        $storeId  = $shipment->getStoreId();
+        /** @var TIG_PostNL_Model_Core_Service $serviceModel */
+        $serviceModel = Mage::getModel('postnl_core/service');
+        $invoice      = $serviceModel->initInvoice($shipment, true);
+        $storeId      = $shipment->getStoreId();
 
         /**
          * Set the store ID and configuration settings.
@@ -866,6 +876,38 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $deliveryDate = $postnlShipment->getDeliveryDate();
                 /** @noinspection PhpParamsInspection */
                 $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
+
+                switch ($postnlShipment->getShipmentType()) {
+                    case $postnlShipment::SHIPMENT_TYPE_AVOND: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_AVOND_COD:
+                        $text .= ' (' . $this->getHelper()->__('Evening Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_SAMEDAY:
+                        $text .= ' (' . $this->getHelper()->__('Same Day Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PG: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_PG_COD:
+                        $text .= ' (' . $this->getHelper()->__('Post Office') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PGE: //no break
+                    case $postnlShipment::SHIPMENT_TYPE_PGE_COD:
+                        $text .= ' (' . $this->getHelper()->__('Early Pickup') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_PA:
+                        $text .= ' (' . $this->getHelper()->__('Parcel Dispenser') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
+                        $text .= ' (' . $this->getHelper()->__('Letter Box Parcel') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_FOOD:
+                        $text .= ' (' . $this->getHelper()->__('Food Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_COOLED:
+                        $text .= ' (' . $this->getHelper()->__('Cooled Food Delivery') . ')';
+                        break;
+                    // no default
+                }
+
                 $x    = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
                 $page->drawText($text, $x, $top, 'UTF-8');
 
@@ -1225,8 +1267,9 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if ($commentType == 'static') {
             $commentText = $this->getStringHelper()->stripTags($this->getConfig('comment_text'));
         } else {
-            $commentsCollection = $shipment->getCommentsCollection()
-                                           ->addFieldToFilter('is_visible_on_front', array('eq' => 1));
+            /** @var Mage_Sales_Model_Resource_Order_Shipment_Comment_Collection $commentsCollection */
+            $commentsCollection = $shipment->getCommentsCollection();
+            $commentsCollection = $commentsCollection->addFieldToFilter('is_visible_on_front', array('eq' => 1));
 
             $commentsCollection->getSelect()
                                ->limit(1);

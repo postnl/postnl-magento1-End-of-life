@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Base CIF model. Contains general code for communicating with the CIF API
@@ -264,7 +264,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         $configPassword = trim($configPassword);
-        $decryptedPassword = Mage::helper('core')->decrypt($configPassword);
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $decryptedPassword = $coreHelper->decrypt($configPassword);
         $password = sha1($decryptedPassword);
 
         return $password;
@@ -554,6 +556,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $n = 0;
         $responseWarnings = array();
         foreach ($warnings as $warning) {
+            if ($this->hasEpsCombiLabelWarning($warning)) {
+                continue;
+            }
+
             foreach ($warning->getElementsByTagName('Code') as $code) {
                 $responseWarnings[$n]['code'] = $code->nodeValue;
             }
@@ -585,6 +591,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
+     * Check if the supplied warning has an EPS Combi Label warning. We don't want to show it so skip it.
+     *
+     * @param $warning
+     *
+     * @return bool
+     */
+    protected function hasEpsCombiLabelWarning($warning) {
+        foreach ($warning->getElementsByTagName('Code') as $code) {
+            if ($code->nodeValue == TIG_PostNL_Model_Core_Shipment::EPS_COMBI_LABEL_WARNING_CODE) {
+                return true;
+            }
+        }
+    }
+
+    /**
      * Handle a SoapFault thrown by CIF.
      *
      * @param SoapFault  $e
@@ -599,6 +620,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     {
         $logException = true;
 
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
         $cifHelper = Mage::helper('postnl/cif');
         $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
 

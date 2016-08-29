@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @deprecated this class is no longer used as of v1.7.0.
@@ -56,8 +56,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
     {
         trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
 
+        /** @noinspection PhpParamsInspection */
         $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        $found                    = mageFindClassFile($loggingObserverClassName);
 
         /**
          * If we can't find the model, there's nothing that can be logged.
@@ -66,7 +67,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
             return $this;
         }
 
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
+        /** @var Enterprise_Logging_Model_Observer $loggingObserver */
+        $loggingObserver = Mage::getModel('enterprise_logging/observer');
+        $loggingObserver->controllerPostdispatch($observer);
 
         return $this;
     }

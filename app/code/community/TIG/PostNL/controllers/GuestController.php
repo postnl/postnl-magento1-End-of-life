@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
@@ -52,7 +52,9 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
      */
     protected function _loadValidOrder($orderId = null)
     {
-        return Mage::helper('sales/guest')->loadValidOrder();
+        /** @var Mage_Sales_Helper_Guest $helper */
+        $helper = Mage::helper('sales/guest');
+        return $helper->loadValidOrder();
     }
 
     /**
@@ -68,11 +70,11 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
             return false;
         }
 
-        /**
-         * @var Mage_Sales_Model_Order $order
-         */
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::registry('current_order');
-        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
+        /** @var Mage_Sales_Model_Order_Config $config */
+        $config = Mage::getSingleton('sales/order_config');
+        $availableStates = $config->getVisibleOnFrontStates();
 
         if ($postnlShipment->getId()
             && $postnlShipment->isConfirmed()

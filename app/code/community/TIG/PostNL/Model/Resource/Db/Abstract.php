@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_Resource_Db_Abstract extends Mage_Core_Model_Resource_Db_Abstract
@@ -48,10 +48,13 @@ abstract class TIG_PostNL_Model_Resource_Db_Abstract extends Mage_Core_Model_Res
     protected function _prepareDataForSave(Mage_Core_Model_Abstract $object)
     {
         $currentTime = Varien_Date::now();
+        /** @noinspection PhpUndefinedMethodInspection */
         if ((!$object->getId() || $object->isObjectNew()) && !$object->getCreatedAt()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $object->setCreatedAt($currentTime);
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $object->setUpdatedAt($currentTime);
 
         $data = parent::_prepareDataForSave($object);

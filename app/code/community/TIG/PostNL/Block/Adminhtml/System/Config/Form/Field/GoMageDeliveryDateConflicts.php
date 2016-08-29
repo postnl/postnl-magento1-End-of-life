@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConflicts
@@ -50,8 +50,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConf
     {
         $storeId = $this->_getStoreId();
 
-        $goMageDeliveryDateConflicts = Mage::helper('postnl/deliveryOptions')
-                                           ->checkGoMageDeliveryDateConflicts($storeId);
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $goMageDeliveryDateConflicts = $helper->checkGoMageDeliveryDateConflicts($storeId);
 
         return (int) $goMageDeliveryDateConflicts;
     }
@@ -69,6 +70,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_GoMageDeliveryDateConf
             $store = $request->getparam('store');
             $storeId = Mage::app()->getStore($store)->getId();
         } elseif ($request->getParam('website')) {
+            /** @var Mage_Core_Model_Website $website */
             $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
             $store = $website->getDefaultStore();
             $storeId = $store->getId();

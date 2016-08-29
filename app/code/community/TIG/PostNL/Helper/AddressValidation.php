@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
@@ -103,6 +103,28 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_POSTCODE_NL_EXTENSION_ACTIVE = 'postcodenl_api/config/enabled';
 
     /**
+     * Extension code of the OneStepCheckout extension.
+     *
+     * @todo move all OSC specific code to a separate OSC-helper class.
+     */
+    const ONESTEPCHECKOUT_EXTENSION_CODE = 'Idev_OneStepCheckout';
+
+    /**
+     * Xpath to the OneStepCheckout extension's enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_EXTENSION_ACTIVE = 'onestepcheckout/general/rewrite_checkout_links';
+
+    /**
+     * Xpath to the OneStepCheckout extension's Google Places enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED = 'onestepcheckout/googleplaces/enabled';
+
+    /**
+     * Xpath to the OneStepCheckout extension's Delivery Date enabled field.
+     */
+    const XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED = 'onestepcheckout/delivery/enabled_date';
+
+    /**
      * @var null|string|int
      */
     protected $_oscStreetFieldSortOrder = null;
@@ -166,7 +188,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return true;
         }
 
-        $addressLines = Mage::helper('postnl/addressValidation')->getAddressLineCount($storeId);
+        $addressLines = $this->getAddressLineCount($storeId);
         if ($addressLines < 2) {
             $this->_useSplitStreet[$storeId] = false;
             return false;
@@ -344,6 +366,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      */
     public function getAttributeValidationClass($attribute)
     {
+        /** @var Mage_Customer_Helper_Address $addressHelper */
         $addressHelper = Mage::helper('customer/address');
         if (is_callable(array($addressHelper, 'getAttributeValidationClass'))) {
             return $addressHelper->getAttributeValidationClass($attribute);
@@ -450,6 +473,81 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Checks if the OneStepCheckout extension is installed and active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkOneStepCheckoutActive($storeId = null)
+    {
+        if (!Mage::helper('core')->isModuleEnabled(self::ONESTEPCHECKOUT_EXTENSION_CODE)) {
+            return false;
+        }
+
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $oneStepCheckoutEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_EXTENSION_ACTIVE, $storeId);
+        if (!$oneStepCheckoutEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if OneStepCheckout's Google Places functionality is active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkGooglePlacesActive($storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->checkOneStepCheckoutActive($storeId)) {
+            return false;
+        }
+
+        $googlePlacesEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_GOOGLE_PLACES_ENABLED, $storeId);
+        if (!$googlePlacesEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the OSC delivery date functionality is active.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    public function checkOscDeliveryDateActive($storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->checkOneStepCheckoutActive($storeId)) {
+            return false;
+        }
+
+        $oscDeliveryDateEnabled = Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_DELIVERY_DATE_ENABLED, $storeId);
+        if (!$oscDeliveryDateEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the configured line count for the current, or specified, config scope.
      *
      * @param int|null $storeId
@@ -496,8 +594,9 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             if ($request->getParam('store')) {
                 $lineCount = Mage::getStoreConfig(self::XPATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
             } elseif ($request->getParam('website')) {
+                /** @var Mage_Core_Model_Website $website */
                 $website   = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
-                $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES, $website->getId());
+                $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES);
             } else {
                 $lineCount = Mage::getStoreConfig(
                     self::XPATH_COMMUNITY_STREET_LINES,
@@ -526,6 +625,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             if ($request->getParam('store')) {
                 $storeId = $request->getParam('store');
             } elseif ($request->getParam('website')) {
+                /** @var Mage_Core_Model_Website $website */
                 $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
                 $storeId = $website->getDefaultStore()->getId();
             } else {
@@ -533,14 +633,16 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             }
         }
 
-        $lineCount = Mage::helper('customer/address')->getStreetLines($storeId);
+        /** @var Mage_Customer_Helper_Address $addressHelper */
+        $addressHelper = Mage::helper('customer/address');
+        $lineCount = $addressHelper->getStreetLines($storeId);
         return $lineCount;
     }
 
     /**
      * Logs a cendris request and response for debug purposes.
      *
-     * @param Soap>__getLastRe $client
+     * @param SoapClient $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *

@@ -32,7 +32,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 var varienForm = new Class.create();
@@ -475,8 +475,8 @@ FormElementDependenceController.prototype = {
      *         ...
      *     }
      * }
-     * @param object elementsMap
-     * @param object config
+     * @param {{}} elementsMap
+     * @param {{}} config
      */
     initialize : function (elementsMap, config)
     {
@@ -509,8 +509,8 @@ FormElementDependenceController.prototype = {
     /**
      * Define whether target element should be toggled and show/hide its row
      *
-     * @param object e - event
-     * @param string idTo - id of target element
+     * @param {{}} e - event
+     * @param {string} idTo - id of target element
      * @param valuesFrom - ids of master elements and reference values
      * @return
      */

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -49,6 +49,7 @@
 <?php $_deliveryDate                   = $this->getDeliveryDate(); ?>
 <?php $_streetData                     = $this->getStreetData(); ?>
 <?php $_housenumber                    = $_streetData['housenumber']; ?>
+<?php $_street                         = $_streetData['streetname']; ?>
 
 <?php $_canAddLocation                 = true; ?>
 <?php $_canUseResponsive               = $this->canUseResponsive(); ?>
@@ -190,12 +191,13 @@
         timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
-        housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
-        country            : '<?php echo $this->escapeHtml($_country); ?>',
-        deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
+        postcode           : '<?php echo $this->escapeJavascriptHtml($_postcode); ?>',
+        housenumber        : '<?php echo $this->escapeJavascriptHtml($_housenumber); ?>',
+        street             : '<?php echo $this->escapeJavascriptHtml($_street); ?>',
+        country            : '<?php echo $this->escapeJavascriptHtml($_country); ?>',
+        deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo $this->escapeHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
+        fullAddress        : "<?php echo $this->escapeJavascriptHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
     };
 
     options = {
@@ -222,6 +224,7 @@
         allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        allowFallBackTimeFrame : <?php echo $this->canUseFallBackTimeframe() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
         disableCufon           : <?php echo $this->getUseCufon()             ? 'true' : 'true'; ?>,
         isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
@@ -235,6 +235,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $moduleConfig = $this->_moduleConfig;
 
         $dbVer = $resource->getDbVersion($this->_resourceName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $configVer = (string) $moduleConfig->version;
 
         $this->setDbVer($dbVer);
@@ -251,6 +252,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function applyDataUninstall()
     {
         $dataVer   = $this->_getResource()->getDataVersion($this->_resourceName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $configVer = (string)$this->_moduleConfig->version;
 
         if ($dataVer !== false) {
@@ -276,8 +278,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $this->_checkVersionCompatibility();
         $this->_checkMemoryRequirement();
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
+        /** @var TIG_PostNL_Model_Admin_Inbox $inbox */
         $inbox = Mage::getModel('postnl_admin/inbox');
         if ($dbVer) {
             $title = '['
@@ -295,6 +299,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             $url = $helper->getErrorUrl(self::SUCCESSFUL_INSTALL_ERROR_CODE );
         }
 
+        /** @noinspection HtmlUnknownTarget */
         $message = $helper->__(
             'You can read the release notes in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
             'knowledgebase</a>.',
@@ -385,7 +390,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             try {
                 switch ($fileType) {
                     case 'php':
-                        $conn   = $this->getConnection();
+                        /** @noinspection PhpIncludeInspection */
                         $result = include $fileName;
                         break;
                     case 'sql':
@@ -514,16 +519,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Store the cron expression in core_config_data.
          */
         try {
-            Mage::getModel('core/config_data')
-                ->load(self::SHIPPING_STATUS_CRON_STRING_PATH, 'path')
-                ->setValue($cronExpr)
-                ->setPath(self::SHIPPING_STATUS_CRON_STRING_PATH)
-                ->save();
-            Mage::getModel('core/config_data')
-                ->load(self::SHIPPING_STATUS_CRON_MODEL_PATH, 'path')
-                ->setValue((string) Mage::getConfig()->getNode(self::SHIPPING_STATUS_CRON_MODEL_PATH))
-                ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')->load(self::SHIPPING_STATUS_CRON_STRING_PATH, 'path');
+            $configData->setValue($cronExpr)
+                       ->setPath(self::SHIPPING_STATUS_CRON_STRING_PATH)
+                       ->save();
+
+            $configData = Mage::getModel('core/config_data')->load(self::SHIPPING_STATUS_CRON_MODEL_PATH, 'path');
+            $configData->setValue((string) Mage::getConfig()->getNode(self::SHIPPING_STATUS_CRON_MODEL_PATH))
+                       ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
+                       ->save();
         } catch (Exception $e) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to save shipping_status cron expression: %s', $cronExpr),
@@ -561,16 +566,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Store the cron expression in core_config_data
          */
         try {
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_STATISTICS_CRON_STRING_PATH, 'path')
-                ->setValue($cronExpr)
-                ->setPath(self::UPDATE_STATISTICS_CRON_STRING_PATH)
-                ->save();
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_STATISTICS_CRON_MODEL_PATH, 'path')
-                ->setValue((string) Mage::getConfig()->getNode(self::UPDATE_STATISTICS_CRON_MODEL_PATH))
-                ->setPath(self::UPDATE_STATISTICS_CRON_MODEL_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_STATISTICS_CRON_STRING_PATH, 'path');
+            $configData->setValue($cronExpr)
+                       ->setPath(self::UPDATE_STATISTICS_CRON_STRING_PATH)
+                       ->save();
+
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_STATISTICS_CRON_MODEL_PATH, 'path');
+            $configData->setValue((string) Mage::getConfig()->getNode(self::UPDATE_STATISTICS_CRON_MODEL_PATH))
+                       ->setPath(self::UPDATE_STATISTICS_CRON_MODEL_PATH)
+                       ->save();
         } catch (Exception $e) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to save update_statistics cron expression: %s', $cronExpr),
@@ -594,6 +599,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if ($helper->isEnterprise()) {
             $edition = 'enterprise';
@@ -601,7 +607,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             $edition = 'community';
         }
 
-        $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
+        $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/magento/' . $edition);
         if ($supportedVersions === false) {
             $this->_addUnsupportedVersionMessage();
 
@@ -633,6 +639,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      */
     protected function _addUnsupportedVersionMessage()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $title = '['
@@ -647,6 +654,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
         $url = $helper->getErrorUrl(self::UNSUPPORTED_MAGENTO_VERSION_ERROR_CODE );
 
+        /** @var TIG_PostNL_Model_Admin_Inbox $inbox */
         $inbox = Mage::getModel('postnl_admin/inbox');
         $inbox->addCritical(
             $title,
@@ -670,6 +678,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
@@ -685,6 +694,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                 $memoryMb
             );
 
+            /** @var TIG_PostNL_Model_Admin_Inbox $inbox */
             $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
                 $title,
@@ -756,7 +766,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         try {
             $adminUser->saveExtra($extra);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
         }
 
         return $this;
@@ -822,11 +834,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function installTestPassword()
     {
         $testPassword = self::DEFAULT_TEST_PASSWORD;
-        $encryptedPassword = Mage::helper('core')->encrypt($testPassword);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $encryptedPassword = $helper->encrypt($testPassword);
 
-        /**
-         * @var Mage_Core_Model_Config_Data $config
-         */
+        /** @var Mage_Core_Model_Config_Data $config */
         $config = Mage::getModel('core/config_data')
                       ->load(self::XPATH_TEST_PASSWORD, 'path');
 
@@ -845,11 +857,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function installWebshopId()
     {
         $testWebshopId = self::DEFAULT_WEBSHOP_ID;
-        $encryptedWebshopId = Mage::helper('core')->encrypt($testWebshopId);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $encryptedWebshopId = $helper->encrypt($testWebshopId);
 
-        /**
-         * @var Mage_Core_Model_Config_Data $config
-         */
+        /** @var Mage_Core_Model_Config_Data $config */
         $config = Mage::getModel('core/config_data')
                       ->load(self::XPATH_WEBSHOP_ID, 'path');
 
@@ -891,6 +903,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($stores as $store) {
             $scopeId = $store->getId();
 
+            /** @noinspection PhpDeprecationInspection */
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
@@ -904,12 +917,14 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($websites as $website) {
             $scopeId = $website->getId();
 
+            /** @noinspection PhpDeprecationInspection */
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
          * Finally, try to move the config setting for the default scope.
          */
+        /** @noinspection PhpDeprecationInspection */
         $this->moveConfigSettingForScope(
             $fromXpath,
             $toXpath,
@@ -1059,6 +1074,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $transactionSave = Mage::getResourceModel('core/transaction');
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        /** @var Mage_Sales_Model_Order_Shipment $shipment */
         foreach ($postnlShipmentCollection as $shipment) {
             try {
                 /**
@@ -1066,7 +1082,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                  */
                 $shipment->getOrderId();
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $helper->logException($e);
                 continue;
             }
 
@@ -1094,6 +1112,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $transactionSave = Mage::getResourceModel('core/transaction');
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        /** @var TIG_PostNL_Model_Core_Shipment $shipment */
         foreach ($postnlShipmentCollection as $shipment) {
             try {
                 /**
@@ -1101,7 +1120,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                  */
                 $shipment->getShipmentType();
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $helper->logException($e);
                 continue;
             }
 
@@ -1127,6 +1148,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $transactionSave = Mage::getResourceModel('core/transaction');
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        /** @var TIG_PostNL_Model_Core_Shipment $shipment */
         foreach ($postnlShipmentCollection as $shipment) {
             /**
              * Set the 'is_buspakje' flag to false for all existing shipments.
@@ -1159,8 +1181,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * @var Mage_Admin_Model_Rules $role
          */
         foreach ($adminRoles as $role) {
-            $rules = Mage::getResourceModel('admin/rules_collection')->getByRoles($role->getId());
+            /** @var Mage_Admin_Model_Resource_Rules_Collection $rules */
+            $rules = Mage::getResourceModel('admin/rules_collection');
+            $rules->getByRoles($role->getId());
             $rules->addFieldToFilter('permission', array('eq' => 'allow'));
+
             $resources = $rules->getColumnValues('resource_id');
 
             /**
@@ -1197,10 +1222,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             /**
              * Save the role.
              */
-            Mage::getModel('admin/rules')
-                ->setRoleId($role->getId())
-                ->setResources($resources)
-                ->saveRel();
+            /** @var Mage_Admin_Model_Rules $rulesModel */
+            $rulesModel = Mage::getModel('admin/rules');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $rulesModel->setRoleId($role->getId())
+                       ->setResources($resources)
+                       ->saveRel();
         }
 
         return $this;
@@ -1285,6 +1312,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         /**
          * Get all products which are of the specified types.
          */
+        /** @var Mage_Catalog_Model_Resource_Product_Collection $productCollection */
         $productCollection = Mage::getResourceModel('catalog/product_collection')
                                  ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
                                  ->addFieldToFilter(
@@ -1297,8 +1325,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         /**
          * Update the attributes of these products.
          */
-        Mage::getSingleton('catalog/product_action')
-            ->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
+        /** @var Mage_Catalog_Model_Product_Action $productAction */
+        $productAction = Mage::getSingleton('catalog/product_action');
+        $productAction->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $this;
     }
@@ -1349,16 +1378,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Store the cron expression in core_config_data.
          */
         try {
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
-                ->setValue($cronExpr)
-                ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
-                ->save();
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH, 'path')
-                ->setValue((string) Mage::getConfig()->getNode(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH))
-                ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path');
+            $configData->setValue($cronExpr)
+                       ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
+                       ->save();
+
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH, 'path');
+            $configData->setValue((string) Mage::getConfig()->getNode(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH))
+                       ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH)
+                       ->save();
         } catch (Exception $e) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to save update_product_attribute cron expression: %s', $cronExpr),
@@ -1382,7 +1411,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         try {
             Mage::getResourceModel('postnl_carrier/matrixrate')->import($data);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
         }
 
         return $this;
@@ -1461,11 +1492,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                         )
                     );
                 } catch (Exception $e) {
-                    Mage::helper('postnl')->logException($e);
+                    /** @var TIG_PostNL_Helper_Data $helper */
+                    $helper = Mage::helper('postnl');
+                    $helper->logException($e);
                 }
             }
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
         }
 
         return $this;
@@ -1495,7 +1530,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                 )
             );
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
         }
 
         try {
@@ -1525,11 +1562,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                         )
                     );
                 } catch (Exception $e) {
-                    Mage::helper('postnl')->logException($e);
+                    /** @var TIG_PostNL_Helper_Data $helper */
+                    $helper = Mage::helper('postnl');
+                    $helper->logException($e);
                 }
             }
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
         }
 
         return $this;
@@ -1564,16 +1605,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Store the cron expression in core_config_data.
          */
         try {
-            Mage::getModel('core/config_data')
-                ->load(self::RETURN_STATUS_CRON_STRING_PATH, 'path')
-                ->setValue($cronExpr)
-                ->setPath(self::RETURN_STATUS_CRON_STRING_PATH)
-                ->save();
-            Mage::getModel('core/config_data')
-                ->load(self::RETURN_STATUS_CRON_MODEL_PATH, 'path')
-                ->setValue((string) Mage::getConfig()->getNode(self::RETURN_STATUS_CRON_MODEL_PATH))
-                ->setPath(self::RETURN_STATUS_CRON_MODEL_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')->load(self::RETURN_STATUS_CRON_STRING_PATH, 'path');
+            $configData->setValue($cronExpr)
+                       ->setPath(self::RETURN_STATUS_CRON_STRING_PATH)
+                       ->save();
+
+            $configData = Mage::getModel('core/config_data')->load(self::RETURN_STATUS_CRON_MODEL_PATH, 'path');
+            $configData->setValue((string) Mage::getConfig()->getNode(self::RETURN_STATUS_CRON_MODEL_PATH))
+                       ->setPath(self::RETURN_STATUS_CRON_MODEL_PATH)
+                       ->save();
         } catch (Exception $e) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to save return_status cron expression: %s', $cronExpr),
@@ -1630,16 +1671,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Store the cron expression in core_config_data.
          */
         try {
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path')
-                ->setValue($cronExpr)
-                ->setPath(self::UPDATE_DATE_TIME_ZONE_STRING_PATH)
-                ->save();
-            Mage::getModel('core/config_data')
-                ->load(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH, 'path')
-                ->setValue((string) Mage::getConfig()->getNode(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH))
-                ->setPath(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH)
-                ->save();
+            /** @var Mage_Core_Model_Config_Data $configData */
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_DATE_TIME_ZONE_STRING_PATH, 'path');
+            $configData->setValue($cronExpr)
+                       ->setPath(self::UPDATE_DATE_TIME_ZONE_STRING_PATH)
+                       ->save();
+            $configData = Mage::getModel('core/config_data')->load(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH, 'path');
+            $configData->setValue((string) Mage::getConfig()->getNode(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH))
+                       ->setPath(self::UPDATE_DATE_TIME_ZONE_MODEL_PATH)
+                       ->save();
         } catch (Exception $e) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to save update_date_time_zone cron expression: %s', $cronExpr),
@@ -1678,7 +1718,79 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                 )
             );
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the shipping duration to -1 for all products that currently use 'use config'.
+     *
+     * @return $this
+     */
+    public function setUseConfigShippingDuration()
+    {
+        $conn = $this->getConnection();
+        /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+        $attribute = Mage::getResourceModel('catalog/product')->getAttribute('postnl_shipping_duration');
+
+        $conn->update(
+            $attribute->getResource()->getTable(
+                array(
+                    $attribute->getEntity()->getEntityTablePrefix(),
+                    $attribute->getBackendType()
+                )
+            ),
+            array(
+                'value' => -1,
+            ),
+            array(
+                'attribute_id = ?' => $attribute->getAttributeId(),
+                'value IS NULL OR value = ?' => '',
+            )
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return $this
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateAttributeData(array $data)
+    {
+        foreach ($data as $attributeCode => $attributeData) {
+            /**
+             * Load the attribute by the specified attribute code.
+             */
+            /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+            $attribute = Mage::getResourceModel('catalog/product')->getAttribute($attributeCode);
+            if (!$attribute || !$attribute->getId()) {
+                /**
+                 * If the attribute could not be found, throw an exception.
+                 */
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                throw new TIG_PostNL_Exception(
+                    $helper->__('No attribute found with attribute code %s.', $attributeCode),
+                    'POSTNL-0241'
+                );
+            }
+
+            /**
+             * Set the specified attribute data.
+             */
+            foreach ($attributeData as $key => $value) {
+                $attribute->setDataUsingMethod($key, $value);
+            }
+
+            $attribute->save();
         }
 
         return $this;

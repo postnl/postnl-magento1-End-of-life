@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
@@ -45,7 +45,9 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
      */
     public function toOptionArray()
     {
-        $paymentMethods = Mage::getSingleton('payment/config')->getActiveMethods();
+        /** @var Mage_Payment_Model_Config $config */
+        $config = Mage::getSingleton('payment/config');
+        $paymentMethods = $config->getActiveMethods();
 
         $storeId = Mage::app()->getStore()->getId();
 

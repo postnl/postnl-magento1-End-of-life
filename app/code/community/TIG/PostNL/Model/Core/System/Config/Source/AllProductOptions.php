@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
@@ -279,6 +279,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'pakjegemak_options',
         ),
+        '4932' => array(
+            'value'             => '4932',
+            'label'             => 'Post Office',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_be_options',
+        ),
         '4952' => array(
             'value'             => '4952',
             'label'             => 'EU Pack Special Consumer (incl. signature)',
@@ -417,6 +428,30 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'standard_options',
         ),
+        '3083' => array(
+            'value'             => '3083',
+            'label'             => 'Dry & Groceries',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'food_options',
+        ),
+        '3084' => array(
+            'value'             => '3084',
+            'label'             => 'Cooled Products',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'cooled_options',
+        ),
     );
 
     /**
@@ -425,11 +460,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     protected $_groups = array(
         'standard_options'       => 'Domestic options',
         'pakjegemak_options'     => 'Post Office options',
+        'pakjegemak_be_options'  => 'Post Office Belgium options',
         'eu_options'             => 'EU options',
         'global_options'         => 'Global options',
         'pakketautomaat_options' => 'Parcel Dispenser options',
         'buspakje_options'       => 'Letter Box Parcel options',
         'sunday_options'         => 'Sunday options',
+        'food_options'           => 'Food Delivery Options',
+        'cooled_options'         => 'Cooled Delivery Options',
     );
 
     /**
@@ -443,8 +481,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      */
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
-        if (!isset($flags['countryLimitation'])) {
+        $canUseDutchProducts = Mage::helper('postnl/deliveryOptions')->canUseDutchProducts();
+        if (!isset($flags['countryLimitation']) && !$canUseDutchProducts) {
             $domesticCountry = $helper->getDomesticCountry();
             $flags['countryLimitation'] =  array(
                 $domesticCountry,
@@ -492,6 +532,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     {
         $options = $this->getGroupedOptions();
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if ($helper->canUseEpsBEOnlyOption()) {
             $options['eu_options']['value']['4955'] = array(

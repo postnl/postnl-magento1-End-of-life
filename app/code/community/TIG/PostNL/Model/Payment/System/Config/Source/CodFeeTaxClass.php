@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Payment_System_Config_Source_CodFeeTaxClass
@@ -46,7 +46,9 @@ class TIG_PostNL_Model_Payment_System_Config_Source_CodFeeTaxClass
      */
     public function toOptionArray()
     {
-        $options = Mage::getModel('tax/class_source_product')->toOptionArray();
+        /** @var Mage_Tax_Model_Class_Source_Product $source */
+        $source = Mage::getModel('tax/class_source_product');
+        $options = $source->toOptionArray();
 
         return $options;
     }

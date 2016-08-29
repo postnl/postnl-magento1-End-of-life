@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
@@ -62,7 +62,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
          * The shipment was not shipped using PostNL
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
@@ -71,6 +73,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
          *
          * @var $postnlShipmentClassName TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentClassName::CONFIRM_STATUS_BUSPAKJE) {
             return '';
@@ -79,6 +82,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
         /**
          * Check if any data is available.
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
         if (!$value) {
             $value = Mage::helper('postnl')->__('No barcode available.');
@@ -102,7 +107,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
             'postcode'    => $postcode,
         );
 
-        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData, false, true);
+        $barcodeUrl = $helper->getBarcodeUrl($value, $destinationData, false, true);
 
         $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
 

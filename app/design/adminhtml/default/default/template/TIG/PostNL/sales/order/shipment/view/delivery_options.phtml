@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -47,12 +47,13 @@
 
 <?php $_canChangeParcelCount = $this->canChangeParcelCount(); ?>
 <?php $_canChangeProductCode = $this->canChangeProductCode(); ?>
+<?php $_isBelgium            = $this->isBelgium(); ?>
+<?php /** @var TIG_PostNL_Helper_Cif $_cifHelper */ ?>
+<?php $_cifHelper            = $this->helper('postnl/cif'); ?>
 <?php if($_canChangeProductCode): ?>
-    <?php $_cifHelper             = $this->helper('postnl/cif'); ?>
     <?php $_shipment              = $this->getShipment(); ?>
     <?php $_productOptions        = $this->getProductOptions(); ?>
     <?php $_defaultProductOption  = $this->getDefaultProductOption(); ?>
-    <?php $_isBelgium             = $this->isBelgium(); ?>
     <?php $_isGlobalPackShipment  = (bool) $_cifHelper->isGlobalShipment($_shipment); ?>
     <?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
     <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
@@ -75,7 +76,7 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if (isset($_isDomesticShipment) && $_isDomesticShipment): ?>
+            <?php if ($_isDomesticShipment || $_isBelgium): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
                     <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>

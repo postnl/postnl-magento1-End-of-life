@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
@@ -51,19 +51,23 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         /**
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
          */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $column = $this->getColumn();
 
         /**
          * The shipment was not shipped using PostNL.
          */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
         /**
          * Check if any data is available.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($column->getIndex());
         if (is_null($value) || $value === '') {
             return '';

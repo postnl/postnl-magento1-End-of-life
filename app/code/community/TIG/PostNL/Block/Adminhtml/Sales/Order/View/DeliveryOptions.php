@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasOrder()
@@ -85,7 +85,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
 
         $order = $this->getOrder();
 
-        $postnlOrder = Mage::getModel('postnl_core/order')->loadByOrder($order);
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
+        $postnlOrder = Mage::getModel('postnl_core/order');
+        $postnlOrder->loadByOrder($order);
 
         $this->setPostnlOrder($postnlOrder);
         return $postnlOrder;
@@ -101,14 +103,17 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
         $order       = $this->getOrder();
         $postnlOrder = $this->getPostnlOrder();
 
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+
         $paymentMethod = $order->getPayment()->getMethod();
-        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+        $codPaymentMethods = $helper->getCodPaymentMethods();
         if (in_array($paymentMethod, $codPaymentMethods)) {
             $this->setIsCod(true);
         }
 
         $countryId = $order->getShippingAddress()->getCountryId();
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        $domesticCountry = $helper->getDomesticCountry();
 
         $shipmentType = false;
         switch ($postnlOrder->getType()) {
@@ -121,6 +126,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 break;
             case 'PG':
                 $shipmentType = $this->__('Post Office');
+
+                if ($countryId == 'BE') {
+                    $this->setSubType($this->__('Belgium'));
+                }
                 break;
             case 'Avond':
                 $this->setSubType($this->__('Evening Delivery'));
@@ -141,19 +150,34 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 }
                 $shipmentType  = $this->__('Domestic');
                 break;
+            case 'Food':
+                $shipmentType = $this->__('Food Delivery');
+                break;
+            case 'Cooledfood':
+                $shipmentType = $this->__('Cooled Food Delivery');
+                break;
         }
 
         if ($shipmentType) {
             return $shipmentType;
         }
 
-        if ($countryId == $domesticCountry) {
+        if (
+            $countryId == $domesticCountry ||
+            (
+                $domesticCountry == 'BE' &&
+                $countryId == 'NL' &&
+                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts()
+            )
+        ) {
             $shipmentType = $this->__('Domestic');
 
             return $shipmentType;
         }
 
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
+        $euCountries = $cifHelper->getEuCountries();
         if (in_array($countryId, $euCountries)) {
             $shipmentType = $this->__('EPS');
 
@@ -251,6 +275,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             'timezone_differ'           => false,
         );
 
+        /** @var Mage_Core_Model_Date $dateModel */
         $dateModel = Mage::getSingleton('core/date');
         $utcTimeZone = new DateTimeZone('UTC');
 

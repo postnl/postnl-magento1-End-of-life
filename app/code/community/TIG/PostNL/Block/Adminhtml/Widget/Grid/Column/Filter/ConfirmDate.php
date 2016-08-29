@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
@@ -137,9 +137,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
                                 + dimensionsButton.width + "px",
                             "top" : offset[1] + scrollOffset[1] + dimensionsButton.height + "px"
                         });
-                    };
+                    }
                 });
-            };
+            }
 
             var confirmDateDatePicker = function() {
                 if ($("' . $this->_getHtmlId() . '").getValue() == "pick_date") {
@@ -175,7 +175,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Filter_ConfirmDate
         if (is_array($value)) {
             $value['datetime'] = true;
         }
+        /** @noinspection PhpUndefinedMethodInspection */
         if (!empty($value['to']) && !$this->getColumn()->getFilterTime()) {
+            /** @noinspection PhpUndefinedClassInspection */
+            /** @var Zend_Date $datetimeTo */
             $datetimeTo = $value['to'];
 
             //calculate end date considering timezone specification

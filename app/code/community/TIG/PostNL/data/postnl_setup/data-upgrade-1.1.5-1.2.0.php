@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -79,6 +79,7 @@ $requiredAclResources = array(
  * prevent merchants from being unable to process shipments as before, we need to add the new resources to the existing
  * admin roles.
  */
+/** @noinspection PhpDeprecationInspection */
 $installer->resetWebserviceVersions($settingsToReset)
           ->addSupportedProductCode('3553')
           ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true)

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                                  hasPhoneNumber()
@@ -93,6 +93,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostN
 
         $quote = $this->getQuote();
         if (!$quote) {
+            /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
             $shippingAddress = Mage::getModel('sales/quote_address');
 
             $this->setShippingAddress($shippingAddress);
@@ -116,7 +117,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostN
             return $this->_getData('quote');
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         $this->setQuote($quote);
         return $quote;

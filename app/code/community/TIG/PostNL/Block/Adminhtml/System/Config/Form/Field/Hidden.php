@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
@@ -61,48 +61,60 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
     {
         $id = $element->getHtmlId();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $html = '<td class="label"><label for="'.$id.'">'.$element->getLabel().'</label></td>';
 
         //$isDefault = !$this->getRequest()->getParam('website') && !$this->getRequest()->getParam('store');
+        /** @noinspection PhpUndefinedMethodInspection */
         $isMultiple = $element->getExtType()==='multiple';
 
         // replace [value] with [inherit]
         $namePrefix = preg_replace('#\[value\](\[\])?$#', '', $element->getName());
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $options = $element->getValues();
 
         $addInheritCheckbox = false;
+        $checkboxLabel = '';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getCanUseWebsiteValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = $this->__('Use Website');
-        }
-        elseif ($element->getCanUseDefaultValue()) {
+        } /** @noinspection PhpUndefinedMethodInspection */ elseif ($element->getCanUseDefaultValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = $this->__('Use Default');
         }
 
+        $inherit = '';
         if ($addInheritCheckbox) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $inherit = $element->getInherit()==1 ? 'checked="checked"' : '';
             if ($inherit) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $element->setDisabled(true);
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getTooltip()) {
             $html .= '<td class="value with-tooltip">';
             $html .= $this->_getElementHtml($element);
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= '<div class="field-tooltip"><div>' . $element->getTooltip() . '</div></div>';
         } else {
             $html .= '<td class="value">';
             $html .= $this->_getElementHtml($element);
         };
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getComment()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<p class="note"><span>'.$element->getComment().'</span></p>';
         }
         $html.= '</td>';
 
         if ($addInheritCheckbox) {
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $defText = $element->getDefaultValue();
             if ($options) {
                 $defTextArr = array();
@@ -137,14 +149,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
         }
 
         $html.= '<td class="scope-label">';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getScope()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= $element->getScopeLabel();
         }
         $html.= '</td>';
 
         $html.= '<td class="">';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getHint()) {
             $html.= '<div class="hint" >';
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<div style="display: none;">' . $element->getHint() . '</div>';
             $html.= '</div>';
         }
@@ -168,11 +184,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
         $html.= $element->getAfterElementHtml();
         return $html;
     }
+
     /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return int|string
      */
     protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $value = $element->getValue();
 
         return $value;

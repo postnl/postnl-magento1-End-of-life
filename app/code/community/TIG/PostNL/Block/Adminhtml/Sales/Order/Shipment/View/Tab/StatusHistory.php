@@ -33,11 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_Shipment getPostnlShipment()
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory setUseAjax($value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -78,6 +79,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     {
         $postnlShipmentId = $this->getPostnlShipment()->getId();
 
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection $collection */
         $collection = Mage::getResourceModel('postnl_core/shipment_status_history_collection');
         $collection->addFieldToFilter('parent_id', array('eq' => $postnlShipmentId));
 
@@ -96,7 +98,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
      */
     protected function _prepareColumns()
     {
-        $helper = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
 
         $this->addColumn(
             'date',
@@ -124,7 +127,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
         );
 
         $postnlShipment = $this->getPostnlShipment();
-        if (Mage::helper('postnl/cif')->isReturnsEnabled() && $postnlShipment->hasReturnLabelsPrinted()) {
+
+        if ($helper->isReturnsEnabled() && $postnlShipment->hasReturnLabelsPrinted()) {
             $this->addColumn(
                 'shipment_type',
                 array(

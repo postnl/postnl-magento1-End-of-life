@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
@@ -55,6 +55,11 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     const XPATH_COD_FEE_INCLUDING_TAX = 'tax/calculation/postnl_cod_fee_including_tax';
 
     /**
+     * @var Mage_Tax_Model_Calculation
+     */
+    protected $_calculator;
+
+    /**
      * @return Mage_Tax_Model_Calculation
      */
     public function getTaxCalculation()
@@ -64,6 +69,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
             return $taxCalculation;
         }
 
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
         $taxCalculation = Mage::getSingleton('tax/calculation');
 
         $this->setTaxCalculation($taxCalculation);
@@ -122,6 +128,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
         }
 
         $taxCalculation   = $this->getTaxCalculation();
+        /** @noinspection PhpUndefinedMethodInspection */
         $customerTaxClass = $order->getCustomerTaxClassId();
         $shippingAddress  = $order->getShippingAddress();
         $billingAddress   = $order->getBillingAddress();
@@ -133,6 +140,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
             $store
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setProductClassId($codTaxClass);
 
         return $request;
@@ -165,6 +173,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     protected function _getCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getPostnlCodFee();
         }
 
@@ -193,6 +202,7 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     protected function _getBaseCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getBasePostnlCodFee();
         }
 

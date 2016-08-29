@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                           hasWebshopId()
@@ -111,7 +111,9 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        if ($helper->isTestMode($storeId)) {
             $url = Mage::getStoreConfig(self::TEST_CHECKOUT_JS_URL_XPATH);
 
             $this->setCheckoutJsUrl($url);
@@ -137,7 +139,9 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        if ($helper->isTestMode($storeId)) {
             $url = Mage::getStoreConfig(self::TEST_CHECKOUT_PREMIUM_JS_URL_XPATH);
 
             $this->setCheckoutPremiumJsUrl($url);
@@ -163,7 +167,9 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        if ($helper->isTestMode($storeId)) {
             $environment = self::TEST_ENVIRONMENT;
 
             $this->setEnvironment($environment);
@@ -209,9 +215,13 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
      */
     protected function _toHtml()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
-        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        /** @var TIG_PostNL_Helper_Checkout $helper */
+        $helper = Mage::helper('postnl/checkout');
+        $canUseCheckout = $helper->canUsePostnlCheckout($quote);
         if (!$canUseCheckout) {
             return '';
         }

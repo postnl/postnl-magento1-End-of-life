@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
@@ -41,7 +41,8 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS   = 'postnl/grid/supported_product_options';
+    const XPATH_USE_DUTCH_PRODUCTS          = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * @var array
@@ -65,6 +66,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
         $options = $this->_options;
+
         if (!empty($flags)) {
             foreach ($options as $key => $option) {
                 if (!$this->_optionMatchesFlags($option, $flags)) {
@@ -231,6 +233,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _filterAvailable(&$options)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
 

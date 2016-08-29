@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_Adminhtml_Config
@@ -50,9 +50,24 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
 
     /**
+     * XML path to the domestic country.
+     */
+    const XPATH_POSTNL_CIF_ADDRESS_COUNTRY = 'postnl/cif_address/country';
+
+    /**
+     * XML path to the use Dutch products setting.
+     */
+    const XPATH_USE_DUTCH_PRODUCTS = 'postnl/cif_labels_and_confirming/use_dutch_products';
+
+    /**
      * @var boolean
      */
     protected $_isTestMode = false;
+
+    /**
+     * @var bool
+     */
+    protected $_doRefresh = false;
 
     /**
      * Validate the extension's account settings.
@@ -109,12 +124,11 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
             $data['password'] = sha1($data['password']);
 
             /**
-             * Load the CIF model and set to test mode to false
-             *
-             * @var TIG_PostNL_Model_Core_Cif $cif
+             * Load the CIF model and set to test mode to false.
              */
-            $cif = Mage::getModel('postnl_core/cif')
-                       ->setTestMode($this->_isTestMode);
+            /** @var TIG_PostNL_Model_Core_Cif $cif */
+            $cif = Mage::getModel('postnl_core/cif');
+            $cif->setTestMode($this->_isTestMode);
 
             $response = $cif->generateBarcodePing($data);
         } catch (Exception $e) {
@@ -204,13 +218,16 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
 
         $websiteCode = $this->getRequest()->getParam('website');
         if (!$inherit && !empty($websiteCode)) {
+            /** @var Mage_Core_Model_Website $website */
             $website = Mage::getModel('core/website')->load($websiteCode, 'code');
             $password = $website->getConfig($xpath);
         } else {
             $password = Mage::getStoreConfig($xpath, $storeId);
         }
 
-        $password = Mage::helper('core')->decrypt($password);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $password = $helper->decrypt($password);
 
         return trim($password);
     }
@@ -278,6 +295,7 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
      */
     public function downloadLogsAction()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         if (!$helper->checkIsPostnlActionAllowed('download_logs')) {
@@ -293,8 +311,9 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
          * Get a zip file containing all valid PostNL logs.
          */
         try {
-            $zip = Mage::getModel('postnl_adminhtml/support_logs')
-                       ->downloadLogs();
+            /** @var TIG_PostNL_Model_Adminhtml_Support_Logs $logsModel */
+            $logsModel = Mage::getModel('postnl_adminhtml/support_logs');
+            $zip = $logsModel->downloadLogs();
         } catch (TIG_PostNL_Exception $e) {
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
@@ -349,6 +368,9 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
                 return $this;
             }
 
+            $this->_isDomesticCountryChanged();
+            $this->_isUseDutchProductsChanged();
+
             /**
              * custom save logic
              */
@@ -356,12 +378,15 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
             $section = $this->getRequest()->getParam('section');
             $website = $this->getRequest()->getParam('website');
             $store   = $this->getRequest()->getParam('store');
-            Mage::getSingleton('adminhtml/config_data')
-                ->setSection($section)
-                ->setWebsite($website)
-                ->setStore($store)
-                ->setGroups($groups)
-                ->save();
+
+            /** @var Mage_Adminhtml_Model_Config_Data $configData */
+            $configData = Mage::getSingleton('adminhtml/config_data');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $configData->setSection($section)
+                       ->setWebsite($website)
+                       ->setStore($store)
+                       ->setGroups($groups)
+                       ->save();
 
             /**
              * reinit configuration
@@ -391,27 +416,38 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
                 $this->_saveCurrentWizardStep($nextStep);
             }
 
-            $this->getResponse()
-                 ->setBody('success');
+            if ($this->_doRefresh) {
+                $this->getResponse()
+                    ->setBody('refresh');
+            } else {
+                $this->getResponse()
+                    ->setBody('success');
+            }
         } catch (TIG_PostNL_Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody(
-                     Mage::helper('postnl')->getSessionMessage($e->getCode(), 'error', $e->getMessage()
+                     $helper->getSessionMessage($e->getCode(), 'error', $e->getMessage()
                  )
             );
 
             return $this;
         } catch (Mage_Core_Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody($e->getMessage());
 
             return $this;
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody(
@@ -441,7 +477,11 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
             return $this;
         }
 
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var Mage_Admin_Model_User $adminUser */
+        $adminUser = $session->getUser();
         if (!$adminUser) {
             $this->getResponse()
                  ->setBody('error');
@@ -456,7 +496,9 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
 
             $adminUser->saveExtra($extra);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody('error');
@@ -492,6 +534,7 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
     protected function _isSectionAllowed($section)
     {
         try {
+            /** @var Mage_Admin_Model_Session $session */
             $session = Mage::getSingleton('admin/session');
             $resourceLookup = "admin/system/config/{$section}";
             if ($session->getData('acl') instanceof Mage_Admin_Model_Acl) {
@@ -522,7 +565,11 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
      */
     protected function _saveState($configState = array())
     {
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var Mage_Admin_Model_User $adminUser */
+        $adminUser = $session->getUser();
         if (is_array($configState)) {
             $extra = $adminUser->getExtra();
             if (!is_array($extra)) {
@@ -539,5 +586,63 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
         }
 
         return true;
+    }
+
+    /**
+     * Check if the domestic country is changed. If that is the case we want to reload the page so all settings are
+     * adjusted for the correct domestic country.
+     *
+     * @return $this
+     */
+    protected function _isDomesticCountryChanged()
+    {
+        if (!$this->_doRefresh) {
+            $this->_doRefresh = $this->_isValueChanged(self::XPATH_POSTNL_CIF_ADDRESS_COUNTRY);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Check if the can use Dutch products option is changed. In that case we want to reload the page.
+     *
+     * @return $this
+     */
+    protected function _isUseDutchProductsChanged()
+    {
+        if (!$this->_doRefresh) {
+            $this->_doRefresh = $this->_isValueChanged(self::XPATH_USE_DUTCH_PRODUCTS);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Check if a particular value is changed
+     *
+     * @param $xPath
+     *
+     * @return bool
+     */
+    protected function _isValueChanged($xPath)
+    {
+        /**
+         * Xpath: postnl/GROUP/VALUE
+         */
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        list($section, $group, $field) = explode('/', $xPath);
+        $groups = $this->getRequest()->getPost('groups');
+
+        if (
+            array_key_exists($group, $groups) &&
+            array_key_exists($field, $groups[$group]['fields'])
+        ) {
+            $value = $groups[$group]['fields'][$field]['value'];
+            $configValue = Mage::getStoreConfig($xPath);
+
+            return $value != $configValue;
+        }
+
+        return false;
     }
 }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasStoreId()
@@ -90,6 +90,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         }
 
         $websiteCode = $this->getWebsiteCode();
+        /** @var Mage_Core_Model_Website $website */
         $website = Mage::getModel('core/website')->load($websiteCode, 'code');
 
         $this->setWebsite($website);
@@ -144,7 +145,9 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
          * Decrypt and then hash the password.
          */
         $password = trim($password);
-        $password = sha1(Mage::helper('core')->decrypt($password));
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $password = sha1($helper->decrypt($password));
 
         /**
          * Put all credentials into an array.
@@ -159,11 +162,10 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
 
         /**
          * Load the CIF model and set to test mode to false.
-         *
-         * @var TIG_PostNL_Model_Core_Cif $cif
          */
-        $cif = Mage::getModel('postnl_core/cif')
-                   ->setTestMode($testMode);
+        /** @var TIG_PostNL_Model_Core_Cif $cif */
+        $cif = Mage::getModel('postnl_core/cif');
+        $cif->setTestMode($testMode);
 
         /**
          * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings
@@ -274,6 +276,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
          * Get the error from the extension's config.xml
          */
         $error = Mage::getConfig()->getNode('tig/errors/POSTNL-0114');
+        /** @noinspection PhpUndefinedFieldInspection */
         $link = (string) $error->url;
 
         /**

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method array                                                       getItemColumns()
@@ -100,6 +100,8 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
         // Custom options
         $options = $this->getItemOptions();
         if ($options) {
+            /** @var Mage_Core_Helper_String $stringHelper */
+            $stringHelper = Mage::helper('core/string');
             foreach ($options as $option) {
                 $optionText = strip_tags($option['label']);
 
@@ -113,7 +115,7 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
 
                 // draw options
                 $lines[][] = array(
-                    'text'      => Mage::helper('core/string')->str_split(strip_tags($optionText), 120, true, true),
+                    'text'      => $stringHelper->str_split(strip_tags($optionText), 120, true, true),
                     'font'      => 'italic',
                     'feed'      => $nameFeed,
                     'font_size' => 7,
@@ -143,10 +145,14 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
     {
         switch ($field) {
             case 'name':
-                $value = Mage::helper('core/string')->str_split($item->getName(), 60, true, true);
+                /** @var Mage_Core_Helper_String $stringHelper */
+                $stringHelper = Mage::helper('core/string');
+                $value = $stringHelper->str_split($item->getName(), 60, true, true);
                 break;
             case 'sku':
-                $value = Mage::helper('core/string')->str_split($this->getSku($item), 20);
+                /** @var Mage_Core_Helper_String $stringHelper */
+                $stringHelper = Mage::helper('core/string');
+                $value = $stringHelper->str_split($this->getSku($item), 20);
                 break;
             case 'price':
                 $value = $this->getOrder()->formatPriceTxt($item->getPrice());

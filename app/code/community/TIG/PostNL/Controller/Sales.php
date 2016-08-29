@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
@@ -63,7 +63,9 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
         }
 
         $order = Mage::registry('current_order');
-        if (!Mage::helper('postnl')->canPrintReturnLabelForOrder($order)) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->canPrintReturnLabelForOrder($order)) {
             $this->_redirect($this->getErrorRedirect());
             return;
         }
@@ -95,10 +97,9 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             return $this;
         }
 
-        /**
-         * @var TIG_postNL_Model_Core_Shipment $postnlShipment
-         */
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var TIG_postNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::registry('current_postnl_shipment');
 
         try {
@@ -118,6 +119,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             /**
              * Merge the labels and print them.
              */
+            /** @var TIG_PostNL_Model_Core_Label $labelModel */
             $labelModel = Mage::getModel('postnl_core/label');
             $output = $labelModel->setLabelSize('A6')->createPdf($labels);
 
@@ -186,6 +188,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             return false;
         }
 
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->load($orderId);
 
         if ($this->_canViewOrder($order)) {
@@ -217,6 +220,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
 
         $shipmentId = Mage::getResourceModel('postnl/order_shipment')->getShipmentId($shipmentIncrementId);
 
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
 
         if ($this->_canViewPostnlShipment($postnlShipment)) {
@@ -236,8 +240,13 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
      */
     protected function _canViewOrder($order)
     {
-        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        $customerId = $session->getCustomerId();
+
+        /** @var Mage_Sales_Model_Order_Config $config */
+        $config = Mage::getSingleton('sales/order_config');
+        $availableStates = $config->getVisibleOnFrontStates();
         if ($order->getId() && $order->getCustomerId() && ($order->getCustomerId() == $customerId)
             && in_array($order->getState(), $availableStates, $strict = true)
         ) {
@@ -255,8 +264,13 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
      */
     protected function _canViewPostnlShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment)
     {
-        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        $customerId = $session->getCustomerId();
+
+        /** @var Mage_Sales_Model_Order_Config $config */
+        $config = Mage::getSingleton('sales/order_config');
+        $availableStates = $config->getVisibleOnFrontStates();
         $order = $postnlShipment->getOrder();
 
         if ($postnlShipment->getId()
@@ -317,7 +331,9 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             $postnlShipment->generateBarcodes();
         }
 
-        $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($postnlShipment->getStoreId());
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
         if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }

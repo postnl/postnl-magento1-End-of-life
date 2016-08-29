@@ -351,6 +351,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this->_cache;
         }
 
+        /** @var TIG_PostNL_Model_Core_Cache $cache */
         $cache = Mage::getSingleton('postnl_core/cache');
         if (!$cache->canUseCache()) {
             $cache = false;
@@ -369,7 +370,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this->_quote;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         $this->_quote = $quote;
         return $quote;
@@ -479,7 +482,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Try to tget the domestic country array from the cache.
+         * Try to get the domestic country array from the cache.
          */
         $cache = $this->getCache();
         if ($cache && $cache->hasDomesticCountry()) {
@@ -600,6 +603,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleVersion()
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $version = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
 
         return $version;
@@ -612,7 +616,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleStability()
     {
-        $stability = (string) Mage::getConfig()->getXpath('tig/stability/postnl')[0];
+        $stability = Mage::getConfig()->getXpath('tig/stability/postnl');
+        $stability = (string) $stability[0];
 
         return $stability;
     }
@@ -649,7 +654,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If this shipment's order was not placed with PostNL, we need to ignore any PakjeGemak addresses that may have
          * been saved.
          */
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper = Mage::helper('postnl/carrier');
+        if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
@@ -679,8 +686,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseStandard();
         }
 
-        $standardProductOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
-                                      ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $standardProductOptionsModel */
+        $standardProductOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
+        $standardProductOptions = $standardProductOptionsModel->getAvailableOptions();
         if (empty($standardProductOptions)) {
             if ($cache) {
                 $cache->setPostnlCoreCanUseStandard(false)
@@ -711,8 +719,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUsePakjeGemak();
         }
 
-        $pakjeGemakProductoptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
-                                        ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductoptionsModel */
+        $pakjeGemakProductoptionsModel = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions');
+        $pakjeGemakProductoptions = $pakjeGemakProductoptionsModel->getAvailableOptions();
 
         if (empty($pakjeGemakProductoptions)) {
             if ($cache) {
@@ -743,8 +752,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseEps();
         }
 
-        $euProductOptions = Mage::getModel('postnl_core/system_config_source_euProductOptions')
-                                ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euProductOptionsModel */
+        $euProductOptionsModel = Mage::getModel('postnl_core/system_config_source_euProductOptions');
+        $euProductOptions = $euProductOptionsModel->getAvailableOptions();
 
         if (empty($euProductOptions)) {
             if ($cache) {
@@ -782,8 +792,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $globalProductOptions = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
-                                    ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions $globalProductOptionsModel */
+        $globalProductOptionsModel = Mage::getModel('postnl_core/system_config_source_globalProductOptions');
+        $globalProductOptions = $globalProductOptionsModel->getAvailableOptions();
 
         if (empty($globalProductOptions)) {
             if ($cache) {
@@ -813,6 +824,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseBuspakje();
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $storeId = Mage::app()->getStore()->getStoreId();
 
         $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE, $storeId);
@@ -826,8 +838,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $buspakjeProductOptions = Mage::getModel('postnl_core/system_config_source_buspakjeProductOptions')
-                                      ->getAvailableOptions();
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BuspakjeProductOptions $buspakjeProductOptionsModel */
+        $buspakjeProductOptionsModel = Mage::getModel('postnl_core/system_config_source_buspakjeProductOptions');
+        $buspakjeProductOptions = $buspakjeProductOptionsModel->getAvailableOptions();
 
         if (empty($buspakjeProductOptions)) {
             if ($cache) {
@@ -886,10 +899,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function saveConfigState($configState = array())
     {
-        /**
-         * @var Mage_Admin_Model_User $adminUser
-         */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        /** @var Mage_Admin_Model_Session $adminSession */
+        $adminSession = Mage::getSingleton('admin/session');
+        /** @var Mage_Admin_Model_User $adminUser */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $adminUser = $adminSession->getUser();
         if (!$adminUser) {
             return false;
         }
@@ -958,6 +972,20 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * Orders to Belgium are never letter box parcels.
+         */
+        if ($this->isBe($quote)) {
+            return false;
+        }
+
+        /**
+         * Food orders are never letter box parcels.
+         */
+        if ($this->quoteIsFood($quote)) {
+            return false;
+        }
+
+        /**
          * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
          * option rules will apply.
          */
@@ -975,6 +1003,81 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         Mage::register($registryKey, $fits);
         return $fits;
+    }
+
+    /**
+     * Checks if the current quote is classified as a food quote, and saves the result in the cache.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return boolean
+     */
+    public function quoteIsFood(Mage_Sales_Model_Quote $quote = null)
+    {
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'postnl_quote_is_food' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        $quoteFoodType = (bool) $this->getQuoteFoodType($quote);
+
+        Mage::register($registryKey, $quoteFoodType);
+        return $quoteFoodType;
+    }
+
+    /**
+     * Returns the food Type of the provided quote.
+     *
+     * Cool products are leading. So if we find a cooled products, the entire quote is marked as Cool Products.
+     * If there is a Dry & Groceries product, but no Cooled Product, the quote is marked as Dry & Groceries.
+     * If neither of above is found, the quote is marked as Non-Food.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return int
+     *  0 = Non-Food
+     *  1 = Dry & Groceries
+     *  2 = Cool Products
+     */
+    public function getQuoteFoodType(Mage_Sales_Model_Quote $quote = null)
+    {
+        if (!$quote) {
+            $quote = $this->getQuote();
+        }
+
+        $quoteItems = $quote->getAllItems();
+
+        $foodType = 0;
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+        foreach ($quoteItems as $quoteItem) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS) {
+                $foodType = $postnlProductType;
+                break;
+            }
+
+            if ($postnlProductType == $deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES) {
+                $foodType = $postnlProductType;
+            }
+        }
+
+        return $foodType;
     }
 
     /**
@@ -1038,6 +1141,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 $qty = $item->getQty();
             } elseif($item instanceof Mage_Sales_Model_Quote_Item) {
                 if ($item->getParentItemId()) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $qty = $item->getParentItem()->getQty();
                 } else {
                     $qty = $item->getQty();
@@ -1306,7 +1410,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $isAllowed = Mage::getSingleton('admin/session')->isAllowed($aclPath);
+        /** @var Mage_Admin_Model_Session $adminSession */
+        $adminSession = Mage::getSingleton('admin/session');
+        $isAllowed = $adminSession->isAllowed($aclPath);
         return $isAllowed;
     }
 
@@ -1485,7 +1591,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * active shipping methods in Magento.
          */
         $postnlShippingMethodEnabled = false;
-        $postnlShippingMethods       = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper               = Mage::helper('postnl/carrier');
+        $postnlShippingMethods       = $carrierHelper->getPostnlShippingMethods();
         $activeMethods               = Mage::getModel('postnl_core/system_config_source_shippingMethods')
                                            ->toArray(true);
 
@@ -1501,7 +1609,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $linkEnd = '';
 
             if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
-                $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
+                /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+                $adminhtmlHelper = Mage::helper("adminhtml");
+                $shippingMethodSectionurl = $adminhtmlHelper->getUrl(
                     'adminhtml/system_config/edit',
                     array(
                         '_secure' => true,
@@ -1538,7 +1648,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * The PostNL module only works with EUR as the shop's base currency
          */
-        $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
+        /** @var Mage_Core_Model_Store $store */
+        $store = Mage::getModel('core/store')->load($storeId);
+        $baseCurrencyCode = $store->getBaseCurrencyCode();
         if ($baseCurrencyCode != 'EUR') {
             $errors = array(
                 array(
@@ -1776,10 +1888,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * Load the adminhtml config model and get the PostNL section.
              *
+             * @var Mage_Adminhtml_Model_Config $configFields
              * @var Varien_Simplexml_Element $section
              */
             $configFields = Mage::getSingleton('adminhtml/config');
-            $section      = $configFields->getSections('postnl')->postnl;
+            /** @noinspection PhpUndefinedFieldInspection */
+            $section = $configFields->getSections('postnl')->postnl;
         }
 
         /**
@@ -1867,9 +1981,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * @var Varien_Simplexml_Element $sectionGroup
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $sectionGroup = $section->groups->$group;
 
+        /** @noinspection PhpUndefinedFieldInspection */
         $label      = (string) $sectionGroup->fields->$field->label;
+        /** @noinspection PhpUndefinedFieldInspection */
         $groupLabel = (string) $sectionGroup->label;
         $groupName  = $sectionGroup->getName();
 
@@ -2010,7 +2127,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * Return labels are only available for orders that are shipped with PostNL.
          */
         $shippingMethod = $order->getShippingMethod();
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper = Mage::helper('postnl/carrier');
+        if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
@@ -2034,13 +2153,67 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
+        if ($this->isFoodOrder($order)) {
+            return false;
+        }
+
         /**
          * Loop through all confirmed shipments. If at least one of them is able to print return labels, return true.
          */
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         foreach ($postnlShipmentsCollection as $postnlShipment) {
             if ($postnlShipment->canPrintReturnLabels()) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determines if the order contains food products.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool
+     */
+    public function isFoodOrder($order)
+    {
+        $orderItems = $order->getAllItems();
+
+        /** @var Mage_Sales_Model_Order_Item $orderItem */
+        foreach ($orderItems as $orderItem) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $postnlProductType = $orderItem->getProduct()->getPostnlProductType();
+
+            if ($postnlProductType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the provided quote or order is being shipped to Belgium.
+     *
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote $object
+     *
+     * @return bool
+     */
+    public function isBe($object)
+    {
+        if (!($object instanceof Mage_Sales_Model_Order) && !($object instanceof Mage_Sales_Model_Quote)) {
+            throw new InvalidArgumentException("The object parameter must be an instance of an order or a quote.");
+        }
+
+        $shippingAddress = $object->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        if ($shippingAddress->getCountryId() == 'BE') {
+            return true;
         }
 
         return false;
@@ -2104,6 +2277,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * @var Varien_Simplexml_Element $moduleConfig
          */
         $moduleConfig = $config->getModuleConfig($moduleName);
+        /** @noinspection PhpUndefinedFieldInspection */
         $codePool = (string) $moduleConfig->codePool;
         $path = $config->getOptions()->getCodeDir()
               . DS
@@ -2263,6 +2437,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the Enterprise_Enterprise extension is installed.
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         if (Mage::getConfig()->getNode('modules')->Enterprise_Enterprise) {
             return true;
         }
@@ -2338,7 +2513,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getErrorUrl($errorCode)
     {
         $error = Mage::getConfig()->getNode('tig/errors/' . $errorCode);
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($error !== false && $error->url) {
+            /** @noinspection PhpUndefinedFieldInspection */
             return (string) $error->url;
         }
 
@@ -2532,6 +2709,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              */
             $error = Mage::getConfig()->getNode('tig/errors/' . $code);
             if ($error !== false) {
+                /** @noinspection PhpUndefinedFieldInspection */
                 $link = (string) $error->url;
             }
         }
@@ -2545,6 +2723,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the specified error was found and no message was supplied, get the error's default message.
          */
         if ($error && !$message) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $message = (string) $error->message;
         }
 
@@ -2562,6 +2741,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the specified error was found and no message type was supplied, get the error's default type.
          */
         if ($error && !$messageType) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $messageType = (string) $error->type;
         }
 

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                         hasCanShowNotification()
@@ -92,7 +92,9 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return $this->_getData('can_show_notification');
         }
 
-        $canShowNotification = Mage::helper('postnl/mijnpakket')->canShowMijnpakketNotification();
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
+        $helper = Mage::helper('postnl/mijnpakket');
+        $canShowNotification = $helper->canShowMijnpakketNotification();
 
         $this->setCanShowNotification($canShowNotification);
         return $canShowNotification;
@@ -162,7 +164,10 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return $this->_getData('order');
         }
 
-        $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $orderId = $session->getLastOrderId();
         if (!$orderId) {
             return false;
         }
@@ -264,6 +269,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return array('webshopPublicId' => $publicWebshopId);
         }
 
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
         $helper = Mage::helper('postnl/mijnpakket');
 
         /**
@@ -284,6 +290,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
         /**
          * If this address has a VAT ID, it's probably a B2B client.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $vat = $shippingAddress->getVatId();
         if ($vat) {
             $params['business'] = 'Z';
@@ -292,6 +299,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
         /**
          * Optionally add the dob.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $dob = $shippingAddress->getDob();
         if ($dob) {
             $dob = new DateTime($dob);
@@ -313,9 +321,11 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
          */
         $streetData = false;
         try {
-            $streetData = Mage::helper('postnl/cif')->getStreetData($order->getStoreId(), $shippingAddress, false);
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $streetData = $cifHelper->getStreetData($order->getStoreId(), $shippingAddress, false);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            $helper->logException($e);
         }
 
         /**

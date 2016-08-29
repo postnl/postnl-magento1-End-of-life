@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
@@ -49,8 +49,11 @@ class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
             return array();
         }
 
+        /** @var Mage_Admin_Model_Session $adminSession */
+        $adminSession = Mage::getSingleton('admin/session');
         /** @var Mage_Admin_Model_User $adminUser */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $adminUser = $adminSession->getUser();
         if (!$adminUser) {
             return array();
         }
@@ -62,4 +65,26 @@ class TIG_PostNL_Helper_Adminhtml extends TIG_PostNL_Helper_Data
 
         return $extra['postnl']['hidden_notification'];
     }
+
+    /**
+     * Returns either the store id of the current scope, or returns 0 for global level scope.
+     *
+     * @return int|mixed
+     * @throws Mage_Core_Exception
+     */
+    public function getCurrentScope()
+    {
+        $storeId = 0;
+
+        /** @var Mage_Adminhtml_Model_Config_Data $configData */
+        $configData = Mage::getSingleton('adminhtml/config_data');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $code = $configData->getStore();
+        if (strlen($code)) {
+            $storeId = Mage::getModel('core/store')->load($code)->getId();
+        }
+
+        return $storeId;
+    }
+
 }

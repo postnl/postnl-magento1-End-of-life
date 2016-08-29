@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
@@ -305,7 +305,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         );
 
         if (!$country) {
-            $country = Mage::helper('postnl')->getDomesticCountry();
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $country = $helper->getDomesticCountry();
         }
 
         if ($country) {
@@ -313,6 +315,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         }
 
         return $this->getOptions($flags, $flat, true);
+    }
+
+    /**
+     * Get a list of available options. This is specific for the Netherlands only
+     *
+     * @return array
+     */
+    public function getAvailableOptionsForTheNetherlands()
+    {
+        return $this->getAvailableOptions(false, 'NL');
     }
 
     /**
@@ -374,7 +386,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableNlCodOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => true, 'isBelgiumOnly' => array(null, false)), $flat, true);
+        return $this->getOptions(array('isCod' => true, 'countryLimitation' => 'NL'), $flat, true);
     }
 
     /**

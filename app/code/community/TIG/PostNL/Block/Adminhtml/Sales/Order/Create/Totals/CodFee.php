@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method Varien_Object getTotal()
@@ -64,7 +64,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Create_Totals_CodFee extends Mage_A
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE);
 
         return $displayMode;
     }
@@ -78,7 +78,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Create_Totals_CodFee extends Mage_A
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcTaxLabel($inclTax);
+        /** @var Mage_Tax_Helper_Data $taxHelper */
+        $taxHelper = Mage::helper('tax');
+        $taxLabel = $taxHelper->getIncExcTaxLabel($inclTax);
 
         return $taxLabel;
     }
@@ -92,13 +94,16 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Create_Totals_CodFee extends Mage_A
      */
     public function getValue($inclTax = false)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $address = $this->getTotal()->getAddress();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $exclTax = $address->getPostnlCodFee();
         if (!$inclTax) {
             return $exclTax;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $inclTax = $exclTax + $address->getPostnlCodFeeTax();
         return $inclTax;
     }

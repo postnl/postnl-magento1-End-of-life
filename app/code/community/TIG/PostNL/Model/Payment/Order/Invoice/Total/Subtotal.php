@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Order_Invoice_Total_Subtotal
@@ -101,6 +101,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
                 $includeShippingTax = false;
             }
 
+            /** @noinspection PhpUndefinedMethodInspection */
             if ($previousInvoice->getPostnlCodFeeTax()) {
                 $includeCodFeeTax = false;
             }
@@ -115,7 +116,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
         }
 
         if ($includeCodFeeTax) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $allowedSubtotalInclTax     -= $order->getPostnlCodFeeTax();
+            /** @noinspection PhpUndefinedMethodInspection */
             $baseAllowedSubtotalInclTax -= $order->getBasePostnlCodFeeTax();
         }
 

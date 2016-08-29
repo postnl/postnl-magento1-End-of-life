@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
@@ -171,6 +171,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             )
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         return $conversionObject->getConversionArray();
     }
 
@@ -301,6 +302,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
              * Send a ping request to see if the PostNL Checkout service is available
              */
             try {
+                /** @var TIG_PostNL_Model_Checkout_Cif $cif */
                 $cif = Mage::getModel('postnl_checkout/cif');
                 $result = $cif->ping();
             } catch (Exception $e) {
@@ -498,7 +500,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      *
      * @param int $storeId
      *
-     * @return array
+     * @return boolean
      */
     protected function _isCheckoutConfigured($storeId)
     {

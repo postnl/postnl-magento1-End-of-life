@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Barcode
@@ -51,6 +51,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
+        /** @var TIG_PostNL_Helper_Cif $helper */
         $helper = Mage::helper('postnl/cif');
 
         /**
@@ -63,6 +64,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * @var Mage_Sales_Model_Order_Shipment $shipment
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $shipment = $observer->getShipment();
 
         /**
@@ -74,19 +76,23 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * If this shipment's order was not placed with PostNL, remove any PakjeGemak addresses that may have been
          * saved.
          */
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper = Mage::helper('postnl/carrier');
+        if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
             return $this;
         }
 
         /**
          * Check if a postnl shipment exists for this shipment.
          */
-        if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
+        if ($helper->postnlShipmentExists($shipment->getId())) {
             return $this;
         }
 
         /**
          * Create a new postnl shipment entity.
+         *
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId());
@@ -123,6 +129,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
             if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
                 $postnlShipment->setExpectedDeliveryTimeEnd($postnlOrder->getExpectedDeliveryTimeEnd());
+            }
+
+            if ($postnlOrder->hasPgLocationCode()) {
+                $postnlShipment->setPgLocationCode($postnlOrder->getPgLocationCode());
+            }
+
+            if ($postnlOrder->hasPgRetailNetworkId()) {
+                $postnlShipment->setPgRetailNetworkId($postnlOrder->getPgRetailNetworkId());
             }
         }
 

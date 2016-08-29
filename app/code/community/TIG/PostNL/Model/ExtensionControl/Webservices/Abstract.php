@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Object
@@ -134,13 +134,17 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
                 $response = $client->$method();
             }
 
-            Mage::helper('postnl/webservices')->logWebserviceCall($client);
+            /** @var TIG_PostNL_Helper_Webservices $helper */
+            $helper = Mage::helper('postnl/webservices');
+            $helper->logWebserviceCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
              * Only Soap exceptions are caught. Other exceptions must be caught by the caller.
              */
-            Mage::helper('postnl/webservices')->logWebserviceException($e);
+            /** @var TIG_PostNL_Helper_Webservices $helper */
+            $helper = Mage::helper('postnl/webservices');
+            $helper->logWebserviceException($e);
 
             throw $e;
         }

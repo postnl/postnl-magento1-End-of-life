@@ -33,8 +33,10 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method Varien_Data_Form_Element_Abstract getElement()
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_PackingSlipItemColumns
     extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
@@ -49,13 +51,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_PackingSlipItemColumns
      */
     public function __construct()
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PackingSlipItemFields $sourceModel */
+        $sourceModel = Mage::getModel('postnl_core/system_config_source_packingSlipItemFields');
         $this->addColumn(
             'field',
             array(
                 'label'   => $this->__('Field'),
                 'style'   => 'width:120px',
                 'type'    => 'select',
-                'options' => Mage::getModel('postnl_core/system_config_source_packingSlipItemFields')->toOptionArray(),
+                'options' => $sourceModel->toOptionArray(),
                 'class'   => 'required-entry validate-select',
             )
         );
@@ -131,6 +135,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_PackingSlipItemColumns
         $inputName  = $this->getElement()->getName() . '[#{_id}][' . $columnName . ']';
 
         if ($column['renderer']) {
+            /** @noinspection PhpUndefinedMethodInspection */
             return $column['renderer']->setInputName($inputName)
                                       ->setColumnName($columnName)
                                       ->setColumn($column)

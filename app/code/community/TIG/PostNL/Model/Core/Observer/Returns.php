@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Returns
@@ -121,7 +121,8 @@ class TIG_PostNL_Model_Core_Observer_Returns
         /**
          * Check if this block is the block we need to edit.
          */
-        $block = $observer->getBlock();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $block          = $observer->getBlock();
         $blockClassName = $this->getBlockClassName();
         if (!($block instanceof $blockClassName)) {
             return $this;
@@ -139,6 +140,7 @@ class TIG_PostNL_Model_Core_Observer_Returns
             return $this;
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -151,7 +153,9 @@ class TIG_PostNL_Model_Core_Observer_Returns
         /**
          * Add the link.
          */
-        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        if ($session->isLoggedIn()) {
             $block->addLink(
                 'postnl_returns',
                 'postnl/order/returns',

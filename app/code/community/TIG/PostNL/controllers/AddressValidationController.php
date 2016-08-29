@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_Action
@@ -66,6 +66,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             return $cendrisModel;
         }
 
+        /** @var TIG_PostNL_Model_AddressValidation_Cendris $cendris */
         $cendris = Mage::getModel('postnl_addressvalidation/cendris');
         $this->setCendrisModel($cendris);
 
@@ -131,7 +132,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         try {
             $result = $cendris->getAdresxpressPostcode($postcode, $housenumber);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $this->getResponse()
                  ->setBody('error');
@@ -160,7 +163,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             'streetname' => $streetname,
         );
 
-        $response = Mage::helper('core')->jsonEncode($responseArray);
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $response = $coreHelper->jsonEncode($responseArray);
 
         /**
          * Return the result as a json response

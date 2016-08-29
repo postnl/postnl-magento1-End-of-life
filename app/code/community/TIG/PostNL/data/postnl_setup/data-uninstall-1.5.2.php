@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -98,6 +98,7 @@ if (file_exists($xmlLocation)) {
         // Load the XML
         $xml = simplexml_load_file($xmlLocation);
         if ($xml) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $xml->modules->TIG_PostNL->active = 'false';
             // Suppress errors in case of the file not being writable after all (which should not happen)
             $writable = @file_put_contents($xmlLocation, $xml->asXML());

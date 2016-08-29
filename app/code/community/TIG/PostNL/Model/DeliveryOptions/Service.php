@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                  hasQuote()
@@ -73,6 +73,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $quote = $this->getQuote();
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
@@ -93,7 +94,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return $quote;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
         $this->setQuote($quote);
         return $quote;
@@ -113,7 +116,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION);
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if ($deliveryDay == 1 && !$helper->canUseSundaySorting()) {
             $shippingDuration++;
         }
 
@@ -123,10 +128,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
     /**
      * @param StdClass[] $timeframes
+     * @param string     $destinationCountry
      *
-     * @return StdClass[]|false
+     * @return false|StdClass[]
      */
-    public function filterTimeframes($timeframes)
+    public function filterTimeframes($timeframes, $destinationCountry = 'NL')
     {
         /**
          * If the time frames are not an array, something has gone wrong.
@@ -135,40 +141,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return false;
         }
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId());
-    }
-
-    /**
-     * Validate if saturday shipping is allowed for the specified shipping date when taking the earliest possible
-     * shipping date into consideration.
-     *
-     * @param array    $shippingDays
-     * @param DateTime $shippingDate
-     * @param DateTime $earliestShippingDate
-     *
-     * @return bool
-     */
-    protected function _validateSaturdayShipping($shippingDays, DateTime $shippingDate, DateTime $earliestShippingDate)
-    {
-        $shippingDate->modify('last saturday ' . $shippingDate->format('H:i:s'));
-        $shippingDay = 6;
-
-        if (!in_array($shippingDay, $shippingDays)) {
-            return false;
-        }
-
-        $cutOffTime = Mage::helper('postnl/deliveryOptions')->getCutOffTime(null, true, $shippingDate);
-        $cutOffTime = explode(':', $cutOffTime);
-
-        $shippingDate->setTime($cutOffTime[0], $cutOffTime[1], $cutOffTime[2]);
-
-        if ($shippingDate < $earliestShippingDate) {
-            return false;
-        }
-
-        return true;
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry);
     }
 
     /**
@@ -237,8 +213,12 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
         $deliveryDate->setTimezone($utcTimeZone);
 
-        $deliveryDateClone = clone $deliveryDate;
-        $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+        if ($data['type'] == 'Food' || $data['type'] == 'Cooledfood') {
+            $confirmDate = $deliveryDate;
+        } else {
+            $deliveryDateClone = clone $deliveryDate;
+            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+        }
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -263,7 +243,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                         ->setProductCode(3553)
                         ->setMobilePhoneNumber($data['number']);
         } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
-            $postnlOrder->setIsPakjeGemak(true);
+            $postnlOrder->setIsPakjeGemak(true)
+                        ->setPgLocationCode($data['locationCode'])
+                        ->setPgRetailNetworkId($data['retailNetworkId']);
         }
 
         /**
@@ -312,7 +294,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                 $phoneNumber = $address['telephone'];
             }
 
+            /** @var Mage_Sales_Model_Quote_Address $pakjeGemakAddress */
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            /** @noinspection PhpParamsInspection */
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setCity($address['city'])
                               ->setCountryId($address['countryCode'])

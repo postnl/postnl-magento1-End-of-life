@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
@@ -57,6 +57,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      */
     public function render(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $actions = $this->getColumn()->getActions();
         if (empty($actions) || !is_array($actions)) {
             return '&nbsp;';
@@ -121,9 +123,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
         if (isset($action['is_postnl'])
             && $action['is_postnl']
-            && !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+            && !$helper->isPostnlShippingMethod($shippingMethod)
         ) {
             unset($action['is_postnl']);
             return false;
@@ -143,7 +147,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      */
     protected function _checkDisableAction($row, $action)
     {
+        /** @var TIG_PostNL_Helper_Cif $helper */
         $helper = Mage::helper('postnl/cif');
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         $euCountries   = $helper->getEuCountries();
@@ -170,6 +176,19 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
             && !$row->getData(self::LABELS_PRINTED_COLUMN)
         ){
             $message = $helper->__("You must first print a shipping label for this shipment.");
+            $action = $this->_disableAction($action, $message);
+
+            return $action;
+        }
+
+        /**
+         * @todo remove this once PostNL has fixed the issue with manually confirming GlobalPack shipments.
+         */
+        if (!in_array($countryId, $euCountries)) {
+            $message = $helper->__(
+                "You cannot manually confirm GlobalPack shipments. Please use the 'print label & confirm' massaction" .
+                " instead."
+            );
             $action = $this->_disableAction($action, $message);
 
             return $action;

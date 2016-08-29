@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Adminhtml_Support_Logs
@@ -53,6 +53,7 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
      */
     public function downloadLogs()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -70,7 +71,7 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
          * Get all log files in the log folder and a list of all logs that are allowed for this download.
          */
         $logs          = glob($logFolder . DS . '*.log');
-        $allowedLogs   = Mage::helper('postnl')->getLogFiles();
+        $allowedLogs   = $helper->getLogFiles();
 
         /**
          * Make sure each log is valid and put the valid logs in an array with the log's filename as the key. We need
@@ -150,9 +151,11 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
         /**
          * Get the path to the final zip file.
          */
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getSingleton('core/date');
         $zipPath = $logFolder
             . 'TIG_PostNL-logs-'
-            . date('Ymd-His', Mage::getSingleton('core/date')->timestamp())
+            . date('Ymd-His', $dateModel->timestamp())
             . '.zip';
 
         /**

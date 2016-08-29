@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
@@ -49,6 +49,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
     {
         $id = $element->getHtmlId();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $html = '<td class="label"><label for="'.$id.'">'.$element->getLabel().'</label></td>';
 
         // replace [value] with [inherit]
@@ -56,40 +57,49 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
 
         $addInheritCheckbox = false;
         $checkboxLabel = '';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getCanUseWebsiteValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = Mage::helper('adminhtml')->__('Use Website');
-        }
-        elseif ($element->getCanUseDefaultValue()) {
+        } /** @noinspection PhpUndefinedMethodInspection */ elseif ($element->getCanUseDefaultValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = Mage::helper('adminhtml')->__('Use Default');
         }
 
         $inherit = '';
         if ($addInheritCheckbox) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $inherit = $element->getInherit()==1 ? 'checked="checked"' : '';
             if ($inherit) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $element->setDisabled(true);
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getTooltip()) {
             $html .= '<td class="value with-tooltip">';
             $html .= '<div id="' . $element->getHtmlId() . '">';
             $html .= $this->_getElementHtml($element);
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= '<div class="field-tooltip"><div>' . $element->getTooltip() . '</div></div>';
         } else {
             $html .= '<td class="value">';
             $html .= '<div id="' . $element->getHtmlId() . '">';
             $html .= $this->_getElementHtml($element);
         };
+
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getComment()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<p class="note"><span>'.$element->getComment().'</span></p>';
         }
+
         $html .= '</div>';
         $html.= '</td>';
 
         if ($addInheritCheckbox) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $defText = $element->getDefaultValue();
 
             // default value
@@ -103,14 +113,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
         }
 
         $html.= '<td class="scope-label">';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getScope()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $html .= $element->getScopeLabel();
         }
         $html.= '</td>';
 
         $html.= '<td class="">';
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($element->getHint()) {
             $html.= '<div class="hint" >';
+            /** @noinspection PhpUndefinedMethodInspection */
             $html.= '<div style="display: none;">' . $element->getHint() . '</div>';
             $html.= '</div>';
         }
@@ -147,6 +161,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
             $minute = $value[1];
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $options = $element->getValues();
 
         /**
@@ -166,10 +181,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
         foreach ($options['hour'] as $option) {
             $selected = '';
             if ($option['value'] == $hour) {
-                $selected = ' selected="selected"';
+                $selected = 'selected="selected"';
             }
 
-            $html .= "<option value=\"{$option['value']}\"{$selected}>{$option['label']}</option>";
+            $html .= "<option value=\"{$option['value']}\" {$selected}>{$option['label']}</option>";
         }
 
         /**
@@ -199,10 +214,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
         foreach ($options['minute'] as $option) {
             $selected = '';
             if ($option['value'] == $minute) {
-                $selected = ' selected="selected"';
+                $selected = 'selected="selected"';
             }
 
-            $html .= "<option value=\"{$option['value']}\"{$selected}>{$option['label']}</option>";
+            $html .= "<option value=\"{$option['value']}\" {$selected}>{$option['label']}</option>";
         }
 
         /**

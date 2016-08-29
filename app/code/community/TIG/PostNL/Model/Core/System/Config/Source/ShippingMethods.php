@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
@@ -47,14 +47,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
      *
      * @return array
      */
-    public function toOptionArray($isMultiSelect = false, $isActiveOnlyFlag = false)
+    public function toOptionArray(/** @noinspection PhpUnusedParameterInspection */
+        $isMultiSelect = false, $isActiveOnlyFlag = false)
     {
         $methods = array();
 
-        /**
-         * @var Mage_Shipping_Model_Carrier_Abstract $carrierModel
-         */
-        $carriers = Mage::getSingleton('shipping/config')->getAllCarriers();
+        /** @var Mage_Shipping_Model_Config $config */
+        $config = Mage::getSingleton('shipping/config');
+        $carriers = $config->getAllCarriers();
+        /** @var Mage_Shipping_Model_Carrier_Abstract|Mage_Shipping_Model_Carrier_Interface $carrierModel */
         foreach ($carriers as $carrierCode => $carrierModel) {
             if ($isActiveOnlyFlag && !$carrierModel->isActive()) {
                 continue;
@@ -66,7 +67,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
                     continue;
                 }
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $helper->logException($e);
                 continue;
             }
 
@@ -98,10 +101,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
     {
         $methods = array();
 
-        /**
-         * @var Mage_Shipping_Model_Carrier_Abstract $carrierModel
-         */
-        $carriers = Mage::getSingleton('shipping/config')->getAllCarriers();
+        /** @var Mage_Shipping_Model_Config $config */
+        $config = Mage::getSingleton('shipping/config');
+        $carriers = $config->getAllCarriers();
+        /** @var Mage_Shipping_Model_Carrier_Abstract|Mage_Shipping_Model_Carrier_Interface $carrierModel */
         foreach ($carriers as $carrierCode => $carrierModel) {
             if ($isActiveOnlyFlag && !$carrierModel->isActive()) {
                 continue;

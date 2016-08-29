@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipment()
@@ -65,6 +65,7 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
         }
 
         $shipment = $this->getShipment();
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
 
         $this->setPostnlShipment($postnlShipment);
@@ -105,7 +106,9 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
             return false;
         }
 
-        $confirmedAt = Mage::helper('core')->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $confirmedAt = $helper->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
 
         return $confirmedAt;
     }
@@ -161,7 +164,9 @@ class TIG_PostNL_Block_Core_ShippingStatus extends TIG_PostNL_Block_Core_Templat
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return '';
         }
 

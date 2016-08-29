@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtml_Block_Sales_Order_Totals
@@ -60,7 +60,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
         $parent = $this->getParentBlock();
         $order  = $this->getOrder();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $fee     = $order->getPostnlCodFee();
+        /** @noinspection PhpUndefinedMethodInspection */
         $baseFee = $order->getBasePostnlCodFee();
 
         if ($fee < 0.01 || $baseFee < 0.01) {
@@ -68,7 +70,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
         }
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($order->getStoreId());
+        /** @var TIG_PostNL_Helper_Payment $helper */
+        $helper = Mage::helper('postnl/payment');
+        $baseLabel = $helper->getPostnlCodFeeLabel($order->getStoreId());
 
         if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
             $label = $baseLabel;
@@ -77,11 +81,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
             }
 
             $total = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $total->setLabel($label)
                   ->setValue($fee)
                   ->setBaseValue($baseFee)
                   ->setCode('postnl_cod_fee');
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $parent->addTotalBefore($total, 'shipping');
         }
 
@@ -92,11 +98,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
             }
 
             $totalInclTax = new Varien_Object();
+            /** @noinspection PhpUndefinedMethodInspection */
             $totalInclTax->setLabel($label)
                          ->setValue($fee + $order->getPostnlCodFeeTax())
                          ->setBaseValue($baseFee + $order->getBasePostnlCodFeeTax())
                          ->setCode('postnl_cod_fee_incl_tax');
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $parent->addTotalBefore($totalInclTax, 'shipping');
         }
 
@@ -110,7 +118,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE);
 
         return $displayMode;
     }
@@ -124,7 +132,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
+        /** @var Mage_Tax_Helper_Data $helper */
+        $helper = Mage::helper('tax');
+        $taxLabel = $helper->getIncExcText($inclTax);
 
         return $taxLabel;
     }

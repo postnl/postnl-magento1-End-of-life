@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                     hasPostnlCoreIsEnabled()
@@ -54,6 +54,7 @@
  * @method boolean                     hasPostnlDeliveryOptionsCanUseEveningTimeframes()
  * @method boolean                     hasPostnlDeliveryOptionsCanUseSundaySorting()
  * @method boolean                     hasPostnlDeliveryOptionsCanUseSameDayDelivery()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUseFoodDelivery()
  * @method boolean                     hasPostnlMijnpakketIsActive()
  * @method boolean                     hasPostnlMijnpakketCanShowNotification()
  * @method boolean                     hasPostnlCoreCanUseBuspakje()
@@ -84,6 +85,7 @@
  * @method boolean                     getPostnlDeliveryOptionsCanUseEveningTimeframes()
  * @method boolean                     getPostnlDeliveryOptionsCanUseSundaySorting()
  * @method boolean                     getPostnlDeliveryOptionsCanUseSameDayDelivery()
+ * @method boolean                     getPostnlDeliveryOptionsCanUseFoodDelivery()
  * @method boolean                     getPostnlMijnpakketIsActive()
  * @method boolean                     getPostnlMijnpakketCanShowNotification()
  * @method boolean                     getPostnlCoreCanUseBuspakje()
@@ -114,6 +116,7 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseEveningTimeframes(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseSundaySorting(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseSameDayDelivery(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseFoodDelivery(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketIsActive(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketCanShowNotification(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseBuspakje(boolean $value)

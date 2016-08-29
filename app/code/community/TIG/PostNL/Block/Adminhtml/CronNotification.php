@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Adminhtml_Template
@@ -59,6 +59,7 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
         /**
          * Get the last execution time from the cron_schedule table
          */
+        /** @var Mage_Core_Model_Resource $coreResource */
         $coreResource = Mage::getSingleton('core/resource');
         $readConnection = $coreResource->getConnection('core_read');
 
@@ -112,7 +113,9 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
          */
         $utcTimeZone = new DateTimeZone('UTC');
         $currentTime = new DateTime('now', $utcTimeZone);
-        $currentTime->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $currentTime->setTimestamp($dateModel->gmtTimestamp());
 
         $oneHourAgo        = $currentTime->sub(new DateInterval('PT1H'));
         $lastExecutionTime = new DateTime($lastExecutionTime, $utcTimeZone);

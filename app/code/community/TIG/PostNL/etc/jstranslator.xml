@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -150,4 +150,13 @@
     <post_office_address translate="message" module="postnl">
         <message>Post Office Address</message>
     </post_office_address>
+    <today_cooled translate="message" module="postnl">
+        <message>today cooled</message>
+    </today_cooled>
+    <cooled_delivery translate="message" module="postnl">
+        <message>cooled delivery</message>
+    </cooled_delivery>
+    <food_delivery_not_possible_postalcode translate="message" module="postnl">
+        <message>Food products delivery is not possible for this postal code. Please choose a different address.</message>
+    </food_delivery_not_possible_postalcode>
 </jstranslator>

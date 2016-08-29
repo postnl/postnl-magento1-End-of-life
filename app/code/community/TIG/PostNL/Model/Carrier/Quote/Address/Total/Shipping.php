@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
@@ -50,6 +50,7 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
         Mage_Sales_Model_Quote_Address_Total_Abstract::collect($address);
 
         $address->setWeight(0);
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setFreeMethodWeight(0);
         $this->_setAmount(0)
             ->_setBaseAmount(0);
@@ -66,20 +67,24 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
          * just return the parent, because another extension might rewrite the regular total model. This way the rewrite
          * is only ignored for PostNL shipments at a slight cost to performance (roughly 0.0005s).
          */
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($method)) {
-            return Mage::getModel('sales/quote_address_total_shipping')->collect($address);
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        if (!$helper->isPostnlShippingMethod($method)) {
+            /** @var Mage_Sales_Model_Quote_Address_Total_Shipping $totalModel */
+            $totalModel = Mage::getModel('sales/quote_address_total_shipping');
+            return $totalModel->collect($address);
         }
 
         $freeAddress= $address->getFreeShipping();
 
         $addressWeight    = $address->getWeight();
+        /** @noinspection PhpUndefinedMethodInspection */
         $freeMethodWeight = $address->getFreeMethodWeight();
 
         $addressQty = 0;
 
         /**
          * @var Mage_Sales_Model_Quote_Item $item
-         * @var Mage_Sales_Model_Quote_Item $child
          */
         foreach ($items as $item) {
             /**
@@ -96,13 +101,16 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                 continue;
             }
 
+            /** @noinspection PhpUndefinedMethodInspection */
             if ($item->getHasChildren() && $item->isShipSeparately()) {
+                /** @var Mage_Sales_Model_Quote_Item $child */
                 foreach ($item->getChildren() as $child) {
                     if ($child->getProduct()->isVirtual()) {
                         continue;
                     }
                     $addressQty += $child->getTotalQty();
 
+                    /** @noinspection PhpUndefinedMethodInspection */
                     if (!$item->getProduct()->getWeightType()) {
                         $itemWeight = $child->getWeight();
                         $itemQty    = $child->getTotalQty();
@@ -123,6 +131,7 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                         $item->setRowWeight($rowWeight);
                     }
                 }
+                /** @noinspection PhpUndefinedMethodInspection */
                 if ($item->getProduct()->getWeightType()) {
                     $itemWeight = $item->getWeight();
                     $rowWeight  = $itemWeight*$item->getQty();
@@ -166,10 +175,12 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
         }
 
         if (isset($addressQty)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $address->setItemQty($addressQty);
         }
 
         $address->setWeight($addressWeight);
+        /** @noinspection PhpUndefinedMethodInspection */
         $address->setFreeMethodWeight($freeMethodWeight);
 
         $address->collectShippingRates();
@@ -201,7 +212,9 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
             $price = $rate->getPrice();
 
             $includingTax = false;
-            if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+            /** @var Mage_Tax_Model_Config $taxConfig */
+            $taxConfig = Mage::getSingleton('tax/config');
+            if ($taxConfig->shippingPriceIncludesTax()) {
                 $includingTax = true;
             }
 

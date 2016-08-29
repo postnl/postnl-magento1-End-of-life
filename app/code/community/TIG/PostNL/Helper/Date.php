@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -80,6 +80,11 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     protected $_postnlDeliveryDelay = 1;
 
     /**
+     * @var bool
+     */
+    protected $_useFoodCutOffTime = false;
+
+    /**
      * @param int $postnlDeliveryDelay
      *
      * @return $this
@@ -87,6 +92,26 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     public function setPostnlDeliveryDelay($postnlDeliveryDelay)
     {
         $this->_postnlDeliveryDelay = (int) $postnlDeliveryDelay;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function useFoodCutOffTime()
+    {
+        return $this->_useFoodCutOffTime;
+    }
+
+    /**
+     * @param boolean $useFoodCutOffTime
+     *
+     * @return $this
+     */
+    public function setUseFoodCutOffTime($useFoodCutOffTime)
+    {
+        $this->_useFoodCutOffTime = $useFoodCutOffTime;
 
         return $this;
     }
@@ -117,6 +142,10 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
         $shippingDays   = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDays   = explode(',', $shippingDays);
+
+        if ($this->isBe($this->getQuote())) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
 
         /**
          * Sunday delivery and sunday sorting are not available for letter box parcels.
@@ -201,12 +230,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Calculates the date an order should be delivered, based on the order date
      *
-     * @param mixed  $date
-     * @param int    $storeId
+     * @param mixed $date
+     * @param int   $storeId
+     * @param bool  $allowSameDay
      *
      * @return DateTime
      */
-    public function getDeliveryDate($date, $storeId)
+    public function getDeliveryDate($date, $storeId, $allowSameDay = true)
     {
         $orderDateObject = $this->getUtcDateTime($date, $storeId);
 
@@ -222,6 +252,13 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          */
         $weekday = $orderDateObject->format('N');
         $shippingDuration = $this->getQuoteShippingDuration();
+
+        /**
+         * The shipping duration may only be less than 1 when same day is allowed.
+         */
+        if ($shippingDuration < 1 && !$allowSameDay) {
+            $shippingDuration = 1;
+        }
 
         /**
          * Get a possible addition of day(s), if the found deliveryDay is not a valid deliveryday.
@@ -249,6 +286,10 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     {
         $dateObject = $this->getDeliveryDate($date, $storeId);
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
+        if ($this->isBe($this->getQuote())) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
 
         /**
          * If the delivery day is monday, the shipment possibly needs to be sent on saturday, if sundaydelivery is not
@@ -282,6 +323,11 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
          * Get required config values and date object.
          */
         $sundaySorting = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
+        if ($this->isBe($this->getQuote())) {
+            $sundaySorting  = Mage::getStoreConfig(self::XPATH_ALLOW_SUNDAY_SORTING_BE, $storeId);
+        }
+
         $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
         $dateObject = $this->getUtcDateTime($deliveryDate, $storeId, false);
@@ -315,7 +361,8 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
      * Returns an UTC DateTime object built from the orderdate.
      *
      * @param mixed $date
-     * @param $storeId
+     * @param       $storeId
+     * @param bool  $convertTimeZone
      *
      * @return DateTime
      */
@@ -353,14 +400,18 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     public function isPastCutOff($orderDateObject, $storeId, $type = null)
     {
         if (!$type) {
-            $weekDay = $orderDateObject->format('w');
+            if ($this->useFoodCutOffTime()) {
+                $type = 'food';
+            } else {
+                $weekDay = $orderDateObject->format('w');
 
-            /**
-             * If the weekday == 7, we need to check for sunday cutoff time instead.
-             */
-            $type = 'weekday';
-            if ($weekDay == self::SUNDAY) {
-                $type = 'sunday';
+                /**
+                 * If the weekday == 7, we need to check for sunday cutoff time instead.
+                 */
+                $type = 'weekday';
+                if ($weekDay == self::SUNDAY) {
+                    $type = 'sunday';
+                }
             }
         }
 
@@ -389,6 +440,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
                 $xpathToUse = self::XPATH_SUNDAY_CUTOFF_TIME;
                 break;
             case 'sameday':
+            case 'food':
                 $xpathToUse = self::XPATH_SAMEDAY_CUTOFF_TIME;
                 break;
             case 'weekday':

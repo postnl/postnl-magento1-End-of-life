@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_SaveShipment
@@ -54,7 +54,9 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
         /**
          * Check if the PostNL module is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -63,6 +65,7 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
          *
          * @var Mage_Core_Controller_Varien_Front $controller
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $controller      = $observer->getControllerAction();
         $shippingOptions = $controller->getRequest()->getParam('postnl');
 

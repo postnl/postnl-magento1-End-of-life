@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                        hasIsTestMode()
@@ -70,7 +70,9 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
             return $this->_getData('is_test_mode');
         }
 
-        $isTestMode = Mage::helper('postnl/mijnpakket')->isTestMode();
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
+        $helper = Mage::helper('postnl/mijnpakket');
+        $isTestMode = $helper->isTestMode();
 
         $this->setIsTestMode($isTestMode);
         return $isTestMode;
@@ -133,6 +135,7 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
      */
     protected function _tohtml()
     {
+        /** @var TIG_PostNL_Helper_Mijnpakket $helper */
         $helper = Mage::helper('postnl/mijnpakket');
         if (!$helper->canLoginWithMijnpakket()) {
             return '';

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
@@ -48,15 +48,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
      */
     public function render(Varien_Object $row)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         $values = $row->getData($this->getColumn()->getIndex());
 
         if (empty($values)) {
             return '';
         }
 
-        $helper         = Mage::helper('postnl');
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper         = Mage::helper('postnl/cif');
         $values         = explode(',', $values);
-        $shippingPhases = Mage::helper('postnl/cif')->getShippingPhases();
+        $shippingPhases = $helper->getShippingPhases();
 
         $labels = array();
         foreach ($values as $value) {

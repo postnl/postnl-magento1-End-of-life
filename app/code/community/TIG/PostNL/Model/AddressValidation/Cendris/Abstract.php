@@ -33,7 +33,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
@@ -96,7 +96,9 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
                 $soapParams
             );
 
-            Mage::helper('postnl/addressValidation')->logCendrisCall($client);
+            /** @var TIG_PostNL_Helper_AddressValidation $helper */
+            $helper = Mage::helper('postnl/addressValidation');
+            $helper->logCendrisCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
@@ -105,7 +107,9 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
             if (!isset($client)) {
                 $client = false;
             }
-            Mage::helper('postnl/addressValidation')->logCendrisException($e, $client);
+            /** @var TIG_PostNL_Helper_AddressValidation $helper */
+            $helper = Mage::helper('postnl/addressValidation');
+            $helper->logCendrisException($e, $client);
 
             throw $e;
         }

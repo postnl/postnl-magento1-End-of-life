@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_Attributes
@@ -45,6 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
      */
     public function toOptionArray()
     {
+        /** @var  Mage_Catalog_Model_Resource_Product_Attribute_Collection $attributes */
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection')
                           ->addFieldToSelect(array('attribute_code', 'frontend_label'))
                           ->addFieldToFilter('frontend_label', array('notnull' => true));
@@ -56,6 +57,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
          * @var Mage_Catalog_Model_Entity_Attribute $attribute
          */
         foreach ($attributes as $attribute) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $label = $attribute->getFrontendLabel();
             if (empty($label)) {
                 continue;

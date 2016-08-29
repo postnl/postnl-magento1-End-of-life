@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_Label setLabelSize(string $value)
@@ -487,9 +487,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * Open a new pdf object and assign some basic values.
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->open();
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetTitle('PostNL Shipping Labels');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetAuthor('PostNL');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetCreator('PostNL');
 
         if (!is_array($labels)
@@ -536,9 +540,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * Open a new pdf object and assign some basic values.
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->open();
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetTitle('PostNL Packingslip');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetAuthor('PostNL');
+        /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetCreator('PostNL');
 
         $pdf->addOrientedPage('P', 'A4');
@@ -591,6 +599,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $label;
     }
 
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Adds multiple labels to the pdf
      *
@@ -611,7 +620,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * However, for safety reasons a limit of 200 is used. By default you shouldn't be able to select more than 200
          * in the shipment grid.
          */
-        if(count($labels) > self::MAX_LABEL_COUNT && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        if(count($labels) > self::MAX_LABEL_COUNT && !$helper->allowInfinitePrinting()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s',
@@ -631,6 +642,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $pdf;
     }
 
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Adds a label to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object. Each
      * label type has it's own properties and size. For some we need to add another A4-size page first, for others we

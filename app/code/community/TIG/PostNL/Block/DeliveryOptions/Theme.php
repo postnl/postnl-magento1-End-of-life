@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasIsOsc()
@@ -97,6 +97,7 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         /**
          * @var Varien_Simplexml_Element $files
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $files = $theme->files;
         if (!$files) {
             return '';
@@ -142,6 +143,7 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         /**
          * @var Varien_Simplexml_Element $files
          */
+        /** @noinspection PhpUndefinedFieldInspection */
         $files = $theme->files;
         if (!$files) {
             return $cssFiles;
@@ -183,7 +185,9 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
      */
     public function canUseResponsive()
     {
-        return Mage::helper('postnl/deliveryOptions')->canUseResponsive();
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        return $helper->canUseResponsive();
     }
 
     /**
@@ -193,8 +197,11 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
      */
     protected function _toHtml()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
         if (!$helper->canUseDeliveryOptions($quote)) {

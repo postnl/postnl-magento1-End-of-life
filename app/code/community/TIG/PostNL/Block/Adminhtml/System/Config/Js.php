@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Adminhtml_Template
@@ -83,6 +83,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
         /**
          * For Magento 1.6 and 1.11 we need to add another css file.
          */
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         $isEnterprise = $helper->isEnterprise();
 
@@ -116,7 +117,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
         /**
          * Get the current admin user and it's saved extra data.
          */
-        $adminUser = Mage::getSingleton('admin/session')->getUser();
+
+        /** @var Mage_Admin_Model_Session $session */
+        $session = Mage::getSingleton('admin/session');
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var Mage_Admin_Model_User $adminUser */
+        $adminUser = $session->getUser();
         $extra     = $adminUser->getExtra();
 
         /**

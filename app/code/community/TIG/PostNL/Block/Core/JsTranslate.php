@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
@@ -118,7 +118,9 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
     {
         $messages = $this->_getTranslateData();
 
-        $json = Mage::helper('core')->jsonEncode($messages);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $json = $helper->jsonEncode($messages);
         return $json;
     }
 
@@ -201,6 +203,7 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
      */
     protected function _toHtml()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if (!$helper->isEnterprise() && version_compare(Mage::getVersion(), '1.7.0.0', '>=')) {
             return '';

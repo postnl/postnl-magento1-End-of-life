@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
@@ -70,6 +70,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
             $store = $request->getparam('store');
             $storeId = Mage::app()->getStore($store)->getId();
         } elseif ($request->getParam('website')) {
+            /** @var Mage_Core_Model_Website $website */
             $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
             $store = $website->getDefaultStore();
             $storeId = $store->getId();
@@ -77,6 +78,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
         $helper = Mage::helper('postnl/addressValidation');
         if ($helper->isPostcodeCheckEnabled($storeId)) {
             return true;
@@ -94,7 +96,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
      */
     protected function _toHtml()
     {
-        $hiddenNotifications = Mage::helper('postnl/adminhtml')->getHiddenNotifications();
+        /** @var TIG_PostNL_Helper_Adminhtml $helper */
+        $helper = Mage::helper('postnl/adminhtml');
+        $hiddenNotifications = $helper->getHiddenNotifications();
 
         if (!empty($hiddenNotifications['split_address_warning'])) {
             return '';

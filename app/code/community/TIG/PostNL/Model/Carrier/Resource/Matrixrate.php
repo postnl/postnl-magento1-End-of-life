@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_Resource_Carrier_Tablerate
@@ -62,11 +62,12 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         /**
          * Get the bound values for the select conditions.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $bind = array(
             ':website_id'  => (int) $request->getWebsiteId(),
             ':country_id'  => "%{$request->getDestCountryId()}%",
             ':region_id'   => (int) $request->getDestRegionId(),
-            ':postcode'    => $request->getDestPostcode(),
+            ':postcode'    => str_replace(' ', '', $request->getDestPostcode()),
             ':weight'      => $request->getPackageWeight(),
             ':subtotal'    => $request->getBaseSubtotalInclTax(),
             ':qty'         => $request->getPackageQty(),
@@ -94,6 +95,16 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                           ->order(
                               array(
                                   'website_id DESC',
+                                  new Zend_Db_Expr(
+                                      "(CASE parcel_type" .
+                                      " WHEN 'letter_box' THEN 1" .
+                                      " WHEN 'pakje_gemak' THEN 2" .
+                                      " WHEN 'food' THEN 3" .
+                                      " WHEN 'regular' THEN 4" .
+                                      " WHEN '*' THEN 5" .
+                                      " ELSE 100" .
+                                      " END) ASC"
+                                  ),
                                   'parcel_type DESC',
                                   'dest_country_id DESC',
                                   'dest_region_id DESC',
@@ -136,7 +147,17 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         $select->where('weight <= :weight');
         $select->where('subtotal <= :subtotal');
         $select->where('qty <= :qty');
-        $select->where("(parcel_type = :parcel_type) OR (parcel_type = '*')");
+
+        $parcelTypeWhereClause = "(parcel_type = :parcel_type)";
+        if ($parcelType == 'pakje_gemak') {
+            $parcelTypeWhereClause .= " OR (parcel_type = 'regular')";
+        }
+
+        if ($parcelType != 'food') {
+            $parcelTypeWhereClause .= " OR (parcel_type = '*')";
+        }
+
+        $select->where($parcelTypeWhereClause);
 
         $result = $adapter->fetchRow($select, $bind);
 
@@ -172,6 +193,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         $csvFile = $_FILES['groups']['tmp_name']['postnl']['fields']['matrix_import']['value'];
+        /** @noinspection PhpUndefinedMethodInspection */
         $website = Mage::app()->getWebsite($object->getScopeId());
 
         $this->_importWebsiteId     = (int)$website->getId();
@@ -237,9 +259,11 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $adapter->rollback();
             $io->streamClose();
 
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('An error occurred while importing the matrix rates.'),
+                $helper->__('An error occurred while importing the matrix rates.'),
                 'POSTNL-0195'
             );
         }
@@ -310,9 +334,11 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         } catch (Exception $e) {
             $adapter->rollback();
 
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('An error occurred while importing the matrix rates.'),
+                $helper->__('An error occurred while importing the matrix rates.'),
                 'POSTNL-0195'
             );
         }
@@ -439,7 +465,9 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $allowedParcelTypes = array(
                 '*',
                 'letter_box',
-                'regular'
+                'regular',
+                'pakje_gemak',
+                'food',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -562,14 +590,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case '*':
                 $formattedType = '*';
                 break;
-            case 'letter_box':       //no break
-            case 'letterbox':        //no break
-            case 'buspakje':         //no break
-            case 'bus_pakje':        //no break
-            case 'brievenbuspakje':  //no break
-            case 'brievenbus pakje': //no break
-            case 'letterboxparcel':  //no break
-            case 'letter box parcel':
+            case 'letter_box':        //no break
+            case 'letterbox':         //no break
+            case 'buspakje':          //no break
+            case 'bus_pakje':         //no break
+            case 'brievenbuspakje':   //no break
+            case 'brievenbus pakje':  //no break
+            case 'letterboxparcel':   //no break
+            case 'letter box parcel': //no break
                 $formattedType = 'letter_box';
                 break;
             case 'regular':          //no break
@@ -579,6 +607,21 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'parcel':           //no break
             case 'package':
                 $formattedType = 'regular';
+                break;
+            case 'pakje_gemak':      //no break
+            case 'pakje gemak':      //no break
+            case 'PakjeGemak':       //no break
+            case 'postkantoor':      //no break
+            case 'post office':      //no break
+                $formattedType = 'pakje_gemak';
+                break;
+            case 'food':             //no break
+            case 'voedsel':          //no break
+            case 'eten':             //no break
+            case 'coolfood':         //no break
+            case 'cooledfood':       //no break
+            case 'gekoeld':          //no break
+                $formattedType = 'food';
                 break;
             //no default
         }

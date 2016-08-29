@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Primary webservices class. Contains all methods used to communicate with the extensioncontrol webservice.
@@ -149,7 +149,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     public function updateStatistics($forceUpdate = false)
     {
-        $canSendStatictics = Mage::helper('postnl/webservices')->canSendStatistics();
+        /** @var TIG_PostNL_Helper_Webservices $helper */
+        $helper = Mage::helper('postnl/webservices');
+        $canSendStatictics = $helper->canSendStatistics();
         if ($forceUpdate !== true && !$canSendStatictics) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to update statistics. This feature has been disabled.'),
@@ -207,7 +209,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $encryptedData = mcrypt_encrypt(
             MCRYPT_RIJNDAEL_256,
-            $mcryptKey,
+            $this->_padKey($mcryptKey),
             $serializedData,
             MCRYPT_MODE_CBC,
             $iv
@@ -253,7 +255,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$isActivated || $isActivated == '1') {
-            Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
+            /** @var Mage_Core_Model_Config $config */
+            $config = Mage::getModel('core/config');
+            $config->saveConfig(self::XPATH_IS_ACTIVATED, 2);
         }
 
         return $result;
@@ -296,6 +300,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $magentoVersion = Mage::getVersion();
         $moduleConfig = Mage::getConfig()->getModuleConfig('TIG_PostNL');
+        /** @noinspection PhpUndefinedFieldInspection */
         $moduleVersion = (string) $moduleConfig->version;
 
         /**
@@ -303,7 +308,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          *
          * N.B. Professional and Go editions are not supported at this time
          */
-        $isEnterprise = Mage::helper('postnl')->isEnterprise();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $isEnterprise = $helper->isEnterprise();
         if ($isEnterprise === true) {
             $magentoEdition = 'Enterprise';
         } else {
@@ -412,14 +419,16 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          * environment.
          */
         if ($website === null) {
-            $hostName = Mage::helper('core/http')->getHttpHost();
+            /** @var Mage_Core_Helper_Http $helper */
+            $helper =  Mage::helper('core/http');
+            $hostName = $helper->getHttpHost();
             return $hostName;
         }
 
         /**
          * Get the website's base URL
          */
-        $baseUrl = $website->getConfig(self::XPATH_UNSECURE_BASE_URL, $website->getId());
+        $baseUrl = $website->getConfig(self::XPATH_UNSECURE_BASE_URL);
 
         /**
          * Parse the URL and get the host name
@@ -438,7 +447,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getUniqueKey()
     {
         $uniqueKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        $uniqueKey = Mage::helper('core')->decrypt($uniqueKey);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $uniqueKey = $helper->decrypt($uniqueKey);
 
         $uniqueKey = trim($uniqueKey);
 
@@ -456,7 +467,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY,
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
-        $privateKey = Mage::helper('core')->decrypt($privateKey);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $privateKey = $helper->decrypt($privateKey);
 
         $privateKey = trim($privateKey);
 
@@ -509,11 +522,13 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             }
         }
 
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
         /**
          * Get the shipment collection.
          */
+        /** @var Mage_Sales_Model_Resource_Order_Shipment_Collection $shipmentCollection */
         $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
         $shipmentCollection->addFieldToSelect('entity_id');
 
@@ -541,7 +556,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             )
         );
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $postnlShippingMethods = $helper->getPostnlShippingMethods();
         $postnlShippingMethodsRegex = '';
         foreach ($postnlShippingMethods as $method) {
             if ($postnlShippingMethodsRegex) {
@@ -638,7 +655,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $lastOrder = $orderCollection->getFirstItem();
         // @codingStandardsIgnoreEnd
         $createdAt = $lastOrder->getCreatedAt();
-        $createdAt = Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
+        /** @var Mage_Core_Model_Date $dateModel */
+        $dateModel = Mage::getModel('core/date');
+        $createdAt = $dateModel->date('Y-m-d H:i:s', $createdAt);
 
         return $createdAt;
     }
@@ -672,7 +691,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $supportedProductOptions = $website->getConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS);
         $supportedProductOptions = explode(',', $supportedProductOptions);
 
-        $globalProductOptions = Mage::helper('postnl/cif')->getGlobalProductCodes();
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $globalProductOptions = $helper->getGlobalProductCodes();
 
         /**
          * Check each global product option if it's supported.
@@ -724,7 +745,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getCheckoutWebshopId($website)
     {
         $webshopId = $website->getConfig(self::XPATH_CHECKOUT_WEBSHOP_ID);
-        $webshopId = Mage::helper('core')->decrypt($webshopId);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $webshopId = $helper->decrypt($webshopId);
 
         return $webshopId;
     }
@@ -1011,5 +1034,45 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $showShippingLabel = (bool) $website->getConfig(self::XPATH_SHOW_LABEL);
 
         return $showShippingLabel;
+    }
+
+    /**
+     * Pad the mcrypt key with zeros. Before PHP 5.6 this was the default. This is to provide backwards compatibility.
+     *
+     * @param $key
+     *
+     * @return bool|string
+     */
+    protected function _padKey($key){
+        if(strlen($key) > 32) {
+            return $key;
+        }
+
+        /**
+         * Valid key sizes.
+         */
+        $sizes = array(
+            16,
+            24,
+            32
+        );
+
+        /**
+         * loop through sizes and pad key
+         */
+        foreach($sizes as $s) {
+            while(strlen($key) < $s) {
+                $key = $key."\0";
+            }
+
+            /**
+             * Finish if the key matches a size
+             */
+            if(strlen($key) == $s) {
+                break;
+            }
+        }
+
+        return $key;
     }
 }

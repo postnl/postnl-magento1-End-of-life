@@ -35,7 +35,7 @@
  *
  * @category    TIG
  * @package     TIG_PostNL
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * @link        http://store.tig.nl/tig/postnl.html
  */
@@ -79,6 +79,7 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
             return $this->_serviceModel;
         }
 
+        /** @var TIG_PostNL_Model_Payment_Service $serviceModel */
         $serviceModel = Mage::getModel('postnl_payment/service');
 
         $this->setServiceModel($serviceModel);

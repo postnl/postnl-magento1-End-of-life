@@ -33,18 +33,22 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_AddressLines
     extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Hidden
 {
     /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return int|string
      */
     protected function _getValue(Varien_Data_Form_Element_Abstract $element)
     {
-        $value = Mage::helper('postnl/addressValidation')->getAddressLineCount();
+        /** @var TIG_PostNL_Helper_AddressValidation $helper */
+        $helper = Mage::helper('postnl/addressValidation');
+        $value = $helper->getAddressLineCount();
 
         return $value;
     }

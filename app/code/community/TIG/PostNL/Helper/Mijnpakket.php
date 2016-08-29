@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
@@ -104,7 +104,9 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
         /**
          * MijnPakket login is only available if delivery options are enabled.
          */
-        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if (!$helper->isDeliveryOptionsEnabled()) {
             return false;
         }
 
@@ -127,7 +129,9 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
             return $cache->getPostnlMijnpakketCanShowNotification();
         }
 
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if (!$helper->canUseDeliveryOptions()) {
             return false;
         }
 

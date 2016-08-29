@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
@@ -53,6 +53,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     const INSTALLATION_MANUAL_URL_XPATH = 'postnl/general/installation_manual_url';
     const USER_GUIDE_URL_XPATH          = 'postnl/general/user_guide_url';
     const KB_URL_XPATH                  = 'postnl/general/kb_url';
+    const POSTNL_DOCUMENTATION_URL      = 'postnl/general/postnl_documentation_url';
+    const CIT_SERVICEDESK_EMAIL         = 'postnl/general/cit_servicedesk_email';
 
     /**
      * Template file used
@@ -66,7 +68,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     public function getVersion()
     {
-        $version =  Mage::helper('postnl')->getModuleVersion();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $version =  $helper->getModuleVersion();
 
         return $version;
     }
@@ -76,9 +80,77 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     public function getStability()
     {
-        $version = Mage::helper('postnl')->getModuleStability();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $version = $helper->getModuleStability();
 
         return $version;
+    }
+
+    /**
+     * @return array|Mage_Core_Model_Config_Element|string|false
+     */
+    public function getCompatibility()
+    {
+        $postnlConfig = Mage::app()->getConfig()->getNode('tig/compatibility/postnl');
+
+        if ($postnlConfig) {
+            $postnlConfig = $postnlConfig->asArray();
+        }
+
+        return $postnlConfig;
+    }
+
+    /**
+     * @param string $extensionKey
+     *
+     * @return string
+     */
+    public function getCompatibleExtensionLabel($extensionKey)
+    {
+        switch ($extensionKey) {
+            case 'Idev_OneStepCheckout':
+                $label = "Idev's OneStepCheckout";
+                break;
+            case 'Bpost_ShippingManager':
+                $label = "Bpost Shipping Manager";
+                break;
+            case 'GoMage_Checkout':
+                $label = "GoMage's Checkout";
+                break;
+            case 'Picqer_PostNL':
+                $label = "Picqer's PostNL add-on";
+                break;
+            default:
+                $label = $extensionKey;
+                break;
+        }
+
+        return $label;
+    }
+
+    /**
+     * @param $versions
+     *
+     * @return string
+     */
+    public function formatCompatibleVersion($versions)
+    {
+        $versionString = '';
+        $versions = explode(',', $versions);
+
+        $count = count($versions);
+        foreach (array_values($versions) as $index => $version) {
+            if ($index > 0 && $index < $count) {
+                $versionString .= ', ';
+            } elseif ($index > 0) {
+                $versionString .= ' & ';
+            }
+
+            $versionString .= 'v' . $version;
+        }
+
+        return $versionString;
     }
 
     /**
@@ -134,9 +206,31 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     /**
      * @return string
      */
+    public function getPostnlDocumentationUrl()
+    {
+        $url = Mage::getStoreConfig(self::POSTNL_DOCUMENTATION_URL, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCitServicedeskEmail()
+    {
+        $url = Mage::getStoreConfig(self::CIT_SERVICEDESK_EMAIL, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
     public function getChangelogUrl()
     {
-        $url = Mage::helper('postnl')->getChangelogUrl();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $url = $helper->getChangelogUrl();
 
         return $url;
     }

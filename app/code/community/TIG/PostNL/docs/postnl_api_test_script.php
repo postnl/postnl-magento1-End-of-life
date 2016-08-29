@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 /**
@@ -132,6 +132,7 @@ try {
         /**
          * Login and get a session ID for future API calls.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $sessionId = $cli->login($username, $apiKey);
 
         /**
@@ -181,6 +182,7 @@ try {
         /**
          * Login and get a session ID for future API calls.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $sessionId = $cli->login(array('username' => $username, 'apiKey' => $apiKey));
 
         /**
@@ -245,6 +247,7 @@ try {
                 file_put_contents('result_' . $resultItem->shipment_id . '.pdf', base64_decode($resultItem->label));
             }
         } elseif (isset($resultArray->label)) {
+            /** @noinspection PhpUndefinedFieldInspection */
             file_put_contents('result_' . $resultArray->shipment_id . '.pdf', base64_decode($resultArray->label));
         }
     }

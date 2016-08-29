@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
@@ -52,6 +52,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         $resultArray = array();
@@ -116,6 +117,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         $response = array();
@@ -190,6 +192,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -256,6 +259,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -322,6 +326,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -358,6 +363,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -396,6 +402,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         /**
          * Get service model used for processing this request.
          */
+        /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
         $serviceModel = Mage::getModel('postnl_core/service_shipment');
 
         /**
@@ -469,6 +476,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
      */
     protected function _confirmShipment(TIG_PostNL_Model_Core_Service_Shipment $serviceModel, $shipmentId)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -565,6 +573,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
     protected function _getLabels(TIG_PostNL_Model_Core_Service_Shipment $serviceModel, $shipmentId, $confirm = false,
                                   $labelSize = false, $labelStartPosition = 0)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -607,7 +616,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             /**
              * Check whether we should also get the return labels based on the shop's configuration.
              */
-            $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
                 $postnlShipment->getStoreId()
             );
 
@@ -619,9 +628,10 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
             /**
              * Get the label model which will convert the base64_encoded pdf strings to a single, merged pdf.
              */
-            $labelModel = Mage::getModel('postnl_core/label')
-                              ->setLabelSize($labelSize)
-                              ->setLabelCounter($labelStartPosition);
+            /** @var TIG_PostNL_Model_Core_Label $labelModel */
+            $labelModel = Mage::getModel('postnl_core/label');
+            $labelModel->setLabelSize($labelSize)
+                       ->setLabelCounter($labelStartPosition);
 
             /**
              * Create the merged pdf.
@@ -681,7 +691,9 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
      */
     protected function _createShipment(TIG_PostNL_Model_Core_Service_Shipment $serviceModel, $orderId)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+
         /**
          * Set return values to default to null.
          */
@@ -845,6 +857,7 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
      */
     protected function _getStatusInfo(TIG_PostNL_Model_Core_Service_Shipment $serviceModel, $shipmentId)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**

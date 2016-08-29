@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipmentCollection()
@@ -53,6 +53,7 @@ class TIG_PostNL_Block_Core_Order_Returns_Shipment_Items extends Mage_Sales_Bloc
         }
 
         $order = Mage::registry('current_order');
+        /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $postnlShipmentCollection */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter('order_id', array('eq' => $order->getid()));
 
@@ -69,7 +70,9 @@ class TIG_PostNL_Block_Core_Order_Returns_Shipment_Items extends Mage_Sales_Bloc
      */
     public function getPrintLabelUrl($shipmentId)
     {
-        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+        /** @var Mage_Customer_Model_Session $session */
+        $session = Mage::getSingleton('customer/session');
+        if ($session->isLoggedIn()) {
             $url = $this->getUrl('postnl/order/printReturnLabel', array('shipment_id' => $shipmentId));
         } else {
             $url = $this->getUrl('postnl/guest/printReturnLabel', array('shipment_id' => $shipmentId));

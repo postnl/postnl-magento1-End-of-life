@@ -33,11 +33,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                 hasIsOldMagento()
- * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento()
+ * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento($value)
  */
 class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml_Template
 {
@@ -64,7 +64,9 @@ class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml
         }
 
         $version = Mage::getVersion();
-        $isEnterprise = Mage::helper('postnl')->isEnterprise();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $isEnterprise = $helper->isEnterprise();
 
         /**
          * Get the minimum version requirement for the current Magento edition.

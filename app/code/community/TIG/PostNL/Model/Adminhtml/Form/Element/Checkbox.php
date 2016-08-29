@@ -33,8 +33,14 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean getChecked()
+ * @method string  getLabel()
+ * @method boolean getRequired()
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox setChecked($checked)
  */
 class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_Element_Checkbox
 {
@@ -58,6 +64,7 @@ class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_
         $html .= '<input id="'.$this->getHtmlId().'_checkbox" name="'.$this->getName()
             .'_checkbox" value="'.$this->getEscapedValue().'" '.$this->serialize($this->getHtmlAttributes()).'/>'."\n";
 
+        /** @noinspection JSUnresolvedVariable */
         $html .= '<script type="text/javascript">' . PHP_EOL
                . '//<![CDATA[' . PHP_EOL
                . '$("'.$this->getHtmlId().'_checkbox").observe("click", '

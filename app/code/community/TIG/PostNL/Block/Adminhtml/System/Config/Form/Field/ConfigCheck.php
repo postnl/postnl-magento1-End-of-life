@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                                         hasPostnlHelper()
@@ -54,6 +54,14 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     const XPATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
 
     /**
+     * XML paths to check the Dutch products.
+     */
+    const XPATH_USE_DUTCH_PRODUCTS    = 'postnl/cif_labels_and_confirming/use_dutch_products';
+    const XPATH_USE_DUTCH_ADDRESS     = 'postnl/cif_address/use_dutch_address';
+    const XPATH_DUTCH_CUSTOMER_CODE   = 'postnl/cif/dutch_customer_code';
+    const XPATH_DUTCH_CUSTOMER_NUMBER = 'postnl/cif/dutch_customer_number';
+
+    /**
      * Template file used by this element.
      *
      * @var string
@@ -71,6 +79,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
             return $this->getData('postnl_helper');
         }
 
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         $this->setPostnlHelper($helper);
@@ -165,6 +174,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function isCheckoutEnabled()
     {
+        /** @var TIG_PostNL_Helper_Checkout $helper */
         $helper = Mage::helper('postnl/checkout');
 
         if (!$helper->isCheckoutActive()) {
@@ -187,5 +197,47 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
         }
 
         return $configErrors;
+    }
+
+    /**
+     * Check if there is a dutch address needed.
+     *
+     * @return bool
+     */
+    public function needsDutchAddress()
+    {
+        $country = $this->helper('postnl')->getDomesticCountry();
+
+        if ($country == 'BE') {
+            $useDutchProducts = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS);
+            $useDutchAddress = Mage::getStoreConfig(self::XPATH_USE_DUTCH_ADDRESS);
+
+            if ($useDutchProducts == '1' && $useDutchAddress == '0') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the dutch customer code and customer number are entered.
+     *
+     * @return bool
+     */
+    public function needsDutchCustomerCodeOrNumber(){
+        $country = $this->helper('postnl')->getDomesticCountry();
+
+        if ($country == 'BE') {
+            $useDutchProducts = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS);
+            $dutchCustomerCode = Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_CODE);
+            $dutchCustomerNumber = Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_NUMBER);
+
+            if ($useDutchProducts == '1' && (empty($dutchCustomerCode) || empty($dutchCustomerNumber))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

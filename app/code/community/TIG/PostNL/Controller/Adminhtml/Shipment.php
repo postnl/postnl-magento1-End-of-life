@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adminhtml_Abstract
@@ -50,6 +50,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
     {
         $serviceModel = $this->_serviceModel;
         if (!$serviceModel) {
+            /** @var TIG_PostNL_Model_Core_Service_Shipment $serviceModel */
             $serviceModel = Mage::getModel('postnl_core/service_shipment');
             $this->setServiceModel($serviceModel);
         }
@@ -308,6 +309,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
      */
     protected function _addWarningMessages($warnings, $headerText = '')
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -383,7 +385,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
         /**
          * Add the warnings to the session.
          */
-        Mage::helper('postnl')->addSessionMessage('adminhtml/session', null, 'notice',
+        $helper->addSessionMessage('adminhtml/session', null, 'notice',
             $warningMessage
         );
 

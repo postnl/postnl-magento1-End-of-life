@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract extends Mage_Tax_Model_Sales_Total_Quote_Tax
@@ -63,10 +63,14 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
      *
      * Sets several class variables.
      */
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct()
     {
         $this->setCode($this->_totalCode);
-        $this->setTaxCalculation(Mage::getSingleton('tax/calculation'));
+
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+        $this->setTaxCalculation($taxCalculation);
 
         $this->_helper = Mage::helper('tax');
         $this->_config = Mage::getSingleton('tax/config');
@@ -83,6 +87,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
             return $taxCalculation;
         }
 
+        /** @var Mage_Tax_Model_Calculation $taxCalculation */
         $taxCalculation = Mage::getSingleton('tax/calculation');
 
         $this->setTaxCalculation($taxCalculation);
@@ -152,6 +157,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
             $store
         );
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $request->setProductClassId($codTaxClass);
 
         return $request;
@@ -184,6 +190,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getPostnlCodFee();
         }
 
@@ -212,6 +219,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getBaseCodFeeTax($address, $taxRate, $fee = null, $isInclTax = false)
     {
         if (is_null($fee)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $fee = (float) $address->getBasePostnlCodFee();
         }
 
@@ -231,8 +239,8 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
      * Process model configuration array.
      * This method can be used for changing models apply sort order
      *
-     * @param   array $config
-     * @param   store $store
+     * @param   array                                 $config
+     * @param   null|int|string|Mage_Core_Model_Store $store
      * @return  array
      */
     public function processConfigArray($config, $store)

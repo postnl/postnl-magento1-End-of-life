@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasShipment()
@@ -92,6 +92,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
 
         $this->setPostnlOrder($postnlOrder);
@@ -111,7 +112,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        $productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($shipment);
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $productOptions = $helper->getProductOptionsForShipment($shipment);
 
         $this->setProductOptions($productOptions);
         return $productOptions;
@@ -128,7 +131,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
             return $this->getData('buspakje_product_options');
         }
 
-        $productOptions = Mage::helper('postnl/cif')->getBuspakjeProductCodes(false);
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $productOptions = $helper->getBuspakjeProductCodes(false);
 
         $this->setBuspakjeProductOptions($productOptions);
         return $productOptions;
@@ -148,9 +153,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
         $shipment = $this->getShipment();
 
         try {
-            $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+            /** @var TIG_PostNL_Helper_Cif $helper */
+            $helper = Mage::helper('postnl/cif');
+            $productOption = $helper->getDefaultProductOptionForShipment($shipment);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $productOption = '';
         }
@@ -170,14 +179,17 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
             return $this->_getData('default_buspakje_option');
         }
 
-        $postnlShipment = Mage::getModel('postnl_core/shipment')
-                        ->setShipmentType('buspakje')
-                        ->setStoreId($this->getShipment()->getStoreId());
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->setShipmentType('buspakje')
+                       ->setStoreId($this->getShipment()->getStoreId());
 
         try {
             $productOption = $postnlShipment->getDefaultProductCode();
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            /** @var TIG_PostNL_Helper_Data $helper */
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
 
             $productOption = '';
         }
@@ -193,7 +205,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
      */
     public function getShipmentTypes()
     {
-        $shipmentTypes = Mage::helper('postnl/cif')->getShipmentTypes();
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $shipmentTypes = $helper->getShipmentTypes();
 
         return $shipmentTypes;
     }
@@ -222,7 +236,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     {
         $shipment = $this->getShipment();
 
-        $parcelCount = (int) Mage::helper('postnl/cif')->getParcelCount($shipment);
+        /** @var TIG_PostNL_Helper_Cif $helper */
+        $helper = Mage::helper('postnl/cif');
+        $parcelCount = (int) $helper->getParcelCount($shipment);
         if ($parcelCount < 1) {
             $parcelCount = 1;
         }
@@ -248,7 +264,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
             $orderItems[] = $item->getOrderItem()->setQtyOrdered($item->getQty());
         }
 
-        $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems, true);
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $fits = $helper->fitsAsBuspakje($orderItems, true);
 
         if (!$fits) {
             return $fits;
@@ -295,6 +313,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
      */
     protected function _toHtml()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
         if (!$helper->isEnabled()) {
             return '';
@@ -302,11 +321,15 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
+        /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
+        $carrierHelper = Mage::helper('postnl/carrier');
+        if (!$carrierHelper->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return '';
         }
 
-        if (Mage::helper('postnl/cif')->isGlobalShipment($shipment) && !$helper->isGlobalAllowed()) {
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
+        if ($cifHelper->isGlobalShipment($shipment) && !$helper->isGlobalAllowed()) {
             return '';
         }
 

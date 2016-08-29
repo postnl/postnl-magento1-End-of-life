@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                       hasFieldsetParam()
@@ -98,6 +98,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             if (!$this->_canShowField($section)) {
                 continue;
             }
+            /** @noinspection PhpUndefinedFieldInspection */
             foreach ($section->groups as $groups){
                 $groups = (array)$groups;
                 usort($groups, array($this, '_sortForm'));
@@ -147,7 +148,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
      */
     protected function _initGroup($form, $group, $section, $parentElement = null)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($group->frontend_model) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $fieldsetRenderer = Mage::getBlockSingleton((string)$group->frontend_model);
         } else {
             $fieldsetRenderer = $this->_defaultFieldsetRenderer;
@@ -158,6 +161,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
         if ($this->_configFields->hasChildren($group, $this->getWebsiteCode(), $this->getStoreCode())) {
             $helperName = $this->_configFields->getAttributeModule($section, $group);
+            /** @noinspection PhpUndefinedFieldInspection */
             $fieldsetConfig = array('legend' => Mage::helper($helperName)->__((string)$group->label));
             if (!empty($group->comment)) {
                 if (!empty($group->comment_url)) {
@@ -195,11 +199,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             }
 
             $fieldset = new Varien_Data_Form_Element_Fieldset($fieldsetConfig);
+            /** @noinspection PhpUndefinedMethodInspection */
             $fieldset->setId($section->getName() . '_' . $group->getName())
-                ->setRenderer($fieldsetRenderer)
-                ->setGroup($group);
+                     ->setRenderer($fieldsetRenderer)
+                     ->setGroup($group);
 
             if ($parentElement) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 $fieldset->setIsNested(true);
                 $parentElement->addElement($fieldset);
             } else {
@@ -211,8 +217,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
             $this->_fieldsets[$group->getName()] = $fieldset;
 
+            /** @noinspection PhpUndefinedFieldInspection */
             if ($group->clone_fields) {
+                /** @noinspection PhpUndefinedFieldInspection */
                 if ($group->clone_model) {
+                    /** @noinspection PhpUndefinedFieldInspection */
                     $cloneModel = Mage::getModel((string)$group->clone_model);
                 } else {
                     throw new TIG_PostNL_Exception(
@@ -220,6 +229,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         'POSTNL-0095'
                     );
                 }
+                /** @noinspection PhpUndefinedMethodInspection */
                 foreach ($cloneModel->getPrefixes() as $prefix) {
                     $this->initFields($fieldset, $group, $section, $prefix['field'], $prefix['label']);
                 }
@@ -252,10 +262,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         // Extends for config data
         $configDataAdditionalGroups = array();
 
+        /** @noinspection PhpUndefinedFieldInspection */
         foreach ($group->fields as $elements) {
             $elements = (array)$elements;
             // sort either by sort_order or by child node values bypassing the sort_order
+            /** @noinspection PhpUndefinedFieldInspection */
             if ($group->sort_fields && $group->sort_fields->by) {
+                /** @noinspection PhpUndefinedFieldInspection */
                 $fieldset->setSortElementsByAttribute(
                     (string)$group->sort_fields->by,
                     $group->sort_fields->direction_desc ? SORT_DESC : SORT_ASC
@@ -269,6 +282,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     continue;
                 }
 
+                /** @noinspection PhpUndefinedMethodInspection */
                 if ((string)$element->getAttribute('type') == 'group') {
                     $this->_initGroup($fieldset->getForm(), $element, $section, $fieldset);
                     continue;
@@ -279,6 +293,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  */
                 $path = (string)$element->config_path;
                 if (empty($path)) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $path = $section->getName() . '/' . $group->getName() . '/' . $fieldPrefix . $element->getName();
                 } elseif (strrpos($path, '/') > 0) {
                     // Extend config data with new section group
@@ -301,7 +316,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  * backwards compatibility for those versions.
                  */
                 $version = Mage::getVersion();
-                $isEnterprise = Mage::helper('postnl')->isEnterprise();
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $isEnterprise = $helper->isEnterprise();
 
                 /**
                  * Get the minimum version requirement for the current Magento edition.
@@ -342,6 +359,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                 $helperName = $this->_configFields->getAttributeModule($section, $group, $element);
                 $fieldType  = (string)$element->frontend_type ? (string)$element->frontend_type : 'text';
+                /** @noinspection PhpUndefinedMethodInspection */
                 $name  = 'groups[' . $group->getName() . '][fields][' . $fieldPrefix.$element->getName() . '][value]';
                 $label =  Mage::helper($helperName)->__($labelPrefix) . ' '
                     . Mage::helper($helperName)->__((string)$element->label);
@@ -352,6 +370,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     if (!$model instanceof Mage_Core_Model_Config_Data) {
                         Mage::throwException('Invalid config field backend model: '.(string)$element->backend_model);
                     }
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $model->setPath($path)
                         ->setValue($data)
                         ->setWebsite($this->getWebsiteCode())
@@ -362,6 +381,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                 $comment = $this->_prepareFieldComment($element, $helperName, $data);
                 $tooltip = $this->_prepareFieldTooltip($element, $helperName);
+                /** @noinspection PhpUndefinedMethodInspection */
                 $id = $section->getName() . '_' . $group->getName() . '_' . $fieldPrefix . $element->getName();
 
                 if ($element->depends) {
@@ -378,6 +398,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         }
 
                         $dependentFieldNameValue = $dependent->getName();
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $dependentFieldGroup = $dependentFieldGroupName == $group->getName()
                             ? $group
                             : $this->_fieldsets[$dependentFieldGroupName]->getGroup();
@@ -395,7 +416,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             $dependentValue = array('eval' => (string) $dependent->eval);
                         }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
-                        $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
+                        /** @noinspection PhpUndefinedFieldInspection */
+                        $dependentField = $dependentFieldGroup->fields->$dependentFieldName;
                         /*
                          * If dependent field can't be shown in current scope and real dependent config value
                          * is not equal to preferred one, then hide dependence fields by adding dependence
@@ -457,6 +479,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 }
 
                 if (isset($element->autocomplete)) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setAutocomplete($element->autocomplete);
                 }
 
@@ -464,6 +487,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     && 'multiselect' === (string)$element->frontend_type
                     && isset($element->can_be_empty)
                 ) {
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setCanBeEmpty(true);
                 }
 
@@ -480,6 +504,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
                     $sourceModel = Mage::getSingleton($factoryName);
                     if ($sourceModel instanceof Varien_Object) {
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $sourceModel->setPath($path);
                     }
                     if ($method) {
@@ -492,8 +517,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             }
                         }
                     } else {
+                        /** @noinspection PhpUndefinedMethodInspection */
                         $optionArray = $sourceModel->toOptionArray($fieldType == 'multiselect');
                     }
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $field->setValues($optionArray);
                 }
             }
@@ -547,12 +574,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
      */
     protected function _prepareFieldTooltip($element, $helper)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         if ($element->tooltip_block) {
+            /** @noinspection PhpUndefinedFieldInspection */
+            /** @noinspection PhpUndefinedMethodInspection */
             return $this->getLayout()
                         ->createBlock((string)$element->tooltip_block)
                         ->setElement($element)
                         ->toHtml();
-        } elseif ($element->tooltip) {
+        } /** @noinspection PhpUndefinedFieldInspection */ elseif ($element->tooltip) {
+            /** @noinspection PhpUndefinedFieldInspection */
             return Mage::helper($helper)->__((string)$element->tooltip);
         }
 
@@ -571,6 +602,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             return false;
         }
 
+        /** @noinspection PhpUndefinedFieldInspection */
         $ifModuleEnabled = trim((string)$field->if_module_enabled);
         if ($ifModuleEnabled && !Mage::helper('Core')->isModuleEnabled($ifModuleEnabled)) {
             return false;
@@ -578,12 +610,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
         switch ($this->getScope()) {
             case self::SCOPE_DEFAULT:
+                /** @noinspection PhpUndefinedFieldInspection */
                 return (int)$field->show_in_default;
                 break;
             case self::SCOPE_WEBSITES:
+                /** @noinspection PhpUndefinedFieldInspection */
                 return (int)$field->show_in_website;
                 break;
             case self::SCOPE_STORES:
+                /** @noinspection PhpUndefinedFieldInspection */
                 return (int)$field->show_in_store;
                 break;
         }

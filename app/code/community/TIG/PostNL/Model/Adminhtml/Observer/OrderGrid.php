@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -108,6 +108,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          *
          * Unfortunately there is no unique event for this block.
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $block = $observer->getBlock();
         $orderGridClass = Mage::getConfig()->getBlockClassName(self::ORDER_GRID_BLOCK_NAME);
 
@@ -118,7 +119,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * check if the extension is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -127,6 +130,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Sales_Model_Resource_Order_Collection $currentCollection
          */
         $currentCollection = $block->getCollection();
+        /** @noinspection PhpUndefinedClassInspection */
         $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
 
         /**
@@ -135,6 +139,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          *
          * @todo see if this can be avoided in any way
          */
+        /** @var TIG_PostNL_Model_Resource_Order_Grid_Collection $collection */
         $collection = Mage::getResourceModel('postnl/order_grid_collection');
         $collection->setSelect($select)
                    ->setPageSize($currentCollection->getPageSize())
@@ -142,6 +147,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $this->setCollection($collection);
         $this->setBlock($block);
+        $block->setCollection($collection);
 
         $this->_joinCollection($collection);
         $this->_modifyColumns($block);
@@ -149,7 +155,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
-        $block->setCollection($collection);
         return $this;
     }
 
@@ -212,6 +217,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _joinCollection($collection)
     {
+        /** @var Mage_Core_Model_Resource $resource */
         $resource = Mage::getSingleton('core/resource');
 
         /**
@@ -338,6 +344,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $incrementIdColumn = $block->getColumn('real_order_id');
         if ($incrementIdColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $incrementIdColumn->setFilterIndex('main_table.increment_id');
         }
 
@@ -346,6 +353,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massactionColumn = $block->getColumn('massaction');
         if ($massactionColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $massactionColumn->setFilterIndex('main_table.entity_id');
         }
 
@@ -354,6 +362,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $statusColumn = $block->getColumn('status');
         if ($statusColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $statusColumn->setFilterIndex('main_table.status');
         }
 
@@ -362,6 +371,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $createdAtColumn = $block->getColumn('created_at');
         if ($createdAtColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $createdAtColumn->setFilterIndex('main_table.created_at');
         }
 
@@ -370,6 +380,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $baseGrandTotalColumn = $block->getColumn('base_grand_total');
         if ($baseGrandTotalColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
         }
 
@@ -378,6 +389,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $grandTotalColumn = $block->getColumn('grand_total');
         if ($grandTotalColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $grandTotalColumn->setFilterIndex('main_table.grand_total');
         }
 
@@ -386,6 +398,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $storeIdColumn = $block->getColumn('store_id');
         if ($storeIdColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $storeIdColumn->setFilterIndex('main_table.store_id');
         }
 
@@ -410,6 +423,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $adyenEventCodeColumn = $block->getColumn('adyen_event_code');
         if ($adyenEventCodeColumn) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $adyenEventCodeColumn->setFilterIndex('main_table.adyen_event_code');
         }
 
@@ -447,6 +461,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'monday'              => $helper->__('Monday Delivery'),
                 'sameday'             => $helper->__('Same Day Delivery'),
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
+                'food'                => $helper->__('Food Delivery'),
+                'cooledfood'          => $helper->__('Cooled Food Delivery'),
             ),
         );
 
@@ -542,7 +558,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * Decorates the confirm_sate column
      *
      * @param string|null                             $value
-     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Sales_Model_Order                  $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * @param boolean                                 $isExport
      *
@@ -556,9 +572,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $class = $this->_getConfirmDateClass($value, $row, $column);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $origValue = $row->getData($column->getIndex());
 
-        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $formattedDate = $helper->formatDate($origValue, 'full', false);
 
         $html = "<span class='{$class}' title='{$formattedDate}'><span>{$value}</span></span>";
         return $html;
@@ -579,7 +598,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return '';
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $origValue = $row->getData($column->getIndex());
+        /** @var Mage_Core_Model_Date $dateModel */
         $dateModel = Mage::getModel('core/date');
         $now       = new DateTime($dateModel->gmtDate(), new DateTimeZone('UTC'));
 
@@ -599,6 +620,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $interval            = $now->diff($origDate);
         $isConfirmed         = $this->_isRowConfirmed($row);
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         if ($isConfirmed ||
@@ -624,17 +646,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Checks if the row has been fully confirmed.
      *
-     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Sales_Model_Order $row
      *
      * @return boolean
      */
     protected function _isRowConfirmed($row)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $confirmStatus = $row->getConfirmStatus();
 
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $statusses = explode(',', $confirmStatus);
         foreach ($statusses as $status) {
@@ -666,6 +690,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return '';
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $origValues = $row->getData($column->getIndex());
         if (!$origValues) {
             $html = '<span class="grid-severity-minor"><span>' . $values . '</span></span>';
@@ -696,6 +721,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($status) {
@@ -735,6 +761,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         $html           = '';
+        /** @noinspection PhpUndefinedMethodInspection */
         $shippingPhases = explode(',', $row->getData($column->getIndex()));
         $values         = explode(',', $values);
 
@@ -758,6 +785,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($phase) {
@@ -793,6 +821,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
         /**
@@ -886,14 +915,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getCreateShipmentMassAction()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+        $adminhtmlHelper = Mage::helper('adminhtml');
 
         /**
          * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massCreateShipments'),
+            'url'  => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massCreateShipments'),
         );
 
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
@@ -979,6 +1011,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pg_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pg_be_options'])) {
+                $config['postnl_pg_be_options'] = array(
+                    'name'   => 'product_options[pg_be_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pg_be_options'],
                 );
             }
 
@@ -1090,6 +1131,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getProductOptions()
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $optionsModel */
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
         $options = array(
             'postnl_domestic_options' => $optionsModel->getOptions(
@@ -1113,6 +1155,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'   => 'pakjegemak_options',
                     'isCod'   => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_pg_be_options' => $optionsModel->getOptions(
+                array(
+                    'group'         => 'pakjegemak_be_options',
+                    'isCod'         => false,
+                    'isBelgiumOnly' => true,
                 ),
                 false,
                 true
@@ -1225,14 +1276,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getFullPostnlFlowMassAction()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+        $adminhtmlHelper = Mage::helper('adminhtml');
 
         /**
          * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print labels and confirm'),
-            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massFullPostnlFlow'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massFullPostnlFlow'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1254,14 +1308,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getFullPostnlFlowPackingSlipMassAction()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+        $adminhtmlHelper = Mage::helper('adminhtml');
 
         /**
          * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Create shipments, print packing slips and confirm'),
-            'url'   => Mage::helper('adminhtml')->getUrl(
+            'url'   => $adminhtmlHelper->getUrl(
                 'adminhtml/postnlAdminhtml_shipment/massFullPostnlFlowWithPackingSlip'
             ),
         );
@@ -1285,14 +1342,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _getCreatePackingSlipMassAction()
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
+        /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+        $adminhtmlHelper = Mage::helper('adminhtml');
 
         /**
          * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label' => $helper->__('PostNL - Print packing slips'),
-            'url'   => Mage::helper('adminhtml')->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingslips'),
+            'url'   => $adminhtmlHelper->getUrl('adminhtml/postnlAdminhtml_shipment/massPrintPackingslips'),
         );
 
         $defaultMassAction = Mage::getStoreConfig(
@@ -1314,12 +1374,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _applySortAndFilter()
     {
+        /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
+        $adminhtmlHelper = Mage::helper('adminhtml');
+
         $session = Mage::getSingleton('adminhtml/session');
 
         $filter = $session->getData(self::ORDER_GRID_FILTER_VAR_NAME);
-        $filter = Mage::helper('adminhtml')->prepareFilterString($filter);
+        $filter = $adminhtmlHelper->prepareFilterString($filter);
 
         if ($filter) {
+            /** @noinspection PhpParamsInspection */
             $this->_filterCollection($filter);
         }
 
@@ -1346,12 +1410,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
+            /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
             $column = $block->getColumn($columnName);
 
             if (!$column) {
                 continue;
             }
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);
         }
@@ -1369,13 +1435,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _filterShipmentType($collection, $column)
     {
-        $cond = $column->getFilter()->getCondition();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $cond       = $column->getFilter()->getCondition();
         $filterCond = $cond['eq'];
 
         /**
          * First filter out all non-postnl orders.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper = Mage::helper('postnl/carrier');
+        $postnlShippingMethods = $helper->getPostnlShippingMethods();
         $postnlShippingMethodsRegex = '';
         foreach ($postnlShippingMethods as $method) {
             if ($postnlShippingMethodsRegex) {
@@ -1485,7 +1554,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
          * need to explicitly filter those as well.
          */
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
+        $domesticCountry = $helper->getDomesticCountry();
         if ($filterCond == strtolower($domesticCountry)) {
             $collection->addFieldToFilter('country_id', $cond);
             $collection->addFieldToFilter(
@@ -1517,10 +1586,40 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * If the filter condition is EU, filter out all orders not being shipped to the EU and those being shipped to
          * the Netherlands
          */
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
+        $euCountries = $cifHelper->getEuCountries();
         if ($filterCond == 'eu') {
             $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
             $collection->addFieldToFilter('country_id', array('in', $euCountries));
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to cooled food, only return postnlorders of the type 'Cooledfood'.
+         */
+        if ($filterCond == 'cooledfood') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Cooledfood'),
+                )
+            );
+
+            return $this;
+        }
+
+        /**
+         * If the filter is set to food, only return postnlorders of the type 'Food'.
+         */
+        if ($filterCond == 'food') {
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'Food'),
+                )
+            );
 
             return $this;
         }
@@ -1550,6 +1649,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $cond = $filter->getCondition();
         if (!$cond) {
             return $this;
@@ -1582,13 +1682,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($column->getFilterConditionCallback()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
 
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $cond = $column->getFilter()->getCondition();
         if ($field && isset($cond)) {
             /**
@@ -1612,11 +1716,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
+        /** @var Mage_Adminhtml_Block_Widget_Grid_Column $column */
         $column = $block->getColumn($sort);
         if (!$column) {
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $column->setDir($dir);
         $this->_setCollectionOrder($column);
 
@@ -1637,7 +1743,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+        /** @noinspection PhpUndefinedMethodInspection */
         $collection->setOrder($columnIndex, strtoupper($column->getDir()));
         return $this;
     }

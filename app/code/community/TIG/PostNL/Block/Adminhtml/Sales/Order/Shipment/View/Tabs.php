@@ -33,8 +33,10 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs setTitle($title)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
@@ -79,14 +81,19 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
          */
         $shipment = Mage::registry('current_shipment');
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->loadByShipment($shipment);
+
+        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->loadByShipment($shipment);
 
         /**
          * Only show the status history tab if a postnl shipment entity was found for the current shipment and the
          * current admin user is allowed to view the complete shipment status history. If the shipment uses a custom
          * barcode we also can't show the status history, because custom barcodes can't be tracked.
          */
-        $historyAllowed = Mage::helper('postnl')->checkIsPostnlActionAllowed('view_complete_status');
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $historyAllowed = $helper->checkIsPostnlActionAllowed('view_complete_status');
         if ($historyAllowed && $postnlShipment->getId() && !$postnlShipment->hasCustomBarcode()) {
             /**
              * Add the status history tab. This is added by PostNL

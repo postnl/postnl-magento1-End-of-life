@@ -33,11 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection
 {
+    /** @noinspection PhpUndefinedClassInspection */
     /**
      * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
      *
@@ -50,14 +51,21 @@ class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sale
         $this->_renderFilters();
 
         $countSelect = clone $this->getSelect();
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::ORDER);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
+        /** @noinspection PhpUndefinedClassInspection */
         $countSelect->reset(Zend_Db_Select::COLUMNS);
 
+        /** @noinspection PhpUndefinedClassInspection */
         if(count($this->getSelect()->getPart(Zend_Db_Select::GROUP)) > 0) {
+            /** @noinspection PhpUndefinedClassInspection */
             $countSelect->reset(Zend_Db_Select::GROUP);
             $countSelect->distinct(true);
+            /** @noinspection PhpUndefinedClassInspection */
             $group = $this->getSelect()->getPart(Zend_Db_Select::GROUP);
             $countSelect->columns("COUNT(DISTINCT ".implode(", ", $group).")");
         } else {
