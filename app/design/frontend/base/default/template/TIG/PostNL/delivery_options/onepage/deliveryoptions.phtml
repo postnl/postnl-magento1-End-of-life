@@ -191,13 +191,13 @@
         timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
-        housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
-        street             : '<?php echo $this->escapeHtml($_street); ?>',
-        country            : '<?php echo $this->escapeHtml($_country); ?>',
-        deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
+        postcode           : '<?php echo $this->escapeJavascriptHtml($_postcode); ?>',
+        housenumber        : '<?php echo $this->escapeJavascriptHtml($_housenumber); ?>',
+        street             : '<?php echo $this->escapeJavascriptHtml($_street); ?>',
+        country            : '<?php echo $this->escapeJavascriptHtml($_country); ?>',
+        deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo $this->escapeHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
+        fullAddress        : "<?php echo $this->escapeJavascriptHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
     };
 
     options = {

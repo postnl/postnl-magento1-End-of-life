@@ -38,8 +38,15 @@
  *
  */
 ?>
-<?php /** @var TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions $this */ ?>
-<?php $_helper = Mage::helper('postnl'); ?>
+<?php
+/** @var TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions $this */
+
+/** @var TIG_PostNL_Helper_Data $_helper */
+$_helper = Mage::helper('postnl');
+
+/** @var TIG_PostNL_Helper_DeliveryOptions $_deliveryOptionsHelper */
+$_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
+?>
 
 <?php $_postnlOrder = $this->getPostnlOrder(); ?>
 
@@ -60,7 +67,7 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if ($_postnlOrder->getOrder()->getShippingAddress()->getCountryId() == $_helper->getDomesticCountry() || $_postnlOrder->getOrder()->getShippingAddress()->getCountryId() == 'BE'): ?>
+            <?php if ($_deliveryOptionsHelper->canUseDutchProducts()): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
                     <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>

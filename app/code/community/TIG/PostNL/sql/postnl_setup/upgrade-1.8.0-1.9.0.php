@@ -135,6 +135,13 @@ $conn->modifyColumn(
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
+$applyTo = array(
+    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+    Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+);
+
 /**
  * Add PostNL product type attribute to products.
  */
@@ -170,6 +177,7 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_type')) {
             'used_for_sort_by'           => false,
             'position'                   => 0,
             'used_for_promo_rules'       => false,
+            'apply_to'                   => implode(',', $applyTo),
         )
     );
 }

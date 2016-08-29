@@ -122,3 +122,15 @@
         <p><a class="postnl-hide-notification-link" data-notification_code="test_mode_warning" href="#" title="<?php echo $this->__('Hide this warning.'); ?>"><?php echo $this->__('Hide this warning.'); ?></a></p>
     </div>
 <?php endif; ?>
+
+<?php if ($this->needsDutchAddress()): ?>
+    <div class="module-message warning">
+        <h4>[POSTNL-0243] <?php echo $this->__('The current PostNL Extension configuration requires you to set an Dutch address.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0243'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TIG knowledgebase.') ?></a></h4>
+    </div>
+<?php endif; ?>
+
+<?php if ($this->needsDutchCustomerCodeOrNumber()): ?>
+    <div class="module-message warning">
+        <h4>[POSTNL-0244] <?php echo $this->__('Please enter your Dutch customer code and number.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0244'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TIG knowledgebase.') ?></a></h4>
+    </div>
+<?php endif; ?>

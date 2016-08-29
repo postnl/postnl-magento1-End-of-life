@@ -41,7 +41,8 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS   = 'postnl/grid/supported_product_options';
+    const XPATH_USE_DUTCH_PRODUCTS          = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * @var array
@@ -65,6 +66,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
         $options = $this->_options;
+
         if (!empty($flags)) {
             foreach ($options as $key => $option) {
                 if (!$this->_optionMatchesFlags($option, $flags)) {

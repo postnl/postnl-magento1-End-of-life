@@ -964,4 +964,21 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
 
         return $dateObject->format('d-m-Y');
     }
+
+    /**
+     * We added addslashes here to escape ' characters.
+     *
+     * @param mixed $data
+     * @param null  $allowedTags
+     *
+     * @return string
+     */
+    public function escapeJavascriptHtml($data, $allowedTags = null)
+    {
+        if (is_string($data)) {
+            return addslashes(parent::escapeHtml($data, $allowedTags));
+        } else {
+            return parent::escapeHtml($data, $allowedTags);
+        }
+    }
 }

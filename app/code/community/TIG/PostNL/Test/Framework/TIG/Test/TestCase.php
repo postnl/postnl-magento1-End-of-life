@@ -235,4 +235,53 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
     {
         return Mage::getConfig();
     }
+
+    /**
+     * Returns the instance. Should be overridden.
+     *
+     * @return null
+     */
+    protected function _getInstance()
+    {
+        return null;
+    }
+
+    /**
+     * Sets a protected property to the provided value.
+     *
+     * @param      $property
+     * @param      $value
+     * @param null $instance
+     *
+     * @return $this
+     */
+    public function setProperty($property, $value, $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $reflection = new ReflectionObject($instance);
+        $property = $reflection->getProperty($property);
+        $property->setAccessible(true);
+        $property->setValue($instance, $value);
+
+        return $this;
+    }
+
+    /**
+     * Updates a specific key.
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setRegistryKey($key, $value)
+    {
+        Mage::unregister($key);
+        Mage::register($key, $value);
+
+        return $this;
+    }
 }

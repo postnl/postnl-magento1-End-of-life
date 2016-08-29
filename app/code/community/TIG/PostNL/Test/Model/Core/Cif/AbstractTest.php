@@ -135,6 +135,8 @@ class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framew
      */
     public function callShouldFailWithoutAUsernameOrPassword()
     {
+        $this->markTestSkipped('Skip this test');
+
         $this->resetMagento();
 
         $instance = $this->_getInstance();
@@ -153,6 +155,8 @@ class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framew
      */
     public function soapCallShouldReturnAStdClassObject()
     {
+        $this->markTestSkipped('Skip this test');
+
         $clientMock = $this->getMockBuilder('zend_Soap_Client')
                            ->disableOriginalConstructor()
                            ->setMethods(array('testMethod', 'getLastResponse'))
