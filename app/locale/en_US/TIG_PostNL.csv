@@ -797,7 +797,7 @@ TIG_PostNL::The customer was redirected to the cart because the quote was empty.
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,The customer was redirected to the cart because the quote had the following error(s): %s.
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,The customer was redirected to the cart because the quote is multishipping.
 TIG_PostNL::more delivery times and pick-up locations,more delivery times and pick-up locations
-TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Select this checkbox to only show post office locations that are open as early as 8:30 A.M.
+TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 9:00 A.M.,Select this checkbox to only show post office locations that are open as early as 9:00 A.M.
 TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.
 TIG_PostNL::COD,COD
 TIG_PostNL::COD + Extra cover,COD + Extra cover
@@ -977,7 +977,7 @@ TIG_PostNL::hour,hour
 TIG_PostNL::minutes,minutes
 TIG_PostNL::Delivery date:,Delivery date:
 TIG_PostNL::(evening),(evening)
-TIG_PostNL::(from 8:30 A.M.),(from 8:30 A.M.)
+TIG_PostNL::(from 9:00 A.M.),(from 9:00 A.M.)
 PostNL Max Qty For Letter Box Parcels,PostNL Max Qty For Letter Box Parcels
 PostNL Allow Delivery Options,PostNL Allow Delivery Options
 PostNL Shipping Duration,PostNL Shipping Duration
