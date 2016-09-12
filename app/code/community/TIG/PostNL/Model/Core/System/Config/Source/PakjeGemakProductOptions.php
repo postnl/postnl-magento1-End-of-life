@@ -109,7 +109,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         ),
         array(
             'value'         => '4932',
-            'label'         => 'Post Office (Belgium)',
+            'label'         => 'Post Office Belgium',
             'isExtraCover'  => false,
             'isPge'         => false,
             'isCod'         => false,
@@ -117,7 +117,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         ),
         array(
             'value'         => '4878',
-            'label'         => 'Post Office (Belgium) + Extra Cover',
+            'label'         => 'Post Office Belgium + Extra Cover',
             'isExtraCover'  => true,
             'isPge'         => false,
             'isCod'         => false,
@@ -125,7 +125,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         ),
         array(
             'value'         => '4880',
-            'label'         => 'Post Office (Belgium)',
+            'label'         => 'Post Office Belgium',
             'isExtraCover'  => false,
             'isPge'         => false,
             'isCod'         => false,
@@ -163,12 +163,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             if (!$asFlatArray) {
                 $options[] = array(
                     'value'         => '4936',
-                    'label'         => $helper->__('Post Office (Belgium)'),
+                    'label'         => $helper->__('Post Office Belgium'),
                     'isBelgiumOnly' => true,
                     'isExtraCover'  => false,
                 );
             } else {
-                $options['4936'] = $helper->__('Post Office (Belgium)');
+                $options['4936'] = $helper->__('Post Office Belgium');
             }
         }
 

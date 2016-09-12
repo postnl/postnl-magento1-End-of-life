@@ -254,8 +254,6 @@ TIG_PostNL::Invalid Table Rate code type:,Ongeldig code type
 TIG_PostNL::Invalid Table Rate code for type %s:,Ongeldige code voor %s
 TIG_PostNL::Flat,Plat
 TIG_PostNL::Table,Tabel
-TIG_PostNL::Post Office + Extra Cover,Postkantoor + extra verzekerd
-TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + extra verzekerd + notificatie
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
 TIG_PostNL::Metric,Metrisch
@@ -312,6 +310,8 @@ TIG_PostNL::Post Office + Extra Cover,Postkantoor + verhoogd aansprakelijk
 TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + verhoogd aansprakelijk + notificatie
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
+TIG_PostNL::Post Office Belgium + Extra Cover,Ophalen bij PostNL Locatie België - verzekerd
+TIG_PostNL::Post Office Belgium,Postkantoor België
 TIG_PostNL::EU options,EU opties
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
 "TIG_PostNL::EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen België zonder handtekening)

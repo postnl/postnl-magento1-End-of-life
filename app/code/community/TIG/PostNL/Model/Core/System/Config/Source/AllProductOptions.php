@@ -281,7 +281,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4932' => array(
             'value'             => '4932',
-            'label'             => 'Post Office',
+            'label'             => 'Post Office Belgium',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
@@ -292,7 +292,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4878' => array(
             'value'             => '4878',
-            'label'             => 'Post Office + Extra Cover',
+            'label'             => 'Post Office Belgium + Extra Cover',
             'isExtraCover'      => true,
             'isSunday'          => false,
             'isPge'             => false,
@@ -303,7 +303,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4880' => array(
             'value'             => '4880',
-            'label'             => 'Post Office',
+            'label'             => 'Post Office Belgium',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
@@ -553,7 +553,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             if (!$asFlatArray) {
                 $options[] = array(
                     'value'             => '4936',
-                    'label'             => $helper->__('Post Office (Belgium)'),
+                    'label'             => $helper->__('Post Office Belgium'),
                     'isBelgiumOnly'     => true,
                     'isExtraCover'      => false,
                     'isAvond'           => false,
@@ -563,7 +563,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     'group'             => 'pakjegemak_be_options'
                 );
             } else {
-                $options['4936'] = $helper->__('Post Office (Belgium)');
+                $options['4936'] = $helper->__('Post Office Belgium');
             }
         }
 

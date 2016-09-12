@@ -258,6 +258,8 @@ TIG_PostNL::Post Office + Extra Cover,Post Office + Extra Cover
 TIG_PostNL::Post Office + Extra Cover + Notification,Post Office + Extra Cover + Notification
 TIG_PostNL::Post Office + Signature on Delivery,Post Office + Signature on Delivery
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Post Office + Signature on Delivery + Notification
+TIG_PostNL::Post Office Belgium + Extra Cover,Post Office Belgium + Extra Cover
+TIG_PostNL::Post Office Belgium,Post Office Belgium
 TIG_PostNL::Metric,Metric
 TIG_PostNL::Tonne (t),Tonne (t)
 TIG_PostNL::Kilogram (kg),Kilogram (kg)
