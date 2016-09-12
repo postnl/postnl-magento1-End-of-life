@@ -51,6 +51,11 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const CSV_SEPARATOR = ';';
 
     /**
+     * The separator used for the Parcelware export.
+     */
+    const CSV_SEPARATOR = ';';
+
+    /**
      * @var Mage_Core_Model_Resource_Transaction|void
      */
     protected $_transactionSave;

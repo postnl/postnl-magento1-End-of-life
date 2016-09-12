@@ -1632,7 +1632,7 @@ PostnlDeliveryOptions.prototype = {
         if (selectedType == 'PG' || selectedType == 'PA') {
             from = '15:00:00';
         } else if (selectedType == 'PGE') {
-            from = '08:30:00'
+            from = '09:00:00'
         }
 
         var params = {
@@ -4436,10 +4436,10 @@ PostnlDeliveryOptions.Location = new Class.create({
         optionHtml += '<span class="option-radio"></span>';
 
         /*
-         * Opening times are hardoded as 8:30 A.M. for PGE locations and 4:00 P.M. for other loations.
+         * Opening times are hardoded as 9:00 A.M. for PGE locations and 4:00 P.M. for other loations.
          */
         if (type == 'PGE') {
-            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
+            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 9:00</span>';
         } else {
             optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 15:00</span>';
         }
@@ -5424,9 +5424,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
             var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
             if (date.getDay() == 6) {
-                openingHours += '08:30 - 18:00';
+                openingHours += '09:00 - 18:00';
             } else {
-                openingHours += '08:30 - 21:30';
+                openingHours += '09:00 - 21:30';
             }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()

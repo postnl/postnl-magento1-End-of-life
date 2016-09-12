@@ -51,6 +51,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const EVENING_DELIVERY_OPTION            = 'Evening';
     const SUNDAY_DELIVERY_OPTION             = 'Sunday';
     const SAMEDAY_DELIVERY_OPTION            = 'Sameday';
+    const PICKUP_DELIVERY_OPTION             = 'Pickup';
 
     /**
      * Config options used by the getDeliveryDate service.
@@ -609,7 +610,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
-        $options[] = self::DOMESTIC_DELIVERY_OPTION;
+        if ($country == 'BE') {
+            $options[] = self::PICKUP_DELIVERY_OPTION;
+        } else {
+            $options[] = self::DOMESTIC_DELIVERY_OPTION;
+        }
 
         if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
