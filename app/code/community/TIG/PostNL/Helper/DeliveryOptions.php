@@ -2401,9 +2401,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
         /**
-         * Delivery options are only available when shipping from the Netherlands.
+         * Delivery options are only available when shipping from the Netherlands or Belgium.
          */
-        if (!$this->canUseDutchProducts()) {
+        if (!$this->getDomesticCountry() == 'NL' || !$this->getDomesticCountry() == 'BE') {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2414,7 +2414,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0237',
                     'message' => $this->__(
-                        'Delivery options are only available when shipping from the Netherlands.'
+                        'Delivery options are only available when shipping from the Netherlands or Belgium.'
                     ),
                 )
             );
@@ -3322,17 +3322,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $isActive = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        $isActiveNL = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        $isActiveBE = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $storeId);
 
-        if (!$isActive) {
-            $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
-
-            $xpathDeliveryInt = 'XPATH_DELIVERY_OPTIONS_' . $shippingCountry . '_ACTIVE';
-            $xpathDeliveryIntVal = constant('self::' . $xpathDeliveryInt);
-            $isActive = Mage::getStoreConfigFlag($xpathDeliveryIntVal, $storeId);
-        }
-
-        return $isActive;
+        return $isActiveNL || $isActiveBE;
     }
 
     /**
