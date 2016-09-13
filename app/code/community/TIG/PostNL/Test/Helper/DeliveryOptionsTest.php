@@ -242,4 +242,31 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
     }
+
+    public function isDeliveryOptionsActiveDataProvider()
+    {
+        return array(
+            array(true, true, true),
+            array(true, false, true),
+            array(false, true, true),
+            array(false, false, false),
+        );
+    }
+
+    /**
+     * @dataProvider isDeliveryOptionsActiveDataProvider
+     *
+     * @param $enableNL
+     * @param $enableBE
+     * @param $result
+     */
+    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
+    {
+        $helper = $this->_getInstance();
+
+        Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_ACTIVE, $enableNL);
+        Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $enableBE);
+
+        $this->assertEquals($result, $helper->isDeliveryOptionsActive());
+    }
 }
