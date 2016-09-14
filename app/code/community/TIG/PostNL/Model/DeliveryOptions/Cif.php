@@ -90,11 +90,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return string
+     * @param string                 $for delivery or pickup
      *
+     * @return string
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote)
+    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote, $for = 'delivery')
     {
         if (empty($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -126,7 +127,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
-        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country);
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country, $for);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -166,13 +167,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Get evening time frames for the specified postcode and delivery window.
      *
-     * @param array $data
+     * @param array  $data
      *
-     * @return StdClass[]|false
+     * @param string $for delivery or pickup
      *
+     * @return false|StdClass[]
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryTimeframes($data)
+    public function getDeliveryTimeframes($data, $for = 'delivery')
     {
         if (empty($data)) {
             throw new TIG_PostNL_Exception(
@@ -202,7 +204,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
-        $options = $this->_getDeliveryTimeframesOptionsArray($data['country']);
+        $options = $this->_getDeliveryTimeframesOptionsArray($data['country'], $for);
 
         $soapParams = array(
             'Timeframe' => array(
@@ -585,9 +587,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * @param null   $shippingDuration
      * @param string $country
      *
+     * @param string $for delivery or pickup
+     *
      * @return array
      */
-    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL')
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL', $for = 'delivery')
     {
         $storeId = $this->getStoreId();
 
@@ -610,7 +614,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
-        if ($country == 'BE') {
+        if ($country == 'BE' && $for == 'pickup') {
             $options[] = self::PICKUP_DELIVERY_OPTION;
         } else {
             $options[] = self::DOMESTIC_DELIVERY_OPTION;

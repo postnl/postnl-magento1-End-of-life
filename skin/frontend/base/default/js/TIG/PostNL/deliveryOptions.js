@@ -134,6 +134,7 @@ PostnlDeliveryOptions.prototype = {
     country                  : null,
     fullAddress              : null,
     deliveryDate             : null,
+    pickupDate               : null,
     imageBaseUrl             : null,
 
     pgLocation               : false,
@@ -182,6 +183,7 @@ PostnlDeliveryOptions.prototype = {
             || !params.city
             || !params.country
             || !params.deliveryDate
+            || !params.pickupDate
             || !params.imageBaseUrl
             || !params.fullAddress
         ) {
@@ -200,6 +202,7 @@ PostnlDeliveryOptions.prototype = {
         this.city               = params.city;
         this.country            = params.country;
         this.deliveryDate       = params.deliveryDate;
+        this.pickupDate         = params.pickupDate;
         this.imageBaseUrl       = params.imageBaseUrl;
         this.fullAddress        = params.fullAddress;
 
@@ -331,6 +334,10 @@ PostnlDeliveryOptions.prototype = {
 
     getDeliveryDate : function() {
         return this.deliveryDate;
+    },
+
+    getPickupDate : function() {
+        return this.pickupDate;
     },
 
     getImageBasUrl : function() {
@@ -4012,13 +4019,13 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {void}
      */
     initialize : function(location, deliveryOptions, type) {
-        var deliveryDate = deliveryOptions.getDeliveryDate();
+        var pickupDate = deliveryOptions.getPickupDate();
         var today = new Date();
         var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
 
-        if (deliveryDate == formattedToday) {
+        if (pickupDate == formattedToday) {
             today.setTime(today.getTime() + 86400000);
-            deliveryDate = PostnlDeliveryOptions.prototype.formatDate(today);
+            pickupDate = PostnlDeliveryOptions.prototype.formatDate(today);
         }
 
         this.address           = location.Address;
@@ -4029,7 +4036,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryDate;
+        this.date              = pickupDate;
         this.isEveningLocation = location.isEvening;
         this.retailNetworkID   = location.RetailNetworkID;
 

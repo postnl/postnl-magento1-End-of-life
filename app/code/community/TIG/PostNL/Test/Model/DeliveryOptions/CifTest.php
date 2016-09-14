@@ -153,4 +153,43 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
 
         $this->assertEquals($expectedDateTime, $deliveryDate);
     }
+
+    public function differentOptionsForBelgiumDataProvder()
+    {
+        return array(
+            array('NL', 'pickup', false),
+            array('BE', 'pickup', true),
+            array('NL', 'delivery', false),
+            array('BE', 'delivery', false),
+        );
+    }
+
+    /**
+     * @dataProvider differentOptionsForBelgiumDataProvder
+     */
+    public function testDifferentOptionsForBelgium($country, $type, $shouldContainPickup)
+    {
+        $dateTomorrow = new DateTime('now + 1day');
+        $expectedDateTime = $dateTomorrow->format('d-m-Y');
+
+        $soapResponse = new stdClass();
+        $soapResponse->DeliveryDate = $expectedDateTime;
+
+        $mockSoapClient = $this->_getSoapClient();
+        $mockSoapClient->expects($this->once())
+            ->method('GetDeliveryDate')
+            ->with( $this->callback( function ($arguments) use ($shouldContainPickup) {
+                if ($shouldContainPickup) {
+                    return in_array('Pickup', $arguments['GetDeliveryDate']['Options']);
+                } else {
+                    return !in_array('Pickup', $arguments['GetDeliveryDate']['Options']);
+                }
+            }))
+            ->willReturn($soapResponse);
+
+        $quote = $this->_getQuote();
+        $instance = $this->_getInstance();
+        $instance->setSoapClient($mockSoapClient);
+        $instance->getDeliveryDate('2000', $country, $quote, $type);
+    }
 }
