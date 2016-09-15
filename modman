@@ -12,6 +12,8 @@ app/locale/en_US/template/email/TIG/PostNL/
 app/locale/en_US/TIG_PostNL.csv
 app/locale/nl_NL/template/email/TIG/PostNL/
 app/locale/nl_NL/TIG_PostNL.csv
+app/locale/fr_FR/template/email/TIG/PostNL/
+app/locale/fr_FR/TIG_PostNL.csv
 lib/TIG/PostNL/
 skin/adminhtml/default/default/css/TIG/PostNL/
 skin/adminhtml/default/default/images/TIG/PostNL/
