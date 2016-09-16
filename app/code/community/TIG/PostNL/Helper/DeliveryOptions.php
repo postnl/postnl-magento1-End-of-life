@@ -2337,8 +2337,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $cache = $this->getCache();
 
-        if ($cache && $cache->hasPostnlDeliveryOPtionsCanUseIdCheckDelivery()) {
-            return $cache->getPostnlDeliveryOPtionsCanUseIdCheckDelivery();
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseIdCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseIdCheckDelivery();
         }
 
         $storeId = Mage::app()->getStore()->getId();
@@ -2349,7 +2349,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if ($cache) {
-            $cache->setPostnlDeliveryOPtionsCanUseIdCheckDelivery($allowed)
+            $cache->setPostnlDeliveryOptionsCanUseIdCheckDelivery($allowed)
                 ->saveCache();
         }
 
