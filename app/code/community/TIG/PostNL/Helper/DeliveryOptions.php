@@ -75,6 +75,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
     const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
+    const XPATH_ENABLE_ID_CHECK_DELIVERY           = 'postnl/delivery_options/enable_id_check_delivery';
     const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
@@ -155,6 +156,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     protected $_foodProductCodes = array(
         '3083',
         '3084',
+    );
+
+    protected $_idCheckProductCodes = array(
+        '1178',
+        '1179',
+        '1180',
+        '3438',
+        '3440',
+        '3442'
     );
 
     /**
@@ -2280,7 +2290,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if at least one food product code is avaialble in the config.
+     * Check if at least one food product code is available in the config.
      *
      * @param null $storeId
      *
@@ -2298,6 +2308,73 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         foreach ($this->_foodProductCodes as $foodProductCode) {
             if (in_array($foodProductCode, $availableProductOptions)) {
+                $available = true;
+                break;
+            }
+        }
+
+        return $available;
+    }
+
+    /**
+     * Determines if id check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseIdCheckDelivery()
+    {
+        return $this->_canUseIdCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if ID Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseIdCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOPtionsCanUseIdCheckDelivery()) {
+            return $cache->getPostnlDeliveryOPtionsCanUseIdCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_ID_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getIdCheckProductOptionsAvailable($storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOPtionsCanUseIdCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check if at least one ID Check product code is available in the config.
+     *
+     * @param null $storeId
+     *
+     * @return bool
+     */
+    protected function _getIdCheckProductOptionsAvailable($storeId = null)
+    {
+        $available = false;
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $availableProductOptions = explode(',', Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId));
+
+        foreach ($this->_idCheckProductCodes as $idCheckProductCode) {
+            if (in_array($idCheckProductCode, $availableProductOptions)) {
                 $available = true;
                 break;
             }

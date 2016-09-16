@@ -452,6 +452,78 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'cooled_options',
         ),
+        '1178' => array(
+            'value'             => '1178',
+            'label'             => 'Letter with ID check (based on date of birth)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
+        '1179' => array(
+            'value'             => '1179',
+            'label'             => 'Letter with age check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
+        '1180' => array(
+            'value'             => '1180',
+            'label'             => 'Letter with ID check (based on ID-number)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
+        '3438' => array(
+            'value'             => '3438',
+            'label'             => 'Parcel with age check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
+        '3440' => array(
+            'value'             => '3440',
+            'label'             => 'Parcel with ID check (based on date of birth)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
+        '3442' => array(
+            'value'             => '3442',
+            'label'             => 'Parcel with ID check (based on ID-number)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => true,
+            'countryLimitation' => false,
+            'group'             => 'id_check_options'
+        ),
     );
 
     /**
@@ -468,6 +540,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'sunday_options'         => 'Sunday options',
         'food_options'           => 'Food Delivery Options',
         'cooled_options'         => 'Cooled Delivery Options',
+        'id_check_options'       => 'ID Check Delivery Options',
     );
 
     /**

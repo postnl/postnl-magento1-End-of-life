@@ -2633,7 +2633,7 @@
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_productType</backend_model>
                             <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>390</sort_order>
+                            <sort_order>385</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2650,6 +2650,20 @@
                                 </country>
                             </depends>
                         </food_delivery_default_product_type>
+                        <enable_id_check_delivery>
+                            <label>Enable ID check delivery</label>
+                            <comment>This product offers you the ability to make sure that confidential and age-validation transactions can be secure. Please consult your PostNL account manager for more information about activating this service for your account.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>390</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_id_check_delivery>
                         <delivery_options_in_belgium_header translate="label" module="postnl">
                             <label>PostNL delivery options in Belgium</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>

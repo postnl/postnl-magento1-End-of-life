@@ -1401,3 +1401,13 @@ TIG_PostNL::Please enter your Dutch customer code and number.,Vul uw Nederlandse
 TIG_PostNL::View the documentation.,Bekijk de documentatie.
 TIG_PostNL::Documentation,Documentatie
 TIG_PostNL::Unable to save down partner data.,Het is niet gelukt bij deze zending de down partner gegevens op te slaan.
+TIG_PostNL::ID Check Delivery Options,ID Controle Bezorging Opties
+TIG_PostNL::Enable ID check delivery,Activeer ID Controle Bezorging
+"TIG_PostNL::This product offers you the ability to make sure that confidential and age-validation transactions can be secure. Please consult your PostNL account manager for more information about activating this service for your account.,Dit product biedt u de mogelijkheid om ervoor te zorgen dat vertrouwelijke en leeftijd - validatie transacties veilig verstuurd worden. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie."
+"TIG_PostNL::Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.,Activeer ID controle levering, als u producten heeft waarbij indentificatie of leeftijd controle nodig is. Het is mogelijk om de bezorger dit te controleren aan de deur."
+TIG_PostNL::Letter with ID check (based on date of birth),Brief met ID controle (gebaseerd op geboortedatum)
+TIG_PostNL::Letter with age check, Brief met leeftijd controle
+TIG_PostNL::Letter with ID check (based on ID-number), Brief met ID controle (gebaseerd op ID-nummer)
+TIG_PostNL::Pakket with ID check (based on date of birth),Pakket met ID controle (gebaseerd op geboortedatum)
+TIG_PostNL::Pakket with age check, Pakket met leeftijd controle
+TIG_PostNL::Pakket with ID check (based on ID-number), Pakket met ID controle (gebaseerd op ID-nummer)

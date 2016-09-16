@@ -897,6 +897,7 @@
                 <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
                 <enable_food_delivery>0</enable_food_delivery> <!-- Disable food delivery -->
                 <food_delivery_default_product_type>0</food_delivery_default_product_type> <!-- By default products are considered non-food. -->
+                <enable_id_check_delivery>0</enable_id_check_delivery> <!-- Disable ID check delivery -->
                 <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
                 <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
                 <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
