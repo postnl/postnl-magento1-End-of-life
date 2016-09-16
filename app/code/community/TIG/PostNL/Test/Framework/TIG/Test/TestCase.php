@@ -216,7 +216,7 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
      * @param string $helperClass
      * @param object $mock
      *
-     * @return TIG_Test_TestCase
+     * @return $this
      */
     public function setHelperMock($helperClass, $mock)
     {

@@ -1226,7 +1226,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_PG:
                 if ($this->isBelgiumShipment() &&
-                    $this->getHelper()->canUsePakjegemakNotInsured($this->getStoreId())
+                    $this->getHelper()->canUsePakjegemakBeNotInsured($this->getStoreId())
                 ) {
                     $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
                 } elseif ($this->isBelgiumShipment()) {
