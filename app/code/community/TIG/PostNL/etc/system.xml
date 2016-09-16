@@ -2651,8 +2651,8 @@
                             </depends>
                         </food_delivery_default_product_type>
                         <enable_id_check_delivery>
-                            <label>Enable ID check delivery</label>
-                            <comment>This product offers you the ability to make sure that confidential and age-validation transactions can be secure. Please consult your PostNL account manager for more information about activating this service for your account.</comment>
+                            <label>Enable ID check delivery (based on ID-number)</label>
+                            <comment>With this product person verification is done based on the ID document number.</comment>
                             <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
@@ -2664,6 +2664,34 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </enable_id_check_delivery>
+                        <enable_birthday_check_delivery>
+                            <label>Enable ID check delivery (based on date of birth)</label>
+                            <comment>With this product person verification is done based on date of birth.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>391</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_birthday_check_delivery>
+                        <enable_age_check_delivery>
+                            <label>Enable Age check delivery</label>
+                            <comment>With this product is checked whether a person is older than 18 years.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>392</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_age_check_delivery>
                         <delivery_options_in_belgium_header translate="label" module="postnl">
                             <label>PostNL delivery options in Belgium</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -5402,6 +5430,84 @@
                                 </country>
                             </depends>
                         </default_sunday_product_option>
+                        <default_id_check_product_option translate="label tooltip" module="postnl">
+                            <label>Default ID check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_idCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>161</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_id_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_id_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_id_check_product_option>
+                        <default_age_check_product_option translate="label tooltip" module="postnl">
+                            <label>Default Age check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_ageCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>162</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_age_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_age_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_age_check_product_option>
+                        <default_birthday_check_product_option translate="label tooltip" module="postnl">
+                            <label>Default Birthday check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_birthdayCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>163</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_birthday_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_birthday_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_birthday_check_product_option>
                         <default_sameday_product_option translate="label tooltip" module="postnl">
                             <label>Default same day delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
