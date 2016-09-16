@@ -363,6 +363,10 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
                 return false;
             }
         }
+        $allowForBuspakje = $this->getConfigData('allow_for_buspakje');
+        if($allowForBuspakje == 0){
+            return false;
+        }
         return true;
     }
 
