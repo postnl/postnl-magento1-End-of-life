@@ -54,8 +54,8 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_AgeCheckProductOptionsTest
     public function hasAgeCheckProductCodesDataProvider()
     {
         return array(
-            array('4878'),
-            array('4848'),
+            array('3438'),
+            array('3446'),
         );
     }
 

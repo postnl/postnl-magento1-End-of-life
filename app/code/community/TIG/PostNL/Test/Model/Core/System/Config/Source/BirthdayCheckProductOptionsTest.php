@@ -54,8 +54,8 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_BirthdayCheckProductOption
     public function hasBirtdayCheckProductCodesDataProvider()
     {
         return array(
-            array('3445'),
-            array('3447'),
+            array('3444'),
+            array('3440'),
         );
     }
 

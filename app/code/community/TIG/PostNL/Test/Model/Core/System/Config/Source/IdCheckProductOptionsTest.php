@@ -54,8 +54,8 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_IdCheckProductOptionsTest 
     public function hasIdCheckProductCodesDataProvider()
     {
         return array(
+            array('3442'),
             array('3445'),
-            array('4848'),
         );
     }
 
