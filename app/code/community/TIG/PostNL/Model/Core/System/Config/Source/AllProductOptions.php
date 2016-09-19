@@ -779,8 +779,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'sunday_options'         => 'Sunday options',
         'food_options'           => 'Food Delivery Options',
         'cooled_options'         => 'Cooled Delivery Options',
-        'agecheck_options'       => 'Parcel with Agecheck Options',
-        'id_check_options'       => 'Parcel with IDcheck Options',
+        'agecheck_options'       => 'Parcel with Age check Options',
+        'id_check_options'       => 'Parcel with ID check Options',
         'birthday_check_options' => 'Parcel with Birthday Check Options',
     );
 
