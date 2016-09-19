@@ -30,7 +30,7 @@
 /* Buttons */
 .postnl-container .button { border:0; padding:0; margin:0; background:transparent; overflow:visible; cursor:pointer; vertical-align:middle; }
 .postnl-container .button span { border:0; padding:0 0 0 12px; margin:0; cursor:pointer; display:-moz-inline-stack; display:inline-block; height:26px; color:#fff; text-decoration:none; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_button.png) 0 -68px no-repeat; }
-.postnl-container .button span span { padding:0 12px 0 0; background-position:100% -68px; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
+.postnl-container .button span span { padding:0 12px 0; background-position:100% -68px; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
 .postnl-container .button.disabled span { background-position:0 -94px; color:#b0b0b0 !important; cursor:default !important; }
 .postnl-container .button.disabled span span { background-position:100% -94px; }
 
