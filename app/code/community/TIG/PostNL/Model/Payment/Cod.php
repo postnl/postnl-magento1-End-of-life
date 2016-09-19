@@ -49,6 +49,11 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     const XPATH_COD_FEE = 'payment/postnl_cod/fee';
 
     /**
+     * Xpath to the 'allow_for_buspakje' configuration setting.
+     */
+    const XPATH_ALLOW_FOR_BUSPAKJE = 'payment/postnl_cod/allow_for_buspakje';
+
+    /**
      * This payment method's unique code.
      *
      * @var string
@@ -292,6 +297,16 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         /**
+         * Check if COD is available in combination with Buspakje.
+         */
+        if (!$this->canShowForBuspakje()) {
+            $helper->log(
+                $helper->__('PostNL Cod is not for Buspakje shipments.')
+            );
+            return false;
+        }
+
+        /**
          * Finally, perform Magento's own checks.
          */
         $parentIsAvailable = parent::isAvailable($quote);
@@ -363,10 +378,6 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
                 return false;
             }
         }
-        $allowForBuspakje = $this->getConfigData('allow_for_buspakje');
-        if($allowForBuspakje == 0){
-            return false;
-        }
         return true;
     }
 
@@ -410,5 +421,43 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          */
         $title = sprintf($title, $fee);
         return $title;
+    }
+
+    /**
+     * Check if the PostNL COD payment method may be shown for letter box parcel orders.
+     *
+     * @return boolean
+     */
+    protected function canShowForBuspakje()
+    {
+        /**
+         * Check the configuration setting.
+         */
+        $showForBuspakje = Mage::getStoreConfigFlag(self::XPATH_ALLOW_FOR_BUSPAKJE, Mage::app()->getStore()->getId());
+        if ($showForBuspakje) {
+            return true;
+        }
+
+        /**
+         * Check if the buspakje calculation mode is set to automatic.
+         */
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $calculationMode = $helper->getBuspakjeCalculationMode();
+        if ($calculationMode != 'automatic') {
+            return true;
+        }
+
+        /**
+         * Check if the current quote fits as a letter box parcel.
+         */
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
+        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+            return true;
+        }
+
+        return false;
     }
 }
