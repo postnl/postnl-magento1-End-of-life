@@ -179,10 +179,9 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_add_location .location-list .location.selected { background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_location-selected.png) 753px 11px no-repeat; }
 #postnl_add_location .location-list .location-icon { display:block; float:left; margin:9px 6px 0 0; max-width:16px; }
 #postnl_add_location .location-list .location-name { margin-right:4px; }
-#postnl_add_location .location-list .location-distance { height:35px; }
-#postnl_add_location .location-list .location-info { text-decoration:none; width:92px; float:right; text-align:right; }
+#postnl_add_location .location-list .location-info { text-decoration:none; width:122px; float:right; text-align:right; }
 #postnl_add_location .location-list .location-info:hover { text-decoration:underline; }
-#postnl_add_location .location-list .location-distance { width:101px; float:right; text-align:right; }
+#postnl_add_location .location-list .location-distance { height:35px; width:71px; float:right; text-align:right; }
 
 /* Scrollbar */
 #scrollbar_container { width:800px; position:relative; }
