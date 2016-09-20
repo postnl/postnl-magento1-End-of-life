@@ -1080,6 +1080,46 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         return $foodType;
     }
 
+    public function quoteIsCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'postnl_quote_is_check_' . $quote->getId();
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        $quoteIsCheck = false;
+        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+        foreach ($quote->getAllItems() as $quoteItem) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+
+            if (
+                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_AGE ||
+                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_BIRTHDAY ||
+                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_ID
+            ) {
+                $quoteIsCheck = true;
+            }
+        }
+
+        Mage::register($registryKey, $quoteIsCheck);
+        return $quoteIsCheck;
+    }
+
     /**
      * Gets the currently configured buspakje calculation mode.
      *

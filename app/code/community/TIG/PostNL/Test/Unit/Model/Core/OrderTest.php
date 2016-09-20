@@ -112,4 +112,25 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
         $instance = $this->_getInstance();
         $instance->setMobilePhoneNumber('testNumber');
     }
+
+    public function isCheckProvider()
+    {
+        return array(
+            array('Agecheck', true),
+            array('Birthdaycheck', true),
+            array('Idcheck', true),
+            array('wrong', false),
+        );
+    }
+
+    /**
+     * @dataProvider isCheckProvider
+     */
+    public function testIsCheck($type, $response)
+    {
+        $model = Mage::getModel('postnl_core/order');
+        $model->setType($type);
+
+        $this->assertEquals($response, $model->isCheck());
+    }
 }

@@ -277,10 +277,13 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
      *
      * @return $this
      */
-    public function setRegistryKey($key, $value)
+    public function setRegistryKey($key, $value = null)
     {
         Mage::unregister($key);
-        Mage::register($key, $value);
+
+        if ($value !== null) {
+            Mage::register($key, $value);
+        }
 
         return $this;
     }
