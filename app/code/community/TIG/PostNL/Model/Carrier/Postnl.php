@@ -67,6 +67,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     const PARCEL_TYPE_LETTERBOX   = 'letter_box';
     const PARCEL_TYPE_FOOD        = 'food';
     const PARCEL_TYPE_PAKJE_GEMAK = 'pakje_gemak';
+    const PARCEL_TYPE_IDCHECK     = 'idcheck';
 
     /**
      * String values for different rate types.

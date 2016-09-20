@@ -60,10 +60,10 @@ $applyTo = array(
 /**
  * Add PostNL product type attribute to products.
  */
-if (!$installer->getAttribute('catalog_product', 'postnl_verification_type')) {
+if (!$installer->getAttribute('catalog_product', 'postnl_check_type')) {
     $installer->addAttribute(
         'catalog_product',
-        'postnl_verification_type',
+        'postnl_check_type',
         array(
             'backend'                    => '',
             'group'                      => 'PostNL',
@@ -71,10 +71,10 @@ if (!$installer->getAttribute('catalog_product', 'postnl_verification_type')) {
             'frontend'                   => '',
             'frontend_class'             => '',
             'default'                    => '0',
-            'label'                      => 'PostNL verification type',
+            'label'                      => 'PostNL Check type',
             'input'                      => 'select',
             'type'                       => 'text',
-            'source'                     => 'postnl_deliveryoptions/product_attribute_source_verificationCheckType',
+            'source'                     => 'postnl_deliveryoptions/product_attribute_source_checkType',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
             'visible'                    => true,
             'required'                   => false,
@@ -99,43 +99,43 @@ if (!$installer->getAttribute('catalog_product', 'postnl_verification_type')) {
 
 $tableName = $installer->getTable('postnl_core/order');
 
-if (!$conn->tableColumnExists($tableName, 'verification_type')) {
+if (!$conn->tableColumnExists($tableName, 'check_type')) {
     $conn->addColumn(
         $tableName,
-        'verification_type',
+        'check_type',
         array(
             'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length' => '32',
             'nullable' => true,
-            'comment' => 'Verification type',
+            'comment' => 'Check type',
             'after'    => 'pg_retail_network_id'
         )
     );
 }
 
-if (!$conn->tableColumnExists($tableName, 'verification_number')) {
+if (!$conn->tableColumnExists($tableName, 'check_number')) {
     $conn->addColumn(
         $tableName,
-        'verification_number',
+        'check_number',
         array(
             'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length' => '1000',
             'nullable' => true,
-            'comment' => 'Verification number',
-            'after'    => 'verification_type'
+            'comment' => 'Check number',
+            'after'    => 'check_type'
         )
     );
 }
 
-if (!$conn->tableColumnExists($tableName, 'verification_expiration_date')) {
+if (!$conn->tableColumnExists($tableName, 'check_expiration_date')) {
     $conn->addColumn(
         $tableName,
-        'verification_expiration_date',
+        'check_expiration_date',
         array(
             'type'   => Varien_Db_Ddl_Table::TYPE_DATE,
             'nullable' => true,
-            'comment' => 'Verification expiration date',
-            'after'    => 'verification_number'
+            'comment' => 'Check expiration date',
+            'after'    => 'check_number'
         )
     );
 }
