@@ -140,6 +140,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const FOOD_TYPE_COOL_PRODUCTS = 2;
 
     /**
+     * The two supported validation delivery types.
+     */
+    const CHECK_TYPE_AGE = 'Agecheck';
+    const CHECK_TYPE_BIRTHDAY = 'Birthdaycheck';
+    const CHECK_TYPE_ID = 'Idcheck';
+
+    /**
      * @var array
      */
     protected $_validTypes = array(

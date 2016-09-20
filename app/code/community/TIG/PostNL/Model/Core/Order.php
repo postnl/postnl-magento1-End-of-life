@@ -109,15 +109,18 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     /**
      * Available types.
      */
-    const TYPE_OVERDAG      = 'Overdag';
-    const TYPE_AVOND        = 'Avond';
-    const TYPE_SUNDAY       = 'Sunday';
-    const TYPE_PG           = 'PG';
-    const TYPE_PGE          = 'PGE';
-    const TYPE_PA           = 'PA';
-    const TYPE_SAMEDAY      = 'Sameday';
-    const TYPE_FOOD         = 'Food';
-    const TYPE_COOLED_FOOD  = 'Cooledfood';
+    const TYPE_OVERDAG       = 'Overdag';
+    const TYPE_AVOND         = 'Avond';
+    const TYPE_SUNDAY        = 'Sunday';
+    const TYPE_PG            = 'PG';
+    const TYPE_PGE           = 'PGE';
+    const TYPE_PA            = 'PA';
+    const TYPE_SAMEDAY       = 'Sameday';
+    const TYPE_FOOD          = 'Food';
+    const TYPE_COOLED_FOOD   = 'Cooledfood';
+    const TYPE_AGECHECK      = 'Agecheck';
+    const TYPE_BIRTHDAYCHECK = 'Birthdaycheck';
+    const TYPE_IDCHECK       = 'Idcheck';
 
     /**
      * Prefix of model events names.
@@ -441,6 +444,21 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     {
         $type = $this->getType();
         if ($type == self::TYPE_FOOD || $type == self::TYPE_COOLED_FOOD) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if this order needs verification at the door.
+     *
+     * @return bool
+     */
+    public function isCheck()
+    {
+        $type = $this->getType();
+        if ($type == self::TYPE_AGECHECK || $type == self::TYPE_BIRTHDAYCHECK || $type == self::TYPE_IDCHECK) {
             return true;
         }
 
