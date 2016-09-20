@@ -1439,3 +1439,7 @@ TIG_PostNL::Parcel with Birthday Check Options, Verzending met Geboortedatum Che
 "TIG_PostNL::Post Office + Notification + Birthday Check","Afhaal locatie + Notificatie + Geboortedatum controle"
 "TIG_PostNL::Post Office + Extra Cover + Birthday Check","Afhaal locatie + Extra dekking + Geboortedatum controle"
 "TIG_PostNL::Post Office + Extra Cover + Notification + Birthday Check","Afhaal locatie + Extra dekking + Notificatie + Geboortedatum controle"
+TIG_PostNL::PostNL verification type,PostNL verificatie type
+TIG_PostNL::Age Check,Leeftijd Check
+TIG_PostNL::Birthday Check,Verjaadags Check
+TIG_PostNL::ID Check,ID Check
