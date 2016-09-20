@@ -1414,3 +1414,7 @@ TIG_PostNL::Default ID check delivery shipping option,Standaard ID Check leverin
 TIG_PostNL::Parcel with Age Check Options,Verzending met Leeftijd Check opties
 TIG_PostNL::Parcel with ID Check Options,Verzending met ID Check opties
 TIG_PostNL::Parcel with Birthday Check Options, Verzending met Geboortedatum Check opties
+TIG_PostNL::PostNL verification type,PostNL verificatie type
+TIG_PostNL::Age Check,Leeftijd Check
+TIG_PostNL::Birthday Check,Verjaadags Check
+TIG_PostNL::ID Check,ID Check

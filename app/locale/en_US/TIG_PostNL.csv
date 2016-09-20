@@ -1344,3 +1344,7 @@ TIG_PostNL::Please enter your Dutch customer code and number.,Please enter your 
 TIG_PostNL::View the documentation.,View the documentation.
 TIG_PostNL::Documentation,Documentation
 TIG_PostNL::Unable to save down partner data.,Unable to save down partner data.
+TIG_PostNL::PostNL verification type,PostNL verification type
+TIG_PostNL::Age Check,Age Check
+TIG_PostNL::Birthday Check,Birthday Check
+TIG_PostNL::ID Check,ID Check
