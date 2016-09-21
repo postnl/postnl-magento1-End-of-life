@@ -55,34 +55,36 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         $this->assertInstanceOf('TIG_PostNL_Helper_DeliveryOptions', $helper);
     }
 
-    /**
-     * @test
-     */
-    public function shouldAllowSundaySorting()
+    public function disallowSundaySortingProvider()
     {
-        $this->markTestIncomplete('Failing on QA');
-
-        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', true);
-
-        $helper = $this->_getInstance();
-
-        $this->assertTrue($helper->canUseSundaySorting());
+        return array(
+            array('NL', true, true, true),
+            array('BE', true, true, true),
+            array('NL', false, true, false),
+            array('BE', false, true, true),
+            array('NL', true, false, true),
+            array('BE', true, false, false),
+            array('NL', false, false, false),
+            array('BE', false, false, false),
+        );
     }
 
     /**
      * @test
+     * @dataProvider disallowSundaySortingProvider
      */
-    public function shouldDisallowSundaySorting()
+    public function shouldDisallowSundaySorting($country, $nl, $be, $result)
     {
-        $this->markTestSkipped('Skip this test');
+        $helper = $this->_getInstance();
+        $helper->setCache(false);
 
         $this->resetMagento();
 
-        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', false);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SENDER_COUNTRY, $country);
+        Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING, $nl);
+        Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING_BE, $be);
 
-        $helper = $this->_getInstance();
-
-        $this->assertTrue(!$helper->canUseSundaySorting());
+        $this->assertEquals($result, $helper->canUseSundaySorting(), 'Can use sunday sorting');
     }
 
     public function testCanUseDutchProductsByCountryDataProvder()

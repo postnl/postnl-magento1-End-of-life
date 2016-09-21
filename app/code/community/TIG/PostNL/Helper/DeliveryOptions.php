@@ -2199,26 +2199,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
-        if (!$this->canUseDutchProducts()) {
-            $allowed = false;
+        if ($this->getDomesticCountry() == 'BE') {
+            $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
         } else {
-            $storeId = Mage::app()->getStore()->getId();
-
-            $quote = $this->getQuote();
-
             $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING;
-            if (
-                $quote && $quote->getShippingAddress() &&
-                (
-                    $quote->getShippingAddress()->getCountryId() == 'BE' ||
-                    (!$quote->getShippingAddress()->getCountryId() && $this->getDomesticCountry() == 'BE')
-                )
-            ) {
-                $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
-            }
-
-            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
         }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
 
         if ($cache) {
             /**

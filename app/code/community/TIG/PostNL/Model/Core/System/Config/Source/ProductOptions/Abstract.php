@@ -41,8 +41,9 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS   = 'postnl/grid/supported_product_options';
-    const XPATH_USE_DUTCH_PRODUCTS          = 'postnl/cif_labels_and_confirming/use_dutch_products';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS    = 'postnl/grid/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS_BE = 'postnl/grid/supported_product_options_be';
+    const XPATH_USE_DUTCH_PRODUCTS           = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * @var array
@@ -243,7 +244,12 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         /**
          * Get the list of supported product options from the shop's configuration
          */
-        $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
+        if ($helper->getDomesticCountry() == 'BE') {
+            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE, $storeId);
+        } else {
+            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
+        }
+
         $supportedOptionsArray = explode(',', $supportedOptions);
         if ($canUseEpsBEOnly) {
             $supportedOptionsArray[] = '4955';

@@ -887,13 +887,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
             $customer = array_merge($customer, $additionalCustomerData);
 
-            /**
-             * This is an edge case:
-             *
-             * If the domestic country is BE, the shipment is being sent to Netherlands and the
-             * option "Use Dutch products" is enabled, we must fool CIF and return the alternative customer id,
-             * customer code and the Dutch alternative address.
-             */
             if (
                 $this->getHelper()->getDomesticCountry() == 'BE' &&
                 $shipment->getShippingAddress()->getCountryId() == 'NL' &&
