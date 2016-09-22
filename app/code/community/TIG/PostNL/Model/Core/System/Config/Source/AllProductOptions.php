@@ -298,7 +298,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,
-            'countryLimitation' => 'BE',
+            'countryLimitation' => false,
             'group'             => 'pakjegemak_be_options',
         ),
         '4880' => array(
@@ -309,7 +309,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,
-            'countryLimitation' => 'BE',
+            'countryLimitation' => false,
             'group'             => 'pakjegemak_be_options',
         ),
         '4952' => array(

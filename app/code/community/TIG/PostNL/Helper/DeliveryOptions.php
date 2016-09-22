@@ -2199,25 +2199,23 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
-        if ($this->getDomesticCountry() == 'BE') {
-            $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
-        } else {
-            $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING;
-        }
+        $allowedXpathNl = self::XPATH_ALLOW_SUNDAY_SORTING;
+        $allowedXpathBe = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
+        $allowedNl = Mage::getStoreConfigFlag($allowedXpathNl, $storeId);
+        $allowedBe = Mage::getStoreConfigFlag($allowedXpathBe, $storeId);
 
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
              */
-            $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
+            $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowedNl || $allowedBe)
                   ->saveCache();
         }
 
-        return $allowed;
+        return $allowedNl || $allowedBe;
     }
 
     /**

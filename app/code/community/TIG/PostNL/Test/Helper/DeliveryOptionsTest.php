@@ -60,10 +60,10 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         return array(
             array('NL', true, true, true),
             array('BE', true, true, true),
-            array('NL', false, true, false),
+            array('NL', false, true, true),
             array('BE', false, true, true),
             array('NL', true, false, true),
-            array('BE', true, false, false),
+            array('BE', true, false, true),
             array('NL', false, false, false),
             array('BE', false, false, false),
         );

@@ -569,7 +569,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
             if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
                 // combilabel detected
-                $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(569), $this->pix2pt(400));
+                $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(560), $this->pix2pt(400));
             } else {
                 $pdf->Rotate(90);
                 $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
