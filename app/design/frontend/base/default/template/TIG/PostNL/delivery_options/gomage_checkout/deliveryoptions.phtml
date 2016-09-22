@@ -51,6 +51,7 @@
 <?php $_pickupDate    = $this->getDeliveryDate('pickup'); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
+<?php $_street        = $_streetData['streetname']; ?>
 <?php $_city          = $this->getCity(); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
@@ -251,6 +252,7 @@
 
     var postcode;
     var housenumber;
+    var street;
     var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
 
     /**
@@ -278,11 +280,12 @@
 
         postcode    = getPostnlPostcode(billingOrShipping);
         housenumber = getPostnlHousenumber(billingOrShipping);
+        street      = getPostnlStreet(billingOrShipping);
 
         /**
          * If we don't have a postcode or house number, we cant retrieve the available time frames and locations.
          */
-        if (!postcode || !housenumber) {
+        if (!postcode || !housenumber || !street) {
             return;
         }
 
@@ -297,7 +300,7 @@
         /**
          * Start the delivery options script.
          */
-        startDeliveryOptions(postcode, housenumber, fullAddress);
+        startDeliveryOptions(postcode, housenumber, street, fullAddress);
     }
 
     /**
@@ -305,9 +308,10 @@
      *
      * @param {string} postcode
      * @param {int}    housenumber
+     * @param {string} street
      * @param {string} fullAddress
      */
-    function startDeliveryOptions(postcode, housenumber, fullAddress) {
+    function startDeliveryOptions(postcode, housenumber, street, fullAddress) {
         var options;
         var params;
         var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
@@ -319,6 +323,7 @@
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
             postcode           : postcode,
             housenumber        : housenumber,
+            street             : street,
             city               : '<?php echo $this->escapeHtml($_city); ?>',
             country            : '<?php echo $this->escapeHtml($_country); ?>',
             deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
@@ -516,6 +521,55 @@
         }
 
         return housenumber;
+    }
+
+    /**
+     * @param {string} billingOrShipping
+     *
+     * @returns {string|int}
+     */
+    function getPostnlStreet(billingOrShipping) {
+        var street = '<?php echo $_street; ?>';
+        var addressSelectField;
+
+        if (billingOrShipping == 'billing') {
+            addressSelectField = $('billing-address-select');
+        } else {
+            addressSelectField = $('shipping-address-select');
+        }
+
+        /**
+         * If we don't have a street and no preset address is chosen, get the street from the street address field.
+         */
+        if (!street
+            || (
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && street != $(billingOrShipping + '_street' + streetnameField).getValue()
+            )
+        ) {
+            var streetFieldValue = $(billingOrShipping + '_street' + streetnameField).getValue();
+
+            if (streetFieldValue) {
+                street = streetFieldValue;
+            }
+        }
+
+        /**
+         * If we still don't have a street, get it from the streetname field.
+         */
+        if (!street) {
+            var streetname = $(billingOrShipping + '_street' + streetnameField).getValue();
+            var streetnameRegex = /([a-zA-Z]+)/;
+
+            var streetnameArray = streetname.match(streetnameRegex);
+            if (!streetnameArray || streetnameArray.length < 1) {
+                throw "Unable to parse streetname";
+            }
+
+            street = streetnameArray[0];
+        }
+
+        return street;
     }
 
     /**
