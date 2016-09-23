@@ -614,12 +614,14 @@
         /**
          * These fields' values are used to determine available delivery options.
          */
-        if (!$('virtual_billing_street' + streetnameField) && !$('virtual_shipping_street' + streetnameField)) {
+        if (!$('virtual_billing_street' + streetnameField) || !$('virtual_shipping_street' + streetnameField)) {
             var fieldsToObserve = [
                 'billing_street' + streetnameField,
                 'shipping_street' + streetnameField,
                 'billing_postcode',
-                'shipping_postcode'
+                'billing_city',
+                'shipping_postcode',
+                'billing_city'
             ];
 
             if (streetnameField != housenumberField) {
