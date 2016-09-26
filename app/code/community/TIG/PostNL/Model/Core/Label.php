@@ -208,12 +208,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             ),
             3 => array(
                 'x' => 0.5,
-                'y' => -127.1,
+                'y' => -128.5,
                 'w' => 105.3,
             ),
             4 => array(
                 'x' => 105.3,
-                'y' => -127.1,
+                'y' => -128.5,
                 'w' => 105.3,
             ),
         ),
@@ -597,37 +597,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         Varien_Profiler::stop('tig::postnl::core::label_createpackingslippdf');
 
         return $label;
-    }
-
-    /**
-     * @param TIG_PostNL_Model_Core_Shipment_Label $label
-     *
-     * @return TIG_PostNL_Fpdi
-     * @throws TIG_PostNL_Exception
-     */
-    public function resizeLabel(TIG_PostNL_Model_Core_Shipment_Label $label)
-    {
-        $tempFilename = $this->_saveTempLabel($label);
-
-        $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->open();
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetTitle('PostNL Label');
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetAuthor('PostNL');
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetCreator('PostNL');
-
-        $pdf->addOrientedPage('L', 'A6');
-
-        $pdf->setSourceFile($tempFilename);
-        $templateIndex = $pdf->ImportPage(1);
-
-        $pdf->Rotate('-90');
-        $pdf->useTemplate($templateIndex, 0, -128, $this->pix2pt(405), $this->pix2pt(570), true);
-
-        return $pdf;
     }
 
     /** @noinspection PhpUndefinedClassInspection */

@@ -157,14 +157,6 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
             $this->setLabelType(self::LABEL_TYPE_LABEL);
         }
 
-        if ($this->getResize()) {
-            $labelModel = Mage::getModel('postnl_core/label');
-            $pdf = $labelModel->resizeLabel($this);
-
-            $label = base64_encode($pdf->Output());
-            $this->setLabel($label);
-        }
-
         return parent::_beforeSave();
     }
 }
