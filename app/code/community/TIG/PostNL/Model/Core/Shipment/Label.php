@@ -45,6 +45,8 @@
  * @method TIG_PostNL_Model_Core_Shipment_Label setLabel(string $value)
  * @method int getParentId()
  * @method TIG_PostNL_Model_Core_Shipment_Label setParentId(int $value)
+ * @method bool getResize()
+ * @method TIG_PostNL_Model_Core_Shipment_Label setResize(bool $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 {
@@ -153,6 +155,14 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
     {
         if ($this->getLabelType() == self::LABEL_TYPE_LABEL_COMBI && !$this->isCombiLabel()) {
             $this->setLabelType(self::LABEL_TYPE_LABEL);
+        }
+
+        if ($this->getResize()) {
+            $labelModel = Mage::getModel('postnl_core/label');
+            $pdf = $labelModel->resizeLabel($this);
+
+            $label = base64_encode($pdf->Output());
+            $this->setLabel($label);
         }
 
         return parent::_beforeSave();
