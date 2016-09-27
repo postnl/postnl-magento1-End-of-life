@@ -53,7 +53,7 @@ class TIG_PostNL_Test_Unit_Controllers_DeliveryOptionsControllerTest extends TIG
      * @param string $helperClass
      * @param object $mock
      *
-     * @return TIG_PostNL_Test_Framework_TIG_Test_TestCase
+     * @return TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
      */
     public function setHelperMock($helperClass, $mock)
     {

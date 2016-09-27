@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
     /**
      * @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
@@ -45,7 +45,13 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
 
     public function setUp()
     {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions _instance */
         $this->_instance = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+
+        $helper = Mage::helper('postnl');
+        $helper->setCache(false);
+
+        $this->setProperty('_helper', $helper, $this->_instance);
     }
 
     public function hasPakjegemakBeProductCodesDataProvider()
