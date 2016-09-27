@@ -82,6 +82,8 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_AllProductOptionsTest exte
             array(true, false, array('isBelgiumOnly' => false)),
             array(true, false, array('isExtraCover' => true)),
             array(true, true, array('isExtraCover' => false)),
+            array(true, true, array('countryLimitation' => 'NL')),
+            array(true, false, array('countryLimitation' => 'BE')),
         );
     }
 
@@ -90,6 +92,12 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_AllProductOptionsTest exte
      */
     public function testHasPakjegemakNotInsured($enabled, $available, $flags = array())
     {
+        $helper = Mage::helper('postnl');
+        $cache = $helper->getCache();
+        $helper->setCache(false);
+
+        $this->setProperty('_helper', $helper);
+
         Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
 
         $hasOption = false;
@@ -102,5 +110,6 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_AllProductOptionsTest exte
         }
 
         $this->assertEquals($available, $hasOption);
+        $helper->setCache($cache);
     }
 }

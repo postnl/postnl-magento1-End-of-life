@@ -1099,7 +1099,8 @@
                 <alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
                 <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
                 <default_pakjegemak_product_option>3544</default_pakjegemak_product_option> <!-- Post Office + Signature on Delivery + Notification -->
-                <default_pakjegemak_be_product_option>4932</default_pakjegemak_be_product_option> <!-- Post Office (Belgium) -->
+                <default_pakjegemak_nl_be_product_option>4932</default_pakjegemak_nl_be_product_option> <!-- Post Office (Belgium). Netherlands -> Belgium flow -->
+                <default_pakjegemak_be_be_product_option>4878</default_pakjegemak_be_be_product_option> <!-- Post Office (Belgium). Belgium -> Belgium flow -->
                 <default_pakjegemak_be_not_insured_product_option>4936</default_pakjegemak_be_not_insured_product_option> <!-- Post Office (Belgium) -->
                 <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->

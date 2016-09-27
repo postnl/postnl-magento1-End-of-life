@@ -1377,6 +1377,9 @@ TIG_PostNL::Warnings:,Attention :
 TIG_PostNL::Activate food delivery for your customers.,Activez la livraison alimentaire pour vos clients.
 TIG_PostNL::PHP,PHP
 TIG_PostNL::Post Office Belgium options,Options bureau de poste en Belgique
+TIG_PostNL::4932 - Post Office Belgium options,4932 - Options bureau de poste en Belgique
+TIG_PostNL::4936 - Post Office Belgium options,4936 - Options bureau de poste en Belgique
+TIG_PostNL::4880 - Post Office Belgium options,4880 - Options bureau de poste en Belgique
 TIG_PostNL::Letter Box Parcel options,Options paquet
 TIG_PostNL::Cooled Delivery Options,Options d'envois réfrigérés
 "TIG_PostNL::Unable to create a shipment for order #%s, because GlobalPack is currently disabled.","Aucun envoi ne peut être réalisé pour la commande #%s, car GlobalPack est actuellement déconnecté."

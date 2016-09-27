@@ -311,7 +311,11 @@ TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + verhoogd aans
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
 TIG_PostNL::Post Office Belgium + Extra Cover,Ophalen bij PostNL Locatie België - verzekerd
+TIG_PostNL::4878 - Post Office Belgium + Extra Cover,4878 - Ophalen bij PostNL Locatie België - verzekerd
 TIG_PostNL::Post Office Belgium,Ophalen bij PostNL Locatie België
+TIG_PostNL::4932 - Post Office Belgium,4932 - Ophalen bij PostNL Locatie België
+TIG_PostNL::4936 - Post Office Belgium,4936 - Ophalen bij PostNL Locatie België
+TIG_PostNL::4880 - Post Office Belgium,4880 - Ophalen bij PostNL Locatie België
 TIG_PostNL::EU options,EU opties
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
 "TIG_PostNL::EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen België zonder handtekening)

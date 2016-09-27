@@ -56,6 +56,23 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     protected $_groups = array();
 
     /**
+     * @var null|TIG_PostNL_Helper_Data
+     */
+    protected $_helper = null;
+
+    /**
+     * @return TIG_PostNL_Helper_Data
+     */
+    protected function getHelper()
+    {
+        if ($this->_helper === null) {
+            $this->_helper = Mage::helper('postnl');
+        }
+
+        return $this->_helper;
+    }
+
+    /**
      * Gets all possible product options matching an array of flags.
      *
      * @param array   $flags

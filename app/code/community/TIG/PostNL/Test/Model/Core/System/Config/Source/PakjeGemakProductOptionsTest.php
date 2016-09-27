@@ -95,6 +95,12 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
      */
     public function testHasPakjegemakNotInsured($enabled, $available, $flags = array())
     {
+        $helper = Mage::helper('postnl');
+        $cache = $helper->getCache();
+        $helper->setCache(false);
+
+        $this->setProperty('_helper', $helper, $this->_instance);
+
         Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
 
         $hasOption = false;
@@ -107,5 +113,6 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
         }
 
         $this->assertEquals($available, $hasOption);
+        $helper->setCache($cache);
     }
 }

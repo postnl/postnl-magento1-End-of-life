@@ -57,7 +57,7 @@ class TIG_PostNL_Test_Helper_DataTest extends TIG_PostNL_Test_Framework_TIG_Test
     public function testCanUsePakjegemakNotInsured($enabled, $result)
     {
         $instance = $this->_getInstance();
-        $instance->setCache(null);
+        $instance->setCache(false);
 
         Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
 
