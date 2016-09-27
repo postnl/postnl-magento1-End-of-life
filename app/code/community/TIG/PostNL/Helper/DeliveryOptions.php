@@ -1250,9 +1250,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean $storeId
      * @param boolean $checkQuote
      *
-     * @return boolean
+     * @param mixed   $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak($storeId = false, $checkQuote = true)
+    public function canUsePakjeGemak($storeId = false, $checkQuote = true, $country = false)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
@@ -1263,6 +1265,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $quote = $this->getQuote();
         if ($quote) {
             $registryKey .= '_' . $quote->getId();
+        }
+
+        if (!$country) {
+            $registryKey .= '_' . $country;
         }
 
         /**
@@ -1285,24 +1291,33 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $cache = $this->getCache();
+        $hasPostnlDeliveryOptionsCanUsePakjeGemak = 'hasPostnlDeliveryOptionsCanUsePakjeGemak';
+        $getPostnlDeliveryOptionsCanUsePakjeGemak = 'getPostnlDeliveryOptionsCanUsePakjeGemak';
+        $setPostnlDeliveryOptionsCanUsePakjeGemak = 'setPostnlDeliveryOptionsCanUsePakjeGemak';
 
-        if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
+        if ($country) {
+            $hasPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+            $getPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+            $setPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+        }
+
+        if ($cache && $cache->$hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
             /**
              * Check if the result of this method has been cached in the PostNL cache.
              */
-            $allowed = $cache->getPostnlDeliveryOptionsCanUsePakjeGemak();
+            $allowed = $cache->$getPostnlDeliveryOptionsCanUsePakjeGemak();
 
             Mage::register($registryKey, $allowed);
             return $allowed;
         }
 
-        $allowed = $this->_canUsePakjeGemak();
+        $allowed = $this->_canUsePakjeGemak($country);
 
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
              */
-            $cache->setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
+            $cache->$setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
                   ->saveCache();
         }
 
@@ -1399,9 +1414,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if PakjeGemak is available.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    protected function _canUsePakjeGemak()
+    protected function _canUsePakjeGemak($country = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
@@ -1409,7 +1426,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Check if PakjeGemak has ben enabled in the configuration.
          */
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
-        if (!$enabled) {
+        if ($country && $country == 'NL' && !$enabled) {
+            return false;
+        }
+
+        /**
+         * Check if PakjeGemak is enabled for Belgium
+         */
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_BE, $storeId);
+        if ($country && $country == 'BE' && !$enabled) {
             return false;
         }
 
@@ -1423,7 +1448,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
          */
-        $allowed = parent::canUsePakjeGemak();
+        $allowed = parent::canUsePakjeGemak($country);
 
         return $allowed;
     }

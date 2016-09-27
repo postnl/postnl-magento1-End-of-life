@@ -655,13 +655,15 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     /**
      * Checks whether PakjeGemak locations are allowed.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak()
+    public function canUsePakjeGemak($country = false)
     {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
-        $canUsePakjeGemak = $helper->canUsePakjeGemak();
+        $canUsePakjeGemak = $helper->canUsePakjeGemak(false, true, $country);
         return $canUsePakjeGemak;
     }
 

@@ -746,23 +746,45 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship using PakjeGemak.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak()
+    public function canUsePakjeGemak($country = false)
     {
         $cache = $this->getCache();
 
-        if ($cache && $cache->hasPostnlCoreCanUsePakjeGemak()) {
-            return $cache->getPostnlCoreCanUsePakjeGemak();
+        $setPostnlCoreCanUsePakjeGemak = 'setPostnlCoreCanUsePakjeGemak';
+        $hasPostnlCoreCanUsePakjeGemak = 'hasPostnlCoreCanUsePakjeGemak';
+        $getPostnlCoreCanUsePakjeGemak = 'getPostnlCoreCanUsePakjeGemak';
+
+        if ($country) {
+            $setPostnlCoreCanUsePakjeGemak .= $country;
+            $hasPostnlCoreCanUsePakjeGemak .= $country;
+            $getPostnlCoreCanUsePakjeGemak .= $country;
+        }
+
+        if ($cache && $cache->$hasPostnlCoreCanUsePakjeGemak()) {
+            return $cache->$getPostnlCoreCanUsePakjeGemak();
+        }
+
+        $options = array(
+            'isCod' => false,
+        );
+
+        if ($country) {
+            $options['countryLimitation'] = $country;
+        } else {
+            $options['isBelgiumOnly'] = false;
         }
 
         /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductoptionsModel */
         $pakjeGemakProductoptionsModel = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions');
-        $pakjeGemakProductoptions = $pakjeGemakProductoptionsModel->getAvailableOptions();
+        $pakjeGemakProductoptions = $pakjeGemakProductoptionsModel->getOptions($options, false, true);
 
         if (empty($pakjeGemakProductoptions)) {
             if ($cache) {
-                $cache->setPostnlCoreCanUsePakjeGemak(false)
+                $cache->$setPostnlCoreCanUsePakjeGemak(false)
                       ->saveCache();
             }
 
@@ -770,7 +792,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($cache) {
-            $cache->setPostnlCoreCanUsePakjeGemak(true)
+            $cache->$setPostnlCoreCanUsePakjeGemak(true)
                   ->saveCache();
         }
         return true;

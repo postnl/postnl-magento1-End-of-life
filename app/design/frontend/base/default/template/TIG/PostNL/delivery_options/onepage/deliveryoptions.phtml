@@ -60,7 +60,7 @@
 
 <?php $_canShowOnlyStatedAddressOption = $this->canShowOnlyStatedAddressOption(); ?>
 <?php $_canUseSundaySorting            = $this->canUseSundaySorting(); ?>
-<?php $_canUsePakjeGemak               = $this->canUsePakjeGemak(); ?>
+<?php $_canUsePakjeGemak               = $this->canUsePakjeGemak($_country); ?>
 <?php $_canUsePakketAutomaat           = $this->canUsePakketAutomaat(); ?>
 <?php $_canUsePakjeGemakExpress        = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
