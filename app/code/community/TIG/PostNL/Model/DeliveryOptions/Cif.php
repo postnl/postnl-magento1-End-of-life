@@ -51,6 +51,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const EVENING_DELIVERY_OPTION            = 'Evening';
     const SUNDAY_DELIVERY_OPTION             = 'Sunday';
     const SAMEDAY_DELIVERY_OPTION            = 'Sameday';
+    const PICKUP_DELIVERY_OPTION             = 'Pickup';
 
     /**
      * Config options used by the getDeliveryDate service.
@@ -58,10 +59,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_SHIPPING_DURATION       = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options/allow_sunday_sorting_be';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
     const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
-    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options/delivery_days_number_be';
+    const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options_int/delivery_days_number_be';
     const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
@@ -89,11 +90,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return string
+     * @param string                 $for delivery or pickup
      *
+     * @return string
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote)
+    public function getDeliveryDate($postcode, $country = 'NL', Mage_Sales_Model_Quote $quote, $for = 'delivery')
     {
         if (empty($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -125,7 +127,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             )
         );
 
-        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country);
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country, $for);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -165,13 +167,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Get evening time frames for the specified postcode and delivery window.
      *
-     * @param array $data
+     * @param array  $data
      *
-     * @return StdClass[]|false
+     * @param string $for delivery or pickup
      *
+     * @return false|StdClass[]
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryTimeframes($data)
+    public function getDeliveryTimeframes($data, $for = 'delivery')
     {
         if (empty($data)) {
             throw new TIG_PostNL_Exception(
@@ -201,7 +204,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
-        $options = $this->_getDeliveryTimeframesOptionsArray($data['country']);
+        $options = $this->_getDeliveryTimeframesOptionsArray($data['country'], $for);
 
         $soapParams = array(
             'Timeframe' => array(
@@ -447,6 +450,20 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
+         * Add the housenumber if available.
+         */
+        if (isset($data['housenumber'])) {
+            $location['HouseNr'] = $data['housenumber'];
+        }
+
+        /**
+         * Add the city if available.
+         */
+        if (isset($data['city'])) {
+            $location['City'] = $data['city'];
+        }
+
+        /**
          * Add coordinates if both a latitude and longitude are available.
          */
         if (isset($data['lat']) && isset($data['long'])) {
@@ -570,9 +587,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * @param null   $shippingDuration
      * @param string $country
      *
+     * @param string $for delivery or pickup
+     *
      * @return array
      */
-    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL')
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL', $for = 'delivery')
     {
         $storeId = $this->getStoreId();
 
@@ -595,7 +614,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
-        $options[] = self::DOMESTIC_DELIVERY_OPTION;
+        if ($country == 'BE' && $for == 'pickup') {
+            $options[] = self::PICKUP_DELIVERY_OPTION;
+        } else {
+            $options[] = self::DOMESTIC_DELIVERY_OPTION;
+        }
 
         if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;

@@ -164,8 +164,6 @@ class TIG_PostNL_Test_Unit_Block_DeliveryOptions_Checkout_AddPhoneNumberTest
      */
     public function shouldGetQuoteFromSession()
     {
-        $this->markTestSkipped('Skip this test');
-
         $block = $this->_getInstance();
 
         $this->registerMockSessions(array('checkout'));

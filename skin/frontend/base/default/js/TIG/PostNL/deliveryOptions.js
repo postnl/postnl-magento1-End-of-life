@@ -139,9 +139,11 @@ PostnlDeliveryOptions.prototype = {
     postcode                 : null,
     housenumber              : null,
     street                   : null,
+    city                     : null,
     country                  : null,
     fullAddress              : null,
     deliveryDate             : null,
+    pickupDate               : null,
     imageBaseUrl             : null,
 
     pgLocation               : false,
@@ -187,8 +189,10 @@ PostnlDeliveryOptions.prototype = {
             || !params.postcode
             || !params.housenumber
             || !params.street
+            || !params.city
             || !params.country
             || !params.deliveryDate
+            || !params.pickupDate
             || !params.imageBaseUrl
             || !params.fullAddress
         ) {
@@ -204,8 +208,10 @@ PostnlDeliveryOptions.prototype = {
         this.postcode           = params.postcode;
         this.housenumber        = params.housenumber;
         this.street             = params.street;
+        this.city               = params.city;
         this.country            = params.country;
         this.deliveryDate       = params.deliveryDate;
+        this.pickupDate         = params.pickupDate;
         this.imageBaseUrl       = params.imageBaseUrl;
         this.fullAddress        = params.fullAddress;
 
@@ -322,6 +328,10 @@ PostnlDeliveryOptions.prototype = {
         return this.street;
     },
 
+    getCity : function() {
+        return this.city;
+    },
+
     getCountry : function() {
         return this.country;
     },
@@ -333,6 +343,10 @@ PostnlDeliveryOptions.prototype = {
 
     getDeliveryDate : function() {
         return this.deliveryDate;
+    },
+
+    getPickupDate : function() {
+        return this.pickupDate;
     },
 
     getImageBasUrl : function() {
@@ -747,7 +761,7 @@ PostnlDeliveryOptions.prototype = {
                 .setParsedTimeframes(true)
                 .hideSpinner();
         }
-        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCountry(), this.getDeliveryDate());
+        this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCity(), this.getCountry(), this.getDeliveryDate());
 
         return this;
     },
@@ -1070,12 +1084,13 @@ PostnlDeliveryOptions.prototype = {
      * @param {string} postcode
      * @param {int}    housenumber
      * @param {string} street
+     * @param {string} city
      * @param {string} country
      * @param {string} deliveryDate
      *
      * @return {PostnlDeliveryOptions}
      */
-    getLocations : function(postcode, housenumber, street, country, deliveryDate) {
+    getLocations : function(postcode, housenumber, street, city, country, deliveryDate) {
         if (this.debug) {
             console.info('Getting available delivery locations.');
         }
@@ -1101,6 +1116,7 @@ PostnlDeliveryOptions.prototype = {
                 housenumber  : housenumber,
                 street       : street,
                 deliveryDate : deliveryDate,
+                city         : city,
                 country      : country,
                 isAjax       : true
             },
@@ -4012,13 +4028,13 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {void}
      */
     initialize : function(location, deliveryOptions, type) {
-        var deliveryDate = deliveryOptions.getDeliveryDate();
+        var pickupDate = deliveryOptions.getPickupDate();
         var today = new Date();
         var formattedToday = PostnlDeliveryOptions.prototype.formatDate(today);
 
-        if (deliveryDate == formattedToday) {
+        if (pickupDate == formattedToday) {
             today.setTime(today.getTime() + 86400000);
-            deliveryDate = PostnlDeliveryOptions.prototype.formatDate(today);
+            pickupDate = PostnlDeliveryOptions.prototype.formatDate(today);
         }
 
         this.address           = location.Address;
@@ -4029,7 +4045,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryDate;
+        this.date              = pickupDate;
         this.isEveningLocation = location.isEvening;
         this.retailNetworkID   = location.RetailNetworkID;
 

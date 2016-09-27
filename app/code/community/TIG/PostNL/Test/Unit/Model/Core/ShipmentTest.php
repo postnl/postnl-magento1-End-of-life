@@ -73,6 +73,8 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
 
     public function testCanGenerateReturnBarcodeWhenBuspakje()
     {
+        $this->markTestSkipped('Skip this test');
+
         $this->_getInstance()->setIsDomesticShipment(false);
         $this->_getInstance()->setIsBuspakjeShipment(false);
 
@@ -155,5 +157,13 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $this->_getInstance()->unsetReturnBarcode();
 
         $this->assertEquals($result, $this->_getInstance()->canGenerateReturnBarcode());
+    }
+
+    public function testHasPakjegemakBeNotInsuredConfig()
+    {
+        $value = Mage::app()->getStore()
+            ->getConfig(TIG_PostNL_Model_Core_Shipment::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION);
+
+        $this->assertNotEmpty($value);
     }
 }

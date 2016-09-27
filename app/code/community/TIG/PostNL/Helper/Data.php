@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
 
     /**
+     * XPATH to the allow Pakjegemak not insured setting.
+     */
+    const XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED = 'postnl/cif_product_options/allow_pakjegemak_not_insured';
+
+    /**
      * XML path to weight unit used
      */
     const XPATH_WEIGHT_UNIT = 'postnl/packing_slip/weight_unit';
@@ -674,7 +679,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
+     * Checks to see if the module may ship to the Netherlands or Belgium using PostNL standard shipments.
      *
      * @return boolean
      */
@@ -686,12 +691,44 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseStandard();
         }
 
+        $canUseStandardNL = $this->canUseStandardForCountry('NL');
+        $canUseStandardBE = $this->canUseStandardForCountry('BE');
+
+        $result = $canUseStandardNL || $canUseStandardBE;
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseStandard($result)
+                  ->saveCache();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
+     *
+     * @param $country
+     *
+     * @return bool
+     */
+    public function canUseStandardForCountry($country)
+    {
+        $cache = $this->getCache();
+
+        $hasPostnlCoreCanUseStandard = 'hasPostnlCoreCanUseStandard' . $country;
+        $getPostnlCoreCanUseStandard = 'getPostnlCoreCanUseStandard' . $country;
+        $setPostnlCoreCanUseStandard = 'setPostnlCoreCanUseStandard' . $country;
+
+        if ($cache && $cache->$hasPostnlCoreCanUseStandard()) {
+            return $cache->$getPostnlCoreCanUseStandard();
+        }
+
         /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $standardProductOptionsModel */
         $standardProductOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
-        $standardProductOptions = $standardProductOptionsModel->getAvailableOptions();
+        $standardProductOptions = $standardProductOptionsModel->getAvailableOptions(false, $country);
         if (empty($standardProductOptions)) {
             if ($cache) {
-                $cache->setPostnlCoreCanUseStandard(false)
+                $cache->$setPostnlCoreCanUseStandard(false)
                       ->saveCache();
             }
 
@@ -699,7 +736,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($cache) {
-            $cache->setPostnlCoreCanUseStandard(true)
+            $cache->$setPostnlCoreCanUseStandard(true)
                   ->saveCache();
         }
 
@@ -886,6 +923,35 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $epsBeOnlyOptionAllowed;
+    }
+
+    /**
+     * Checks if the productcode 4936 is allowed.
+     *
+     * @param bool $storeId
+     *
+     * @return bool
+     */
+    public function canUsePakjegemakBeNotInsured($storeId = false)
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUsePakjegemakNotInsured()) {
+            return $cache->getPostnlCoreCanUsePakjegemakNotInsured();
+        }
+
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $pakjegemakNotInsuredAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUsePakjegemakNotInsured($pakjegemakNotInsuredAllowed)
+                ->saveCache();
+        }
+
+        return $pakjegemakNotInsuredAllowed;
     }
 
     /**

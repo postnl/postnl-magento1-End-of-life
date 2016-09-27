@@ -40,6 +40,8 @@
  * @method boolean                     hasPostnlCoreIsConfigured()
  * @method boolean                     hasPostnlCoreIsGlobalConfigured()
  * @method boolean                     hasPostnlCoreCanUseStandard()
+ * @method boolean                     hasPostnlCoreCanUseStandardNL()
+ * @method boolean                     hasPostnlCoreCanUseStandardBE()
  * @method boolean                     hasPostnlCoreCanUsePakjeGemak()
  * @method boolean                     hasPostnlCoreCanUseEps()
  * @method boolean                     hasPostnlCoreCanUseGlobalPack()
@@ -69,11 +71,14 @@
  * @method boolean                     hasStoreTimeZones()
  * @method boolean                     hasValidDeliveryDaysArray()
  * @method boolean                     hasDomesticCountry()
+ * @method boolean                     hasPostnlCoreCanUsePakjegemakNotInsured()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
  * @method boolean                     getPostnlCoreIsGlobalConfigured()
  * @method boolean                     getPostnlCoreCanUseStandard()
+ * @method boolean                     getPostnlCoreCanUseStandardNL()
+ * @method boolean                     getPostnlCoreCanUseStandardBE()
  * @method boolean                     getPostnlCoreCanUsePakjeGemak()
  * @method boolean                     getPostnlCoreCanUseEps()
  * @method boolean                     getPostnlCoreCanUseGlobalPack()
@@ -97,6 +102,7 @@
  * @method boolean                     getPostnlCoreCanUseBuspakje()
  * @method boolean                     getPostnlDeliveryOptionsCanUseDeliveryDays()
  * @method boolean                     getCanShowOnlyStatedAddressOption()
+ * @method boolean                     getPostnlCoreCanUsePakjegemakNotInsured()
  * @method array                       getPostnlShippingMethods()
  * @method array                       getMatchedPostnlShippingMethods()
  * @method boolean                     getCanUseResponsiveDeliveryOptions()
@@ -108,6 +114,8 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsGlobalConfigured(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseStandard(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseStandardNL(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseStandardBE(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUsePakjeGemak(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseEps(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseGlobalPack(boolean $value)
@@ -137,6 +145,7 @@
  * @method TIG_PostNL_Model_Core_Cache setStoreTimeZones(array $value)
  * @method TIG_PostNL_Model_Core_Cache setValidDeliveryDaysArray(array $value)
  * @method TIG_PostNL_Model_Core_Cache setDomesticCountry(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUsePakjegemakNotInsured(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

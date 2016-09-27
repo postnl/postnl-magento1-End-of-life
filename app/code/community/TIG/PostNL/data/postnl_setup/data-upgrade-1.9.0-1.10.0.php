@@ -31,28 +31,34 @@
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@tig.nl for more information.
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php /** @var Mage_Sales_Model_Order $_order */ ?>
-<?php $_order = $this->getOrder(); ?>
-<?php
-/** @var TIG_PostNL_Helper_DeliveryOptions $_helper */
-$_helper = Mage::helper('postnl/deliveryOptions'); ?>
 
-<?php if ($_order): ?>
-    <?php $_deliveryOptions = $_helper->getDeliveryOptionsInfo($_order, false); ?>
-    <?php $_filteredDeliveryOptions = array_filter($_deliveryOptions); ?>
-    <?php if (!empty($_filteredDeliveryOptions) && $_helper->canUseDeliveryDays(false)): ?>
-        <br />
-        <?php echo $this->formatDate($_deliveryOptions['store_delivery_date'], Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM); ?>
-        <?php if ($_deliveryOptions['store_delivery_time_start'] && $_deliveryOptions['store_delivery_time_end'] && $_helper->canUseTimeframes(false)): ?>
-            &nbsp;(<?php echo $_deliveryOptions['store_delivery_time_start']; ?> - <?php echo $_deliveryOptions['store_delivery_time_end']; ?>)
-        <?php elseif ($_deliveryOptions['store_delivery_time_start'] && $_helper->canUseTimeframes(false)): ?>
-            &nbsp;(<?php echo $_helper->__('from')?> <?php echo $_deliveryOptions['store_delivery_time_start']; ?>)
-        <?php endif; ?>
-    <?php endif; ?>
-<?php endif; ?>
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
+
+/**
+ * These xpaths have been changed.
+ */
+$updatedXpaths = array(
+    'postnl/delivery_options/delivery_options_be_active' => 'postnl/delivery_options_int/delivery_options_be_active',
+    'postnl/delivery_options/enable_pakjegemak_be'       => 'postnl/delivery_options_int/enable_pakjegemak_be',
+    'postnl/delivery_options/enable_delivery_days_be'    => 'postnl/delivery_options_int/enable_delivery_days_be',
+    'postnl/delivery_options/allow_sunday_sorting_be'    => 'postnl/delivery_options_int/allow_sunday_sorting_be',
+    'postnl/delivery_options/delivery_days_number_be'    => 'postnl/delivery_options_int/delivery_days_number_be',
+);
+
+foreach ($updatedXpaths as $oldXpath => $newXpath) {
+    $installer->moveConfigSettingInDb(
+        $oldXpath,
+        $newXpath
+    );
+}
+
+
+$installer->clearConfigCache();

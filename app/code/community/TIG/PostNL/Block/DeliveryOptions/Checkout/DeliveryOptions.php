@@ -292,6 +292,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get the currently inserted shipping address's city.
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        $city = $this->getShippingAddress()->getCity();
+
+        return $city;
+    }
+
+    /**
      * Get the currently selected shipping address's country.
      *
      * @return string
@@ -310,11 +322,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     /**
      * Get the earliest possible delivery date.
      *
+     * @param string $for delivery or pickup
+     *
      * @return null|string
      */
-    public function getDeliveryDate()
+    public function getDeliveryDate($for = 'delivery')
     {
-        $deliveryDate = $this->_deliveryDate;
+        $deliveryDate = isset($this->_deliveryDate[$for]) ? $this->_deliveryDate[$for] : null;
 
         if ($deliveryDate !== null) {
             return $deliveryDate;
@@ -326,7 +340,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $country  = $this->getCountry();
 
         try {
-            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote);
+            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote, $for);
         } catch (Exception $e) {
             /** @var TIG_PostNL_Helper_Date $helper */
             $helper = Mage::helper('postnl/date');
@@ -336,7 +350,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
                                    ->format('d-m-Y');
         }
 
-        $this->setDeliveryDate($deliveryDate);
+        $this->setDeliveryDate($deliveryDate, $for);
+
+        if ($for == 'delivery' && $country != 'BE') {
+            $this->setDeliveryDate($deliveryDate, 'pickup');
+        }
+
         return $deliveryDate;
     }
 
@@ -345,11 +364,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param string $deliveryDate
      *
+     * @param string $for delivery or pickup
+     *
      * @return $this
      */
-    public function setDeliveryDate($deliveryDate)
+    public function setDeliveryDate($deliveryDate, $for = 'delivery')
     {
-        $this->_deliveryDate = $deliveryDate;
+        $this->_deliveryDate[$for] = $deliveryDate;
 
         return $this;
     }
@@ -921,20 +942,30 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @throws TIG_PostNL_Exception
+     * @param string                 $for delivery or pickup
      *
      * @return string
+     * @throws TIG_PostNL_Exception
      */
-    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote) {
+    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote, $for) {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
-        if (!$validator->isValid($postcode)) {
+        $validatorBe = new Zend_Validate_PostCode('nl_BE');
+        if (!$validator->isValid($postcode) && !$validatorBe->isValid($postcode)) {
+            $exceptionMessage = 'Invalid postcode supplied for GetDeliveryDate request: '
+                . '%s Postcodes may only contain 4 numbers';
+
+            if ($country == 'NL') {
+                $exceptionMessage .= ' and 2 letters';
+            }
+
+            $exceptionMessage .= '.';
+
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers '
-                        . 'and 2 letters.',
-                     $postcode
+                    $exceptionMessage,
+                    $postcode
                 ),
                 'POSTNL-0131'
             );
@@ -953,7 +984,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         /** @var TIG_PostNL_Model_DeliveryOptions_Cif $cif */
         $cif = Mage::getModel('postnl_deliveryoptions/cif');
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
-                        ->getDeliveryDate($postcode, $country, $quote);
+                        ->getDeliveryDate($postcode, $country, $quote, $for);
 
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');

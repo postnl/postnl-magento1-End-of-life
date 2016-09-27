@@ -55,34 +55,36 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $this->assertInstanceOf('TIG_PostNL_Helper_DeliveryOptions', $helper);
     }
 
-    /**
-     * @test
-     */
-    public function shouldAllowSundaySorting()
+    public function disallowSundaySortingProvider()
     {
-        $this->markTestSkipped('Skip this test');
-
-        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', true);
-
-        $helper = $this->_getInstance();
-
-        $this->assertTrue($helper->canUseSundaySorting());
+        return array(
+            array('NL', true, true, true),
+            array('BE', true, true, true),
+            array('NL', false, true, true),
+            array('BE', false, true, true),
+            array('NL', true, false, true),
+            array('BE', true, false, true),
+            array('NL', false, false, false),
+            array('BE', false, false, false),
+        );
     }
 
     /**
      * @test
+     * @dataProvider disallowSundaySortingProvider
      */
-    public function shouldDisallowSundaySorting()
+    public function shouldDisallowSundaySorting($country, $nl, $be, $result)
     {
-        $this->markTestSkipped('Skip this test');
+        $helper = $this->_getInstance();
+        $helper->setCache(false);
 
         $this->resetMagento();
 
-        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', false);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SENDER_COUNTRY, $country);
+        Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING, $nl);
+        Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING_BE, $be);
 
-        $helper = $this->_getInstance();
-
-        $this->assertTrue(!$helper->canUseSundaySorting());
+        $this->assertEquals($result, $helper->canUseSundaySorting(), 'Can use sunday sorting');
     }
 
     public function testCanUseDutchProductsByCountryDataProvder()
@@ -125,16 +127,24 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     {
         return array(
             array(
-                'country' => 'BE',
-                'shouldPass' => false,
+                'country'          => 'BE',
+                'shouldPass'       => true,
+                'useDutchProducts' => 1,
             ),
             array(
-                'country' => 'NL',
-                'shouldPass' => true,
+                'country'          => 'BE',
+                'shouldPass'       => true,
+                'useDutchProducts' => 0,
             ),
             array(
-                'country' => 'DE',
-                'shouldPass' => false,
+                'country'          => 'NL',
+                'shouldPass'       => true,
+                'useDutchProducts' => 1,
+            ),
+            array(
+                'country'          => 'DE',
+                'shouldPass'       => false,
+                'useDutchProducts' => 0,
             ),
         );
     }
@@ -142,17 +152,29 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     /**
      * @param $country
      * @param $shouldPass
+     * @param $useDutchProducts
      *
      * @dataProvider testCanUseDutchProductsWhenDisabledProvder
      */
-    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass)
+    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
     {
         $helper = $this->_getInstance();
 
+        $quote = $this->getMock('Mage_Sales_Model_Quote', array('getCountryId', 'getShippingAddress'));
+
+        $quote->expects($this->any())
+            ->method('getShippingAddress')
+            ->willReturnSelf();
+
+        $quote->expects($this->any())
+            ->method('getCountryId')
+            ->willReturn($country);
+
+        $this->setProperty('_quote', $quote);
         $this->setProperty('_canUseDutchProducts', null);
         $this->setProperty('_domesticCountry', $country);
 
-        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '0');
+        Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, $useDutchProducts);
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
     }
@@ -221,5 +243,32 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
+    }
+
+    public function isDeliveryOptionsActiveDataProvider()
+    {
+        return array(
+            array(true, true, true),
+            array(true, false, true),
+            array(false, true, true),
+            array(false, false, false),
+        );
+    }
+
+    /**
+     * @dataProvider isDeliveryOptionsActiveDataProvider
+     *
+     * @param $enableNL
+     * @param $enableBE
+     * @param $result
+     */
+    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
+    {
+        $helper = $this->_getInstance();
+
+        Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_ACTIVE, $enableNL);
+        Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $enableBE);
+
+        $this->assertEquals($result, $helper->isDeliveryOptionsActive());
     }
 }
