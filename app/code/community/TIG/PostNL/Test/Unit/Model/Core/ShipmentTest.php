@@ -162,7 +162,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
     public function testHasPakjegemakBeNotInsuredConfig()
     {
         $this->markTestIncomplete('Not working at the moment');
-        
+
         $value = Mage::app()->getStore()
             ->getConfig(TIG_PostNL_Model_Core_Shipment::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION);
 

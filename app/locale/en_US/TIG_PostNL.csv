@@ -1380,3 +1380,16 @@ TIG_PostNL::PostNL verification type,PostNL verification type
 TIG_PostNL::Age Check,Age Check
 TIG_PostNL::Birthday Check,Birthday Check
 TIG_PostNL::ID Check,ID Check
+TIG_PostNL::Dutch Passport,Nederlands paspoort
+TIG_POSTNL::Dutch ID,Dutch ID
+TIG_POSTNL::Dutch drivers license,Dutch drivers license
+TIG_POSTNL::Foreigners document,Foreigners document
+TIG_POSTNL::European ID,European ID
+TIG_POSTNL::Abroad passport,Abroad passport
+TIG_PostNL::Documentnumber:,Documentnumber:
+TIG_PostNL::Expiration date:,Expiration date:
+TIG_PostNL::Document type,Document type
+TIG_PostNL::Day,Day
+TIG_PostNL::Month,Month
+TIG_PostNL::Year,Year
+TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,The following data will be used for a personidentification when delivering the parcel.

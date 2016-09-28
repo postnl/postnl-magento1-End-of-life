@@ -374,6 +374,7 @@
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
+            <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
         </reference>
         <reference name="checkout.onepage.shipping">
             <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>

@@ -126,11 +126,11 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
     /**
      * @dataProvider isCheckProvider
      */
-    public function testIsCheck($type, $response)
+    public function testIsIDCheck($type, $response)
     {
         $model = Mage::getModel('postnl_core/order');
         $model->setType($type);
 
-        $this->assertEquals($response, $model->isCheck());
+        $this->assertEquals($response, $model->isIDCheck());
     }
 }

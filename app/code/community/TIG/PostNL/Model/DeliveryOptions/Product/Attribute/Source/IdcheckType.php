@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_CheckType
+class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType
     extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
     /**

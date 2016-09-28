@@ -1,0 +1,94 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+/** @var TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck $this */
+
+/** @var TIG_PostNL_Helper_Data $helper */
+$helper = $this->helper('postnl');
+?>
+<div id="postnl_agecheck">
+    <em><?php echo $helper->__('The following data will be used for a personidentification when delivering the parcel.'); ?></em>
+
+    <div class="fields">
+        <div class="field">
+            <label for="billing:postnl_idcheck_type"><?php echo $helper->__('Document type'); ?></label>
+            <div class="input-box">
+                <select name="idcheck_type" id="billing:postnl_idcheck_type">
+                    <?php foreach ($this->helper('postnl/deliveryOptions_iDCheck')->getValidationOptions() as $option): ?>
+                        <option value="<?php echo $option['value']; ?>"><?php echo $option['text']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="billing:postnl_idcheck_number"><?php echo $this->helper('postnl')->__('Documentnumber:'); ?></label>
+            <div class="input-box">
+                <input type="text" name="postnl_idcheck_number" id="billing:postnl_idcheck_number" class="input-text validation-required">
+            </div>
+        </div>
+    </div>
+
+    <?php echo $this->helper('postnl')->__('Expiration date:'); ?>
+    <div class="field">
+        <label for="billing:postnl_idcheck_expiration_day"><?php echo $this->helper('postnl')->__('Day'); ?></label>
+        <select name="postnl_idcheck_expiration_date_day" id="billing:postnl_idcheck_expiration_day">
+            <?php for ($i = 1; $i <= 31; $i++): ?>
+                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+            <?php endfor; ?>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="billing:postnl_idcheck_expiration_month"><?php echo $this->helper('postnl')->__('Month'); ?></label>
+        <select name="postnl_idcheck_expiration_date_month" id="billing:postnl_idcheck_expiration_month">
+            <?php foreach ($this->getMonthList() as $value => $label): ?>
+                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="billing:postnl_idcheck_expiration_year"><?php echo $this->helper('postnl')->__('Year'); ?></label>
+        <select name="postnl_idcheck_expiration_date_year" id="billing:postnl_idcheck_expiration_year">
+            <?php for ($i = date('Y'); $i >= date('Y') - 100; $i--): ?>
+                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+            <?php endfor; ?>
+        </select>
+    </div>
+</div>

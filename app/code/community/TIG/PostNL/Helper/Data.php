@@ -1146,7 +1146,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         return $foodType;
     }
 
-    public function quoteIsCheck(Mage_Sales_Model_Quote $quote = null)
+    public function quoteIsIDCheck(Mage_Sales_Model_Quote $quote = null)
     {
         if ($quote === null) {
             $quote = $this->getQuote();
@@ -1174,9 +1174,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
 
             if (
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_AGE ||
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_BIRTHDAY ||
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_ID
+                $postnlProductType === $deliveryOptionsHelper::IDCHECK_TYPE_AGE ||
+                $postnlProductType === $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY ||
+                $postnlProductType === $deliveryOptionsHelper::IDCHECK_TYPE_ID
             ) {
                 $quoteIsCheck = true;
             }

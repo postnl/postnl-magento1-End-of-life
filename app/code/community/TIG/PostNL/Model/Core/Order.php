@@ -455,7 +455,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      *
      * @return bool
      */
-    public function isCheck()
+    public function isIDCheck()
     {
         $type = $this->getType();
         if ($type == self::TYPE_AGECHECK || $type == self::TYPE_BIRTHDAYCHECK || $type == self::TYPE_IDCHECK) {
