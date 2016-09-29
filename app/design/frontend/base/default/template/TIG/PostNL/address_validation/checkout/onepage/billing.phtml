@@ -117,7 +117,7 @@
 
                 <?php if(!$this->isCustomerLoggedIn()): ?>
 
-        <?php $_dob = $this->getLayout()->createBlock('customer/widget_dob') ?>
+        <?php $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob') ?>
         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
             <?php if ($_dob->isEnabled() || $_gender->isEnabled()): ?>
                 <li class="fields">

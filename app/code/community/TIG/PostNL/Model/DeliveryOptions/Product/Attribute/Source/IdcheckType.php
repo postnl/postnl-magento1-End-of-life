@@ -50,6 +50,8 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType
             return $this->_options;
         }
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
         $helper = Mage::helper('postnl');
 
         $options = array(
@@ -58,15 +60,15 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType
                 'label' => $helper->__('None'),
             ),
             array(
-                'value' => 'agecheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_AGE,
                 'label' => $helper->__('Age Check'),
             ),
             array(
-                'value' => 'birthdaycheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY,
                 'label' => $helper->__('Birthday Check'),
             ),
             array(
-                'value' => 'idcheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_ID,
                 'label' => $helper->__('ID Check'),
             ),
         );
