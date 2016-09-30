@@ -41,7 +41,7 @@
 /** @var TIG_PostNL_Helper_Data $helper */
 $helper = $this->helper('postnl');
 ?>
-<div id="postnl_agecheck">
+<div id="postnl_idcheck">
     <em><?php echo $helper->__('The following data will be used for a personidentification when delivering the parcel.'); ?></em>
 
     <div class="fields">
@@ -57,38 +57,21 @@ $helper = $this->helper('postnl');
         </div>
 
         <div class="field">
-            <label for="billing:postnl_idcheck_number"><?php echo $this->helper('postnl')->__('Documentnumber:'); ?></label>
+            <label for="billing:postnl_idcheck_number"><?php echo $helper->__('Documentnumber:'); ?></label>
             <div class="input-box">
-                <input type="text" name="postnl_idcheck_number" id="billing:postnl_idcheck_number" class="input-text validation-required">
+                <input type="text" name="postnl_idcheck_number" id="billing:postnl_idcheck_number" class="input-text required-entry">
             </div>
         </div>
     </div>
 
-    <?php echo $this->helper('postnl')->__('Expiration date:'); ?>
-    <div class="field">
-        <label for="billing:postnl_idcheck_expiration_day"><?php echo $this->helper('postnl')->__('Day'); ?></label>
-        <select name="postnl_idcheck_expiration_date_day" id="billing:postnl_idcheck_expiration_day">
-            <?php for ($i = 1; $i <= 31; $i++): ?>
-                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-            <?php endfor; ?>
-        </select>
-    </div>
-
-    <div class="field">
-        <label for="billing:postnl_idcheck_expiration_month"><?php echo $this->helper('postnl')->__('Month'); ?></label>
-        <select name="postnl_idcheck_expiration_date_month" id="billing:postnl_idcheck_expiration_month">
-            <?php foreach ($this->getMonthList() as $value => $label): ?>
-                <option value="<?php echo $value; ?>"><?php echo $label; ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-    <div class="field">
-        <label for="billing:postnl_idcheck_expiration_year"><?php echo $this->helper('postnl')->__('Year'); ?></label>
-        <select name="postnl_idcheck_expiration_date_year" id="billing:postnl_idcheck_expiration_year">
-            <?php for ($i = date('Y'); $i >= date('Y') - 100; $i--): ?>
-                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-            <?php endfor; ?>
-        </select>
-    </div>
+    <?php
+    /** @var TIG_PostNL_Block_Checkout_Widget_Date $_date */
+    $_date = $this->getLayout()->createBlock('postnl/checkout_widget_date');
+    echo $_date
+        ->setFieldIdFormat('billing:postnl_idcheck_expiration_date_%s')
+        ->setFieldNameFormat('billing[postnl_idcheck_expiration_date_%s]')
+        ->setLabel($helper->__('Expiration date:'))
+        ->setIsRequired(true)
+        ->toHtml();
+    ?>
 </div>

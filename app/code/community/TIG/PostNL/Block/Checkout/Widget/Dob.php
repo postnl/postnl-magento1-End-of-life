@@ -64,7 +64,7 @@ class TIG_PostNL_Block_Checkout_Widget_Dob extends Mage_Customer_Block_Widget_Do
             return true;
         }
 
-        return $this->canUseIdCheck() && $this->isIDCheckShipment();
+        return $this->isAgeCheckShipment() || $this->isBirthdayCheckShipment();
     }
 
     /**
@@ -72,27 +72,30 @@ class TIG_PostNL_Block_Checkout_Widget_Dob extends Mage_Customer_Block_Widget_Do
      */
     public function isRequired()
     {
-        $parent = parent::isRequired();
-        if ($parent) {
+        if (parent::isRequired()) {
             return true;
         }
 
-        return $this->canUseIdCheck() && $this->isIDCheckShipment();
+        return $this->isAgeCheckShipment() || $this->isBirthdayCheckShipment();
     }
 
     /**
      * @return bool
      */
-    protected function canUseIdCheck()
+    protected function isAgeCheckShipment()
     {
-        return $this->getDeliveryOptionsHelper()->canUseIdCheckDelivery();
+        return
+            $this->getDeliveryOptionsHelper()->canUseAgeCheckDelivery() &&
+            $this->getDeliveryOptionsHelper()->quoteIsAgeCheck();
     }
 
     /**
-     * @return bool|mixed
+     * @return bool
      */
-    protected function isIDCheckShipment()
+    protected function isBirthdayCheckShipment()
     {
-        return $this->getDeliveryOptionsHelper()->quoteIsIDCheck();
+        return
+            $this->getDeliveryOptionsHelper()->canUseBirthdayCheckDelivery() &&
+            $this->getDeliveryOptionsHelper()->quoteIsBirthdayCheck();
     }
 }

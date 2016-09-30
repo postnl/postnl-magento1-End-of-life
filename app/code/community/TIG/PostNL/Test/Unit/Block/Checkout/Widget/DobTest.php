@@ -64,43 +64,74 @@ class TIG_PostNL_Test_Unit_Block_Checkout_Widget_DobTest extends TIG_PostNL_Test
     public function dataProvider()
     {
         return array(
-            array('isEnabled', 'opt', true, true, true),
-            array('isEnabled', 'opt', false, true, true),
-            array('isEnabled', 'opt', false, false, true),
-            array('isEnabled', 'opt', false, false, true),
+            array('isEnabled', 'opt', true, true, true, true, true),
+            array('isEnabled', 'opt', false, true, true, true, true),
+            array('isEnabled', 'opt', false, false, true, true, true),
+            array('isEnabled', 'opt', false, false, false, true, true),
+            array('isEnabled', 'opt', false, false, false, false, true),
+            array('isEnabled', 'opt', true, false, false, false, true),
+            array('isEnabled', 'opt', true, true, false, false, true),
+            array('isEnabled', 'opt', true, true, true, false, true),
 
-            array('isEnabled', 'req', true, true, true),
-            array('isEnabled', 'req', false, true, true),
-            array('isEnabled', 'req', false, false, true),
-            array('isEnabled', 'req', true, false, true),
+            array('isEnabled', 'req', true, true, true, true, true),
+            array('isEnabled', 'req', false, true, true, true, true),
+            array('isEnabled', 'req', false, false, true, true, true),
+            array('isEnabled', 'req', false, false, false, true, true),
+            array('isEnabled', 'req', false, false, false, false, true),
+            array('isEnabled', 'req', true, false, false, false, true),
+            array('isEnabled', 'req', true, true, false, false, true),
+            array('isEnabled', 'req', true, true, true, false, true),
 
-            array('isEnabled', '', true, true, true),
-            array('isEnabled', '', false, true, false),
-            array('isEnabled', '', false, false, false),
-            array('isEnabled', '', true, false, false),
+            array('isEnabled', '', true, true, true, true, true),
+            array('isEnabled', '', false, true, true, true, true),
+            array('isEnabled', '', false, false, true, true, true),
+            array('isEnabled', '', false, false, false, true, false),
+            array('isEnabled', '', false, false, false, false, false),
+            array('isEnabled', '', true, false, false, false, false),
+            array('isEnabled', '', true, true, false, false, true),
+            array('isEnabled', '', true, true, true, false, true),
 
-            array('isRequired', 'opt', true, true, true),
-            array('isRequired', 'opt', true, false, false),
-            array('isRequired', 'opt', false, false, false),
-            array('isRequired', 'opt', false, true, false),
+            array('isRequired', 'opt', true, true, true, true, true),
+            array('isRequired', 'opt', false, true, true, true, true),
+            array('isRequired', 'opt', false, false, true, true, true),
+            array('isRequired', 'opt', false, false, false, true, false),
+            array('isRequired', 'opt', false, false, false, false, false),
+            array('isRequired', 'opt', true, false, false, false, false),
+            array('isRequired', 'opt', true, true, false, false, true),
+            array('isRequired', 'opt', true, true, true, false, true),
 
-            array('isRequired', 'req', false, false, true),
-            array('isRequired', 'req', true, false, true),
-            array('isRequired', 'req', true, true, true),
-            array('isRequired', 'req', false, true, true),
+            array('isRequired', 'req', true, true, true, true, true),
+            array('isRequired', 'req', false, true, true, true, true),
+            array('isRequired', 'req', false, false, true, true, true),
+            array('isRequired', 'req', false, false, false, true, true),
+            array('isRequired', 'req', false, false, false, false, true),
+            array('isRequired', 'req', true, false, false, false, true),
+            array('isRequired', 'req', true, true, false, false, true),
+            array('isRequired', 'req', true, true, true, false, true),
 
-            array('isRequired', '', false, false, false),
-            array('isRequired', '', true, false, false),
-            array('isRequired', '', true, true, true),
-            array('isRequired', '', false, true, false),
+            array('isRequired', '', true, true, true, true, true),
+            array('isRequired', '', false, true, true, true, true),
+            array('isRequired', '', false, false, true, true, true),
+            array('isRequired', '', false, false, false, true, false),
+            array('isRequired', '', false, false, false, false, false),
+            array('isRequired', '', true, false, false, false, false),
+            array('isRequired', '', true, true, false, false, true),
+            array('isRequired', '', true, true, true, false, true),
         );
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testIsEnabled($method, $dobValue, $canUseIdCheckDelivery, $quoteIsIDCheck, $result)
-    {
+    public function testIsEnabled(
+        $method,
+        $dobValue,
+        $canUseAgeCheckDelivery,
+        $quoteIsAgeCheck,
+        $canUseBirthdayCheckDelivery,
+        $quoteIsBirthdayCheck,
+        $result
+    ) {
         Mage::app()->getStore()->setConfig('customer/address/dob_show', $dobValue);
 
         $attribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'dob');
@@ -108,21 +139,31 @@ class TIG_PostNL_Test_Unit_Block_Checkout_Widget_DobTest extends TIG_PostNL_Test
         $attribute->setData('is_required', $dobValue == 'req' ? '1' : '0');
 
         $this->_helper->expects($this->any())
-            ->method('canUseIdCheckDelivery')
-            ->willReturn($canUseIdCheckDelivery);
+            ->method('canUseAgeCheckDelivery')
+            ->willReturn($canUseAgeCheckDelivery);
 
         $this->_helper->expects($this->any())
-            ->method('quoteIsIDCheck')
-            ->willReturn($quoteIsIDCheck);
+            ->method('quoteIsAgeCheck')
+            ->willReturn($quoteIsAgeCheck);
+
+        $this->_helper->expects($this->any())
+            ->method('canUseBirthdayCheckDelivery')
+            ->willReturn($canUseBirthdayCheckDelivery);
+
+        $this->_helper->expects($this->any())
+            ->method('quoteIsBirthdayCheck')
+            ->willReturn($quoteIsBirthdayCheck);
 
         $this->assertEquals(
             $result,
             $this->_getInstance()->$method(),
-            'Check that ' . $method . ' with' .
-            ' $dobValue on ' . $dobValue .
-            ', $canUseIdCheckDelivery on ' . ($canUseIdCheckDelivery ? 'true' : 'false') .
-            ', $quoteIsIDCheck on ' . ($quoteIsIDCheck ? 'true' : 'false') .
-            ' will return ' . ($result ? 'true' : 'false')
+            'Check that ' . $method . ' with' . PHP_EOL .
+            '$dobValue on "' . $dobValue . '"' . PHP_EOL .
+            '$canUseIdCheckDelivery on ' . ($canUseAgeCheckDelivery ? 'true' : 'false') . PHP_EOL .
+            '$quoteIsIDCheck on ' . ($quoteIsAgeCheck ? 'true' : 'false') . PHP_EOL .
+            '$canUseBirthdayCheckDelivery on ' . ($canUseBirthdayCheckDelivery ? 'true' : 'false') . PHP_EOL .
+            '$quoteIsBirthdayCheck on ' . ($quoteIsBirthdayCheck ? 'true' : 'false') . PHP_EOL .
+            'will return ' . ($result ? 'true' : 'false')
         );
     }
 }

@@ -277,3 +277,8 @@ cufon[alt=" "] { display:none !important; width:0 !important; height:0 !importan
 .responsive-tooltip,
 .responsive-tooltip-open { display:none; }
 /* ======================================================================================= */
+
+/* ID Check Expiration Date=============================================================== */
+.postnl-date .postnl-month, .postnl-date .postnl-day { width: 40px; float: left; margin-right: 10px; }
+.postnl-date .postnl-year { width: 80px; float: left; }
+/* ======================================================================================= */
