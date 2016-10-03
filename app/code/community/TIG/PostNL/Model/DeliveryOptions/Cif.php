@@ -605,8 +605,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $shippingDuration = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
         }
 
+        /**
+         * Sameday must be combined with evening, and can't be combined with other options.
+         */
         if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
+            $options[] = self::EVENING_DELIVERY_OPTION;
+
+            return $options;
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
