@@ -2743,6 +2743,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
+        if ($this->quoteIsIDCheck($quote) || $this->quoteIsBirthdayCheck($quote) || $this->quoteIsAgeCheck($quote)) {
+            return false;
+        }
+
         if (
             $quote->getShippingAddress()->getCountryId() !== null &&
             $quote->getShippingAddress()->getCountryId() == 'NL' &&

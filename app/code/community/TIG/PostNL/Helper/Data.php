@@ -3001,6 +3001,36 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param null $quote
+     *
+     * @return bool
+     */
+    public function getQuoteIdCheckType($quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        $shipmentType = false;
+        if ($this->quoteIsAgeCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        }
+
+        if ($this->quoteIsBirthdayCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        }
+
+        if ($this->quoteIsIdCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        return $shipmentType;
+    }
+
+    /**
      * Save the stored time zones to the PostNl cache.
      */
     public function __destruct()

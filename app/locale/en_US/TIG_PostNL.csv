@@ -1393,3 +1393,4 @@ TIG_PostNL::Day,Day
 TIG_PostNL::Month,Month
 TIG_PostNL::Year,Year
 TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,The following data will be used for a personidentification when delivering the parcel.
+TIG_PostNL::Please enter a date that is in the future.,Please enter a date that is in the future.

@@ -46,9 +46,9 @@ $helper = $this->helper('postnl');
 
     <div class="fields">
         <div class="field">
-            <label for="billing:postnl_idcheck_type"><?php echo $helper->__('Document type'); ?></label>
+            <label for="postnl_idcheck:type"class="required"><?php echo $helper->__('Document type'); ?></label>
             <div class="input-box">
-                <select name="idcheck_type" id="billing:postnl_idcheck_type">
+                <select name="postnl_idcheck[type]" id="postnl_idcheck:type">
                     <?php foreach ($this->helper('postnl/deliveryOptions_iDCheck')->getValidationOptions() as $option): ?>
                         <option value="<?php echo $option['value']; ?>"><?php echo $option['text']; ?></option>
                     <?php endforeach; ?>
@@ -57,9 +57,9 @@ $helper = $this->helper('postnl');
         </div>
 
         <div class="field">
-            <label for="billing:postnl_idcheck_number"><?php echo $helper->__('Documentnumber:'); ?></label>
+            <label for="postnl_idcheck:number" class="required"><?php echo $helper->__('Documentnumber:'); ?></label>
             <div class="input-box">
-                <input type="text" name="postnl_idcheck_number" id="billing:postnl_idcheck_number" class="input-text required-entry">
+                <input type="text" name="postnl_idcheck[number]" id="postnl_idcheck:number" class="input-text required-entry">
             </div>
         </div>
     </div>
@@ -68,8 +68,8 @@ $helper = $this->helper('postnl');
     /** @var TIG_PostNL_Block_Checkout_Widget_Date $_date */
     $_date = $this->getLayout()->createBlock('postnl/checkout_widget_date');
     echo $_date
-        ->setFieldIdFormat('billing:postnl_idcheck_expiration_date_%s')
-        ->setFieldNameFormat('billing[postnl_idcheck_expiration_date_%s]')
+        ->setFieldIdFormat('postnl_idcheck:expiration_date_%s')
+        ->setFieldNameFormat('postnl_idcheck[expiration_date_%s]')
         ->setLabel($helper->__('Expiration date:'))
         ->setIsRequired(true)
         ->toHtml();

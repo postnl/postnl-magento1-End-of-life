@@ -73,7 +73,7 @@ if ($this->hasLabel()) {
 ?>
     <div class="validation-advice" style="display:none;"></div>
     <div class="postnl-full" style="display:none;">
-        <input type="hidden" id="<?php echo $this->getFieldId('dob')?>" name="<?php echo $this->getFieldName('dob')?>" />
+        <input type="hidden" id="<?php echo $this->getFieldId('full')?>" name="<?php echo $this->getFieldName('full')?>" />
     </div>
 </div>
 
@@ -87,6 +87,18 @@ if ($this->hasLabel()) {
     container.full      = Element.select(el, '.postnl-full input')[0];
     container.advice    = Element.select(el, '.validation-advice')[0];
 
-    new Varien.DateElement('container', container, <?php echo $this->getIsRequired() ? 'true' : 'false' ?>, '<?php echo $this->getDateFormat() ?>');
+    var result = new Varien.DateElement('container', container, <?php echo $this->getIsRequired() ? 'true' : 'false' ?>, '<?php echo $this->getDateFormat() ?>');
+
+    result.validateDataErrorText = 'Please enter a date that is in the future.';
+
+    /**
+     * The default is to check that the date is in the past, but we need to check that the date is in the future.
+     *
+     * @returns {boolean}
+     */
+    result.validateData = function () {
+        var date = new Date;
+        return date < this.fullDate;
+    };
     //]]>
 </script>

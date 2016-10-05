@@ -97,4 +97,22 @@ class TIG_PostNL_Helper_DeliveryOptions_IDCheck extends Mage_Core_Helper_Abstrac
             ),
         );
     }
+
+    /**
+     * @param $value
+     *
+     * @return bool
+     */
+    public function isValidOption($value)
+    {
+        $options = $this->getValidationOptions();
+
+        foreach ($options as $option) {
+            if ($option['value'] == $value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -108,4 +108,38 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
             'Check ' . $method . ' with type ' . $type
         );
     }
+
+    public function getQuoteIdCheckTypeProvider()
+    {
+        return array(
+            array(true, false, false, 'AgeCheck'),
+            array(false, true, false, 'IDCheck'),
+            array(false, false, true, 'BirthdayCheck'),
+        );
+    }
+
+    /**
+     * @param $ageCheck
+     * @param $idCheck
+     * @param $birthdayCheck
+     * @param $result
+     *
+     * @dataProvider getQuoteIdCheckTypeProvider
+     */
+    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $result)
+    {
+        $quote = $this->getMock('Mage_Sales_Model_Quote');
+
+        $quote->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->setRegistryKey('postnl_quote_is_age_check_1', $ageCheck);
+        $this->setRegistryKey('postnl_quote_is_birthday_check_1', $birthdayCheck);
+        $this->setRegistryKey('postnl_quote_is_id_check_1', $idCheck);
+
+        $instance = $this->getInstance();
+
+        $this->assertEquals($result, $instance->getQuoteIdCheckType($quote), 'The result should be ' . $result);
+    }
 }

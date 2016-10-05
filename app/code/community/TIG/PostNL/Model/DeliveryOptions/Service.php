@@ -44,6 +44,8 @@
  * @method TIG_PostNL_Model_DeliveryOptions_Service setShippingDuration(int $duration)
  * @method boolean                                  hasConfirmDate()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setConfirmDate(string $date)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setIdcheckType(string $value)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setIdcheckExpirationDate(string $value)
  */
 class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 {

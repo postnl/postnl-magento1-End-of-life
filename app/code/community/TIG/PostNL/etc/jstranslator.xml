@@ -159,4 +159,7 @@
     <food_delivery_not_possible_postalcode translate="message" module="postnl">
         <message>Food products delivery is not possible for this postal code. Please choose a different address.</message>
     </food_delivery_not_possible_postalcode>
+    <please_enter_future_date translate="message" module="postnl">
+        <message>Please enter a date that is in the future.</message>
+    </please_enter_future_date>
 </jstranslator>
