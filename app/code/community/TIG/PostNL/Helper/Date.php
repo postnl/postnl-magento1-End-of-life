@@ -333,14 +333,6 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
         }
 
         $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
-
-        /**
-         * PG BE is not send on saturday and sunday.
-         */
-        if ($isPGBE) {
-            $shippingDays = str_replace(array(',6', ',7'), '', $shippingDays);
-        }
-
         $shippingDaysArray = explode(',', $shippingDays);
         $dateObject = $this->getUtcDateTime($deliveryDate, $storeId, false);
 
