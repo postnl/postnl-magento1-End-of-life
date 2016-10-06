@@ -36,6 +36,7 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+/** @var Mage_Checkout_Block_Onepage_Billing $this */
 ?>
 <form id="co-billing-form" action="">
 <fieldset>
@@ -46,6 +47,12 @@
             <div class="input-box">
                 <?php echo $this->getAddressesHtmlSelect('billing') ?>
             </div>
+
+            <?php
+            if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+                echo $this->getChildHtml('postnl_billing_idcheck');
+            endif;
+            ?>
         </li>
     <?php endif; ?>
     <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif; ?>>
@@ -112,9 +119,16 @@
                         </div>
                     </div>
                 </li>
+
+                <?php
+                if (!$this->customerHasAddresses() && $this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+                    echo $this->getChildHtml('postnl_billing_idcheck');
+                endif;
+                ?>
+
                 <?php if(!$this->isCustomerLoggedIn()): ?>
 
-        <?php $_dob = $this->getLayout()->createBlock('customer/widget_dob') ?>
+        <?php $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob') ?>
         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
             <?php if ($_dob->isEnabled() || $_gender->isEnabled()): ?>
                 <li class="fields">

@@ -25,46 +25,77 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@tig.nl so we can send you a copy immediately.
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@tig.nl for more information.
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_CheckTypeTest
-    extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
+class TIG_PostNL_Block_Checkout_Widget_Dob extends Mage_Customer_Block_Widget_Dob
 {
-    public function types()
+    /**
+     * @var null|TIG_PostNL_Helper_DeliveryOptions
+     */
+    protected $_helper = null;
+
+    /**
+     * @return TIG_PostNL_Helper_DeliveryOptions
+     */
+    protected function getDeliveryOptionsHelper()
     {
-        return array(
-            array('agecheck'),
-            array('birthdaycheck'),
-            array('idcheck'),
-        );
+        if ($this->_helper === null) {
+            $this->_helper = Mage::helper('postnl/deliveryOptions');
+        }
+
+        return $this->_helper;
     }
 
     /**
-     * @dataProvider types
+     * @return bool
      */
-    public function testHasAllTheOptions($type)
+    public function isEnabled()
     {
-        /** @var TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_CheckType $model */
-        $model = Mage::getModel('postnl_deliveryoptions/product_attribute_source_checkType');
-
-        $options = $model->getAllOptions();
-
-        foreach ($options as $option) {
-            if ($option['value'] === $type) {
-                $this->assertEquals($type, $option['value']);
-                return $this;
-            }
+        if (parent::isEnabled()) {
+            return true;
         }
 
-        $this->fail('Option ' . $type . ' not found');
+        return $this->isAgeCheckShipment() || $this->isBirthdayCheckShipment();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired()
+    {
+        if (parent::isRequired()) {
+            return true;
+        }
+
+        return $this->isAgeCheckShipment() || $this->isBirthdayCheckShipment();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAgeCheckShipment()
+    {
+        return
+            $this->getDeliveryOptionsHelper()->canUseAgeCheckDelivery() &&
+            $this->getDeliveryOptionsHelper()->quoteIsAgeCheck();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isBirthdayCheckShipment()
+    {
+        return
+            $this->getDeliveryOptionsHelper()->canUseBirthdayCheckDelivery() &&
+            $this->getDeliveryOptionsHelper()->quoteIsBirthdayCheck();
     }
 }

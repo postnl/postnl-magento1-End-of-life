@@ -49,25 +49,37 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
     public function checkIsQuoteProvider()
     {
         return array(
-            array('Agecheck', true),
-            array('Birthdaycheck', true),
-            array('Idcheck', true),
-            array(0, false),
-            array('0', false),
-            array('', false),
+            array('quoteIsAgeCheck', 'AgeCheck', true),
+            array('quoteIsAgeCheck', 'BirthdayCheck', false),
+            array('quoteIsAgeCheck', 'IDCheck', false),
+            array('quoteIsAgeCheck', 0, false),
+            array('quoteIsAgeCheck', '0', false),
+            array('quoteIsAgeCheck', '', false),
+            array('quoteIsBirthdayCheck', 'AgeCheck', false),
+            array('quoteIsBirthdayCheck', 'BirthdayCheck', true),
+            array('quoteIsBirthdayCheck', 'IDCheck', false),
+            array('quoteIsBirthdayCheck', 0, false),
+            array('quoteIsBirthdayCheck', '0', false),
+            array('quoteIsBirthdayCheck', '', false),
+            array('quoteIsIDCheck', 'AgeCheck', false),
+            array('quoteIsIDCheck', 'BirthdayCheck', false),
+            array('quoteIsIDCheck', 'IDCheck', true),
+            array('quoteIsIDCheck', 0, false),
+            array('quoteIsIDCheck', '0', false),
+            array('quoteIsIDCheck', '', false),
         );
     }
 
     /**
      * @dataProvider checkIsQuoteProvider
      */
-    public function testCheckIsQuote($type, $result)
+    public function testQuoteIsCheck($method, $type, $result)
     {
         /** @var PHPUnit_Framework_MockObject_MockObject $item */
-        $item = $this->getMock('Mage_Sales_Model_Quote_Item', array('getPostnlProductType'));
+        $item = $this->getMock('Mage_Sales_Model_Quote_Item', array('getPostnlIdcheckType'));
 
         $item->expects($this->once())
-            ->method('getPostnlProductType')
+            ->method('getPostnlIdcheckType')
             ->willReturn($type);
 
         /** @var Mage_Sales_Model_Quote|PHPUnit_Framework_MockObject_MockObject $quote */
@@ -85,12 +97,49 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
             ->method('getProduct')
             ->willReturn($item);
 
-        $this->setRegistryKey('postnl_quote_is_check_' . 1);
+        $this->setRegistryKey('postnl_quote_is_age_check_' . 1);
+        $this->setRegistryKey('postnl_quote_is_birthday_check_' . 1);
+        $this->setRegistryKey('postnl_quote_is_id_check_' . 1);
 
         $instance = $this->getInstance();
         $this->assertEquals(
             $result,
-            $instance->quoteIsCheck($quote),
-            'Check if that the type ' . $type . ' is ' . ($result ? '' : 'not ') . 'marked as Check type');
+            $instance->$method($quote),
+            'Check ' . $method . ' with type ' . $type
+        );
+    }
+
+    public function getQuoteIdCheckTypeProvider()
+    {
+        return array(
+            array(true, false, false, 'AgeCheck'),
+            array(false, true, false, 'IDCheck'),
+            array(false, false, true, 'BirthdayCheck'),
+        );
+    }
+
+    /**
+     * @param $ageCheck
+     * @param $idCheck
+     * @param $birthdayCheck
+     * @param $result
+     *
+     * @dataProvider getQuoteIdCheckTypeProvider
+     */
+    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $result)
+    {
+        $quote = $this->getMock('Mage_Sales_Model_Quote');
+
+        $quote->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->setRegistryKey('postnl_quote_is_age_check_1', $ageCheck);
+        $this->setRegistryKey('postnl_quote_is_birthday_check_1', $birthdayCheck);
+        $this->setRegistryKey('postnl_quote_is_id_check_1', $idCheck);
+
+        $instance = $this->getInstance();
+
+        $this->assertEquals($result, $instance->getQuoteIdCheckType($quote), 'The result should be ' . $result);
     }
 }

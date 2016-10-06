@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_CheckType
+class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType
     extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
     /**
@@ -50,6 +50,8 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_CheckType
             return $this->_options;
         }
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
         $helper = Mage::helper('postnl');
 
         $options = array(
@@ -58,15 +60,15 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_CheckType
                 'label' => $helper->__('None'),
             ),
             array(
-                'value' => 'agecheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_AGE,
                 'label' => $helper->__('Age Check'),
             ),
             array(
-                'value' => 'birthdaycheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY,
                 'label' => $helper->__('Birthday Check'),
             ),
             array(
-                'value' => 'idcheck',
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_ID,
                 'label' => $helper->__('ID Check'),
             ),
         );

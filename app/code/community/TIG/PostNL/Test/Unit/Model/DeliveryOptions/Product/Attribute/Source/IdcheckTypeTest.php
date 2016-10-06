@@ -25,65 +25,49 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Unit_Install_V12Test extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_IdcheckTypeTest
+    extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
-    public function attributesProvider()
+    public function types()
     {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
         return array(
-            array('postnl_idcheck_type'),
+            array($deliveryOptionsHelper::IDCHECK_TYPE_AGE),
+            array($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY),
+            array($deliveryOptionsHelper::IDCHECK_TYPE_ID),
         );
     }
 
     /**
-     * @param $attribute
-     *
-     * @throws Mage_Core_Exception
-     * @dataProvider attributesProvider
+     * @dataProvider types
      */
-    public function testIfAttributesExists($attribute)
+    public function testHasAllTheOptions($type)
     {
-        $attr = Mage::getResourceModel('catalog/eav_attribute')->loadByCode('catalog_product', $attribute);
+        /** @var TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType $model */
+        $model = Mage::getModel('postnl_deliveryoptions/product_attribute_source_IdcheckType');
 
-        $this->assertNotNull($attr->getId(), 'Check that the attribute ' .$attribute . ' does exists');
-    }
+        $options = $model->getAllOptions();
 
-    public function columnsProvider()
-    {
-        return array(
-            array('postnl_core/order', 'idcheck_type', 'varchar'),
-            array('postnl_core/order', 'idcheck_number', 'text'),
-            array('postnl_core/order', 'idcheck_expiration_date', 'date'),
-        );
-    }
-
-    /**
-     * @dataProvider columnsProvider
-     */
-    public function testIfColumnsExists($model, $column, $type)
-    {
-        $tableName = Mage::getSingleton('core/resource')->getTableName($model);
-        $read = Mage::getSingleton('core/resource')->getConnection('core_read');
-
-        $fields = $read->query('DESCRIBE `' . $tableName . '`')->fetchAll();
-
-        foreach ($fields as $field) {
-            if ($field['Field'] == $column) {
-                $this->assertNotFalse(strpos($field['Type'], $type));
+        foreach ($options as $option) {
+            if ($option['value'] === $type) {
+                $this->assertEquals($type, $option['value']);
                 return $this;
             }
         }
 
-        $this->fail('Column ' . $column . ' not found in ' . $tableName . ' (' . $model . ')');
+        $this->fail('Option ' . $type . ' not found');
     }
 }

@@ -281,6 +281,7 @@
                         <postnl_allow_timeframes/>
                         <postnl_allow_pakketautomaat/>
                         <postnl_product_type/>
+                        <postnl_idcheck_type/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -606,6 +607,26 @@
                     </set_registry_flag>
                 </observers>
             </controller_action_predispatch_gomage_checkout_onepage_ajax>
+            <controller_action_postdispatch_checkout_onepage_savebilling>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_checkout_onepage_savebilling>
+            <customer_address_validation_after>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <validate_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>validate</method>
+                    </validate_idcheck_data>
+                </observers>
+            </customer_address_validation_after>
         </events>
     </frontend>
 

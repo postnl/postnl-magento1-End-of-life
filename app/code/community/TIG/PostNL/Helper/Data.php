@@ -1146,44 +1146,82 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         return $foodType;
     }
 
-    public function quoteIsCheck(Mage_Sales_Model_Quote $quote = null)
+    /**
+     * Check if this quote has a ID Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsIDCheck(Mage_Sales_Model_Quote $quote = null)
     {
         if ($quote === null) {
             $quote = $this->getQuote();
         }
 
-        /**
-         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
-         * the registry.
-         */
-        $registryKey = 'postnl_quote_is_check_' . $quote->getId();
-        /**
-         * Check if the result of this method has been cached in the registry.
-         */
+        $registryKey = 'postnl_quote_is_id_check_' . $quote->getId();
         if (Mage::registry($registryKey) !== null) {
             return Mage::registry($registryKey);
         }
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_ID, $quote);
 
-        $quoteIsCheck = false;
-        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
-        foreach ($quote->getAllItems() as $quoteItem) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+        Mage::register($registryKey, $result);
+        return $result;
+    }
 
-            if (
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_AGE ||
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_BIRTHDAY ||
-                $postnlProductType === $deliveryOptionsHelper::CHECK_TYPE_ID
-            ) {
-                $quoteIsCheck = true;
-            }
+    /**
+     * Check if this quote has a Age Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsAgeCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
         }
 
-        Mage::register($registryKey, $quoteIsCheck);
-        return $quoteIsCheck;
+        $registryKey = 'postnl_quote_is_age_check_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_AGE, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
+    }
+
+    /**
+     * Check if this quote has a Age Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsBirthdayCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_birthday_check_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
     }
 
     /**
@@ -2927,6 +2965,69 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * @param array|string           $types
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    protected function _hasQuotePostnlProductType($types, Mage_Sales_Model_Quote $quote = null)
+    {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
+
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $quoteHasIDCheckType = false;
+        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+        foreach ($quote->getAllItems() as $quoteItem) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $postnlIDCheckType = $quoteItem->getProduct()->getPostnlIdcheckType();
+
+            foreach ($types as $type) {
+                if ($postnlIDCheckType === $type) {
+                    $quoteHasIDCheckType = true;
+                    break;
+                }
+            }
+        }
+
+        return $quoteHasIDCheckType;
+    }
+
+    /**
+     * @param null $quote
+     *
+     * @return bool
+     */
+    public function getQuoteIdCheckType($quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        $shipmentType = false;
+        if ($this->quoteIsAgeCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        }
+
+        if ($this->quoteIsBirthdayCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        }
+
+        if ($this->quoteIsIdCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        return $shipmentType;
     }
 
     /**
