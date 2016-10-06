@@ -142,11 +142,22 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
         }
 
         $service = $this->getServiceModel();
-        $service->saveDeliveryOption(array(
-            'date' => '05-10-2016',
-            'type' => $shipmentType,
-            'costs' => '',
-        ));
+
+        /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
+        $postnlOrder = $service->getPostnlOrder();
+
+        if (!$postnlOrder->getId()) {
+            $postnlOrder->setQuoteId($quote->getId())
+                ->setOrderId(null)
+                ->setIsActive(true)
+                ->setIsPakjeGemak(false)
+                ->setIsPakketautomaat(false)
+                ->setProductCode(false)
+                ->setMobilePhoneNumber(false, true)
+                ->setType($shipmentType)
+                ->setExpectedDeliveryTimeStart(false)
+                ->setExpectedDeliveryTimeEnd(false);
+        }
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
@@ -159,14 +170,12 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
         } elseif ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
             $post = Mage::app()->getRequest()->getPost('postnl_idcheck');
 
-            /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
-            $postnlOrder = $service->getPostnlOrder();
-
             $postnlOrder->setIdcheckType($post['type']);
             $postnlOrder->setIdcheckNumber($post['number']);
             $postnlOrder->setIdcheckExpirationDate($post['expiration_date_full']);
-            $postnlOrder->save();
         }
+
+        $postnlOrder->save();
     }
 
     /**

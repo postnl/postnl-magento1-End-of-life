@@ -194,17 +194,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
         ));
 
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
-        $mockService->expects($this->once())
-            ->method('saveDeliveryOption')
-            ->with($this->callback(function ($arguments) use (
-                $shipmentType
-            ) {
-                if ($shipmentType != $arguments['type']) {
-                    return false;
-                }
-
-                return true;
-            }));
 
         $mockService->expects($this->any())
             ->method('getPostnlOrder')
