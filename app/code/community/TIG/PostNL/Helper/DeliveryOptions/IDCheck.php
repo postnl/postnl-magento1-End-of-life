@@ -73,27 +73,27 @@ class TIG_PostNL_Helper_DeliveryOptions_IDCheck extends Mage_Core_Helper_Abstrac
         return array(
             array(
                 'value' => self::TYPE_DUTCH_PASSPORT,
-                'text' => $helper->__('Nederlands paspoort'),
+                'label' => $helper->__('Nederlands paspoort'),
             ),
             array(
                 'value' => self::TYPE_DUTCH_ID,
-                'text' => $helper->__('Nederlandse identiteitskaart'),
+                'label' => $helper->__('Nederlandse identiteitskaart'),
             ),
             array(
                 'value' => self::TYPE_DUTCH_DRIVERS_LICENSE,
-                'text' => $helper->__('Nederlands rijbewijs'),
+                'label' => $helper->__('Nederlands rijbewijs'),
             ),
             array(
                 'value' => self::TYPE_DUTCH_FOREIGNERS_DOCUMENT,
-                'text' => $helper->__('Nederlands vreemdelingendocument'),
+                'label' => $helper->__('Nederlands vreemdelingendocument'),
             ),
             array(
                 'value' => self::TYPE_EUROPEAN_ID,
-                'text' => $helper->__('Europese identiteitskaart'),
+                'label' => $helper->__('Europese identiteitskaart'),
             ),
             array(
                 'value' => self::TYPE_ABROAD_PASSPORT,
-                'text' => $helper->__('Buitenlands paspoort'),
+                'label' => $helper->__('Buitenlands paspoort'),
             ),
         );
     }

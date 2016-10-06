@@ -71,9 +71,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
-        if ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
-            $post = Mage::app()->getRequest()->getPost('postnl_idcheck');
 
+        $post = Mage::app()->getRequest()->getPost('postnl_idcheck');
+        if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
             /**
              * Check the document type.
              */
@@ -111,9 +111,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
             }
         }
 
-        if ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
-            $post = Mage::app()->getRequest()->getPost('billing');
-
+        $post = Mage::app()->getRequest()->getPost('billing');
+        if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
             if (!isset($post['dob']) || empty($post['dob'])) {
                 $validator->addError($this->getHelper()->__('Please provide a valid birthday'));
 

@@ -38,16 +38,30 @@
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck extends Mage_Core_Block_Template
 {
-    public function __construct(array $args = array())
-    {
-        parent::__construct($args);
-    }
-
+    /**
+     * @return mixed
+     * @throws Zend_Locale_Exception
+     */
     public function getMonthList()
     {
         $localeCode = Mage::app()->getLocale()->getLocaleCode();
         $months = Zend_Locale_Data::getList($localeCode, 'months');
 
         return $months['format']['wide'];
+    }
+
+    /**
+     * @return TIG_PostNL_Model_Core_Order
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->_order === null) {
+            $session = Mage::getSingleton('checkout/session');
+            $quote_id = $session->getQuoteId();
+
+            $this->_order = Mage::getModel('postnl_core/order')->load($quote_id, 'quote_id');
+        }
+
+        return $this->_order;
     }
 }

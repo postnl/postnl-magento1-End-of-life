@@ -47,6 +47,12 @@
             <div class="input-box">
                 <?php echo $this->getAddressesHtmlSelect('billing') ?>
             </div>
+
+            <?php
+            if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+                echo $this->getChildHtml('postnl_billing_idcheck');
+            endif;
+            ?>
         </li>
     <?php endif; ?>
     <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif; ?>>
@@ -115,7 +121,7 @@
                 </li>
 
                 <?php
-                if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+                if (!$this->customerHasAddresses() && $this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
                     echo $this->getChildHtml('postnl_billing_idcheck');
                 endif;
                 ?>

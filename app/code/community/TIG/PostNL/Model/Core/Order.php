@@ -59,6 +59,9 @@
  * @method string                      getCreatedAt()
  * @method string                      getPgLocationCode()
  * @method string                      getPgRetailNetworkId()
+ * @method string                      getIdcheckType()
+ * @method string                      getIdcheckNumber()
+ * @method string                      getIdcheckExpirationDate()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)

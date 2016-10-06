@@ -53,8 +53,18 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(),
+                false
+            ),
+
+            array(
+                'IDCheck',
+                array(
+                    'postnl_idcheck' => array(
+                    ),
+                ),
                 'Please provide a document type'
             ),
+
             array(
                 'IDCheck',
                 array(
@@ -64,6 +74,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ),
                 'Please provide a valid document type'
             ),
+
             array(
                 'IDCheck',
                 array(
@@ -74,6 +85,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ),
                 'Please provide a document number',
             ),
+
             array(
                 'IDCheck',
                 array(
@@ -85,6 +97,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ),
                 'Please provide a expiration date',
             ),
+
             array(
                 'IDCheck',
                 array(
@@ -96,8 +109,13 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ),
                 false
             ),
+
             array('AgeCheck', array(), false),
-            array('BirthdayCheck', array(), 'Please provide a valid birthday'),
+
+            array('BirthdayCheck', array(), false),
+
+            array('BirthdayCheck', array('billing'=>array()), 'Please provide a valid birthday'),
+
             array('BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
         );
     }
@@ -212,7 +230,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
 
             $mockOrder->expects($this->once())
                 ->method('setIdcheckExpirationDate')
-                ->with($postData['postnl_idcheck']['expiration_date']);
+                ->with($postData['postnl_idcheck']['expiration_date_full']);
         }
 
         $mockSession = Mage::getSingleton('checkout/session');
