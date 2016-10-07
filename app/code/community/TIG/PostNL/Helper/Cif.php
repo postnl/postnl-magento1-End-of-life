@@ -547,6 +547,42 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getAgeCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AgeCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_ageCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getBirthdayCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BirthdayCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_birthdayCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getIDCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array

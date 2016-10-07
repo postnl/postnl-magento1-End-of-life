@@ -116,9 +116,9 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
     public function isCheckProvider()
     {
         return array(
-            array('Agecheck', true),
-            array('Birthdaycheck', true),
-            array('Idcheck', true),
+            array('AgeCheck', true),
+            array('BirthdayCheck', true),
+            array('IDCheck', true),
             array('wrong', false),
         );
     }

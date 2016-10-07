@@ -64,6 +64,10 @@ class TIG_PostNL_Test_Unit_Install_V12Test extends TIG_PostNL_Test_Unit_Framewor
             array('postnl_core/order', 'idcheck_type', 'varchar'),
             array('postnl_core/order', 'idcheck_number', 'text'),
             array('postnl_core/order', 'idcheck_expiration_date', 'date'),
+
+            array('postnl_core/shipment', 'idcheck_type', 'varchar'),
+            array('postnl_core/shipment', 'idcheck_number', 'text'),
+            array('postnl_core/shipment', 'idcheck_expiration_date', 'date'),
         );
     }
 

@@ -138,6 +138,18 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlOrder->hasPgRetailNetworkId()) {
                 $postnlShipment->setPgRetailNetworkId($postnlOrder->getPgRetailNetworkId());
             }
+
+            if ($postnlOrder->hasIdcheckType()) {
+                $postnlShipment->setIdcheckType($postnlOrder->getIdcheckType());
+            }
+
+            if ($postnlOrder->hasIdcheckNumber()) {
+                $postnlShipment->setIdcheckNumber($postnlOrder->getIdcheckNumber());
+            }
+
+            if ($postnlOrder->hasIdcheckExpirationDate()) {
+                $postnlShipment->setIdcheckExpirationDate($postnlOrder->getIdcheckExpirationDate());
+            }
         }
 
         /**

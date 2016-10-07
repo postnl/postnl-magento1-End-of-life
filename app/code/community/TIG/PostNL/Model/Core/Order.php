@@ -101,6 +101,9 @@
  * @method boolean                     hasStoreId()
  * @method string                      hasPgLocationCode()
  * @method string                      hasPgRetailNetworkId()
+ * @method string                      hasIdcheckType()
+ * @method string                      hasIdcheckNumber()
+ * @method string                      hasIdcheckExpirationDate()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -124,9 +127,9 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const TYPE_SAMEDAY       = 'Sameday';
     const TYPE_FOOD          = 'Food';
     const TYPE_COOLED_FOOD   = 'Cooledfood';
-    const TYPE_AGECHECK      = 'Agecheck';
-    const TYPE_BIRTHDAYCHECK = 'Birthdaycheck';
-    const TYPE_IDCHECK       = 'Idcheck';
+    const TYPE_AGECHECK      = 'AgeCheck';
+    const TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
+    const TYPE_IDCHECK       = 'IDCheck';
 
     /**
      * Prefix of model events names.
@@ -145,11 +148,6 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         'PGE',
         'PA'
     );
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     public function _construct()
     {

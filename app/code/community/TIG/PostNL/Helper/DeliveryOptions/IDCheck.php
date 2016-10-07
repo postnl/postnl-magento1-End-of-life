@@ -38,12 +38,15 @@
  */
 class TIG_PostNL_Helper_DeliveryOptions_IDCheck extends Mage_Core_Helper_Abstract
 {
-    const TYPE_DUTCH_PASSPORT               = 'dutch_passport';
-    const TYPE_DUTCH_ID                     = 'dutch_id';
-    const TYPE_DUTCH_DRIVERS_LICENSE        = 'dutch_drivers_license';
-    const TYPE_DUTCH_FOREIGNERS_DOCUMENT    = 'dutch_foreigners_document';
-    const TYPE_EUROPEAN_ID                  = 'european_id';
-    const TYPE_ABROAD_PASSPORT              = 'abroad_passport';
+    /**
+     * @source https://developer.postnl.nl/apis/labelling-webservice/how-use#toc-26
+     */
+    const TYPE_DUTCH_FOREIGNERS_DOCUMENT = '01';
+    const TYPE_DUTCH_ID                  = '02';
+    const TYPE_DUTCH_PASSPORT            = '03';
+    const TYPE_DUTCH_DRIVERS_LICENSE     = '04';
+    const TYPE_EUROPEAN_ID               = '05';
+    const TYPE_ABROAD_PASSPORT           = '07';
 
     /**
      * @var null|TIG_PostNL_Helper_Data
