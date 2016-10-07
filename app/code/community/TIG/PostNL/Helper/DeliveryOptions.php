@@ -733,6 +733,38 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  */
                 unset($timeframes[$key]);
                 continue;
+            } elseif ($timeFrameDate->format('Y-m-d') != $today->format('Y-m-d') && !$this->canUseTimeframes()) {
+                $allowedOptions = array('Daytime', 'Sunday', 'Monday');
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    if (
+                        isset($timeFrameTimeFrame->Options->string[0]) &&
+                        isset($timeFrameTimeFrame->Options->string[1]) &&
+                        (
+                            (
+                                $timeFrameTimeFrame->Options->string[0] == 'Sameday' &&
+                                $timeFrameTimeFrame->Options->string[1] == 'Evening'
+                            ) ||
+                            (
+                                $timeFrameTimeFrame->Options->string[0] == 'Evening' &&
+                                $timeFrameTimeFrame->Options->string[1] == 'Sameday'
+                            )
+                        )
+                    ) {
+                        continue;
+                    }
+
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if (!in_array($timeFrameTimeFrameOption, $allowedOptions)) {
+                            unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                            break;
+                        }
+                    }
+                }
+
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
             }
 
             $timeFrameDay = $timeFrameDate->format('N');

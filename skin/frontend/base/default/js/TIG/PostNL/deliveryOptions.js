@@ -5441,7 +5441,11 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         ) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += Translator.translate('As soon as possible');
-        } else if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getType() != 'Sameday') {
+        } else if (
+            !this.getDeliveryOptions().isTimeframesAllowed() &&
+            this.getType() != 'Sameday' &&
+            this.getType() != 'Food'
+        ) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';
         } else {
