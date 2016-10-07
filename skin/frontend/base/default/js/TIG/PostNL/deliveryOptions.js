@@ -5422,6 +5422,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<span class="option-radio"></span>';
 
         spanClass = 'option-time';
+
         var openingHours = '';
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
             spanClass += ' no-timeframe-buspakje';
@@ -5440,7 +5441,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         ) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += Translator.translate('As soon as possible');
-        } else if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+        } else if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getType() != 'Sameday') {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';
         } else {
