@@ -103,6 +103,12 @@
  * @method boolean                        getIsSameDayShipment()
  * @method boolean                        getIsFoodShipment()
  * @method boolean                        getIsCooledShipment()
+ * @method boolean                        getIsAgeCheckShipment()
+ * @method boolean                        getIsBirthdayCheckShipment()
+ * @method boolean                        getIsIDCheckShipment()
+ * @method boolean                        getIdcheckExpirationDate()
+ * @method boolean                        getIdcheckNumber()
+ * @method boolean                        getIdcheckType()
  * @method int                            getReturnLabelsPrinted()
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
@@ -147,6 +153,9 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsSameDayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsFoodShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsCooledShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsAgeCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsBirthdayCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsIDCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -186,6 +195,9 @@
  * @method boolean                        hasIsSameDayShipment()
  * @method boolean                        hasIsFoodShipment()
  * @method boolean                        hasIsCooledShipment()
+ * @method boolean                        hasIsAgeCheckShipment()
+ * @method boolean                        hasIsBirthdayCheckShipment()
+ * @method boolean                        hasIsIDCheckShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -224,23 +236,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Possible shipment types.
      */
-    const SHIPMENT_TYPE_DOMESTIC     = 'domestic';
-    const SHIPMENT_TYPE_DOMESTIC_COD = 'domestic_cod';
-    const SHIPMENT_TYPE_AVOND        = 'avond';
-    const SHIPMENT_TYPE_AVOND_COD    = 'avond_cod';
-    const SHIPMENT_TYPE_PG           = 'pg';
-    const SHIPMENT_TYPE_PG_COD       = 'pg_cod';
-    const SHIPMENT_TYPE_PGE          = 'pge';
-    const SHIPMENT_TYPE_PGE_COD      = 'pge_cod';
-    const SHIPMENT_TYPE_PA           = 'pa';
-    const SHIPMENT_TYPE_EPS          = 'eps';
-    const SHIPMENT_TYPE_GLOBALPACK   = 'globalpack';
-    const SHIPMENT_TYPE_BUSPAKJE     = 'buspakje';
-    const SHIPMENT_TYPE_SUNDAY       = 'sunday';
-    const SHIPMENT_TYPE_MONDAY       = 'monday';
-    const SHIPMENT_TYPE_SAMEDAY      = 'sameday';
-    const SHIPMENT_TYPE_FOOD         = 'food';
-    const SHIPMENT_TYPE_COOLED       = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
+    const SHIPMENT_TYPE_DOMESTIC      = 'domestic';
+    const SHIPMENT_TYPE_DOMESTIC_COD  = 'domestic_cod';
+    const SHIPMENT_TYPE_AVOND         = 'avond';
+    const SHIPMENT_TYPE_AVOND_COD     = 'avond_cod';
+    const SHIPMENT_TYPE_PG            = 'pg';
+    const SHIPMENT_TYPE_PG_COD        = 'pg_cod';
+    const SHIPMENT_TYPE_PGE           = 'pge';
+    const SHIPMENT_TYPE_PGE_COD       = 'pge_cod';
+    const SHIPMENT_TYPE_PA            = 'pa';
+    const SHIPMENT_TYPE_EPS           = 'eps';
+    const SHIPMENT_TYPE_GLOBALPACK    = 'globalpack';
+    const SHIPMENT_TYPE_BUSPAKJE      = 'buspakje';
+    const SHIPMENT_TYPE_SUNDAY        = 'sunday';
+    const SHIPMENT_TYPE_MONDAY        = 'monday';
+    const SHIPMENT_TYPE_SAMEDAY       = 'sameday';
+    const SHIPMENT_TYPE_FOOD          = 'food';
+    const SHIPMENT_TYPE_COOLED        = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
+    const SHIPMENT_TYPE_AGECHECK      = 'AgeCheck';
+    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
+    const SHIPMENT_TYPE_IDCHECK       = 'IDCheck';
 
     /**
      * Xpaths to default product options settings.
@@ -260,6 +275,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION            = 'postnl/delivery_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_FOOD_PRODUCT_OPTION                      = 'postnl/delivery_options/default_food_product_option';
     const XPATH_DEFAULT_COOLED_PRODUCT_OPTION                    = 'postnl/delivery_options/default_cooled_product_option';
+    const XPATH_DEFAULT_AGECHECK_PRODUCT_OPTION                  = 'postnl/grid/default_age_check_product_option';
+    const XPATH_DEFAULT_BIRTHDAYCHECK_PRODUCT_OPTION             = 'postnl/grid/default_birthday_check_product_option';
+    const XPATH_DEFAULT_IDCHECK_PRODUCT_OPTION                   = 'postnl/grid/default_id_check_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
@@ -849,6 +867,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_FOOD;
         }
 
+        if ($this->isAgeCheckShipment()) {
+            return self::SHIPMENT_TYPE_AGECHECK;
+        }
+
+        if ($this->isBirthdayCheckShipment()) {
+            return self::SHIPMENT_TYPE_BIRTHDAYCHECK;
+        }
+
+        if ($this->isIDCheckShipment()) {
+            return self::SHIPMENT_TYPE_IDCHECK;
+        }
+
         if ($this->isDomesticShipment()) {
             return self::SHIPMENT_TYPE_DOMESTIC;
         }
@@ -1278,6 +1308,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_COOLED:
                 $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_AGECHECK:
+                $xpath = self::XPATH_DEFAULT_AGECHECK_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_IDCHECK:
+                $xpath = self::XPATH_DEFAULT_IDCHECK_PRODUCT_OPTION;
                 break;
 
 
@@ -1716,6 +1755,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_FOOD:
                 $allowedProductCodes = $cifHelper->getFoodProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_AGECHECK:
+                $allowedProductCodes = $cifHelper->getAgeCheckProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                $allowedProductCodes = $cifHelper->getBirthdayCheckProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_IDCHECK:
+                $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
                 break;
             default:
                 $allowedProductCodes = array();
@@ -2624,6 +2672,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a age check shipment.
+     *
+     * @return bool
+     */
+    public function isAgeCheckShipment()
+    {
+        if ($this->hasIsAgeCheckShipment()) {
+            return $this->getIsAgeCheckShipment();
+        }
+
+        $value = $this->isAgeCheck();
+
+        $this->setIsAgeCheckShipment($value);
+        return $value;
+    }
+
+    /**
+     * Check if this shipment is a birthday check shipment.
+     *
+     * @return bool
+     */
+    public function isBirthdayCheckShipment()
+    {
+        if ($this->hasIsBirthdayCheckShipment()) {
+            return $this->getIsBirthdayCheckShipment();
+        }
+
+        $value = $this->isBirthdayCheck();
+
+        $this->setIsAgeCheckShipment($value);
+        return $value;
+    }
+
+    /**
+     * Check if this shipment is a ID check shipment.
+     *
+     * @return bool
+     */
+    public function isIDCheckShipment()
+    {
+        if ($this->hasIsIDCheckShipment()) {
+            return $this->getIsIDCheckShipment();
+        }
+
+        $value = $this->isIDCheck();
+
+        $this->setIsIDCheckShipment($value);
+        return $value;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
@@ -2700,6 +2799,51 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_COOLED_FOOD) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a age check order.
+     *
+     * @return bool
+     */
+    public function isAgeCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_AGECHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a birthday check order.
+     *
+     * @return bool
+     */
+    public function isBirthdayCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_BIRTHDAYCHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a ID check order.
+     *
+     * @return bool
+     */
+    public function isIDCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_IDCHECK) {
             return true;
         }
 

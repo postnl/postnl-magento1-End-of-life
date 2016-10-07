@@ -1463,3 +1463,8 @@ TIG_PostNL::Month,Maand
 TIG_PostNL::Year,Jaar
 TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,De volgende gegevens worden gebruikt om een persoonsidentifcatie bij bezorging uit te voeren.
 TIG_PostNL::Please enter a date that is in the future.,Voer een datum in de toekomst in.
+TIG_PostNL::Please provide a document type,Geef een document type op
+TIG_PostNL::Please provide a valid document type,Geef een valide document type op
+TIG_PostNL::Please provide a document number,Geef een document nummer op
+TIG_PostNL::Please provide a expiration date,Geef een verval datum op
+TIG_PostNL::Please provide a valid birthday,Geef een valide verjaardag op

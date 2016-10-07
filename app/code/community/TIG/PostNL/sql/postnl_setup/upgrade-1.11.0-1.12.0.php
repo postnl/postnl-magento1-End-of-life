@@ -140,4 +140,47 @@ if (!$conn->tableColumnExists($tableName, 'idcheck_expiration_date')) {
     );
 }
 
+$tableName = $installer->getTable('postnl_core/shipment');
+
+if (!$conn->tableColumnExists($tableName, 'idcheck_type')) {
+    $conn->addColumn(
+        $tableName,
+        'idcheck_type',
+        array(
+            'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length' => '32',
+            'nullable' => true,
+            'comment' => 'ID Check type',
+            'after'    => 'pg_retail_network_id'
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'idcheck_number')) {
+    $conn->addColumn(
+        $tableName,
+        'idcheck_number',
+        array(
+            'type'   => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length' => '1000',
+            'nullable' => true,
+            'comment' => 'ID Check number',
+            'after'    => 'idcheck_type'
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'idcheck_expiration_date')) {
+    $conn->addColumn(
+        $tableName,
+        'idcheck_expiration_date',
+        array(
+            'type'   => Varien_Db_Ddl_Table::TYPE_DATE,
+            'nullable' => true,
+            'comment' => 'ID Check expiration date',
+            'after'    => 'idcheck_number'
+        )
+    );
+}
+
 $installer->endSetup();

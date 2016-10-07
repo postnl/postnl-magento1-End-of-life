@@ -79,7 +79,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 'IDCheck',
                 array(
                     'postnl_idcheck' => array(
-                        'type' => 'abroad_passport',
+                        'type' => '03',
                         'number' => '',
                     ),
                 ),
@@ -90,7 +90,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 'IDCheck',
                 array(
                     'postnl_idcheck' => array(
-                        'type' => 'abroad_passport',
+                        'type' => '03',
                         'number' => '1234',
                         'expiration_date_full' => '',
                     ),
@@ -102,7 +102,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 'IDCheck',
                 array(
                     'postnl_idcheck' => array(
-                        'type' => 'abroad_passport',
+                        'type' => '03',
                         'number' => '1234',
                         'expiration_date_full' => '12-04-2112',
                     ),
