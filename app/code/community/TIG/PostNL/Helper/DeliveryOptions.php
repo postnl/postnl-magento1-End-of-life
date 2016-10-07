@@ -1448,7 +1448,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
          */
-        $allowed = parent::canUsePakjeGemak($country);
+        $allowed = parent::canUsePakjeGemak();
 
         return $allowed;
     }
