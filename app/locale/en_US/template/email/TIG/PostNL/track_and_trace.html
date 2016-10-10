@@ -6,7 +6,10 @@
 "var barcode":"Barcode",
 "var barcode_url":"Barcode URL",
 "store url=\"customer/account/\"":"Customer Account Url",
-"var shipment.increment_id":"Shipment Id"}
+"var shipment.increment_id":"Shipment Id",
+"var is_age_check":"Is this a age check shipment?",
+"var is_birthday_check":"Is this a birthday check shipment?",
+"var is_id_check":"Is this a id check shipment?"}
 @-->
 
 <body style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
@@ -28,6 +31,15 @@
                         <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$order.getCustomerName()}},</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">To track the progress of your shipment click <a href="{{var barcode_url}}" target="_blank">here</a>.<p>
+                        {{if is_age_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL will only hand you the parcel when your age is verified.<p>
+                        {{/if}}
+                        {{if is_birthday_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL will only hand you the parcel if we can verify your birthdate on a valid identification card.<p>
+                        {{/if}}
+                        {{if is_id_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL will only hand you the parcel if the by you provided identification data can be validated.<p>
+                        {{/if}}
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Kind Regards,</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
                     </td>
