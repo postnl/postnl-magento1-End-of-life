@@ -200,11 +200,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveDeliveryOption($data)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+
         /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
+        $dateHelper = Mage::helper('postnl/date');
 
         if ($data['type'] == 'Sameday') {
-            $helper->setPostnlDeliveryDelay(0);
+            $dateHelper->setPostnlDeliveryDelay(0);
         }
 
         $quote = $this->getQuote();
@@ -224,7 +227,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             $confirmDate = $deliveryDate;
         } else {
             $deliveryDateClone = clone $deliveryDate;
-            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId(), $isPGBE);
+            $confirmDate = $dateHelper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId(), $isPGBE);
         }
 
         /**
@@ -238,12 +241,32 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setIsPakketautomaat(false)
                     ->setProductCode(false)
                     ->setMobilePhoneNumber(false, true)
-                    ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'))
                     ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
                     ->setExpectedDeliveryTimeStart(false)
                     ->setExpectedDeliveryTimeEnd(false);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        /**
+         * Age, Birthday and ID don't have deliveryoptions, so default to their value.
+         */
+        $newType = false;
+        if ($helper->quoteIsAgeCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        } elseif ($helper->quoteIsBirthdayCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        } elseif ($helper->quoteIsIDCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        if ($newType) {
+            $postnlOrder->setType($newType);
+        } else {
+            $postnlOrder->setType($data['type']);
+        }
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)

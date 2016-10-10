@@ -121,4 +121,22 @@ class TIG_PostNL_Test_Model_Core_System_Config_Source_PakjeGemakProductOptionsTe
         $this->assertEquals($available, $hasOption);
         $helper->setCache($cache);
     }
+
+    public function hasIDCheckPakjegemakProvider()
+    {
+        return array(
+            array('getAgeCheckOptions'),
+            array('getBirthdayCheckOptions'),
+            array('getIDCheckOptions'),
+        );
+    }
+
+    /**
+     * @dataProvider hasIDCheckPakjegemakProvider
+     */
+    public function testHasIDCheckPakjegemak($method)
+    {
+        $options = $this->_instance->$method();
+        $this->assertNotEquals(0, count($options), 'Assert that the getIDCheckOptions method returns options');
+    }
 }
