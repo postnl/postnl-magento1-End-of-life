@@ -230,6 +230,15 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             case $postnlShipment::SHIPMENT_TYPE_COOLED:
                 $shipmentType = $this->__('Cooled Food Delivery');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_AGECHECK:
+                $shipmentType = $this->__('Age Check');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                $shipmentType = $this->__('Birthday Check');
+                break;
+            case $postnlShipment::SHIPMENT_TYPE_IDCHECK:
+                $shipmentType = $this->__('ID Check');
+                break;
         }
 
         return $shipmentType;
