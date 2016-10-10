@@ -1126,6 +1126,12 @@
                 <default_sameday_product_option>3385</default_sameday_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+                <default_id_check_delivery_product_option>3442</default_id_check_delivery_product_option>
+                <default_id_check_pickup_product_option>3573</default_id_check_pickup_product_option>
+                <default_age_check_delivery_product_option>3438</default_age_check_delivery_product_option>
+                <default_age_check_pickup_product_option>3571</default_age_check_pickup_product_option>
+                <default_birthday_check_delivery_product_option>3440</default_birthday_check_delivery_product_option>
+                <default_birthday_check_pickup_product_option>3572</default_birthday_check_pickup_product_option>
                 <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>

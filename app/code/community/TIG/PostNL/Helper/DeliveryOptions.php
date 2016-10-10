@@ -1852,6 +1852,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
+        if ($this->quoteIsIDCheck($quote) || $this->quoteIsBirthdayCheck($quote) || $this->quoteIsAgeCheck($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
         if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
@@ -2741,10 +2746,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 return false;
             }
-        }
-
-        if ($this->quoteIsIDCheck($quote) || $this->quoteIsBirthdayCheck($quote) || $this->quoteIsAgeCheck($quote)) {
-            return false;
         }
 
         if (

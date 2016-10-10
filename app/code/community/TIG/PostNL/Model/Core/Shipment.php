@@ -275,9 +275,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION            = 'postnl/delivery_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_FOOD_PRODUCT_OPTION                      = 'postnl/delivery_options/default_food_product_option';
     const XPATH_DEFAULT_COOLED_PRODUCT_OPTION                    = 'postnl/delivery_options/default_cooled_product_option';
-    const XPATH_DEFAULT_AGECHECK_PRODUCT_OPTION                  = 'postnl/grid/default_age_check_product_option';
-    const XPATH_DEFAULT_BIRTHDAYCHECK_PRODUCT_OPTION             = 'postnl/grid/default_birthday_check_product_option';
-    const XPATH_DEFAULT_IDCHECK_PRODUCT_OPTION                   = 'postnl/grid/default_id_check_product_option';
+    const XPATH_DEFAULT_AGECHECK_DELIVERY_PRODUCT_OPTION         = 'postnl/grid/default_age_check_delivery_product_option';
+    const XPATH_DEFAULT_AGECHECK_PICKUP_PRODUCT_OPTION           = 'postnl/grid/default_age_check_pickup_product_option';
+    const XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION    = 'postnl/grid/default_birthday_check_delivery_product_option';
+    const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
+    const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
+    const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
@@ -1234,101 +1237,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $storeId = $this->getStoreId();
 
-        $shipmentType = $this->getShipmentType();
-
         $postnlOrder = $this->getPostnlOrder();
-
-        $xpath = false;
-        switch ($shipmentType) {
-            case self::SHIPMENT_TYPE_DOMESTIC_COD:
-                $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_AVOND:
-                if ($postnlOrder && $postnlOrder->hasOptions()) {
-                    $xpath = $this->_getDefaultProductCodeXpathByOptions();
-                }
-
-                if (!$xpath) {
-                    $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_AVOND_COD:
-                $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PG:
-                if ($this->isBelgiumShipment()) {
-                    if ($this->getHelper()->getDomesticCountry() == 'BE') {
-                        $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION;
-                    } else {
-                        if ($this->getHelper()->canUsePakjegemakBeNotInsured($this->getStoreId())) {
-                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
-                        } else {
-                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
-                        }
-                    }
-                } else {
-                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_PG_COD:
-                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PGE:
-                $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PGE_COD:
-                $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PA:
-                $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_EPS:
-                if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
-                    && $this->isBelgiumShipment()
-                ) {
-                    $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
-                } else {
-                    $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_GLOBALPACK:
-                $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_BUSPAKJE:
-                $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_SUNDAY:
-                $xpath = self::XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_SAMEDAY:
-                $xpath = self::XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_FOOD:
-                $xpath = self::XPATH_DEFAULT_FOOD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_COOLED:
-                $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_AGECHECK:
-                $xpath = self::XPATH_DEFAULT_AGECHECK_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
-                $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_IDCHECK:
-                $xpath = self::XPATH_DEFAULT_IDCHECK_PRODUCT_OPTION;
-                break;
-
-
-            //no default
-        }
-
-        /**
-         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).
-         */
-        if (!$xpath && $postnlOrder && $postnlOrder->hasOptions()) {
-            $xpath = $this->_getDefaultProductCodeXpathByOptions();
-        }
+        $xpath = $this->_getDefaultXpath($postnlOrder);
 
         /**
          * Dutch shipments may use an alternative default option when the shipment's base grand total exceeds a
@@ -1721,7 +1631,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                     $destination = $shippingAddress->getCountryId();
                 }
 
-                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat, $destination);
+                $group = 'default';
+                if ($this->isAgeCheckShipment()) {
+                    $group = 'AgeCheck';
+                } elseif ($this->isBirthdayCheckShipment()) {
+                    $group = 'BirthdayCheck';
+                } elseif ($this->isIDCheckShipment()) {
+                    $group = 'IDCheck';
+                }
+
+                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat, $destination, $group);
                 break;
             case self::SHIPMENT_TYPE_PG_COD:
                 $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
@@ -4353,6 +4272,113 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return $this;
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     *
+     * @return bool|string
+     */
+    protected function _getDefaultXpath(TIG_PostNL_Model_Core_Order $postnlOrder)
+    {
+        $xpath = false;
+        $shipmentType = $this->getShipmentType();
+        switch ($shipmentType) {
+            case self::SHIPMENT_TYPE_DOMESTIC_COD:
+                $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_AVOND:
+                if ($postnlOrder && $postnlOrder->hasOptions()) {
+                    $xpath = $this->_getDefaultProductCodeXpathByOptions();
+                }
+
+                if (!$xpath) {
+                    $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+                }
+                break;
+            case self::SHIPMENT_TYPE_AVOND_COD:
+                $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_PG:
+                if ($this->isBelgiumShipment()) {
+                    if ($this->getHelper()->getDomesticCountry() == 'BE') {
+                        $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION;
+                    } else {
+                        if ($this->getHelper()->canUsePakjegemakBeNotInsured($this->getStoreId())) {
+                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
+                        } else {
+                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
+                        }
+                    }
+                } elseif ($this->isAgeCheckShipment()) {
+                    $xpath = self::XPATH_DEFAULT_AGECHECK_PICKUP_PRODUCT_OPTION;
+                } elseif ($this->isBirthdayCheckShipment()) {
+                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION;
+                } elseif ($this->isIDCheckShipment()) {
+                    $xpath = self::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
+                }
+                break;
+            case self::SHIPMENT_TYPE_PG_COD:
+                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_PGE:
+                $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_PGE_COD:
+                $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_PA:
+                $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_EPS:
+                if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
+                    && $this->isBelgiumShipment()
+                ) {
+                    $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                }
+                break;
+            case self::SHIPMENT_TYPE_GLOBALPACK:
+                $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_BUSPAKJE:
+                $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_SUNDAY:
+                $xpath = self::XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_SAMEDAY:
+                $xpath = self::XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_FOOD:
+                $xpath = self::XPATH_DEFAULT_FOOD_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_COOLED:
+                $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_AGECHECK:
+                $xpath = self::XPATH_DEFAULT_AGECHECK_DELIVERY_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION;
+                break;
+            case self::SHIPMENT_TYPE_IDCHECK:
+                $xpath = self::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
+                break;
+            //no default
+        }
+
+        /**
+         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).
+         */
+        if (!$xpath && $postnlOrder && $postnlOrder->hasOptions()) {
+            $xpath = $this->_getDefaultProductCodeXpathByOptions();
+        }
+
+        return $xpath;
     }
 
     /**

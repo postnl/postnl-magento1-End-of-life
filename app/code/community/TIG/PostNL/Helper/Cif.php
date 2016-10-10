@@ -380,18 +380,20 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @param boolean     $flat
      * @param string|bool $destination
      *
+     * @param string      $group
+     *
      * @return array
      */
-    public function getPakjeGemakProductCodes($flat = true, $destination = false)
+    public function getPakjeGemakProductCodes($flat = true, $destination = false, $group = 'default')
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
 
         if ($destination == 'BE') {
-            return $pakjeGemakProductCodes->getAvailableBeOptions($flat);
+            return $pakjeGemakProductCodes->getAvailableBeOptions($flat, $group);
         }
 
-        return $pakjeGemakProductCodes->getAvailableOptions($flat);
+        return $pakjeGemakProductCodes->getAvailableOptions($flat, $group);
     }
 
     /**

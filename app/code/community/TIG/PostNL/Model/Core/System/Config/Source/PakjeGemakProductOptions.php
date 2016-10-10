@@ -44,68 +44,76 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      */
     protected $_options = array(
         array(
-            'value'         => '3534',
-            'label'         => 'Post Office + Extra Cover',
-            'isExtraCover'  => true,
-            'isPge'         => false,
-            'isCod'         => false,
-            'isBelgiumOnly' => false,
+            'value'             => '3534',
+            'label'             => 'Post Office + Extra Cover',
+            'isExtraCover'      => true,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3544',
-            'label'         => 'Post Office + Extra Cover + Notification',
-            'isExtraCover'  => true,
-            'isPge'         => true,
-            'isCod'         => false,
-            'isBelgiumOnly' => false,
+            'value'             => '3544',
+            'label'             => 'Post Office + Extra Cover + Notification',
+            'isExtraCover'      => true,
+            'isPge'             => true,
+            'isCod'             => false,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3533',
-            'label'         => 'Post Office + Signature on Delivery',
-            'isExtraCover'  => false,
-            'isPge'         => false,
-            'isCod'         => false,
-            'isBelgiumOnly' => false,
+            'value'             => '3533',
+            'label'             => 'Post Office + Signature on Delivery',
+            'isExtraCover'      => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3543',
-            'label'         => 'Post Office + Signature on Delivery + Notification',
-            'isExtraCover'  => false,
-            'isPge'         => true,
-            'isCod'         => false,
-            'isBelgiumOnly' => false,
+            'value'             => '3543',
+            'label'             => 'Post Office + Signature on Delivery + Notification',
+            'isExtraCover'      => false,
+            'isPge'             => true,
+            'isCod'             => false,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3535',
-            'label'         => 'Post Office + COD',
-            'isExtraCover'  => false,
-            'isPge'         => false,
-            'isCod'         => true,
-            'isBelgiumOnly' => false,
+            'value'             => '3535',
+            'label'             => 'Post Office + COD',
+            'isExtraCover'      => false,
+            'isPge'             => false,
+            'isCod'             => true,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3545',
-            'label'         => 'Post Office + COD + Notification',
-            'isExtraCover'  => false,
-            'isPge'         => true,
-            'isCod'         => true,
-            'isBelgiumOnly' => false,
+            'value'             => '3545',
+            'label'             => 'Post Office + COD + Notification',
+            'isExtraCover'      => false,
+            'isPge'             => true,
+            'isCod'             => true,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3536',
-            'label'         => 'Post Office + COD + Extra Cover',
-            'isExtraCover'  => false,
-            'isPge'         => false,
-            'isCod'         => true,
-            'isBelgiumOnly' => false,
+            'value'             => '3536',
+            'label'             => 'Post Office + COD + Extra Cover',
+            'isExtraCover'      => false,
+            'isPge'             => false,
+            'isCod'             => true,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
-            'value'         => '3546',
-            'label'         => 'Post Office + COD + Extra Cover + Notification',
-            'isExtraCover'  => false,
-            'isPge'         => true,
-            'isCod'         => true,
-            'isBelgiumOnly' => false,
+            'value'             => '3546',
+            'label'             => 'Post Office + COD + Extra Cover + Notification',
+            'isExtraCover'      => false,
+            'isPge'             => true,
+            'isCod'             => true,
+            'isBelgiumOnly'     => false,
+            'group'             => 'default',
         ),
         array(
             'value'             => '4932',
@@ -115,6 +123,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'NL',
+            'group'             => 'default',
         ),
         array(
             'value'             => '4878',
@@ -124,6 +133,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'BE',
+            'group'             => 'default',
         ),
         array(
             'value'             => '4880',
@@ -133,148 +143,125 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'BE',
+            'group'             => 'default',
         ),
         array(
             'value'             => '3571',
             'label'             => 'Post Office + Agecheck 18+',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'AgeCheck',
         ),
         array(
             'value'             => '3574',
             'label'             => 'Post Office + Notification + Agecheck 18+',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'AgeCheck',
         ),
         array(
             'value'             => '3581',
             'label'             => 'Post Office + Extra Cover + Agecheck 18+',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'AgeCheck',
         ),
         array(
             'value'             => '3584',
             'label'             => 'Post Office + Extra Cover + Notification + Agecheck 18+',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'AgeCheck',
         ),
         array(
             'value'             => '3573',
             'label'             => 'Post Office + ID Check',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isPge'             => false,
             'isCod'             => false,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'NL',
+            'group'             => 'IDCheck',
         ),
         array(
             'value'             => '3576',
-            'label'             => 'Post Office + Notifaction + ID Check',
+            'label'             => 'Post Office + Notification + ID Check',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
             'isPge'             => true,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'IDCheck',
         ),
         array(
             'value'             => '3583',
             'label'             => 'Post Office + Extra Cover + ID Check',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
             'isPge'             => false,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'IDCheck',
         ),
         array(
             'value'             => '3586',
-            'label'             => 'Post Office + Extra Cover + Notifaction + ID Check',
+            'label'             => 'Post Office + Extra Cover + Notification + ID Check',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
             'isPge'             => true,
-            'isSameDay'         => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'IDCheck',
         ),
         array(
             'value'             => '3572',
             'label'             => 'Post Office + Birthday Check',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => false,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'BirthdayCheck',
         ),
         array(
             'value'             => '3575',
             'label'             => 'Post Office + Notification + Birthday Check',
             'isExtraCover'      => false,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'BirthdayCheck',
         ),
         array(
             'value'             => '3582',
             'label'             => 'Post Office + Extra Cover + Birthday Check',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => false,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'BirthdayCheck',
         ),
         array(
             'value'             => '3585',
             'label'             => 'Post Office + Extra Cover + Notification + Birthday Check',
             'isExtraCover'      => true,
-            'isAvond'           => true,
-            'isSunday'          => true,
             'isCod'             => false,
-            'isSameDay'         => true,
             'isPge'             => true,
             'statedAddressOnly' => false,
             'isBelgiumOnly'     => false,
+            'group'             => 'BirthdayCheck',
         ),
     );
 
@@ -340,11 +327,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      *
      * @param boolean $flat
      *
+     * @param string  $group
+     *
      * @return array
      */
-    public function getAvailableOptions($flat = false)
+    public function getAvailableOptions($flat = false, $group = 'default')
     {
-        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => false), $flat, true);
+        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => false, 'group' => $group), $flat, true);
     }
 
     /**
@@ -353,9 +342,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      *
      * @param boolean $flat
      *
+     * @param string  $group
+     *
      * @return array
      */
-    public function getAvailableBeOptions($flat = false)
+    public function getAvailableBeOptions($flat = false, $group = 'default')
     {
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
@@ -364,42 +355,85 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isCod' => false,
             'isBelgiumOnly' => true,
             'countryLimitation' => $helper->getDomesticCountry(),
+            'group' => $group,
         ), $flat, true);
     }
 
     /**
      * Get available COD options.
      *
-     * @param bool $flat
+     * @param bool   $flat
+     *
+     * @param string $group
      *
      * @return array
      */
-    public function getAvailableCodOptions($flat = false)
+    public function getAvailableCodOptions($flat = false, $group = 'default')
     {
-        return $this->getOptions(array('isCod' => true), $flat, true);
+        return $this->getOptions(array('isCod' => true, 'group' => $group), $flat, true);
     }
 
     /**
      * Get available PGE options.
      *
-     * @param bool $flat
+     * @param bool   $flat
+     *
+     * @param string $group
      *
      * @return array
      */
-    public function getAvailablePgeOptions($flat = false)
+    public function getAvailablePgeOptions($flat = false, $group = 'default')
     {
-        return $this->getOptions(array('isPge' => true, 'isCod' => false), $flat, true);
+        return $this->getOptions(array('isPge' => true, 'isCod' => false, 'group' => $group), $flat, true);
     }
 
     /**
      * Get available PGE options that are also COD.
      *
-     * @param bool $flat
+     * @param bool   $flat
+     *
+     * @param string $group
      *
      * @return array
      */
-    public function getAvailablePgeCodOptions($flat = false)
+    public function getAvailablePgeCodOptions($flat = false, $group = 'default')
     {
-        return $this->getOptions(array('isPge' => true, 'isCod' => true), $flat, true);
+        return $this->getOptions(array('isPge' => true, 'isCod' => true, 'group' => $group), $flat, true);
+    }
+
+    /**
+     * Get available Age Check options.
+     *
+     * @param bool   $flat
+     *
+     * @return array
+     */
+    public function getAgeCheckOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'group' => 'AgeCheck'), $flat, true);
+    }
+
+    /**
+     * Get available Birthday Check options.
+     *
+     * @param bool   $flat
+     *
+     * @return array
+     */
+    public function getBirthdayCheckOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'group' => 'BirthdayCheck'), $flat, true);
+    }
+
+    /**
+     * Get available ID Check options.
+     *
+     * @param bool   $flat
+     *
+     * @return array
+     */
+    public function getIDCheckOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false, 'group' => 'IDCheck'), $flat, true);
     }
 }

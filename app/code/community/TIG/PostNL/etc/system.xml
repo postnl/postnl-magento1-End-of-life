@@ -5593,14 +5593,14 @@
                                 </country>
                             </depends>
                         </default_sunday_product_option>
-                        <default_id_check_product_option translate="label tooltip" module="postnl">
+                        <default_id_check_delivery_product_option translate="label tooltip" module="postnl">
                             <label>Default ID check delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_idCheckProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>161</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5618,15 +5618,41 @@
                                     <value>NL</value>
                                 </country>
                             </depends>
-                        </default_id_check_product_option>
-                        <default_age_check_product_option translate="label tooltip" module="postnl">
+                        </default_id_check_delivery_product_option>
+                        <default_id_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default ID check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getIDCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_id_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_id_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_id_check_pickup_product_option>
+                        <default_age_check_delivery_product_option translate="label tooltip" module="postnl">
                             <label>Default Age check delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_ageCheckProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>162</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5644,15 +5670,41 @@
                                     <value>NL</value>
                                 </country>
                             </depends>
-                        </default_age_check_product_option>
-                        <default_birthday_check_product_option translate="label tooltip" module="postnl">
+                        </default_age_check_delivery_product_option>
+                        <default_age_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default Age check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getAgeCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_age_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_age_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_age_check_pickup_product_option>
+                        <default_birthday_check_delivery_product_option translate="label tooltip" module="postnl">
                             <label>Default Birthday check delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_birthdayCheckProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>163</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5670,7 +5722,33 @@
                                     <value>NL</value>
                                 </country>
                             </depends>
-                        </default_birthday_check_product_option>
+                        </default_birthday_check_delivery_product_option>
+                        <default_birthday_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default Birthday check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getBirthdayCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_birthday_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_birthday_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_birthday_check_pickup_product_option>
                         <default_sameday_product_option translate="label tooltip" module="postnl">
                             <label>Default same day delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
@@ -5678,7 +5756,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableSameDayOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>170</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5708,7 +5786,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>180</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5734,7 +5812,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>190</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5764,7 +5842,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>200</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5786,7 +5864,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>210</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
