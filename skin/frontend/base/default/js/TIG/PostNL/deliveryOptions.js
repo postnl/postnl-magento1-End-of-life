@@ -5444,7 +5444,8 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         } else if (
             !this.getDeliveryOptions().isTimeframesAllowed() &&
             this.getType() != 'Sameday' &&
-            this.getType() != 'Food'
+            this.getType() != 'Food' &&
+            this.getType() != 'Cooledfood'
         ) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';
