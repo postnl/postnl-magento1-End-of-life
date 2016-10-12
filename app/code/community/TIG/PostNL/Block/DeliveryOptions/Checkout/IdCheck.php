@@ -38,8 +38,6 @@
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck extends Mage_Core_Block_Template
 {
-    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_labels_and_confirming/checkout_extension';
-
     /**
      * @var null|TIG_PostNL_Model_Core_Order
      */
@@ -70,13 +68,5 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck extends Mage_Core_Block_
         }
 
         return $this->_order;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isIdevOsc()
-    {
-        return Mage::getStoreConfigFlag(self::XPATH_CHECKOUT_EXTENSION);
     }
 }

@@ -36,13 +36,21 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
 /**
  * @var TIG_PostNL_Block_Checkout_Widget_Date $this
  */
+
+/** @var TIG_PostNL_Helper_Data $helper */
+$helper = Mage::helper('postnl');
+
 if ($this->hasLabel()) {
 ?>
-    <label for="<?php echo $this->getFieldId('month') ?>"<?php if ($this->getIsRequired()) { echo ' class="required"'; } ?>><?php if ($this->getIsRequired()) { echo '<em>*</em>'; } ?><?php echo $this->getLabel() ?></label>
+    <label for="<?php echo $this->getFieldId('month') ?>">
+        <?php echo $this->getLabel() ?>
+        <?php if ($this->getIsRequired()): ?>
+            <span class="required"><?php if ($helper->isIdevOsc()): echo '*'; endif; ?></span>
+        <?php endif; ?>
+    </label>
 <?php
 }
 ?>

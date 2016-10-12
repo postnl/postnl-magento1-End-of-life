@@ -70,23 +70,4 @@ class TIG_PostNL_Test_Unit_Block_DeliveryOptions_Checkout_IdCheckTest
 
         $this->assertEquals('customclass', $block->getPostnlOrder());
     }
-
-    public function isIdevOscProvider()
-    {
-        return array(
-            array(true, true),
-            array(false, false),
-        );
-    }
-
-    /**
-     * @dataProvider isIdevOscProvider
-     */
-    public function testIsIdevOsc($value, $result)
-    {
-        $block = $this->_getInstance();
-        Mage::app()->getStore()->setConfig($block::XPATH_CHECKOUT_EXTENSION, $value);
-
-        $this->assertEquals($result, $block->isIdevOsc());
-    }
 }

@@ -41,7 +41,7 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
     /**
      * @return TIG_PostNL_Helper_Data
      */
-    public function getInstance()
+    public function _getInstance()
     {
         return Mage::helper('postnl');
     }
@@ -101,7 +101,7 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         $this->setRegistryKey('postnl_quote_is_birthday_check_' . 1);
         $this->setRegistryKey('postnl_quote_is_id_check_' . 1);
 
-        $instance = $this->getInstance();
+        $instance = $this->_getInstance();
         $this->assertEquals(
             $result,
             $instance->$method($quote),
@@ -138,8 +138,29 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         $this->setRegistryKey('postnl_quote_is_birthday_check_1', $birthdayCheck);
         $this->setRegistryKey('postnl_quote_is_id_check_1', $idCheck);
 
-        $instance = $this->getInstance();
+        $instance = $this->_getInstance();
 
         $this->assertEquals($result, $instance->getQuoteIdCheckType($quote), 'The result should be ' . $result);
+    }
+
+    public function isIdevOscProvider()
+    {
+        return array(
+            array('magento_onepagecheckout', false),
+            array('idev_onestepcheckout', true),
+            array('gomage_lightcheckout', false),
+            array('other', false),
+        );
+    }
+
+    /**
+     * @dataProvider isIdevOscProvider
+     */
+    public function testIsIdevOsc($value, $result)
+    {
+        $helper = $this->_getInstance();
+        Mage::app()->getStore()->setConfig($helper::XPATH_CHECKOUT_EXTENSION, $value);
+
+        $this->assertEquals($result, $helper->isIdevOsc());
     }
 }
