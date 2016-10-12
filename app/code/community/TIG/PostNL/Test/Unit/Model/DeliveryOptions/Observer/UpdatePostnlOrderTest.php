@@ -50,29 +50,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest
     /**
      * @test
      */
-    public function shouldGetTheOrderFromTheObserver()
-    {
-        $this->markTestSkipped('Test is not working at this moment');
-
-        $mockObserver = $this->getMock('Varien_Event_Observer', array('getOrder'));
-        $mockObserver->expects($this->once())
-                     ->method('getOrder')
-                     ->will($this->returnValue(null));
-
-        $mockObserver->expects($this->once())
-                     ->method('getQuoteId')
-                     ->will($this->returnValue(null));
-
-        $observer = $this->_getInstance($mockObserver);
-        $this->assertInstanceOf(
-             'TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder',
-                 $observer->updatePostnlOrder($mockObserver)
-        );
-    }
-
-    /**
-     * @test
-     */
     public function shouldGetAPostnlOrder()
     {
         $mockOrder = $this->getMock('Mage_Sales_Model_Order', array('getQuoteId'));

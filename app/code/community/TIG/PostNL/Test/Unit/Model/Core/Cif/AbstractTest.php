@@ -128,66 +128,6 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_U
     }
 
     /**
-     * @test
-     *
-     * @expectedException TIG_PostNL_Exception
-     * @expectedExceptionCode POSTNL-0052
-     */
-    public function callShouldFailWithoutAUsernameOrPassword()
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $this->resetMagento();
-
-        $instance = $this->_getInstance();
-        $instance->setTestMode(true);
-
-        $storeCode = Mage::app()->getStore()->getCode();
-        $xPath = $instance::XPATH_TEST_PASSWORD;
-
-        Mage::getConfig()->setNode("stores/{$storeCode}/{$xPath}", '');
-
-        $instance->call('barcode', '');
-    }
-
-    /**
-     * @test
-     */
-    public function soapCallShouldReturnAStdClassObject()
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $clientMock = $this->getMockBuilder('zend_Soap_Client')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('testMethod', 'getLastResponse'))
-                           ->getMock();
-
-        $clientMock->expects($this->once())
-                   ->method('testMethod')
-                   ->with(array())
-                   ->will($this->returnValue(new StdClass()));
-        $clientMock->expects($this->once())
-                   ->method('getLastResponse')
-                   ->will($this->returnValue('<?xml version="1.0" encoding="UTF-8"?><test></test>'));
-
-        $helperMock = $this->getMock('TIG_PostNL_Helper_Cif');
-        $helperMock->expects($this->once())
-                   ->method('logCifCall')
-                   ->withAnyParameters()
-                   ->will($this->returnSelf());
-
-        $this->setHelperMock('postnl/cif', $helperMock);
-
-        $cif = $this->_getInstance();
-        $cif->setSoapClient($clientMock);
-
-        $cif->setTestMode(true);
-
-        $response = $cif->call('barcode', 'testMethod', array(), 'testUser', 'testPass');
-        $this->assertInstanceOf('StdClass', $response);
-    }
-
-    /**
      * @param $wsdlType
      *
      * @test

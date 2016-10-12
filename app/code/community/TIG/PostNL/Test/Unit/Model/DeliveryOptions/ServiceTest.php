@@ -133,27 +133,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_
     }
 
     /**
-     * @test
-     *
-     * @dataProvider confirmDateProvider
-     *
-     * @param $deliveryDate
-     * @param $shippingDuration
-     * @param $expected
-     */
-    public function getConfirmDateShouldReturnTheCorrectDate($deliveryDate, $shippingDuration, $expected)
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $instance = $this->_getInstance();
-        $instance->setShippingDuration($shippingDuration);
-
-        $confirmDate = $instance->getConfirmDate($deliveryDate);
-
-        $this->assertEquals($expected, $confirmDate);
-    }
-
-    /**
      * @return array
      */
     public function confirmDateProvider()

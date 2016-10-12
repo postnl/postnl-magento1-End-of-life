@@ -78,8 +78,6 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $helper = $this->_getInstance();
         $helper->setCache(false);
 
-        $this->resetMagento();
-
         Mage::app()->getStore()->setConfig($helper::XPATH_SENDER_COUNTRY, $country);
         Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING, $nl);
         Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING_BE, $be);
@@ -248,10 +246,25 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     public function isDeliveryOptionsActiveDataProvider()
     {
         return array(
-            array(true, true, true),
-            array(true, false, true),
-            array(false, true, true),
-            array(false, false, false),
+            array(true, true, 'magento_onepagecheckout', true),
+            array(true, true, 'idev_onestepcheckout', true),
+            array(true, true, 'gomage_lightcheckout', true),
+            array(true, true, 'other', false),
+
+            array(true, false, 'magento_onepagecheckout', true),
+            array(true, false, 'idev_onestepcheckout', true),
+            array(true, false, 'gomage_lightcheckout', true),
+            array(true, false, 'other', false),
+
+            array(false, true, 'magento_onepagecheckout', true),
+            array(false, true, 'idev_onestepcheckout', true),
+            array(false, true, 'gomage_lightcheckout', true),
+            array(false, true, 'other', false),
+
+            array(false, false, 'magento_onepagecheckout', false),
+            array(false, false, 'idev_onestepcheckout', false),
+            array(false, false, 'gomage_lightcheckout', false),
+            array(false, false, 'other', false),
         );
     }
 
@@ -262,12 +275,13 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
      * @param $enableBE
      * @param $result
      */
-    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
+    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $extension, $result)
     {
         $helper = $this->_getInstance();
 
         Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_ACTIVE, $enableNL);
         Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $enableBE);
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_AddressValidation::XPATH_CHECKOUT_EXTENSION, $extension);
 
         $this->assertEquals($result, $helper->isDeliveryOptionsActive());
     }

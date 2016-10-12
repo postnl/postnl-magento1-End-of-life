@@ -46,6 +46,85 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         return Mage::helper('postnl');
     }
 
+    public function canUsePakjegemakNotInsuredDataProvider()
+    {
+        return array(
+            array(true, true),
+            array(false, false),
+        );
+    }
+
+    /**
+     * @dataProvider canUsePakjegemakNotInsuredDataProvider
+     */
+    public function testCanUsePakjegemakNotInsured($enabled, $result)
+    {
+        $instance = $this->_getInstance();
+        $instance->setCache(false);
+
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
+
+        $this->assertEquals($result, $instance->canUsePakjeGemakBeNotInsured());
+    }
+
+    public function testCanUsePakjegemakNotInsuredUsesCache()
+    {
+        $value = uniqid();
+        $instance = $this->_getInstance();
+
+        $cacheMock = $this->getMock('TIG_PostNL_Model_Core_Cache', array(
+            'hasPostnlCoreCanUsePakjegemakNotInsured',
+            'getPostnlCoreCanUsePakjegemakNotInsured',
+        ));
+
+        $cacheMock
+            ->expects($this->once())
+            ->method('hasPostnlCoreCanUsePakjegemakNotInsured')
+            ->willReturn(true);
+
+        $cacheMock
+            ->expects($this->once())
+            ->method('getPostnlCoreCanUsePakjegemakNotInsured')
+            ->willReturn($value);
+
+        $this->setProperty('_cache', $cacheMock);
+
+        $cache = $instance->getCache();
+        $cache->setPostnlCoreCanUsePakjegemakNotInsured($value);
+
+        $result = $instance->canUsePakjeGemakBeNotInsured();
+        $this->assertEquals($value, $result);
+    }
+
+    public function testCanUsePakjegemakNotInsuredSavesCache()
+    {
+        $value = true;
+        $instance = $this->_getInstance();
+
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $value);
+
+        $cacheMock = $this->getMock('TIG_PostNL_Model_Core_Cache', array(
+            'hasPostnlCoreCanUsePakjegemakNotInsured',
+            'setPostnlCoreCanUsePakjegemakNotInsured',
+        ));
+
+        $cacheMock
+            ->expects($this->once())
+            ->method('hasPostnlCoreCanUsePakjegemakNotInsured')
+            ->willReturn(false);
+
+        $cacheMock
+            ->expects($this->once())
+            ->method('setPostnlCoreCanUsePakjegemakNotInsured')
+            ->with($value)
+            ->willReturnSelf();
+
+        $this->setProperty('_cache', $cacheMock);
+
+        $result = $instance->canUsePakjeGemakBeNotInsured();
+        $this->assertEquals($value, $result);
+    }
+
     public function checkIsQuoteProvider()
     {
         return array(

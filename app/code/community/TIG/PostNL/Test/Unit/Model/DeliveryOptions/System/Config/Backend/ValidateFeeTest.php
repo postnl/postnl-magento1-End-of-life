@@ -60,37 +60,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_System_Config_Backend_ValidateF
     }
 
     /**
-     * @param $fee
-     * @param $includingTax
-     * @param $expected
-     *
-     * @test
-     *
-     * @dataProvider validateFeeprovider
-     */
-    public function shouldValidateFee($fee, $includingTax, $expected)
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $this->registerMockSessions(array('customer'));
-
-        Mage::getSingleton('tax/config')->setShippingPriceIncludeTax(false);
-
-        $instance = new TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFeeFake();
-        $instance->setIsIncludingTax($includingTax);
-
-        if (!$expected) {
-            $this->setExpectedException('TIG_PostNL_Exception');
-        }
-
-        $isValid = $instance->validateFee($fee);
-
-        if ($expected) {
-            $this->assertSame($expected, $isValid);
-        }
-    }
-
-    /**
      * @return array
      */
     public function validateFeeprovider()
@@ -147,22 +116,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_System_Config_Backend_ValidateF
                 'expected'     => false,
             ),
         );
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException TIG_PostNL_Exception
-     * @expectedExceptionCode POSTNL-0153
-     */
-    public function shouldThrowAnExceptionIfAnInvalidFeeIsEntered()
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $instance = new TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFeeFake();
-
-        $instance->setValue('invalid_fee');
-        $instance->beforeSave();
     }
 }
 

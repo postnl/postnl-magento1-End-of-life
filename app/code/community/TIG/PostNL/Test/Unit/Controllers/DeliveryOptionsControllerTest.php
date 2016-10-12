@@ -157,25 +157,6 @@ class TIG_PostNL_Test_Unit_Controllers_DeliveryOptionsControllerTest extends TIG
     }
 
     /**
-     * @test
-     *
-     * @depends saveSelectedOptionActionShouldBeCallable
-     */
-    public function shouldRejextSaveSelectedOptionActionIfUnableToUseDeliveryOptions()
-    {
-        $this->markTestSkipped('Skip this test');
-
-        $controller = $this->_getInstance(array('isAjax' => true));
-        $controller->setCanUseDeliveryOptions(false);
-        $controller->saveSelectedOptionAction();
-
-        $body = Mage::app()->getResponse()->getBody();
-        $dataMissing = strpos($body, 'not_allowed');
-
-        $this->assertTrue($dataMissing !== false);
-    }
-
-    /**
      * @param $data
      * @param $success
      *
@@ -309,71 +290,6 @@ class TIG_PostNL_Test_Unit_Controllers_DeliveryOptionsControllerTest extends TIG
                 true,
             ),
         );
-    }
-
-    /**
-     * @param $address
-     * @param $errorCode
-     * @param $success
-     *
-     * @test
-     * @group failing
-     *
-     * @depend s saveSelectedOptionActionShouldBeCallable
-     *
-     * @dataProvider shouldValidateAddressDataDataProvider
-     */
-    public function shouldValidatePGAddressData($address, $errorCode, $success)
-    {
-        $this->markTestIncomplete('Should get more data');
-
-        $data = array(
-            'isAjax' => true,
-            'type' => 'PG',
-            'date' => '18-03-2014',
-            'from' => '15:00:00',
-            'to' => '',
-            'costs' => '{"incl":0,"excl":0}',
-            'address' => json_encode($address),
-            'locationCode' => '"BE0Q23"',
-            'retailNetworkId' => '"LD-01"',
-        );
-
-        $controller = $this->_getInstance($data);
-
-        if ($errorCode !== null) {
-            $mock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
-            $mock->expects($this->any())
-                ->method('logException')
-                ->with($this->callback( function (TIG_PostNL_Exception $exception) use ($errorCode) {
-                    $this->assertEquals($errorCode, $exception->getCode());
-
-                    return true;
-                }));
-
-            $this->setHelperMock('postnl/deliveryOptions', $mock);
-        }
-
-        $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
-        if ($success) {
-            $mockService->expects($this->once())
-                ->method('saveDeliveryOption')
-                ->withAnyParameters()
-                ->will($this->returnSelf());
-        }
-
-        $controller->setService($mockService);
-
-        $controller->setCanUseDeliveryOptions(true);
-        $controller->saveSelectedOptionAction();
-
-        $body = Mage::app()->getResponse()->getBody();
-
-        if ($success) {
-            $this->assertTrue(strpos($body, 'OK') !== false);
-        } else {
-            $this->assertTrue(strpos($body, 'invalid_data') !== false);
-        }
     }
 
     /**
