@@ -59,7 +59,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_postnl_idcheck' => array(
                     ),
                 ),
                 'Please provide a document type'
@@ -68,7 +68,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_postnl_idcheck' => array(
                         'type' => 'wrong',
                     ),
                 ),
@@ -78,7 +78,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_postnl_idcheck' => array(
                         'type' => '03',
                         'number' => '',
                     ),
@@ -89,7 +89,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_postnl_idcheck' => array(
                         'type' => '03',
                         'number' => '1234',
                         'expiration_date_full' => '',
@@ -101,7 +101,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_postnl_idcheck' => array(
                         'type' => '03',
                         'number' => '1234',
                         'expiration_date_full' => '12-04-2112',
@@ -166,7 +166,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 'IDCheck',
                 true,
                 array(
-                    'postnl_idcheck' => array(
+                    'billing_billing_postnl_idcheck' => array(
                         'type' => 'abroud_passport',
                         'number' => '12345',
                         'expiration_date_full' => '12-12-2112',
@@ -216,15 +216,15 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
         } elseif ($shipmentType == 'IDCheck') {
             $mockOrder->expects($this->once())
                 ->method('setIdcheckType')
-                ->with($postData['postnl_idcheck']['type']);
+                ->with($postData['billing_postnl_idcheck']['type']);
 
             $mockOrder->expects($this->once())
                 ->method('setIdcheckNumber')
-                ->with($postData['postnl_idcheck']['number']);
+                ->with($postData['billing_postnl_idcheck']['number']);
 
             $mockOrder->expects($this->once())
                 ->method('setIdcheckExpirationDate')
-                ->with($postData['postnl_idcheck']['expiration_date_full']);
+                ->with($postData['billing_postnl_idcheck']['expiration_date_full']);
         }
 
         $mockSession = Mage::getSingleton('checkout/session');

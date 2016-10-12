@@ -627,6 +627,16 @@
                     </validate_idcheck_data>
                 </observers>
             </customer_address_validation_after>
+            <controller_action_postdispatch_onestepcheckout_ajax_save_billing>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_onestepcheckout_ajax_save_billing>
         </events>
     </frontend>
 

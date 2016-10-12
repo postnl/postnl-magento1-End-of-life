@@ -46,12 +46,12 @@ $helper = $this->helper('postnl');
 
     <div class="fields">
         <div class="field">
-            <label for="postnl_idcheck:type"class="required"><?php echo $helper->__('Document type'); ?></label>
+            <label for="billing_postnl_idcheck:type"class="required"><?php echo $helper->__('Document type'); ?></label>
             <div class="input-box">
                 <?php
                 echo $this->getLayout()->createBlock('core/html_select')
-                    ->setName('postnl_idcheck[type]')
-                    ->setId('postnl_idcheck:type')
+                    ->setName('billing_postnl_idcheck[type]')
+                    ->setId('billing_postnl_idcheck:type')
                     ->setClass('required-entry')
                     ->setValue($this->getPostnlOrder()->getIdcheckType())
                     ->setOptions($this->helper('postnl/deliveryOptions_iDCheck')->getValidationOptions())
@@ -61,9 +61,12 @@ $helper = $this->helper('postnl');
         </div>
 
         <div class="field">
-            <label for="postnl_idcheck:number" class="required"><?php echo $helper->__('Documentnumber:'); ?></label>
+            <label for="billing_postnl_idcheck:number">
+                <?php echo $helper->__('Documentnumber:'); ?>
+                <span class="required"><?php if ($this->isIdevOsc()): echo '*'; endif; ?></span>
+            </label>
             <div class="input-box">
-                <input type="text" name="postnl_idcheck[number]" value="<?php echo $this->escapeHtml($this->getPostnlOrder()->getIdcheckNumber()); ?>" id="postnl_idcheck:number" class="input-text required-entry">
+                <input type="text" name="billing_postnl_idcheck[number]" value="<?php echo $this->escapeHtml($this->getPostnlOrder()->getIdcheckNumber()); ?>" id="billing_postnl_idcheck:number" class="input-text required-entry">
             </div>
         </div>
     </div>
@@ -72,8 +75,8 @@ $helper = $this->helper('postnl');
     /** @var TIG_PostNL_Block_Checkout_Widget_Date $_date */
     $_date = $this->getLayout()->createBlock('postnl/checkout_widget_date');
     echo $_date
-        ->setFieldIdFormat('postnl_idcheck:expiration_date_%s')
-        ->setFieldNameFormat('postnl_idcheck[expiration_date_%s]')
+        ->setFieldIdFormat('billing_postnl_idcheck:expiration_date_%s')
+        ->setFieldNameFormat('billing_postnl_idcheck[expiration_date_%s]')
         ->setLabel($helper->__('Expiration date:'))
         ->setDate($this->getPostnlOrder()->getIdcheckExpirationDate())
         ->setIsRequired(true)

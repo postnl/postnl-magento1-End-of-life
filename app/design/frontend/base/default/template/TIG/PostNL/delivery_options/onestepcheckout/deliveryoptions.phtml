@@ -602,7 +602,10 @@
             'virtual:shipping:street' + streetnameField,
             'shipping:street' + streetnameField,
             'billing:postcode',
-            'shipping:postcode'
+            'shipping:postcode',
+            'postnl_idcheck:type',
+            'postnl_idcheck:number',
+            'postnl_idcheck:expiration_date_full'
         ];
 
         if (streetnameField != housenumberField) {
@@ -646,6 +649,26 @@
                 }
 
                 get_save_billing_function(url_save_billing, url_set_methods, true)();
+            });
+        });
+
+        var fieldsToValidate = [
+            'billing_postnl_idcheck:expiration_date_day',
+            'billing_postnl_idcheck:expiration_date_month',
+            'billing_postnl_idcheck:expiration_date_year'
+        ];
+
+        fieldsToValidate.each( function (field) {
+            var element = $(field);
+            console.log('field, element', field, element);
+            if (!element) {
+                return;
+            }
+
+            element.observe('change', function() {
+                if (this.validate()) {
+                    get_save_billing_function(url_save_billing, url_set_methods, true)();
+                }
             });
         });
 

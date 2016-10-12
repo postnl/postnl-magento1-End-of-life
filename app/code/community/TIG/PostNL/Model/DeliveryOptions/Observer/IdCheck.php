@@ -72,7 +72,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
 
-        $post = Mage::app()->getRequest()->getPost('postnl_idcheck');
+        $post = Mage::app()->getRequest()->getPost('billing_postnl_idcheck');
         if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
             /**
              * Check the document type.
@@ -168,7 +168,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
                 $quote->save();
             }
         } elseif ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
-            $post = Mage::app()->getRequest()->getPost('postnl_idcheck');
+            $post = Mage::app()->getRequest()->getPost('billing_postnl_idcheck');
 
             $postnlOrder->setIdcheckType($post['type']);
             $postnlOrder->setIdcheckNumber($post['number']);

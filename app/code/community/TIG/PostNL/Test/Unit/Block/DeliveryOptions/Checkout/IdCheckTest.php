@@ -33,50 +33,60 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2015 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck extends Mage_Core_Block_Template
+class TIG_PostNL_Test_Unit_Block_DeliveryOptions_Checkout_IdCheckTest
+    extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
-    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_labels_and_confirming/checkout_extension';
+    protected $_class = 'TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck';
 
     /**
-     * @var null|TIG_PostNL_Model_Core_Order
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_IdCheck
      */
-    protected $_order = null;
-
-    /**
-     * @return mixed
-     * @throws Zend_Locale_Exception
-     */
-    public function getMonthList()
+    protected function _getInstance()
     {
-        $localeCode = Mage::app()->getLocale()->getLocaleCode();
-        $months = Zend_Locale_Data::getList($localeCode, 'months');
+        return new $this->_class();
+    }
 
-        return $months['format']['wide'];
+    public function testBlockShouldBeTheRightInstance()
+    {
+        $block = $this->_getInstance();
+
+        $this->assertInstanceOf($this->_class, $block);
+    }
+
+    public function testGetMonthList()
+    {
+        $block = $this->_getInstance();
+
+        $this->assertEquals(12, count($block->getMonthList()));
+    }
+
+    public function testGetPostnlOrder()
+    {
+        $block = $this->_getInstance();
+        $this->setProperty('_order', 'customclass', $block);
+
+        $this->assertEquals('customclass', $block->getPostnlOrder());
+    }
+
+    public function isIdevOscProvider()
+    {
+        return array(
+            array(true, true),
+            array(false, false),
+        );
     }
 
     /**
-     * @return TIG_PostNL_Model_Core_Order
+     * @dataProvider isIdevOscProvider
      */
-    public function getPostnlOrder()
+    public function testIsIdevOsc($value, $result)
     {
-        if ($this->_order === null) {
-            $session = Mage::getSingleton('checkout/session');
-            $quote_id = $session->getQuoteId();
+        $block = $this->_getInstance();
+        Mage::app()->getStore()->setConfig($block::XPATH_CHECKOUT_EXTENSION, $value);
 
-            $this->_order = Mage::getModel('postnl_core/order')->load($quote_id, 'quote_id');
-        }
-
-        return $this->_order;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isIdevOsc()
-    {
-        return Mage::getStoreConfigFlag(self::XPATH_CHECKOUT_EXTENSION);
+        $this->assertEquals($result, $block->isIdevOsc());
     }
 }
