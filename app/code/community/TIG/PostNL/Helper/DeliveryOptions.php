@@ -779,7 +779,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     /**
                      * If:
                      * - Sunday delivery is not active
-                     * - Sunday sorting (monday delivery) IS active
+                     * - Sunday sorting (monday delivery) IS NOT active
                      * - Today is saturday
                      * - We are after the cut-off time
                      *
@@ -788,6 +788,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     if (
                         !$sundayDelivery &&
                         $sundaySorting &&
+                        !array_key_exists(6, $deliveryDateArray) &&
                         $today->format('N') == TIG_PostNL_Helper_Date::SATURDAY &&
                         $helper->isPastCutOff($today, $storeId)
                     ) {
