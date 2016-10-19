@@ -154,7 +154,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $this->assertEquals($expectedDateTime, $deliveryDate);
     }
 
-    public function differentOptionsForBelgiumDataProvder()
+    public function differentOptionsForBelgiumDataProvider()
     {
         return array(
             array('NL', 'pickup', false),
@@ -165,7 +165,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
     }
 
     /**
-     * @dataProvider differentOptionsForBelgiumDataProvder
+     * @dataProvider differentOptionsForBelgiumDataProvider
      */
     public function testDifferentOptionsForBelgium($country, $type, $shouldContainPickup)
     {
@@ -345,7 +345,10 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $this->setProperty('_dates', array('now' => new DateTime($timeStamp)));
         $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));
 
-        $result = $instance->getDeliveryDateOptionsArray($shippingDuration, $country, $for);
+        $method = new ReflectionMethod(get_class($instance), '_getDeliveryDateOptionsArray');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($instance, array($shippingDuration, $country, $for));
 
         foreach ($expectedResult as $option) {
             $this->assertTrue(
@@ -355,5 +358,92 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         }
 
         $this->assertEquals(count($expectedResult), count($result));
+    }
+
+    public function cutoffTimesProvider()
+    {
+        return array(
+            array('next thursday 10:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next thursday 10:00', 'Regular', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+            array('next thursday 15:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '22:00', '15:00'),
+            array('next thursday 23:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next thursday 23:00', 'Regular', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+
+            array('next thursday 10:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next thursday 10:00', 'Cooled', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+            array('next thursday 15:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '22:00', '15:00'),
+            array('next thursday 23:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next thursday 23:00', 'Cooled', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+
+            array('next friday 10:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next friday 10:00', 'Regular', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+            array('next friday 15:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '22:00', '15:00'),
+            array('next friday 23:00', 'Regular', '22:00', '15:00', '10:30', true, /* Response --> */ '22:00', '15:00'),
+
+            array('next friday 10:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next friday 10:00', 'Cooled', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+            array('next friday 15:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next friday 15:00', 'Cooled', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+            array('next friday 23:00', 'Cooled', '22:00', '15:00', '10:30', true, /* Response --> */ '10:30', '15:00'),
+            array('next friday 23:00', 'Cooled', '22:00', '15:00', '10:30', false, /* Response --> */ '22:00', '15:00'),
+        );
+    }
+
+    /**
+     * @dataProvider cutoffTimesProvider
+     *
+     * @param $timestamp
+     * @param $shipmentType
+     * @param $regularDeliveryCutoff
+     * @param $sundayDeliveryCutoff
+     * @param $sameDayDeliveryCutoff
+     * @param $enableSameDayDelivery
+     * @param $monSatCutoff
+     * @param $sundayCutoff
+     *
+     * @internal     param $expectedResult
+     */
+    public function testCutoffTimes(
+        $timestamp,
+        $shipmentType,
+        $regularDeliveryCutoff,
+        $sundayDeliveryCutoff,
+        $sameDayDeliveryCutoff,
+        $enableSameDayDelivery,
+        $monSatCutoff,
+        $sundayCutoff
+    ) {
+        $helper = Mage::helper('postnl/deliveryOptions');
+        Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularDeliveryCutoff);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayDeliveryCutoff);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SAMEDAY_CUTOFF_TIME, $sameDayDeliveryCutoff);
+        Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $enableSameDayDelivery);
+
+        $helperMock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
+
+        $helperMock->expects($this->any())
+            ->method('quoteIsFood')
+            ->willReturn($shipmentType == 'Cooled');
+
+        $helperMock->expects($this->any())
+            ->method('getQuoteFoodType')
+            ->willReturn($shipmentType == 'Cooled' ? 2 : 0);
+
+        $instance = $this->_getInstance();
+        $this->setProperty('_dates', array('now' => new DateTime($timestamp)));
+        $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));
+
+        $method = new ReflectionMethod(get_class($instance), '_getCutOffTimes');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($instance);
+
+        foreach ($result as $cutoff) {
+            if ($cutoff['Day'] == '00') {
+                $this->assertEquals($monSatCutoff, $cutoff['Time'], 'Assert that mon-sat has a cutoff of ' . $monSatCutoff);
+            } elseif ($cutoff['Day'] == '07') {
+                $this->assertEquals($sundayCutoff, $cutoff['Time'], 'Assert that sunday has a cutoff of ' . $sundayCutoff);
+            }
+        }
     }
 }

@@ -126,18 +126,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          *
          * Day 00 indicates weekdays and saturday, while day 07 indicates sunday
          */
-        $CutOffTimes = array(
-            array(
-                'Day'   => '00',
-                'Time'  => $this->_getCutOffTime()
-            ),
-            array(
-                'Day'   => '07',
-                'Time'  => $this->_getSundaySortingCutOffTime()
-            )
-        );
+        $CutOffTimes = $this->_getCutOffTimes($quote->getStoreId());
 
-        $options = $this->getDeliveryDateOptionsArray($shippingDuration, $country, $for);
+        $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country, $for);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -371,6 +362,51 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
+     * Gets the regular cut-off time for this storeview.
+     *
+     * @param $storeId
+     *
+     * @return string
+     */
+    protected function _getCutOffTimes($storeId)
+    {
+        $monSatCutoff = $this->_getCutOffTime();
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+        if ($sameDayDelivery) {
+            $date                  = $this->_getDateTime('now');
+            $sameDayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SAMEDAY_CUTOFF_TIME, $storeId);
+            $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
+
+            if ($date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp()) {
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+            } elseif ($date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() && $date->format('N') != 5) {
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+            } elseif (
+                $helper->quoteIsFood()
+                && $helper->getQuoteFoodType() == $helper::FOOD_TYPE_COOL_PRODUCTS
+                && $date->format('N') == 5
+            ) {
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+            }
+        }
+
+        $CutOffTimes = array(
+            array(
+                'Day'   => '00',
+                'Time'  => $monSatCutoff,
+            ),
+            array(
+                'Day'   => '07',
+                'Time'  => $this->_getSundaySortingCutOffTime(),
+            )
+        );
+
+        return $CutOffTimes;
+    }
+
+    /**
      * Checks whether sunday sorting is allowed for this storeview.
      *
      * @param $country
@@ -601,12 +637,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @return array
      */
-    public function getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL', $for = 'delivery')
+    protected function _getDeliveryDateOptionsArray($shippingDuration = null, $country = 'NL', $for = 'delivery')
     {
         $storeId = $this->getStoreId();
 
         $options = array();
-        $date = $this->_getTime('now');
+        $date = $this->_getDateTime('now');
         $dayOfWeek = $date->format('N');
         $helper = $this->_getHelper('deliveryOptions');
         $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
@@ -683,7 +719,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @return DateTime
      */
-    protected function _getTime($dateString, $storeId = null)
+    protected function _getDateTime($dateString, $storeId = null)
     {
         if ($storeId === null) {
             $storeId = $this->getStoreId();
@@ -707,8 +743,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @return DateTime
      */
-    protected function _getCutoff(DateTime $date, $xpathCutoffTime, $storeId)
+    protected function _getCutoff(DateTime $date, $xpathCutoffTime, $storeId = null)
     {
+        if ($storeId === null) {
+            $storeId = $this->getStoreId();
+        }
+
         $time = Mage::getStoreConfig($xpathCutoffTime, $storeId);
         list($hour, $minute) = explode(':', $time);
 
