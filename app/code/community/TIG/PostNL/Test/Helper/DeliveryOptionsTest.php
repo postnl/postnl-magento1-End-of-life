@@ -271,4 +271,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $this->assertEquals($result, $helper->isDeliveryOptionsActive());
     }
+
+    public function filterTimeFrames()
+    {
+
+    }
 }

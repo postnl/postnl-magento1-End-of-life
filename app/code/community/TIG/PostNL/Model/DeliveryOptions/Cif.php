@@ -592,12 +592,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $storeId = $this->getStoreId();
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
-        $helper = Mage::helper('postnl/deliveryOptions');
+        $helper = $this->_getHelper('deliveryOptions');
 
         /**
          * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
          */
-        if ($country == 'NL' && $helper->canUseFoodDelivery(true)) {
+        if ($country == 'NL' && $helper->canUseFoodDelivery(true) && $helper->quoteIsFood()) {
             $options = array(
                 self::SAMEDAY_DELIVERY_OPTION,
                 self::EVENING_DELIVERY_OPTION,
@@ -606,13 +606,19 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             return $options;
         }
 
-        $options = array(self::DOMESTIC_DELIVERY_OPTION);
-
         if ($country == 'NL' && $helper->canUseSameDayDelivery()) {
-            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+            $options = array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+                self::DOMESTIC_DELIVERY_OPTION,
+            );
+
+            return $options;
         }
 
-        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
+
+        if ($country == 'NL' && $helper->canUseEveningTimeframes() && !$helper->canUseSameDayDelivery()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
@@ -658,11 +664,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0 && $for == 'delivery') {
             if (
-                $date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp() // ||
-//                (
-//                    $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() &&
-//                    $dayOfWeek != 5
-//                )
+                $date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp() ||
+                (
+                    $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() &&
+                    $dayOfWeek != 5
+                )
             ) {
                 $options[] = self::SAMEDAY_DELIVERY_OPTION;
                 $options[] = self::EVENING_DELIVERY_OPTION;
