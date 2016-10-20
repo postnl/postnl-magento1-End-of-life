@@ -380,15 +380,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
 
             if ($date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp()) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif ($date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() && $date->format('N') != 5) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif (
                 $helper->quoteIsFood()
                 && $helper->getQuoteFoodType() == $helper::FOOD_TYPE_COOL_PRODUCTS
                 && $date->format('N') == 5
             ) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             }
         }
 
@@ -592,12 +592,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $storeId = $this->getStoreId();
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
-        $helper = Mage::helper('postnl/deliveryOptions');
+        $helper = $this->_getHelper('deliveryOptions');
 
         /**
          * In the case of a food delivery, only sameday and evening delivery timeframes should be shown.
          */
-        if ($country == 'NL' && $helper->canUseFoodDelivery(true)) {
+        if ($country == 'NL' && $helper->canUseFoodDelivery(true) && $helper->quoteIsFood()) {
             $options = array(
                 self::SAMEDAY_DELIVERY_OPTION,
                 self::EVENING_DELIVERY_OPTION,
@@ -606,13 +606,19 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             return $options;
         }
 
-        $options = array(self::DOMESTIC_DELIVERY_OPTION);
-
         if ($country == 'NL' && $helper->canUseSameDayDelivery()) {
-            $options[] = self::SAMEDAY_DELIVERY_OPTION;
+            $options = array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+                self::DOMESTIC_DELIVERY_OPTION,
+            );
+
+            return $options;
         }
 
-        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
+        $options = array(self::DOMESTIC_DELIVERY_OPTION);
+
+        if ($country == 'NL' && $helper->canUseEveningTimeframes() && !$helper->canUseSameDayDelivery()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 

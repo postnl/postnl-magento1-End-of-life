@@ -679,6 +679,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return false|StdClass[]
      * @throws TIG_PostNL_Exception
+     *
+     * @todo Add unit tests
      */
     public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL')
     {
