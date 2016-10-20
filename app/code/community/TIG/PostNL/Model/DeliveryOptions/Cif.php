@@ -380,15 +380,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
 
             if ($date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp()) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif ($date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() && $date->format('N') != 5) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif (
                 $helper->quoteIsFood()
                 && $helper->getQuoteFoodType() == $helper::FOOD_TYPE_COOL_PRODUCTS
                 && $date->format('N') == 5
             ) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i');
+                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             }
         }
 
@@ -658,11 +658,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0 && $for == 'delivery') {
             if (
-                $date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp() ||
-                (
-                    $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() &&
-                    $dayOfWeek != 5
-                )
+                $date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp() // ||
+//                (
+//                    $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() &&
+//                    $dayOfWeek != 5
+//                )
             ) {
                 $options[] = self::SAMEDAY_DELIVERY_OPTION;
                 $options[] = self::EVENING_DELIVERY_OPTION;
