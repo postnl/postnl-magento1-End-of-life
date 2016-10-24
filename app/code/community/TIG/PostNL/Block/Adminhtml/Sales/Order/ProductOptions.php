@@ -86,7 +86,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
             return '';
         }
 
-        $optionValue = current($globalPackProductOption)['value'];
+        $current = current($globalPackProductOption);
+        $optionValue = $current['value'];
         $this->setGlobalpackProductOption($optionValue);
         return $optionValue;
     }
