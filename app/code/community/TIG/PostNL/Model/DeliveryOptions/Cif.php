@@ -66,16 +66,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
 
     /**
-     * @var array
-     */
-    protected $_helpers = array();
-
-    /**
-     * @var array
-     */
-    protected $_dates = array();
-
-    /**
      * Check if the module is set to test mode
      *
      * @param bool $storeId
@@ -375,7 +365,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $helper = $this->_getHelper('deliveryOptions');
         $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
         if ($sameDayDelivery) {
-            $date                  = $this->_getDateTime('now');
+            $date                  = $helper->getDateTime('now');
             $sameDayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SAMEDAY_CUTOFF_TIME, $storeId);
             $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
 
@@ -648,9 +638,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $storeId = $this->getStoreId();
 
         $options = array();
-        $date = $this->_getDateTime('now');
-        $dayOfWeek = $date->format('N');
         $helper = $this->_getHelper('deliveryOptions');
+        $date = $helper->getDateTime('now');
+        $dayOfWeek = $date->format('N');
         $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
         $sameDayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SAMEDAY_CUTOFF_TIME, $storeId);
         $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
@@ -697,49 +687,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return $options;
-    }
-
-    /**
-     * @param string $helper
-     *
-     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_DeliveryOptions
-     */
-    protected function _getHelper($helper = '')
-    {
-        if ($helper == '') {
-            $helper = 'postnl';
-        } else {
-            $helper = 'postnl/' . $helper;
-        }
-
-        if (!array_key_exists($helper, $this->_helpers)) {
-            $this->_helpers[$helper] = Mage::helper($helper);
-        }
-
-        return $this->_helpers[$helper];
-    }
-
-    /**
-     * @param $dateString
-     * @param $storeId
-     *
-     * @return DateTime
-     */
-    protected function _getDateTime($dateString, $storeId = null)
-    {
-        if ($storeId === null) {
-            $storeId = $this->getStoreId();
-        }
-
-        if (!array_key_exists($dateString, $this->_dates)) {
-            $helper = $this->_getHelper('deliveryOptions');
-            $date   = new DateTime('now', $helper->getStoreTimeZone($storeId, true));
-            $date->setTimezone(new DateTimeZone('Europe/Berlin'));
-
-            $this->_dates[$dateString] = $date;
-        }
-
-        return $this->_dates[$dateString];
     }
 
     /**

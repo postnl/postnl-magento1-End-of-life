@@ -178,6 +178,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     protected $_canUseDutchProducts = null;
 
     /**
+     * @var array
+     */
+    protected $_dates = array();
+
+    /**
      * @return int
      */
     public function getConfigBackorders()
@@ -676,14 +681,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param StdClass[] $timeframes
      * @param int        $storeId
      * @param string     $destinationCountry
+     * @param null       $firstDeliveryDate
      *
      * @return false|StdClass[]
-     * @throws TIG_PostNL_Exception
+     * @internal param null $deliveryDate
      *
-     * @todo Add unit tests
+     * @todo     Add unit tests
      */
-    public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL')
+    public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL', $firstDeliveryDate = null)
     {
+        if ($firstDeliveryDate === null) {
+            $firstDeliveryDate = new DateTime('now', new DateTimeZone('UTC'));
+        } else {
+            $firstDeliveryDate = new DateTime($firstDeliveryDate, new DateTimeZone('UTC'));
+        }
+
         /**
          * Retrieves required config values.
          */
@@ -696,14 +708,48 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
 
+        $isPastEveningCutoff = $helper->isPastCutOff($today, $storeId, 'weekday');
+
         foreach ($timeframes as $key => $timeFrame) {
             $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
             /**
-             * Check if the time frame's date is today. If so, it is probably a same day delivery time frame.
+             * If this is the first possible deliverydate, and we are after the last cutoff time, then filter all
+             * timeframes that are not Sameday
              */
-            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
+            if (
+                $timeFrameDate->format('Y-m-d') == $firstDeliveryDate->format('Y-m-d') &&
+                $this->_canUseSameDayDelivery() &&
+                $isPastEveningCutoff
+            ) {
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    $sameDay = false;
+
+                    /**
+                     * Same day delivery timeframes may have multiple 'options'. Only one of these needs to actually be
+                     * 'Sameday'.
+                     */
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $sameDay = true;
+                        }
+                    }
+
+                    if (!$sameDay) {
+                        unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                    }
+                }
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
+
+                /**
+                 * Check if the time frame's date is today, or the first shipping date. If so, it is probably a
+                 * same day delivery time frame.
+                 */
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
                 /**
                  * Check for each sub-timeframe if it is indeed same day delivery.
                  */
@@ -735,26 +781,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  */
                 unset($timeframes[$key]);
                 continue;
-            } elseif ($timeFrameDate->format('Y-m-d') != $today->format('Y-m-d') && !$this->canUseTimeframes()) {
+            } elseif (
+                $timeFrameDate->format('Y-m-d') != $today->format('Y-m-d') &&
+                !$this->canUseTimeframes() &&
+                !$this->quoteIsFood()
+            ) {
                 $allowedOptions = array('Daytime', 'Sunday', 'Monday');
                 foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
-                    if (
-                        isset($timeFrameTimeFrame->Options->string[0]) &&
-                        isset($timeFrameTimeFrame->Options->string[1]) &&
-                        (
-                            (
-                                $timeFrameTimeFrame->Options->string[0] == 'Sameday' &&
-                                $timeFrameTimeFrame->Options->string[1] == 'Evening'
-                            ) ||
-                            (
-                                $timeFrameTimeFrame->Options->string[0] == 'Evening' &&
-                                $timeFrameTimeFrame->Options->string[1] == 'Sameday'
-                            )
-                        )
-                    ) {
-                        continue;
-                    }
-
                     foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
                         if (!in_array($timeFrameTimeFrameOption, $allowedOptions)) {
                             unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
@@ -3518,5 +3551,23 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $this->_canUseDutchProducts = false;
         return $this->_canUseDutchProducts;
+    }
+
+    /**
+     * @param $dateString
+     * @param $storeId
+     *
+     * @return DateTime
+     */
+    public function getDateTime($dateString, $storeId = null)
+    {
+        if (!array_key_exists($dateString, $this->_dates)) {
+            $date   = new DateTime('now', $this->getStoreTimeZone($storeId, true));
+            $date->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $this->_dates[$dateString] = $date;
+        }
+
+        return $this->_dates[$dateString];
     }
 }

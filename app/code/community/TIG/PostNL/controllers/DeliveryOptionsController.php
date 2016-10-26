@@ -395,7 +395,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         /**
          * Filter out unavailable time frames.
          */
-        $timeframes = $this->getService()->filterTimeframes($response, $data['country']);
+        $timeframes = $this->getService()->filterTimeframes($response, $data['country'], $data['deliveryDate']);
 
         if (!$timeframes) {
             $this->getResponse()
