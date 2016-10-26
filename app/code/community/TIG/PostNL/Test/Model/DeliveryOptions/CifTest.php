@@ -119,7 +119,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
      *
      * @expectedException TIG_PostNL_Exception
      */
-    /*public function shouldThrowAnExceptionIfInvalidResponse()
+    public function shouldThrowAnExceptionIfInvalidResponse()
     {
         $instance = $this->_getInstance();
         $quote = $this->_getQuote();
@@ -127,12 +127,12 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
 
         $instance->setSoapClient($mockSoapClient);
         $instance->getDeliveryDate('1014 BA', 'NL', $quote);
-    }*/
+    }
 
     /**
      * @test
      */
-    /*public function shouldReturnCorrectDeliveryDate()
+    public function shouldReturnCorrectDeliveryDate()
     {
         $dateTomorrow = new DateTime('now + 1day');
         $expectedDateTime = $dateTomorrow->format('d-m-Y');
@@ -151,9 +151,9 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $deliveryDate = $instance->getDeliveryDate('1014 BA', 'NL', $quote);
 
         $this->assertEquals($expectedDateTime, $deliveryDate);
-    }*/
+    }
 
-    /*public function differentOptionsForBelgiumDataProvider()
+    public function differentOptionsForBelgiumDataProvider()
     {
         return array(
             array('NL', 'pickup', false),
@@ -161,12 +161,12 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
             array('NL', 'delivery', false),
             array('BE', 'delivery', false),
         );
-    }*/
+    }
 
     /**
      * @dataProvider differentOptionsForBelgiumDataProvider
      */
-    /*public function testDifferentOptionsForBelgium($country, $type, $shouldContainPickup)
+    public function testDifferentOptionsForBelgium($country, $type, $shouldContainPickup)
     {
         $dateTomorrow = new DateTime('now + 1day');
         $expectedDateTime = $dateTomorrow->format('d-m-Y');
@@ -190,14 +190,14 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $instance = $this->_getInstance();
         $instance->setSoapClient($mockSoapClient);
         $instance->getDeliveryDate('2000', $country, $quote, $type);
-    }*/
+    }
 
-    /*public function getDeliveryDateOptionsArrayProvider()
+    public function getDeliveryDateOptionsArrayProvider()
     {
         return array(
             /**
              * Sameday tests
-             * /
+             */
             array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
             array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
             array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
@@ -252,7 +252,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
 
             /**
              * BE
-             * /
+             */
             array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
             array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
             array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
@@ -262,7 +262,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
 
             /**
              * BE Pickup
-             * /
+             */
             array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
             array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
             array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
@@ -272,7 +272,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
 
             /**
              * NL Pickup
-             * /
+             */
             array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
             array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
             array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
@@ -286,7 +286,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
         );
-    }*/
+    }
 
     /**
      * @param $timeStamp
@@ -304,7 +304,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
      *
      * @dataProvider getDeliveryDateOptionsArrayProvider
      */
-    /*public function testGetDeliveryDateOptionsArray(
+    public function testGetDeliveryDateOptionsArray(
         $timeStamp,
         $shipmentType,
         $shippingDuration,
@@ -319,7 +319,9 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $expectedResult
     )
     {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
+
         Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $enableSameDayDelivery);
         Mage::app()->getStore()->setConfig($helper::XPATH_SAMEDAY_CUTOFF_TIME, $sameDayDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularCutoff);
@@ -340,8 +342,11 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
             ->method('canUseEveningTimeframes')
             ->willReturn($canUseEveningTimeframes);
 
+        $helperMock->expects($this->any())
+            ->method('getDateTime')
+            ->willReturn(new DateTime($timeStamp));
+
         $instance = $this->_getInstance();
-        $this->setProperty('_dates', array('now' => new DateTime($timeStamp)));
         $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));
 
         $method = new ReflectionMethod(get_class($instance), '_getDeliveryDateOptionsArray');
@@ -357,36 +362,36 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         }
 
         $this->assertEquals(count($expectedResult), count($result));
-    }*/
+    }
 
-    /*public function cutoffTimesProvider()
+    public function cutoffTimesProvider()
     {
         return array(
-            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next thursday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
 
-            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next thursday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
 
-            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next friday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next friday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '22:00:00', '15:00:00'),
+            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
 
-            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
-            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> * / '10:30:00', '15:00:00'),
-            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> * / '22:00:00', '15:00:00'),
+            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
+            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
         );
-    }*/
+    }
 
     /**
      * @dataProvider cutoffTimesProvider
@@ -402,7 +407,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
      *
      * @internal     param $expectedResult
      */
-    /*public function testCutoffTimes(
+    public function testCutoffTimes(
         $timestamp,
         $shipmentType,
         $regularDeliveryCutoff,
@@ -412,7 +417,9 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $monSatCutoff,
         $sundayCutoff
     ) {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
+
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SAMEDAY_CUTOFF_TIME, $sameDayDeliveryCutoff);
@@ -428,8 +435,11 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
             ->method('getQuoteFoodType')
             ->willReturn($shipmentType == 'Cooled' ? 2 : 0);
 
+        $helperMock->expects($this->any())
+            ->method('getDateTime')
+            ->willReturn(new DateTime($timestamp));
+
         $instance = $this->_getInstance();
-        $this->setProperty('_dates', array('now' => new DateTime($timestamp)));
         $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));
 
         $method = new ReflectionMethod(get_class($instance), '_getCutOffTimes');
@@ -444,22 +454,26 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
                 $this->assertEquals($sundayCutoff, $cutoff['Time'], 'Assert that sunday has a cutoff of ' . $sundayCutoff);
             }
         }
-    }*/
+    }
 
+    /**
+     * @todo Expanded test cases, includes different countries and sunday sorting.
+     * @return array
+     */
     public function getDeliveryTimeframesOptionsArrayProvider()
     {
         return array(
-            array('Regular', 'NL', true, true, true, array('Sameday', 'Evening', 'Daytime')),
-            array('Regular', 'NL', false, false, true, array('Daytime', 'Evening')),
-            array('Regular', 'NL', false, false, false, array('Daytime')),
-            array('Regular', 'NL', true, false, false, array('Daytime')),
-            array('Regular', 'NL', true, true, false, array('Sameday', 'Evening', 'Daytime')),
+            array('Regular', 'NL', true, true, true, false, array('Sameday', 'Evening', 'Daytime')),
+            array('Regular', 'NL', false, false, true, false, array('Daytime', 'Evening')),
+            array('Regular', 'NL', false, false, false, false, array('Daytime')),
+            array('Regular', 'NL', true, false, false, false, array('Daytime')),
+            array('Regular', 'NL', true, true, false, false, array('Sameday', 'Evening', 'Daytime')),
 
-            array('Cooled', 'NL', true, true, true, array('Sameday', 'Evening')),
-            array('Cooled', 'NL', false, false, true, array('Daytime', 'Evening')),
-            array('Cooled', 'NL', false, false, false, array('Daytime')),
-            array('Cooled', 'NL', true, false, false, array('Sameday', 'Evening')),
-            array('Cooled', 'NL', true, true, false, array('Sameday', 'Evening')),
+            array('Cooled', 'NL', true, true, true, false, array('Sameday', 'Evening')),
+            array('Cooled', 'NL', false, false, true, false, array('Daytime', 'Evening')),
+            array('Cooled', 'NL', false, false, false, false, array('Daytime')),
+            array('Cooled', 'NL', true, false, false, false, array('Sameday', 'Evening')),
+            array('Cooled', 'NL', true, true, false, false, array('Sameday', 'Evening')),
         );
     }
 
@@ -471,6 +485,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
      * @param $canUseFoodDelivery
      * @param $canUseSameDayDelivery
      * @param $canUseEveningTimeframes
+     * @param $enableSundayDelivery
      * @param $expectedResult
      */
     public function testGetDeliveryTimeframesOptionsArray(
@@ -479,6 +494,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $canUseFoodDelivery,
         $canUseSameDayDelivery,
         $canUseEveningTimeframes,
+        $enableSundayDelivery,
         $expectedResult
     )
     {
@@ -503,6 +519,8 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         $helperMock->expects($this->any())
             ->method('canUseEveningTimeframes')
             ->willReturn($canUseEveningTimeframes);
+
+        Mage::app()->getStore()->setConfig($helperMock::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
 
         $instance = $this->_getInstance();
         $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));

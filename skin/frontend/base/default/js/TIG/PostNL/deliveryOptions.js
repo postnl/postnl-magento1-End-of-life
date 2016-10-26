@@ -5294,9 +5294,13 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         this.to   = timeframe.To;
 
         var today = new Date();
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
 
         var formattedDay = today.getDate();
         var formattedMonth = today.getMonth() + 1;
+        var formattedDayTomorrow = tomorrow.getDate();
+        var formattedMonthTomorrow = tomorrow.getMonth() + 1;
 
         if (formattedDay.toString().length < 2) {
             formattedDay = '0' + formattedDay.toString();
@@ -5306,11 +5310,22 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             formattedMonth = '0' + formattedMonth.toString();
         }
 
+        if (formattedDayTomorrow.toString().length < 2) {
+            formattedDayTomorrow = '0' + formattedDayTomorrow.toString();
+        }
+
+        if (formattedMonthTomorrow.toString().length < 2) {
+            formattedMonthTomorrow = '0' + formattedMonthTomorrow.toString();
+        }
+
         var formattedToday = formattedDay + '-' + formattedMonth + '-' + today.getFullYear();
+        var formattedTomorrow = formattedDayTomorrow + '-' + formattedMonthTomorrow + '-' + tomorrow.getFullYear();
 
         var type = '';
         timeframe.Options.string.each(function(value) {
             if (value == 'Sameday' && date == formattedToday) {
+                type = value;
+            } else if (value == 'Sameday' && timeframeIndex == 0 && date == formattedTomorrow) {
                 type = value;
             } else if (value != 'Sameday' && !type) {
                 type = value;
@@ -5557,7 +5572,11 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
                 sameDayCostHtml += ' + ' + sameDayCosts;
             }
 
-            comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
+            if (this.isTimeFrameToday()) {
+                comment = '<span class="option-comment">' + Translator.translate('today') + sameDayCostHtml + '</span>';
+            } else {
+                comment = '<span class="option-comment">' + Translator.translate('evening') + sameDayCostHtml + '</span>';
+            }
         }
 
         if (this.type == 'Food') {

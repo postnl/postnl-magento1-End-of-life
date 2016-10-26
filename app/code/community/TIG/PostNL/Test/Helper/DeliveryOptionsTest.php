@@ -46,14 +46,11 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         return Mage::helper('postnl/deliveryOptions');
     }
 
-    /**
-     * @test
-     */
-    public function shouldBeOfTheRightInstance()
+    /*public function testBeOfTheRightInstance()
     {
         $helper = $this->_getInstance();
         $this->assertInstanceOf('TIG_PostNL_Helper_DeliveryOptions', $helper);
-    }
+    }*/
 
     public function disallowSundaySortingProvider()
     {
@@ -70,10 +67,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     }
 
     /**
-     * @test
      * @dataProvider disallowSundaySortingProvider
      */
-    public function shouldDisallowSundaySorting($country, $nl, $be, $result)
+    /*public function testDisallowSundaySorting($country, $nl, $be, $result)
     {
         $helper = $this->_getInstance();
         $helper->setCache(false);
@@ -85,9 +81,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING_BE, $be);
 
         $this->assertEquals($result, $helper->canUseSundaySorting(), 'Can use sunday sorting');
-    }
+    }*/
 
-    public function testCanUseDutchProductsByCountryDataProvder()
+    public function canUseDutchProductsByCountryDataProvider()
     {
         return array(
             array(
@@ -109,9 +105,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      * @param $country
      * @param $shouldPass
      *
-     * @dataProvider testCanUseDutchProductsByCountryDataProvder
+     * @dataProvider canUseDutchProductsByCountryDataProvider
      */
-    public function testCanUseDutchProductsByCountry($country, $shouldPass)
+    /*public function testCanUseDutchProductsByCountry($country, $shouldPass)
     {
         $helper = $this->_getInstance();
 
@@ -121,9 +117,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '1');
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
-    }
+    }*/
 
-    public function testCanUseDutchProductsWhenDisabledProvder()
+    public function canUseDutchProductsWhenDisabledProvider()
     {
         return array(
             array(
@@ -154,9 +150,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      * @param $shouldPass
      * @param $useDutchProducts
      *
-     * @dataProvider testCanUseDutchProductsWhenDisabledProvder
+     * @dataProvider canUseDutchProductsWhenDisabledProvider
      */
-    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
+    /*public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
     {
         $helper = $this->_getInstance();
 
@@ -177,17 +173,17 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, $useDutchProducts);
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
-    }
+    }*/
 
-    public function testCanUseDutchProductsUsesCache()
+    /*public function testCanUseDutchProductsUsesCache()
     {
         $value = uniqid();
         $this->setProperty('_canUseDutchProducts', $value);
 
         $this->assertEquals($value, $this->_getInstance()->canUseDutchProducts());
-    }
+    }*/
 
-    public function testCanUseDeliveryOptionsForQuoteIsVirtual()
+    /*public function testCanUseDeliveryOptionsForQuoteIsVirtual()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -200,9 +196,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0104', $error[0]['code']);
-    }
+    }*/
 
-    public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
+    /*public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -221,9 +217,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
-    }
+    }*/
 
-    public function testCanUseDeliveryOptionsForQuoteIsBuspakjeEnabled()
+    /*public function testCanUseDeliveryOptionsForQuoteIsBuspakjeEnabled()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -243,7 +239,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
-    }
+    }*/
 
     public function isDeliveryOptionsActiveDataProvider()
     {
@@ -262,7 +258,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      * @param $enableBE
      * @param $result
      */
-    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
+    /*public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
     {
         $helper = $this->_getInstance();
 
@@ -270,10 +266,112 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $enableBE);
 
         $this->assertEquals($result, $helper->isDeliveryOptionsActive());
+    }*/
+
+    public function getTimeframes($startDate = 'now', $days = 2, $timeframesPerDay = 1)
+    {
+        $date = new DateTime($startDate);
+        $timeframes = array();
+        for ($i = 1; $i <= $days; $i++) {
+            $timeframe = array();
+            $timeframe['Date'] = $date->format('Y-m-d');
+
+            $timeframe['Timeframes'] = array();
+            $timeframe['Timeframes'] = array();
+
+            for ($j = 1; $j <= $timeframesPerDay; $j++) {
+                $timeframe['Timeframes'][] = array(
+                    'TimeframeTimeFrame' => array(
+                        'Options' => array('Sameday', 'Evening'),
+                    ),
+                );
+            };
+
+            $date->add(new DateInterval('P1D'));
+            $timeframes[] = json_decode(json_encode($timeframe), false);
+        }
+
+        return $timeframes;
     }
 
-    public function filterTimeFrames()
+    public function filterTimeFramesProvider()
     {
+        return array(
+            array(
+                range(0, 7),
+                'next friday',
+                true,
+                true,
+                $this->getTimeframes(),
+                'NL',
+                '10-10-2010',
+                $this->getTimeframes()
+            ),
 
+            array(
+                range(0, 7),
+                'next friday',
+                false,
+                false,
+                $this->getTimeframes(),
+                'NL',
+                '10-10-2010',
+                $this->getTimeframes()
+            ),
+        );
+    }
+
+    /**
+     * @param        $enableSundayDelivery
+     * @param        $enableSundaySorting
+     * @param        $timeframes
+     * @param string $destinationCountry
+     * @param null   $firstDeliveryDate
+     * @param        $expected
+     *
+     * @dataProvider filterTimeFramesProvider
+     */
+    public function testFilterTimeFrames(
+        $deliveryDays,
+        $now,
+        $enableSundayDelivery,
+        $enableSundaySorting,
+        $timeframes,
+        $destinationCountry,
+        $firstDeliveryDate,
+        $expected
+    )
+    {
+        $this->markTestIncomplete('This test is in progress');
+
+        $instance = $this->_getInstance();
+
+        $oldHelper = Mage::helper('postnl/date');
+        $dateHelperMock = $this->getMock('TIG_PostNL_Helper_Date');
+
+        $dateHelperMock->expects($this->any())
+            ->method('getValidDeliveryDaysArray')
+            ->willReturn($deliveryDays);
+
+        $dateHelperMock->expects($this->any())
+            ->method('getUtcDateTime')
+            ->willReturn(new DateTime($now));
+
+        Mage::app()->getStore()->setConfig($instance::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
+        Mage::app()->getStore()->setConfig($instance::XPATH_ALLOW_SUNDAY_SORTING, $enableSundaySorting);
+
+        $this->setRegistryKey('_helper/postnl/date', $dateHelperMock);
+        $this->setProperty('_dates', array('now' => new DateTime($now)), $instance);
+
+        $result = $instance->filterTimeFrames(
+            $timeframes,
+            Mage::app()->getStore()->getId(),
+            $destinationCountry,
+            $firstDeliveryDate
+        );
+
+        $this->assertEquals($expected, $result);
+
+        $this->setRegistryKey('_helper/postnl/date', $oldHelper);
     }
 }
