@@ -44,6 +44,50 @@ abstract class TIG_PostNL_Block_Core_Template extends Mage_Core_Block_Template
     protected $_eventPrefix = 'postnl_core_template';
 
     /**
+     * @var array
+     */
+    protected $_helpers = array();
+
+    /**
+     * @var array
+     */
+    protected $_models = array();
+
+    /**
+     * @param null $helperName
+     *
+     * @return TIG_PostNL_Helper_Data
+     */
+    protected function _getHelper($helperName = null)
+    {
+        $helper = 'postnl';
+
+        if ($helperName !== null) {
+            $helper .= '/' . $helperName;
+        }
+
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
+    }
+
+    /**
+     * @param $model
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    protected function _getModel($model)
+    {
+        if (array_key_exists($model, $this->_models)) {
+            return $this->_models[$model];
+        }
+
+        return Mage::getModel($model);
+    }
+
+    /**
      * Renders a template block. Also throws 2 events based on the current event prefix.
      *
      * @return string

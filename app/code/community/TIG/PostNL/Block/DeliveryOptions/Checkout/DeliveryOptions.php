@@ -352,10 +352,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
 
         $this->setDeliveryDate($deliveryDate, $for);
 
-        if ($for == 'delivery' && $country != 'BE') {
-            $this->setDeliveryDate($deliveryDate, 'pickup');
-        }
-
         return $deliveryDate;
     }
 
@@ -949,7 +945,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * @return string
      * @throws TIG_PostNL_Exception
      */
-    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote, $for) {
+    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote, $for)
+    {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
@@ -977,22 +974,43 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             throw new TIG_PostNL_Exception(
                 $this->__(
                     'Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.',
-                    $postcode
+                    $country
                 ),
                 'POSTNL-0235'
             );
         }
 
+        $storeId = Mage::app()->getStore()->getId();
+
         /** @var TIG_PostNL_Model_DeliveryOptions_Cif $cif */
-        $cif = Mage::getModel('postnl_deliveryoptions/cif');
-        $response = $cif->setStoreId(Mage::app()->getStore()->getId())
+        $cif = $this->_getModel('postnl_deliveryoptions/cif');
+
+        $response = $cif->setStoreId($storeId)
                         ->getDeliveryDate($postcode, $country, $quote, $for);
 
-        /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = $this->_getHelper('deliveryOptions');
+
+        /** @var TIG_PostNL_Helper_Date $dateHelper */
+        $dateHelper = $this->_getHelper('date');
 
         $dateObject = new DateTime($response, new DateTimeZone('UTC'));
-        $correction = $helper->getDeliveryDateCorrection($dateObject);
+
+        /**
+         * If we are after the cutoff time, the deliverydate webservice will return the next day if sameday is
+         * enabled. That's why we need to add a day. The getDeliveryDateCorrection will check if it is
+         * not in the weekend etc.
+         */
+        if (
+            $country == 'NL' &&
+            $deliveryOptionsHelper->canUseSameDayDelivery() &&
+            $dateHelper->isPastCutOff($dateObject, $storeId) &&
+            $for == 'pickup'
+        ) {
+            $dateObject->add(new DateInterval("P1D"));
+        }
+
+        $correction = $dateHelper->getDeliveryDateCorrection($dateObject);
         $dateObject->add(new DateInterval("P{$correction}D"));
 
         return $dateObject->format('d-m-Y');
