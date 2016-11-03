@@ -52,6 +52,8 @@
 <?php $_housenumber                    = $_streetData['housenumber']; ?>
 <?php $_street                         = $_streetData['streetname']; ?>
 <?php $_city                           = $this->getCity(); ?>
+<?php $_weekdayCutOffTime              = $this->getCutOff('weekday'); ?>
+<?php $_sameDayCutOffTime              = $this->getCutOff('sameday'); ?>
 
 <?php $_canAddLocation                 = true; ?>
 <?php $_canUseResponsive               = $this->canUseResponsive(); ?>
@@ -201,7 +203,11 @@
         deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
         pickupDate         : '<?php echo $this->escapeJavascriptHtml($_pickupDate); ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo $this->escapeJavascriptHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
+        fullAddress        : "<?php echo $this->escapeJavascriptHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>",
+        cutOffTimes        : {
+            weekday: '<?php echo $_weekdayCutOffTime; ?>',
+            sameday: '<?php echo $_sameDayCutOffTime; ?>'
+        }
     };
 
     options = {

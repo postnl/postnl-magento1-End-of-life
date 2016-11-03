@@ -121,6 +121,7 @@ PostnlDeliveryOptions.prototype = {
     options                  : {},
     weekdays                 : [],
     datesProcessed           : [],
+    cutOffTimes              : {},
 
     saveUrl                  : null,
     timeframesUrl            : null,
@@ -205,6 +206,7 @@ PostnlDeliveryOptions.prototype = {
         this.pickupDate         = params.pickupDate;
         this.imageBaseUrl       = params.imageBaseUrl;
         this.fullAddress        = params.fullAddress;
+        this.cutOffTimes        = params.cutOffTimes;
 
         this.options = Object.extend({
             isOsc                     : false,
@@ -5328,11 +5330,18 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         var formattedToday = formattedDay + '-' + formattedMonth + '-' + today.getFullYear();
         var formattedTomorrow = formattedDayTomorrow + '-' + formattedMonthTomorrow + '-' + tomorrow.getFullYear();
 
+        var cutOffTimes = deliveryOptions.cutOffTimes;
+        var now = new Date();
+        var currentTime = ("0" + now.getHours()).slice(-2)   + ":" +
+            ("0" + now.getMinutes()).slice(-2) + ":" +
+            ("0" + now.getSeconds()).slice(-2);
+        var isPastCutoff = cutOffTimes.weekday < currentTime;
+
         var type = '';
         timeframe.Options.string.each(function(value) {
             if (value == 'Sameday' && date == formattedToday) {
                 type = value;
-            } else if (value == 'Sameday' && timeframeIndex == 0 && date == formattedTomorrow) {
+            } else if (value == 'Sameday' && timeframeIndex == 0 && date == formattedTomorrow && isPastCutoff) {
                 type = value;
             } else if (value != 'Sameday' && !type) {
                 type = value;
