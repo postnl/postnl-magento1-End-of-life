@@ -597,10 +597,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         if ($country == 'NL' && $helper->canUseSameDayDelivery()) {
+            /**
+             * This order is mandatory to show the deliveryoptions in the correct order.
+             * (Daytime first, then Evening)
+             */
             $options = array(
+                self::DOMESTIC_DELIVERY_OPTION,
                 self::SAMEDAY_DELIVERY_OPTION,
                 self::EVENING_DELIVERY_OPTION,
-                self::DOMESTIC_DELIVERY_OPTION,
             );
 
             return $options;

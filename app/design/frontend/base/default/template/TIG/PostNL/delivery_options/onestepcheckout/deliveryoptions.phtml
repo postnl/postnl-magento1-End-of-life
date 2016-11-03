@@ -43,16 +43,18 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
-<?php $_store         = Mage::app()->getStore(); ?>
-<?php $_address       = $this->getShippingAddress(); ?>
-<?php $_postcode      = $this->getPostcode(); ?>
-<?php $_country       = $this->getCountry(); ?>
-<?php $_deliveryDate  = $this->getDeliveryDate('delivery'); ?>
-<?php $_pickupDate    = $this->getDeliveryDate('pickup'); ?>
-<?php $_streetData    = $this->getStreetData(); ?>
-<?php $_housenumber   = $_streetData['housenumber']; ?>
-<?php $_street        = $_streetData['streetname']; ?>
-<?php $_city          = $this->getCity(); ?>
+<?php $_store               = Mage::app()->getStore(); ?>
+<?php $_address             = $this->getShippingAddress(); ?>
+<?php $_postcode            = $this->getPostcode(); ?>
+<?php $_country             = $this->getCountry(); ?>
+<?php $_deliveryDate        = $this->getDeliveryDate('delivery'); ?>
+<?php $_pickupDate          = $this->getDeliveryDate('pickup'); ?>
+<?php $_streetData          = $this->getStreetData(); ?>
+<?php $_housenumber         = $_streetData['housenumber']; ?>
+<?php $_street              = $_streetData['streetname']; ?>
+<?php $_city                = $this->getCity(); ?>
+<?php $_weekdayCutOffTime   = $this->getCutOff('weekday'); ?>
+<?php $_sameDayCutOffTime   = $this->getCutOff('sameday'); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
 
@@ -339,7 +341,11 @@
             deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
             pickupDate         : '<?php echo $this->escapeJavascriptHtml($_pickupDate); ?>',
             imageBaseUrl       : baseUrl,
-            fullAddress        : fullAddress
+            fullAddress        : fullAddress,
+            cutOffTimes        : {
+                weekday: '<?php echo $_weekdayCutOffTime; ?>',
+                sameday: '<?php echo $_sameDayCutOffTime; ?>'
+            }
         };
 
         options = {

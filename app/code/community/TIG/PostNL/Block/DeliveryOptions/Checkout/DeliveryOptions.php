@@ -1032,4 +1032,20 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return parent::escapeHtml($data, $allowedTags);
         }
     }
+
+    /**
+     * @param $type
+     *
+     * @return DateTime
+     */
+    public function getCutOff($type)
+    {
+        /** @var  $storeId */
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = $this->_getHelper('date');
+
+        return $helper->getCutOff($storeId, $type);
+    }
 }
