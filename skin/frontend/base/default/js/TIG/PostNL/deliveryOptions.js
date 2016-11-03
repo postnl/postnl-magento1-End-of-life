@@ -4325,9 +4325,14 @@ PostnlDeliveryOptions.Location = new Class.create({
                 availableDeliveryDate.setTime(availableDeliveryDate.getTime() + 86400000);
             }
 
-            element = this.renderOption(type, availableDeliveryDate, parent, false);
-            if (element) {
-                elements[type] = element;
+            /**
+             * Early pickup PG is not allowed on monday.
+             */
+            if (!(availableDeliveryDate.getDay() === 1 && type === 'PGE')) {
+                element = this.renderOption(type, availableDeliveryDate, parent, false);
+                if (element) {
+                    elements[type] = element;
+                }
             }
         }.bind(this));
 
@@ -4549,7 +4554,9 @@ PostnlDeliveryOptions.Location = new Class.create({
                 openingHours = false;
                 break;
             case 1:
-                openingHours = false;
+                if (openingDays.Monday) {
+                    openingHours = openingDays.Monday.string;
+                }
                 break;
             case 2:
                 if (openingDays.Tuesday) {
