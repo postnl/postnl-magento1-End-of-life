@@ -707,6 +707,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
+        $tomorrow = clone $today;
+        $tomorrow->add(new DateInterval('P1D'));
 
         $isPastEveningCutoff = $helper->isPastCutOff($today, $storeId, 'weekday');
 
@@ -716,10 +718,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
             /**
              * If this is the first possible deliverydate, and we are after the last cutoff time, then filter all
-             * timeframes that are not Sameday
+             * timeframes that are not Sameday.
              */
             if (
                 $timeFrameDate->format('Y-m-d') == $firstDeliveryDate->format('Y-m-d') &&
+                $firstDeliveryDate->format('Y-m-d') == $tomorrow->format('Y-m-d') &&
                 $this->_canUseSameDayDelivery() &&
                 $isPastEveningCutoff
             ) {
