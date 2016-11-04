@@ -464,12 +464,14 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
     {
         return array(
             array('Regular', 'NL', true, true, true, false, array('Daytime', 'Sameday', 'Evening')),
+            array('Regular', 'NL', true, true, true, true, array('Daytime', 'Sameday', 'Evening', 'Sunday')),
             array('Regular', 'NL', false, false, true, false, array('Daytime', 'Evening')),
             array('Regular', 'NL', false, false, false, false, array('Daytime')),
             array('Regular', 'NL', true, false, false, false, array('Daytime')),
             array('Regular', 'NL', true, true, false, false, array('Daytime', 'Sameday', 'Evening')),
 
             array('Cooled', 'NL', true, true, true, false, array('Sameday', 'Evening')),
+            array('Cooled', 'NL', true, true, true, true, array('Sameday', 'Evening')),
             array('Cooled', 'NL', false, false, true, false, array('Daytime', 'Evening')),
             array('Cooled', 'NL', false, false, false, false, array('Daytime')),
             array('Cooled', 'NL', true, false, false, false, array('Sameday', 'Evening')),
