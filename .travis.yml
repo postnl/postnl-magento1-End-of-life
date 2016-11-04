@@ -8,7 +8,7 @@ php:
 
 matrix:
   allow_failures:
-    - 7.1
+    - php: 7.1
 
 env:
   - MAGENTO_VERSION=magento-mirror-1.9.2.4
@@ -18,3 +18,8 @@ env:
 
 script:
   - bash app/code/community/TIG/PostNL/Test/setup.sh
+
+cache:
+  directories:
+  - tools
+  - .composer

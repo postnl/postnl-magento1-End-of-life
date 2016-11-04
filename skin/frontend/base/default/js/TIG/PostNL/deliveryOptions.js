@@ -252,7 +252,9 @@ PostnlDeliveryOptions.prototype = {
             currencySymbol            : '€',
             shippingMethodName        : 's_method_postnl_flatrate',
             postnlShippingMethods     : [
-                's_method_postnl_tablerate', 's_method_postnl_flatrate'
+                's_method_postnl_tablerate',
+                's_method_postnl_flatrate',
+                's_method_postnl_matrixrate'
             ],
             extraOptions              : {},
             getLocationsTimeout       : 5,
