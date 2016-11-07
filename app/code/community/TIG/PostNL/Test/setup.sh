@@ -2,8 +2,6 @@
 set -e
 set -x
 
-TMPNAME=`openssl rand -base64 32 | tr -cd '[:alnum:]' | head -c8`;
-
 if [ -z $MAGENTO_DB_HOST ]; then MAGENTO_DB_HOST="localhost"; fi
 if [ -z $MAGENTO_DB_PORT ]; then MAGENTO_DB_PORT="3306"; fi
 if [ -z $MAGENTO_DB_USER ]; then MAGENTO_DB_USER="root"; fi
@@ -16,9 +14,9 @@ fi
 
 
 CURRENT_DIR=`pwd`
-BUILDENV="/tmp/magento.${TMPNAME}"
+BUILDENV="/tmp/magento"
 mkdir -p ${BUILDENV}
-TOOLS="${CURRENT_DIR}/tools"
+TOOLS="${HOME}/tools"
 PUBLIC_DIR="${BUILDENV}/public/"
 
 mkdir -p "${TOOLS}"
@@ -80,7 +78,3 @@ mkdir -p "${PUBLIC_DIR}var/session";
 chmod -R 777 "${PUBLIC_DIR}var/session";
 
 "${TOOLS}/phpunit" -c "${PUBLIC_DIR}/app/code/community/TIG/PostNL/Test/phpunit.xml"
-
-mysql -u${MAGENTO_DB_USER} ${MYSQLPASS} -h${MAGENTO_DB_HOST} -P${MAGENTO_DB_PORT} -e "DROP DATABASE IF EXISTS \`${MAGENTO_DB_NAME}\`;"
-echo "Deleting ${BUILDENV}"
-rm -rf "${BUILDENV}"
