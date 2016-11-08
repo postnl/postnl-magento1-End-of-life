@@ -5435,6 +5435,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
      */
     render : function(parent, forceDate) {
         /**
+         * Sameday delivery is not allowed as Buspakje.
+         */
+        if (
+            !this.getDeliveryOptions().isTimeframesAllowed() &&
+            this.getDeliveryOptions().getIsBuspakje() &&
+            this.getType() == 'Sameday'
+        ) {
+            return;
+        }
+
+        /**
          * Build the element's html.
          */
         var html = '<li class="option" id="timeframe_' + this.getTimeframeIndex() + '">';

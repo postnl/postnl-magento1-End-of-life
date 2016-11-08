@@ -73,7 +73,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test_Fram
         if ($this->_soapClient === null) {
             $this->_soapClient = $this->getMockBuilder('SoapClient')
                 ->disableOriginalConstructor()
-                ->setMethods(['GetDeliveryDate'])
+                ->setMethods(array('GetDeliveryDate'))
                 ->getMock();
         }
 
