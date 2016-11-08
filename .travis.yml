@@ -21,6 +21,7 @@ before_script:
   - phpenv config-rm xdebug.ini
   - composer global require n98/magerun
   - composer global require colinmollenhour/modman
+  - export PATH=$PATH:$HOME/.composer/vendor/bin
 
 script:
   - bash app/code/community/TIG/PostNL/Test/setup.sh
