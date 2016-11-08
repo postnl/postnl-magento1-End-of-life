@@ -28,5 +28,4 @@ script:
 
 cache:
   directories:
-  - $HOME/tools
   - $HOME/.composer/cache
