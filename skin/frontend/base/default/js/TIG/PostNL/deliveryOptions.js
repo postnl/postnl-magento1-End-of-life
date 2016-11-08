@@ -37,6 +37,15 @@
  */
 
 /**
+ * Make sure the console is available. If not, create a dummy function.
+ */
+if (typeof console === "undefined"){
+    console={};
+    console.log = function(){};
+    console.info = function(){};
+}
+
+/**
  * Make sure the magento translator is available. If not, create a dummy function.
  */
 if (typeof Translator == 'undefined' && typeof Translate === 'function') {

@@ -95,6 +95,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
     /**
      * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
+     * http://www.postnl.nl/zakelijke-oplossingen/pakket-versturen/pakket-buitenland/binnen-de-eu/
      *
      * @var array
      */
@@ -123,7 +124,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'ES',
         'CZ',
         'SE',
-        'GR',
         'NL',
     );
 
