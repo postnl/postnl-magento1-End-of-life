@@ -9,7 +9,7 @@ if [ -z $MAGENTO_DB_PASS ]; then MAGENTO_DB_PASS=""; fi
 if [ -z $MAGENTO_DB_ALLOWSAME ]; then MAGENTO_DB_ALLOWSAME="0"; fi
 if [ ! -z $PHP_VERSION ]; then phpenv global $PHP_VERSION; fi
 if [ -z $MAGENTO_DB_NAME ]; then
-    MAGENTO_DB_NAME="magento_${TMPNAME}";
+    MAGENTO_DB_NAME="magento";
 fi
 
 
