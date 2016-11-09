@@ -2413,7 +2413,6 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2443,7 +2442,6 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2502,7 +2500,6 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
