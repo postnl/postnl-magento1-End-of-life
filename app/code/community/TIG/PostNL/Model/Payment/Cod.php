@@ -190,19 +190,19 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         $helper = Mage::helper('postnl/payment');
 
         /**
-         * Check if this payment method is active.
-         */
-        if (!(bool)$this->getConfigData('active', $quote->getStoreId())) {
-            return false;
-        }
-
-        /**
          * Make sure the quote is available.
          */
         if (is_null($quote)) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because the quote is empty.')
             );
+            return false;
+        }
+
+        /**
+         * Check if this payment method is active.
+         */
+        if (!(bool)$this->getConfigData('active', $quote->getStoreId())) {
             return false;
         }
 
