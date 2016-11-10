@@ -108,14 +108,80 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             'isBelgiumOnly' => false,
         ),
         array(
-            'value'         => '4932',
-            'label'         => 'Post Office (Belgium)',
-            'isExtraCover'  => false,
-            'isPge'         => false,
-            'isCod'         => false,
-            'isBelgiumOnly' => true,
+            'value'             => '4932',
+            'label'             => '4932 - Post Office Belgium + Extra Cover',
+            'isExtraCover'      => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+        ),
+        array(
+            'value'             => '4878',
+            'label'             => '4878 - Post Office Belgium + Extra Cover',
+            'isExtraCover'      => true,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
+        ),
+        array(
+            'value'             => '4880',
+            'label'             => '4880 - Post Office Belgium',
+            'isExtraCover'      => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
         ),
     );
+
+    /**
+     * Gets all possible product options matching an array of flags.
+     *
+     * @param array $flags
+     * @param bool  $asFlatArray
+     * @param bool  $checkAvailable
+     *
+     * @return array
+     */
+    public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
+    {
+        $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
+
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if (
+            $helper->canUsePakjegemakBeNotInsured()
+            && (!isset($flags['isBelgiumOnly'])
+                || $flags['isBelgiumOnly'] == true
+            ) && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
+            ) && (!isset($flags['isCod'])
+                || $flags['isCod'] == false
+            ) && (!isset($flags['isPge'])
+                || $flags['isPge'] == false
+            ) && (!isset($flags['countryLimitation'])
+                || $flags['countryLimitation'] == 'NL'
+            )
+        ) {
+            if (!$asFlatArray) {
+                $options[] = array(
+                    'value'             => '4936',
+                    'label'             => $helper->__('4936 - Post Office Belgium'),
+                    'isBelgiumOnly'     => false,
+                    'isExtraCover'      => false,
+                    'countryLimitation' => 'NL',
+                );
+            } else {
+                $options['4936'] = $helper->__('4936 - Post Office Belgium');
+            }
+        }
+
+        ksort($options);
+
+        return $options;
+    }
 
     /**
      * Returns an option array for all possible PostNL product options.
@@ -149,7 +215,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      */
     public function getAvailableBeOptions($flat = false)
     {
-        return $this->getOptions(array('isCod' => false, 'isBelgiumOnly' => true), $flat, true);
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+
+        return $this->getOptions(array(
+            'isCod' => false,
+            'isBelgiumOnly' => true,
+            'countryLimitation' => $helper->getDomesticCountry(),
+        ), $flat, true);
     }
 
     /**
