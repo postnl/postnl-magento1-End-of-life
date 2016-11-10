@@ -38,6 +38,8 @@
  */
 ?>
 <?php
+$billingFields = array();
+$extraBillingFields = array();
 $formErrors = $this->getParentBlock()->formErrors;
 $formErrors = (!empty($formErrors['billing_errors'])) ? $formErrors['billing_errors'] : array();
 
@@ -150,7 +152,7 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php endif; ?>
 <?php
     try {
-        $_dob = $this->getLayout()->createBlock('customer/widget_dob');
+        $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob');
     } catch (Exception $e) {
         $_dob = false;
     }
@@ -228,7 +230,43 @@ $dataHelper = Mage::helper('onestepcheckout');
     ?>
 <?php endif; ?>
 
+<?php
+if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+    $extraBillingFields[11]['fields'] = array('postnl_idcheck' => '<li class="control">' . $this->getChildHtml('postnl_billing_idcheck') . '</li>');
+endif;
+?>
+
 <?php $billingFields = $this->getBillingFieldsOrder($billingFields);?>
+
+<?php
+/**
+ * 1. Go from top to bottom and move all items 1 position up (14 -> 15, 10 -> 11, etc)
+ * 2. Place the new items in the array if at the right position.
+ * 3. Sort the array by key.
+ */
+foreach ($extraBillingFields as $position => $field):
+    $fieldAdded = false;
+    for ($i = max(array_keys($billingFields)); $i <= 0; $i--):
+        if (isset($billingFields[$i])):
+            $billingFields[$i + 1] = $billingFields[$i];
+            unset($billingFields[$i]);
+        endif;
+
+        if ($position == $i):
+            $fieldAdded = true;
+            $billingFields[$position] = $field;
+            break;
+        endif;
+    endfor;
+
+    if (!$fieldAdded):
+        $billingFields[$position] = $field;
+    endif;
+endforeach;
+ksort($billingFields);
+?>
+
+
 <?php $_streetFieldSortOrder = Mage::helper('postnl/addressValidation')->getOscStreetFieldSortOrder(); ?>
 <?php foreach($billingFields as $key => $value):?>
     <?php if(!empty($value['has_li']) || $key == $_streetFieldSortOrder):?>

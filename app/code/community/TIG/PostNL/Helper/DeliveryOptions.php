@@ -75,6 +75,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
     const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
+    const XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY     = 'postnl/delivery_options/enable_birthday_check_delivery';
+    const XPATH_ENABLE_ID_CHECK_DELIVERY           = 'postnl/delivery_options/enable_id_check_delivery';
+    const XPATH_ENABLE_AGE_CHECK_DELIVERY          = 'postnl/delivery_options/enable_age_check_delivery';
     const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
@@ -137,6 +140,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const FOOD_TYPE_COOL_PRODUCTS = 2;
 
     /**
+     * The two supported validation delivery types.
+     */
+    const IDCHECK_TYPE_AGE = 'AgeCheck';
+    const IDCHECK_TYPE_BIRTHDAY = 'BirthdayCheck';
+    const IDCHECK_TYPE_ID = 'IDCheck';
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -155,6 +165,28 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     protected $_foodProductCodes = array(
         '3083',
         '3084',
+    );
+
+    protected $_idCheckProductCodes = array(
+        '3442',
+        '3445',
+        '3448',
+        '3451',
+    );
+
+    protected $_ageCheckProductCodes = array(
+        '3437',
+        '3438',
+        '3449',
+        '3443',
+        '3446',
+    );
+
+    protected $_birthdayCheckProductCodes = array(
+        '3440',
+        '3444',
+        '3447',
+        '3450',
     );
 
     /**
@@ -1917,6 +1949,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
+        if ($this->quoteIsIDCheck($quote) || $this->quoteIsBirthdayCheck($quote) || $this->quoteIsAgeCheck($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
         if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
@@ -2370,7 +2407,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if at least one food product code is avaialble in the config.
+     * Check if at least one food product code is available in the config.
      *
      * @param null $storeId
      *
@@ -2388,6 +2425,154 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         foreach ($this->_foodProductCodes as $foodProductCode) {
             if (in_array($foodProductCode, $availableProductOptions)) {
+                $available = true;
+                break;
+            }
+        }
+
+        return $available;
+    }
+
+    /**
+     * Determines if id check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseIdCheckDelivery()
+    {
+        return $this->_canUseIdCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if ID Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseIdCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseIdCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseIdCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_ID_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_idCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseIdCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if age check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseAgeCheckDelivery()
+    {
+        return $this->_canUseAgeCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if Age Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseAgeCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseAgeCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseAgeCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_AGE_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_ageCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseAgeCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if birthday check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseBirthdayCheckDelivery()
+    {
+        return $this->_canUseBirthdayCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if Birthday Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseBirthdayCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseBirthdayCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseBirthdayCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_birthdayCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseBirthdayCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check if at least one Check product code is available in the config.
+     *
+     * @param null $storeId
+     * @param array $productCodes
+     *
+     * @return bool
+     */
+    protected function _getCheckProductOptionsAvailable($productCodes, $storeId = null)
+    {
+        $available = false;
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $availableProductOptions = explode(',', Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId));
+
+        foreach ($productCodes as $idCheckProductCode) {
+            if (in_array($idCheckProductCode, $availableProductOptions)) {
                 $available = true;
                 break;
             }

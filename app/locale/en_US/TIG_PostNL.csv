@@ -1351,3 +1351,52 @@ TIG_PostNL::Please enter your Dutch customer code and number.,Please enter your 
 TIG_PostNL::View the documentation.,View the documentation.
 TIG_PostNL::Documentation,Documentation
 TIG_PostNL::Unable to save down partner data.,Unable to save down partner data.
+TIG_PostNL::PostNL verification type,PostNL verification type
+"TIG_PostNL::Parcel with Agecheck 18+","Parcel with Agecheck 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+","Parcel with Extra Cover + Agecheck 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+ Return when not home","Parcel with Extra Cover + Agecheck 18+ Return when not home"
+"TIG_PostNL::Parcel with Agecheck 18+ Return when not home","Parcel with Agecheck 18+ Return when not home"
+"TIG_PostNL::Parcel with Agecheck 18+ Neighbors","Parcel with Agecheck 18+ Neighbors"
+"TIG_PostNL::Post Office + Agecheck 18+","Post Office + Agecheck 18+"
+"TIG_PostNL::Post Office + Notification + Agecheck 18+","Post Office + Notification + Agecheck 18+"
+"TIG_PostNL::Post Office + Extra Cover + Agecheck 18+","Post Office + Extra Cover + Agecheck 18+"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Agecheck 18+","Post Office + Extra Cover + Notification + Agecheck 18+"
+"TIG_PostNL::Parcel with ID check (based on ID-number)","Parcel with ID check (based on ID-number)"
+"TIG_PostNL::Parcel with Extra Cover + ID check","Parcel with Extra Cover + ID check"
+"TIG_PostNL::Parcel with Extra Cover + ID check + Return when not home","Parcel with Extra Cover + ID check + Return when not home"
+"TIG_PostNL::Parcel with ID check + Return when not home","Parcel with ID check + Return when not home"
+"TIG_PostNL::Post Office + ID Check","Post Office + ID Check"
+"TIG_PostNL::Post Office + Notification + ID Check","Post Office + Notification + ID Check"
+"TIG_PostNL::Post Office + Extra Cover + ID Check","Post Office + Extra Cover + ID Check"
+"TIG_PostNL::Post Office + Extra Cover + Notification + ID Check","Post Office + Extra Cover + Notification + ID Check"
+"TIG_PostNL::Parcel with Birthday Check","Parcel with Birthday Check"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check","Parcel with Extra Cover + Birthday Check"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check + Return when not home","Parcel with Extra Cover + Birthday Check + Return when not home"
+"TIG_PostNL::Parcel with Birthday Check + Return when not home","Parcel with Birthday Check + Return when not home"
+"TIG_PostNL::Post Office + Birthday Check","Post Office + Birthday Check"
+"TIG_PostNL::Post Office + Notification + Birthday Check","Post Office + Notification + Birthday Check"
+"TIG_PostNL::Post Office + Extra Cover + Birthday Check","Post Office + Extra Cover + Birthday Check"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Birthday Check","Post Office + Extra Cover + Notification + Birthday Check"
+TIG_PostNL::Age Check,Age Check
+TIG_PostNL::Birthday Check,Birthday Check
+TIG_PostNL::ID Check,ID Check
+TIG_PostNL::Dutch Passport,Nederlands paspoort
+TIG_POSTNL::Dutch ID,Dutch ID
+TIG_POSTNL::Dutch drivers license,Dutch drivers license
+TIG_POSTNL::Foreigners document,Foreigners document
+TIG_POSTNL::European ID,European ID
+TIG_POSTNL::Abroad passport,Abroad passport
+TIG_PostNL::Documentnumber:,Documentnumber:
+TIG_PostNL::Expiration date:,Expiration date:
+TIG_PostNL::Document type,Document type
+TIG_PostNL::Day,Day
+TIG_PostNL::Month,Month
+TIG_PostNL::Year,Year
+TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,The following data will be used for a personidentification when delivering the parcel.
+TIG_PostNL::Please enter a date that is in the future.,Please enter a date that is in the future.
+TIG_PostNL::Please provide a document type,Please provide a document type
+TIG_PostNL::Please provide a valid document type,Please provide a valid document type
+TIG_PostNL::Please provide a document number,Please provide a document number
+TIG_PostNL::Please provide a expiration date,Please provide a expiration date
+TIG_PostNL::Please provide a valid birthday,Please provide a valid birthday
+TIG_PostNL::This data will be used to verify your age at delivery.,This data will be used to verify your age at delivery.

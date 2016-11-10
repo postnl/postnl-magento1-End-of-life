@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.11.3</version>
+            <version>1.12.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -281,6 +281,7 @@
                         <postnl_allow_timeframes/>
                         <postnl_allow_pakketautomaat/>
                         <postnl_product_type/>
+                        <postnl_idcheck_type/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -606,6 +607,36 @@
                     </set_registry_flag>
                 </observers>
             </controller_action_predispatch_gomage_checkout_onepage_ajax>
+            <controller_action_postdispatch_checkout_onepage_savebilling>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_checkout_onepage_savebilling>
+            <customer_address_validation_after>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <validate_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>validate</method>
+                    </validate_idcheck_data>
+                </observers>
+            </customer_address_validation_after>
+            <controller_action_postdispatch_onestepcheckout_ajax_save_billing>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_onestepcheckout_ajax_save_billing>
         </events>
     </frontend>
 
@@ -896,6 +927,14 @@
                 <sameday_delivery_cutoff_time>14:00:00</sameday_delivery_cutoff_time> <!-- Only allow same day delivery when ordering before 14:00 P.M. -->
                 <enable_food_delivery>0</enable_food_delivery> <!-- Disable food delivery -->
                 <food_delivery_default_product_type>0</food_delivery_default_product_type> <!-- By default products are considered non-food. -->
+                <enable_id_check_delivery>0</enable_id_check_delivery> <!-- Disable ID check delivery -->
+                <enable_birthday_check_delivery>0</enable_birthday_check_delivery> <!-- Disable birthday check delivery -->
+                <enable_age_check_delivery>0</enable_age_check_delivery><!-- Disable age check delivery -->
+                <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
+                <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
+                <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
+                <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
+                <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
@@ -1097,6 +1136,12 @@
                 <default_sameday_product_option>3385</default_sameday_product_option> <!-- Deliver to stated address only -->
                 <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+                <default_id_check_delivery_product_option>3442</default_id_check_delivery_product_option>
+                <default_id_check_pickup_product_option>3573</default_id_check_pickup_product_option>
+                <default_age_check_delivery_product_option>3438</default_age_check_delivery_product_option>
+                <default_age_check_pickup_product_option>3571</default_age_check_pickup_product_option>
+                <default_birthday_check_delivery_product_option>3440</default_birthday_check_delivery_product_option>
+                <default_birthday_check_pickup_product_option>3572</default_birthday_check_pickup_product_option>
                 <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>

@@ -63,10 +63,13 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     /**
      * String values for parcel types.
      */
-    const PARCEL_TYPE_REGULAR     = 'regular';
-    const PARCEL_TYPE_LETTERBOX   = 'letter_box';
-    const PARCEL_TYPE_FOOD        = 'food';
-    const PARCEL_TYPE_PAKJE_GEMAK = 'pakje_gemak';
+    const PARCEL_TYPE_REGULAR       = 'regular';
+    const PARCEL_TYPE_LETTERBOX     = 'letter_box';
+    const PARCEL_TYPE_FOOD          = 'food';
+    const PARCEL_TYPE_PAKJE_GEMAK   = 'pakje_gemak';
+    const PARCEL_TYPE_AGECHECK      = 'agecheck';
+    const PARCEL_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
+    const PARCEL_TYPE_IDCHECK       = 'idcheck';
 
     /**
      * String values for different rate types.
@@ -308,6 +311,15 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             } elseif ($this->getHelper()->quoteIsFood()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_FOOD);
+            } elseif ($this->getHelper()->quoteIsAgeCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
+            } elseif ($this->getHelper()->quoteIsBirthdayCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_BIRTHDAYCHECK);
+            } elseif ($this->getHelper()->quoteIsIDCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_IDCHECK);
             } else {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_REGULAR);

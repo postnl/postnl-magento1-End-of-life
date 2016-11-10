@@ -1406,4 +1406,66 @@ TIG_PostNL::Customer Code for shipments to the Netherlands,Klantcode voor verzen
 TIG_PostNL::Please enter your Dutch customer code and number.,Vul uw Nederlandse klantnummer en klantcode in.
 TIG_PostNL::View the documentation.,Bekijk de documentatie.
 TIG_PostNL::Documentation,Documentatie
+"TIG_PostNL::Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.","Activeer ID Check levering, als u product(en) heeft waar identificatie of leeftijd controle voor nodig is. De bezorger zal het ID controleren aan de deur."
 TIG_PostNL::Unable to save down partner data.,Het is niet gelukt bij deze zending de down partner gegevens op te slaan.
+TIG_PostNL::Enable ID check delivery (based on ID-number),Activeer ID Check levering (Controle op ID nummer)
+TIG_PostNL::With this product person verification is done based on the ID document number.,Met dit product wordt persoon verificatie gedaan aan de hand van het document nummer.
+TIG_PostNL::Enable ID check delivery (based on date of birth),Activeer ID Check levering (Controle op geboortedatum)
+TIG_PostNL::With this product person verification is done based on date of birth.,Met dit product wordt persoon verificatie gedaan aan de hand van geboortedatum.
+TIG_PostNL::Enable Age check delivery,Activeer Leeftijd Check levering
+"TIG_PostNL::With this product is checked whether a person is older than 18 years.","Met dit product wordt gecontroleerd of iemand ouder is dan 18 jaar."
+TIG_PostNL::Default Age check delivery shipping option,Standaard Leeftijd Check levering optie
+TIG_PostNL::Default Birthday check delivery shipping option,Standaard Geboortedatum Check levering optie
+TIG_PostNL::Default ID check delivery shipping option,Standaard ID Check levering optie
+TIG_PostNL::Parcel with Age Check Options,Verzending met Leeftijd Check opties
+TIG_PostNL::Parcel with ID Check Options,Verzending met ID Check opties
+TIG_PostNL::Parcel with Birthday Check Options, Verzending met Geboortedatum Check opties
+"TIG_PostNL::Parcel with Agecheck 18+","Verzending met Leeftijd controle 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+","Verzending met extra dekking + Leeftijd controle 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+ Return when not home","Verzending met extra dekking, Leeftijd controle 18+ en Retour bij geen gehoor"
+"TIG_PostNL::Parcel with Agecheck 18+ Return when not home","Verzending met Leeftijd controle 18+ en Retour bij geen gehoor"
+"TIG_PostNL::Parcel with Agecheck 18+ Neighbors","Verzending met Leeftijd controle 18+ bij buren"
+"TIG_PostNL::Post Office + Agecheck 18+","Afhaal locatie + Leeftijd controle 18+"
+"TIG_PostNL::Post Office + Notification + Agecheck 18+","Afhaal locatie + Notificatie + Leeftijd controle 18+ "
+"TIG_PostNL::Post Office + Extra Cover + Agecheck 18+","Afhaal locatie + Extra dekking + Leeftijd controle 18+"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Agecheck 18+","Afhaal locatie + Extra dekking + Notificatie + Leeftijd controle 18+"
+"TIG_PostNL::Parcel with ID check (based on ID-number)","Verzending met ID controle (Controle op ID nummer)"
+"TIG_PostNL::Parcel with Extra Cover + ID check","Verzending met Extra dekking + ID controle"
+"TIG_PostNL::Parcel with Extra Cover + ID check + Return when not home","Verzending met Extra dekking + ID controle + Retour bij geen gehoor"
+"TIG_PostNL::Parcel with ID check + Return when not home","Verzending met ID controle + Retour bij geen gehoor"
+"TIG_PostNL::Post Office + ID Check","Afhaal locatie + ID controle"
+"TIG_PostNL::Post Office + Notification + ID Check","Afhaal locatie + Notificatie + ID controle"
+"TIG_PostNL::Post Office + Extra Cover + ID Check","Afhaal locatie + Extra dekking + ID controle"
+"TIG_PostNL::Post Office + Extra Cover + Notification + ID Check","Afhaal locatie + Extra dekking + Notificatie + ID controle"
+"TIG_PostNL::Parcel with Birthday Check","Verzending met Geboortedatum controle"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check","Verzending met Extra dekking + Geboortedatum controle"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check + Return when not home","Verzending met Extra dekking + Geboortedatum controle + Retour bij geen gehoor"
+"TIG_PostNL::Parcel with Birthday Check + Return when not home","Verzending met Geboortedatum controle + Retour bij geen gehoor"
+"TIG_PostNL::Post Office + Birthday Check","Afhaal locatie + Geboortedatum controle"
+"TIG_PostNL::Post Office + Notification + Birthday Check","Afhaal locatie + Notificatie + Geboortedatum controle"
+"TIG_PostNL::Post Office + Extra Cover + Birthday Check","Afhaal locatie + Extra dekking + Geboortedatum controle"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Birthday Check","Afhaal locatie + Extra dekking + Notificatie + Geboortedatum controle"
+TIG_PostNL::PostNL verification type,PostNL verificatie type
+TIG_PostNL::Age Check,Leeftijd Check
+TIG_PostNL::Birthday Check,Verjaadags Check
+TIG_PostNL::ID Check,ID Check
+TIG_PostNL::Dutch Passport,Nederlands paspoort
+TIG_PostNL::Dutch ID,Nederlandse identiteitskaart
+TIG_PostNL::Dutch drivers license,Nederlands rijbewijs
+TIG_PostNL::Dutch foreigners document,Nederlands vreemdelingendocument
+TIG_PostNL::European ID,Europese identiteitskaart
+TIG_PostNL::Abroad passport,Buitenlands paspoort
+TIG_PostNL::Documentnumber:,Documentnummer:
+TIG_PostNL::Expiration date:,Verloopdatum:
+TIG_PostNL::Document type,Document type
+TIG_PostNL::Day,Dag
+TIG_PostNL::Month,Maand
+TIG_PostNL::Year,Jaar
+TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,De volgende gegevens worden gebruikt om een persoonsidentifcatie bij bezorging uit te voeren.
+TIG_PostNL::Please enter a date that is in the future.,Voer een datum in de toekomst in.
+TIG_PostNL::Please provide a document type,Geef een document type op
+TIG_PostNL::Please provide a valid document type,Geef een valide document type op
+TIG_PostNL::Please provide a document number,Geef een document nummer op
+TIG_PostNL::Please provide a expiration date,Geef een verval datum op
+TIG_PostNL::Please provide a valid birthday,Geef een valide verjaardag op
+TIG_PostNL::This data will be used to verify your age at delivery.,De volgende gegevens worden gebruikt om uw leeftijd te verifiëren bij bezorging.
