@@ -167,6 +167,11 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     protected $_helpers                     = array();
 
     /**
+     * @var array
+     */
+    protected $_models                      = array();
+
+    /**
      * @var boolean
      */
 
@@ -293,7 +298,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check if the delivery type is not a Sunday Delivery, since COD is not available for Sunday delivery
          */
         /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = $this->getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getType() == 'Sunday') {
             $helper->log(
                 $helper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
@@ -478,5 +483,19 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         return $this->_helpers[$helper];
+    }
+
+    /**
+     * @param $model
+     *
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function getModel($model)
+    {
+        if (!array_key_exists($model, $this->_models)) {
+            $this->_models[$model] = Mage::getModel($model);
+        }
+
+        return $this->_models[$model];
     }
 }

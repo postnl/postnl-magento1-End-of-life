@@ -198,8 +198,6 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
 
     public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
     {
-        $this->markTestSkipped('Fails for unknown reason');
-
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
 
@@ -421,7 +419,7 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $expected
     )
     {
-        $this->markTestSkipped('Creating test is in progress');
+        $this->markTestIncomplete('Creating test is in progress');
 
         $now = new DateTime($now);
         $timeframes = $this->createTimeframesFormat($now, $timeframes);

@@ -49,15 +49,16 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
     public function isAvailableDataProvider()
     {
         return array(
-            array(false, false, false, false, false, false, false, 'NL', 'NL,BE', false, 'PostNL COD is not available, because the quote is empty.'),
-            array(true, false, false, false, false, false, false, 'NL', 'NL,BE', false, false),
-            array(true, true, false, false, false, false, false, 'NL', 'NL,BE', false, false),
-            array(true, true, true, false, false, false, false, 'NL', 'NL,BE', false, 'PostNL COD is not available, because the order is virtual.'),
-            array(true, true, false, true, false, false, false, 'NL', 'NL,BE', false, false),
-            array(true, true, false, false, true, false, false, 'NL', 'NL,BE', false, 'PostNL COD is not available, because required fields are missing.'),
-            array(true, true, false, false, true, true, false, 'US', 'NL,BE', false, 'PostNL COD is not available, because the shipping destination country is not allowed.'),
-            array(true, true, false, false, true, true, true, 'NL', 'NL,BE', false, 'PostNL COD is not available, because the shipping address is a P.O. box.'),
-            array(true, true, false, false, true, true, false, 'NL', 'NL,BE', true, false),
+            array(false, false, false, false, false, false, false, false, 'NL', false, 'PostNL COD is not available, because the quote is empty.'),
+            array(true, false, false, false, false, false, false, false, 'NL', false, false),
+            array(true, true, false, false, false, false, false, false, 'NL', false, false),
+            array(true, true, true, false, false, false, false, false, 'NL', false, 'PostNL COD is not available, because the order is virtual.'),
+            array(true, true, false, true, false, false, false, false, 'NL', false, false),
+            array(true, true, false, false, true, false, false, false, 'NL', false, 'PostNL COD is not available, because required fields are missing.'),
+            array(true, true, false, false, true, true, false, false, 'US', false, 'PostNL COD is not available, because the shipping destination country is not allowed.'),
+            array(true, true, false, false, true, true, true, false, 'NL', false, 'PostNL COD is not available, because the shipping address is a P.O. box.'),
+            array(true, true, false, false, true, true, false, true, 'NL', false, 'PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.'),
+            array(true, true, false, false, true, true, false, false, 'NL', true, false),
         );
     }
 
@@ -69,8 +70,8 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
      * @param $allowForNonPostNL
      * @param $codSettings
      * @param $isPostbus
+     * @param $isSunday
      * @param $country
-     * @param $allowedCountries
      * @param $expected
      * @param $logMessage
      *
@@ -86,18 +87,20 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
         $allowForNonPostNL,
         $codSettings,
         $isPostbus,
+        $isSunday,
         $country,
-        $allowedCountries,
         $expected,
         $logMessage
     )
     {
+        $quote_id = 69;
+        $models = array();
         $helpers = array();
         $store = Mage::app()->getStore();
 
         $quote = null;
         if ($useQuote) {
-            $shippingAddress = $this->getMOck('Mage_Sales_Model_Quote_Address');
+            $shippingAddress = $this->getMock('Mage_Sales_Model_Quote_Address');
 
             $shippingAddress->expects($this->any())
                 ->method('getStreetFull')
@@ -112,6 +115,10 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
             $quote->expects($this->atLeastOnce())
                 ->method('getStoreId')
                 ->willReturn($store->getId());
+
+            $quote->expects($this->any())
+                ->method('getId')
+                ->willReturn($quote_id);
 
             $quote->expects($this->any())
                 ->method('isVirtual')
@@ -136,10 +143,22 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
 
         }
 
+        $postnlOrder = $this->getMock('TIG_PostNL_Core_Order', array('load', 'getType'));
+        $models['postnl_core/order'] = $postnlOrder;
+
+        $postnlOrder->expects($this->any())
+            ->method('load')
+            ->with($quote_id, 'quote_id')
+            ->willReturnSelf();
+
+        $postnlOrder->expects($this->any())
+            ->method('getType')
+            ->willReturn($isSunday ? 'Sunday' : 'Other');
+
         Mage::app()->getStore()->setConfig('payment/postnl_cod/allowspecific', 1);
         Mage::app()->getStore()->setConfig('payment/postnl_cod/active', $isActive);
         Mage::app()->getStore()->setConfig('payment/postnl_cod/allow_for_non_postnl', $allowForNonPostNL);
-        Mage::app()->getStore()->setConfig('payment/postnl_cod/specificcountry', $allowedCountries);
+        Mage::app()->getStore()->setConfig('payment/postnl_cod/specificcountry', 'NL,BE');
 
         if ($codSettings) {
             Mage::app()->getStore()->setConfig('postnl/cod/bic', 'bicnumber');
@@ -154,6 +173,7 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
         }
 
         $instance = $this->_getInstance();
+        $this->setProperty('_models', $models, $instance);
         $this->setProperty('_helpers', $helpers, $instance);
         $result = $instance->isAvailable($quote);
 
