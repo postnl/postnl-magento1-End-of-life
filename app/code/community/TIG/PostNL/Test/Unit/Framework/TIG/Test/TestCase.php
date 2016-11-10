@@ -272,11 +272,16 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
      *
      * @param $property
      *
+     * @param $instance
+     *
      * @return mixed
      */
-    public function getProtectedPropertyValue($property)
+    public function getProtectedPropertyValue($property, $instance = null)
     {
-        $instance = $this->_getInstance();
+        if (is_null($instance)) {
+            $instance = $this->_getInstance();
+        }
+
         $property = $this->_getProperty($property, $instance);
 
         return $property->getValue($instance);
