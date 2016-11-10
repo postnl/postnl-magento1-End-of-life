@@ -421,6 +421,8 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $expected
     )
     {
+        $this->markTestSkipped('Creating test is in progress');
+
         $now = new DateTime($now);
         $timeframes = $this->createTimeframesFormat($now, $timeframes);
         $expected = $this->createTimeframesFormat($now, $expected);

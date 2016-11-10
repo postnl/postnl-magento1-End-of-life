@@ -36,8 +36,8 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Block_DeliveryOptions_Checkout_DeliveryOptionsTest
-    extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Unit_Block_DeliveryOptions_Checkout_DeliveryOptionsTest
+    extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
     protected function _getInstance()
     {
