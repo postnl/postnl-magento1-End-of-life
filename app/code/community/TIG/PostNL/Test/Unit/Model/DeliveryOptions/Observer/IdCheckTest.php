@@ -125,9 +125,8 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
      */
     public function testValidate($shipmentType, $postData, $error)
     {
-        $version = Mage::getVersionInfo();
-        if ($version['minor'] == '8' && $version['revision'] == '0') {
-            $this->markTestIncomplete('Needs to be fixed for 1.8.0');
+        if (version_compare(Mage::getVersion(), '1.9.0.0', '>=')) {
+            $this->markTestIncomplete('Needs to be fixed for 1.8.0 and lower');
         }
 
         $_POST = $postData;
