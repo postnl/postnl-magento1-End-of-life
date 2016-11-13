@@ -710,7 +710,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $tomorrow = clone $today;
         $tomorrow->add(new DateInterval('P1D'));
 
-        $isPastEveningCutoff = $helper->isPastCutOff($today, $storeId, 'weekday');
+        $helper->setUseFoodCutOffTime(false);
+        $isPastCutoff = $helper->isPastCutOff($today, $storeId);
 
         foreach ($timeframes as $key => $timeFrame) {
             $forceSameDayTimeFrame = false;
@@ -724,7 +725,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $timeFrameDate->format('Y-m-d') == $firstDeliveryDate->format('Y-m-d') &&
                 $firstDeliveryDate->format('Y-m-d') == $tomorrow->format('Y-m-d') &&
                 $this->_canUseSameDayDelivery() &&
-                $isPastEveningCutoff
+                $isPastCutoff
             ) {
                 foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
                     $sameDay = false;

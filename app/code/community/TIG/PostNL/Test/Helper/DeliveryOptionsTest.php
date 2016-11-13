@@ -46,11 +46,11 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         return Mage::helper('postnl/deliveryOptions');
     }
 
-    /*public function testBeOfTheRightInstance()
+    public function testBeOfTheRightInstance()
     {
         $helper = $this->_getInstance();
         $this->assertInstanceOf('TIG_PostNL_Helper_DeliveryOptions', $helper);
-    }*/
+    }
 
     public function disallowSundaySortingProvider()
     {
@@ -69,7 +69,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     /**
      * @dataProvider disallowSundaySortingProvider
      */
-    /*public function testDisallowSundaySorting($country, $nl, $be, $result)
+    public function testDisallowSundaySorting($country, $nl, $be, $result)
     {
         $helper = $this->_getInstance();
         $helper->setCache(false);
@@ -81,7 +81,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_ALLOW_SUNDAY_SORTING_BE, $be);
 
         $this->assertEquals($result, $helper->canUseSundaySorting(), 'Can use sunday sorting');
-    }*/
+    }
 
     public function canUseDutchProductsByCountryDataProvider()
     {
@@ -107,7 +107,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      *
      * @dataProvider canUseDutchProductsByCountryDataProvider
      */
-    /*public function testCanUseDutchProductsByCountry($country, $shouldPass)
+    public function testCanUseDutchProductsByCountry($country, $shouldPass)
     {
         $helper = $this->_getInstance();
 
@@ -117,7 +117,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '1');
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
-    }*/
+    }
 
     public function canUseDutchProductsWhenDisabledProvider()
     {
@@ -152,7 +152,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      *
      * @dataProvider canUseDutchProductsWhenDisabledProvider
      */
-    /*public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
+    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
     {
         $helper = $this->_getInstance();
 
@@ -173,17 +173,17 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, $useDutchProducts);
 
         $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
-    }*/
+    }
 
-    /*public function testCanUseDutchProductsUsesCache()
+    public function testCanUseDutchProductsUsesCache()
     {
         $value = uniqid();
         $this->setProperty('_canUseDutchProducts', $value);
 
         $this->assertEquals($value, $this->_getInstance()->canUseDutchProducts());
-    }*/
+    }
 
-    /*public function testCanUseDeliveryOptionsForQuoteIsVirtual()
+    public function testCanUseDeliveryOptionsForQuoteIsVirtual()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -196,9 +196,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0104', $error[0]['code']);
-    }*/
+    }
 
-    /*public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
+    public function testCanUseDeliveryOptionsForQuoteIsBuspakje()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -217,9 +217,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
-    }*/
+    }
 
-    /*public function testCanUseDeliveryOptionsForQuoteIsBuspakjeEnabled()
+    public function testCanUseDeliveryOptionsForQuoteIsBuspakjeEnabled()
     {
         $helper = $this->_getInstance();
         $quote = $this->getMock('Mage_Sales_Model_Quote');
@@ -239,7 +239,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $error = Mage::registry('postnl_delivery_options_can_use_delivery_options_errors');
         $this->assertEquals('POSTNL-0190', $error[0]['code']);
-    }*/
+    }
 
     public function isDeliveryOptionsActiveDataProvider()
     {
@@ -258,7 +258,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      * @param $enableBE
      * @param $result
      */
-    /*public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
+    public function testIsDeliveryOptionsActive($enableNL, $enableBE, $result)
     {
         $helper = $this->_getInstance();
 
@@ -266,28 +266,27 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         Mage::app()->getStore()->setConfig($helper::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $enableBE);
 
         $this->assertEquals($result, $helper->isDeliveryOptionsActive());
-    }*/
+    }
 
-    public function getTimeframes($startDate = 'now', $days = 2, $timeframesPerDay = 1)
+    public function createTimeframesFormat(DateTime $now, $data)
     {
-        $date = new DateTime($startDate);
         $timeframes = array();
-        for ($i = 1; $i <= $days; $i++) {
+        foreach ($data as $day => $contents) {
             $timeframe = array();
-            $timeframe['Date'] = $date->format('Y-m-d');
+            $timeframe['Date'] = date('d-m-Y', strtotime('next ' . $day, $now->getTimestamp()));
 
             $timeframe['Timeframes'] = array();
-            $timeframe['Timeframes'] = array();
 
-            for ($j = 1; $j <= $timeframesPerDay; $j++) {
+            foreach ($contents as $timeframeData) {
                 $timeframe['Timeframes'][] = array(
                     'TimeframeTimeFrame' => array(
-                        'Options' => array('Sameday', 'Evening'),
+                        'To' => $timeframeData['To'],
+                        'From' => $timeframeData['From'],
+                        'Options' => $timeframeData['Options'],
                     ),
                 );
             };
 
-            $date->add(new DateInterval('P1D'));
             $timeframes[] = json_decode(json_encode($timeframe), false);
         }
 
@@ -299,24 +298,88 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         return array(
             array(
                 range(0, 7),
-                'next friday',
+                'next monday',
                 true,
                 true,
-                $this->getTimeframes(),
+                array(
+                    'Tuesday' => array(
+                        array(
+                            'From' => '10:00:00',
+                            'To' => '17:30:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                    'Wednesday' => array(
+                        array(
+                            'From' => '13:30:00',
+                            'To' => '17:00:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                    'Thursday' => array(
+                        array(
+                            'From' => '14:00:00',
+                            'To' => '16:00:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                )
+                ,
                 'NL',
                 '10-10-2010',
-                $this->getTimeframes()
-            ),
-
-            array(
-                range(0, 7),
-                'next friday',
-                false,
-                false,
-                $this->getTimeframes(),
-                'NL',
-                '10-10-2010',
-                $this->getTimeframes()
+                array(
+                    'Tuesday' => array(
+                        array(
+                            'From' => '10:00:00',
+                            'To' => '17:30:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                    'Wednesday' => array(
+                        array(
+                            'From' => '13:30:00',
+                            'To' => '17:00:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                    'Thursday' => array(
+                        array(
+                            'From' => '14:00:00',
+                            'To' => '16:00:00',
+                            'Options' => array('Daytime'),
+                        ),
+                        array(
+                            'From' => '18:00:00',
+                            'To' => '21:30:00',
+                            'Options' => array('Sameday', 'Evening'),
+                        ),
+                    ),
+                )
             ),
         );
     }
@@ -342,7 +405,9 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
         $expected
     )
     {
-        $this->markTestIncomplete('This test is in progress');
+        $now = new DateTime($now);
+        $timeframes = $this->createTimeframesFormat($now, $timeframes);
+        $expected = $this->createTimeframesFormat($now, $expected);
 
         $instance = $this->_getInstance();
 
@@ -355,13 +420,13 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $dateHelperMock->expects($this->any())
             ->method('getUtcDateTime')
-            ->willReturn(new DateTime($now));
+            ->willReturn($now);
 
         Mage::app()->getStore()->setConfig($instance::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
         Mage::app()->getStore()->setConfig($instance::XPATH_ALLOW_SUNDAY_SORTING, $enableSundaySorting);
 
         $this->setRegistryKey('_helper/postnl/date', $dateHelperMock);
-        $this->setProperty('_dates', array('now' => new DateTime($now)), $instance);
+        $this->setProperty('_dates', array('now' => $now), $instance);
 
         $result = $instance->filterTimeFrames(
             $timeframes,
