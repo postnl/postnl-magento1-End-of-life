@@ -51,12 +51,14 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
     {
         return array(
             array(
+                true,
                 'IDCheck',
                 array(),
                 false
             ),
 
             array(
+                true,
                 'IDCheck',
                 array(
                     'billing_postnl_idcheck' => array(
@@ -66,6 +68,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ),
 
             array(
+                true,
                 'IDCheck',
                 array(
                     'billing_postnl_idcheck' => array(
@@ -76,6 +79,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ),
 
             array(
+                true,
                 'IDCheck',
                 array(
                     'billing_postnl_idcheck' => array(
@@ -87,6 +91,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ),
 
             array(
+                true,
                 'IDCheck',
                 array(
                     'billing_postnl_idcheck' => array(
@@ -99,6 +104,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ),
 
             array(
+                true,
                 'IDCheck',
                 array(
                     'billing_postnl_idcheck' => array(
@@ -109,21 +115,18 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ),
                 false
             ),
-
-            array('AgeCheck', array(), false),
-
-            array('BirthdayCheck', array(), false),
-
-            array('BirthdayCheck', array('billing'=>array()), 'Please provide a valid birthday'),
-
-            array('BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
+            array(true, 'AgeCheck', array(), false),
+            array(true, 'BirthdayCheck', array(), false),
+            array(true, 'BirthdayCheck', array('billing'=>array()), 'Please provide a valid birthday'),
+            array(true, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
+            array(false, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
         );
     }
 
     /**
      * @dataProvider validateProvider
      */
-    public function testValidate($shipmentType, $postData, $error)
+    public function testValidate($useObserver, $shipmentType, $postData, $error)
     {
         if (version_compare(Mage::getVersion(), '1.9.0.0', '<=')) {
             $this->markTestIncomplete('Needs to be fixed for 1.8.0 and lower');
@@ -136,26 +139,37 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ->method('getQuoteIdCheckType')
             ->willReturn($shipmentType);
 
-        $addressMock = $this->getMock('Mage_Sales_Model_Quote_Address');
+        $observer = null;
+        if ($useObserver) {
+            $addressMock = $this->getMock('Mage_Sales_Model_Quote_Address');
 
-        if ($error) {
-            $addressMock->expects($this->once())
-                ->method('addError')
-                ->with($error);
-        } else {
-            $addressMock->expects($this->never())
-                ->method('addError');
+            if ($error) {
+                $addressMock->expects($this->once())
+                    ->method('addError')
+                    ->with($error);
+            } else {
+                $addressMock->expects($this->never())
+                    ->method('addError');
+            }
+
+            $observer = $this->getMock('Varien_Event_Object', array('getAddress'));
+            $observer->expects($this->once())
+                ->method('getAddress')
+                ->willReturn($addressMock);
         }
-
-        $observer = $this->getMock('Varien_Event_Object', array('getAddress'));
-        $observer->expects($this->once())
-            ->method('getAddress')
-            ->willReturn($addressMock);
 
         $instance = $this->_getInstance();
         $this->setProperty('_helpers', array('postnl' => $mockHelper), $instance);
 
-        $instance->validate($observer);
+        $response = $instance->validate($observer);
+
+        if (!$useObserver) {
+            $result = array(
+                'error' => (bool)$error,
+                'message' => $error,
+            );
+            $this->assertEquals($result, $response);
+        }
     }
 
     public function saveDataProvider()

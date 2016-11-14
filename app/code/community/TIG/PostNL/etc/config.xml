@@ -605,8 +605,24 @@
                         <class>postnl_deliveryoptions/observer_goMage_lightCheckout_ajax</class>
                         <method>setRegistryFlag</method>
                     </set_registry_flag>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
                 </observers>
             </controller_action_predispatch_gomage_checkout_onepage_ajax>
+            <controller_action_postdispatch_gomage_checkout_onepage_ajax>
+                <observers>
+                    <!-- Set a registry flag to prevent the PostNL order from being reset. -->
+                    <validate_idcheck_data>
+                        <type>model</type>
+                        <class>postnl_deliveryoptions/observer_goMage_lightCheckout_ajax</class>
+                        <method>validateIdCheck</method>
+                    </validate_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_gomage_checkout_onepage_ajax>
             <controller_action_postdispatch_checkout_onepage_savebilling>
                 <observers>
                     <!-- Saves the data for the ID Check -->
