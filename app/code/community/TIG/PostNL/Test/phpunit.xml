@@ -4,10 +4,19 @@
          colors="true">
 
     <testsuites>
-        <testsuite>
-            <directory>.</directory>
+        <testsuite name="unit">
+            <directory>Unit</directory>
+            <exclude>Unit/Model/DeliveryOptions/Observer/GoMage</exclude>
+        </testsuite>
+        <testsuite name="gomage">
+            <directory>Unit/Model/DeliveryOptions/Observer/GoMage</directory>
         </testsuite>
     </testsuites>
+
+    <testsuite name="Magento Unit Tests">
+        <directory suffix="Test.php">Build/Magento 2/vendor/tig/buckaroo/Test/Unit</directory>
+        <directory suffix="Test.php">Build/Magento 2/vendor/tig/buckaroo/Test/Functional</directory>
+    </testsuite>
 
     <filter>
         <whitelist>
