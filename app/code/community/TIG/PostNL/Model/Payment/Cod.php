@@ -247,7 +247,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             }
 
             /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
-            $carrierHelper = $this->_getHelper('postnl/carrier');
+            $carrierHelper = $this->getHelper('postnl/carrier');
             if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
                 $helper->log(
                     $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')

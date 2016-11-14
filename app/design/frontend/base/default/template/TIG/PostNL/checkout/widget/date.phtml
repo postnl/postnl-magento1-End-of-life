@@ -79,10 +79,11 @@ if ($this->hasLabel()) {
 
     echo $this->getSortedDateInputs();
 ?>
-    <div class="validation-advice" style="display:none;"></div>
-    <div class="postnl-full" style="display:none;">
+    <div class="postnl-full">
         <input type="hidden" id="<?php echo $this->getFieldId('full')?>" name="<?php echo $this->getFieldName('full')?>" />
     </div>
+
+    <div class="postnl-idcheck-validation-advice validation-advice-container" style="display:none;"></div>
 </div>
 
 <script type="text/javascript">
@@ -93,7 +94,7 @@ if ($this->hasLabel()) {
     container.month     = Element.select(el, '.postnl-month input')[0];
     container.year      = Element.select(el, '.postnl-year input')[0];
     container.full      = Element.select(el, '.postnl-full input')[0];
-    container.advice    = Element.select(el, '.validation-advice')[0];
+    container.advice    = Element.select(el, '.postnl-idcheck-validation-advice')[0];
 
     var result = new Varien.DateElement('container', container, <?php echo $this->getIsRequired() ? 'true' : 'false' ?>, '<?php echo $this->getDateFormat() ?>');
 

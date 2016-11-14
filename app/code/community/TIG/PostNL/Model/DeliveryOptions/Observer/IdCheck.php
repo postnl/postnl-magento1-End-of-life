@@ -49,13 +49,18 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
     protected $_serviceModel = null;
 
     /**
+     * @var null|Mage_Sales_Model_Quote_Address
+     */
+    protected $_validator = null;
+
+    /**
      * Validates the ID Check data.
      *
-     * @param Varien_Event_Observer $observer
+     * @param $observer
      *
      * @return $this
      */
-    public function validate(Varien_Event_Observer $observer)
+    public function validate($observer = null)
     {
         /** @var Mage_Checkout_Model_Session $session */
         $session = Mage::getSingleton('checkout/session');
@@ -63,11 +68,16 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
 
         $shipmentType = $this->getHelper()->getQuoteIdCheckType($quote);
         if (!$shipmentType) {
-            return $this;
+            return array(
+                'error' => false,
+                'message' => null,
+            );
         }
 
-        /** @var Mage_Sales_Model_Quote_Address $validator */
-        $validator = $observer->getAddress();
+        if ($observer !== null) {
+            /** @var Mage_Sales_Model_Quote_Address $validator */
+            $this->_validator = $observer->getAddress();
+        }
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
@@ -78,17 +88,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
              * Check the document type.
              */
             if (!isset($post['type']) || empty($post['type'])) {
-                $validator->addError($this->getHelper()->__('Please provide a document type'));
-
-                return $this;
+                return $this->error($this->getHelper()->__('Please provide a document type'));
             } else {
                 /** @var TIG_PostNL_Helper_DeliveryOptions_IDCheck $helper */
                 $helper = $this->getHelper('postnl/deliveryOptions_iDCheck');
 
                 if (!$helper->isValidOption($post['type'])) {
-                    $validator->addError($this->getHelper()->__('Please provide a valid document type'));
-
-                    return $this;
+                    return $this->error($this->getHelper()->__('Please provide a valid document type'));
                 }
             }
 
@@ -96,41 +102,55 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
              * Check the document number.
              */
             if (!isset($post['number']) || empty($post['number'])) {
-                $validator->addError($this->getHelper()->__('Please provide a document number'));
-
-                return $this;
+                return $this->error($this->getHelper()->__('Please provide a document number'));
             }
 
             /**
              * Check the expiration date.
              */
             if (!isset($post['expiration_date_full']) || empty($post['expiration_date_full'])) {
-                $validator->addError($this->getHelper()->__('Please provide a expiration date'));
-
-                return $this;
+                return $this->error($this->getHelper()->__('Please provide a expiration date'));
             }
         }
 
         $post = Mage::app()->getRequest()->getPost('billing');
         if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
             if (!isset($post['dob']) || empty($post['dob'])) {
-                $validator->addError($this->getHelper()->__('Please provide a valid birthday'));
-
-                return $this;
+                return $this->error($this->getHelper()->__('Please provide a valid birthday'));
             }
         }
 
-        return $this;
+        return array(
+            'error' => false,
+            'message' => null,
+        );
+    }
+
+    /**
+     * @param $error
+     *
+     * @return $this|array
+     */
+    public function error($error)
+    {
+        if ($this->_validator !== null) {
+            $this->_validator->addError($error);
+
+            return $this;
+        } else {
+            return array(
+                'error' => true,
+                'message' => $error,
+            );
+        }
     }
 
     /**
      * Saves some extra data after the saveBilling call.
      *
-     * @param Varien_Event_Observer $observer
-     *
      * @return $this
      */
-    public function saveData(Varien_Event_Observer $observer)
+    public function saveData()
     {
         /** @var Mage_Checkout_Model_Session $session */
         $session = Mage::getSingleton('checkout/session');

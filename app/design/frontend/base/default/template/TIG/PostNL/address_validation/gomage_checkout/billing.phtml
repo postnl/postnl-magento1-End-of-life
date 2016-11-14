@@ -173,6 +173,9 @@
                     <label for="billing_use_for_shipping_yes"><?php echo  $this->__('Ship to this address') ?></label>
                 </li>
             <?php endif; ?>
+            <li>
+                <?php echo $this->getChildHtml('postnl_billing_idcheck'); ?>
+            </li>
         </ul>
         <?php if (!$this->canShip()): ?>
             <input type="hidden" name="billing[use_for_shipping]" value="1" />

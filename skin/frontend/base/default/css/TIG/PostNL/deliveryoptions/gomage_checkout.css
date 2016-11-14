@@ -11,7 +11,7 @@
 #postnl_add_location .popup-overlay { background:transparent !important; }
 #postnl_pickup .location-name.overflow-protect { max-width:calc(100% - 84px) !important; }
 
-#palocation .location-name.overflow-protect, 
+#palocation .location-name.overflow-protect,
 .pa-location .location-name.overflow-protect { max-width:calc(100% - 19px) !important; padding-right:19px; }
 
 /* GoMage */
@@ -20,7 +20,7 @@
 #postnl_container button.button.btn-search > span { padding:0 0 0 12px; }
 #postnl_container button.button.btn-search > span span { padding:0 12px 0 0; }
 #postnl_container button.button.button.btn-save.next > span { padding-left:12px; }
-#postnl_container button.button span span {  
+#postnl_container button.button span span {
 	-webkit-border-radius:0;
   	   -moz-border-radius:0;
   	        border-radius:0;
@@ -65,3 +65,10 @@
 #osc_scrollbar_track:hover #osc_scrollbar_handle { background-color:#575756; }
 #osc_scrollbar_content { overflow:hidden; width:631px; }
 /* ======================================================================================= */
+
+/* ID Check /* =========================================================================== */
+
+.postnl-full { clear: both; }
+#advice-validate-custom-billing_postnl_idcheck\:expiration_date_day,
+#advice-validate-custom-billing_postnl_idcheck\:expiration_date_month,
+#advice-validate-custom-billing_postnl_idcheck\:expiration_date_year { display: none; }
