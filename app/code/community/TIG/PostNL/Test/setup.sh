@@ -56,4 +56,4 @@ cd "${PUBLIC_DIR}/.modman/project";
 mkdir -p "${PUBLIC_DIR}var/session";
 chmod -R 777 "${PUBLIC_DIR}var/session";
 
-phpunit -c "${PUBLIC_DIR}/app/code/community/TIG/PostNL/Test/phpunit.xml"
+phpunit -c "${PUBLIC_DIR}/app/code/community/TIG/PostNL/Test/phpunit.xml" $TESTSUITE
