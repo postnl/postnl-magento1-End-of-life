@@ -4260,9 +4260,8 @@ PostnlDeliveryOptions.Location = new Class.create({
                     + '">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
-        if (this.getType().indexOf('PA') == -1) {
-            headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
-        }
+        headerHtml += '<span class="location-distance-text">' + this.getDistanceText() + '</span>';
+
         headerHtml += '</a>';
 
         if (!noTooltip) {
@@ -4814,13 +4813,8 @@ PostnlDeliveryOptions.Location = new Class.create({
         var distance = parseInt(this.getDistance());
         var distanceText = '';
 
-        /**
-         * Render distances below 1000 in meters and above 1000 in kilometers.
-         */
-        if (renderDistance && distance < 1000 && distance > 0) {
-            distanceText = distance + ' m';
-        } else if (renderDistance && distance > 0) {
-            distanceText = parseFloat(Math.round(distance / 100) / 10).toFixed(1) + ' km';
+        if (renderDistance) {
+            distanceText = this.getDistanceText();
         }
 
         var businessHoursText = '';
@@ -5282,6 +5276,27 @@ PostnlDeliveryOptions.Location = new Class.create({
         }
 
         return this;
+    },
+
+    getDistanceText : function () {
+        var distance = parseInt(this.getDistance());
+        var distanceText = '';
+
+        /**
+         * Round the distance to 5 meters.
+         */
+        distance = Math.round(distance / 5) * 5;
+
+        /**
+         * Render distances below 1000 in meters and above 1000 in kilometers.
+         */
+        if (distance < 1000 && distance > 0) {
+            distanceText = distance + ' m';
+        } else if (distance > 0) {
+            distanceText = parseFloat(Math.round(distance / 100) / 10).toFixed(1) + ' km';
+        }
+
+        return distanceText;
     }
 });
 

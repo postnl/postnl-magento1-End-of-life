@@ -68,7 +68,8 @@
 .postnl-container .location .show-map { color:#fff; }
 .postnl-container .location .show-map:hover { text-decoration:none; }
 .postnl-container .location .location-name { font-size:13px; line-height:24px; }
-.postnl-container .location .location-type { color:#eaeaeb; line-height:25px; margin-left:6px; }
+.postnl-container .location .location-type,
+.postnl-container .location .location-distance-text { color:#eaeaeb; line-height:25px; margin-left:6px; }
 .postnl-container .location .location-info { float:right; }
 .postnl-container .location .location-info span { position: absolute; top:0; right: 7px; margin-right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; }
 .postnl-container .location .tooltip-container:hover .location-info span,
