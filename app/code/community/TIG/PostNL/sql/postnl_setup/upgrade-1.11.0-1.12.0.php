@@ -183,4 +183,25 @@ if (!$conn->tableColumnExists($tableName, 'idcheck_expiration_date')) {
     );
 }
 
+/***********************************************************************************************************************
+ * DISABLE THE POSTNL CHECKOUT
+ **********************************************************************************************************************/
+
+$this->resetConfig(array(
+    'postnl/checkout/active',
+    'postnl/checkout_payment_methods/activate_belgium',
+    'postnl/checkout_payment_methods/ideal',
+    'postnl/checkout_payment_methods/creditcard',
+    'postnl/checkout_payment_methods/checkpay',
+    'postnl/checkout_payment_methods/paypal',
+    'postnl/checkout_payment_methods/directdebit',
+    'postnl/checkout_payment_methods/acceptgiro',
+    'postnl/checkout_payment_methods/vooraf_betalen',
+    'postnl/checkout_payment_methods/termijnen',
+    'postnl/checkout_payment_methods/giftcard',
+    'postnl/checkout_payment_methods/rabobank_internetkassa',
+    'postnl/checkout_payment_methods/afterpay',
+    'postnl/checkout_payment_methods/klarna',
+));
+
 $installer->endSetup();
