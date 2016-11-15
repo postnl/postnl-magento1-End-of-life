@@ -2,7 +2,7 @@
 class TIG_PostNL_Test_Unit_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
     /**
-     * @return TIG_PostNL_Model_Core_Cif_Abstract_Fake
+     * @return TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getInstance()
     {
