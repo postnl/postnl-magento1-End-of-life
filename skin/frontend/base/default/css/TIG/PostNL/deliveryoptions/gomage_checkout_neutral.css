@@ -60,14 +60,14 @@
 @media screen and (max-width : 953px) {
     button.postnl-button { background:#546f91; border-radius:0; -webkit-border-radius:0; }
     button.postnl-button.white { border-color:#546f91; color:#546f91; }
-       
+
     .responsive-switch-wrapper li a { border-radius:0 !important; -webkit-border-radius:0 !important; -moz-border-radius:0 !important; }
     .responsive-switch-wrapper li a.active { background:#546f91; color:#fff !important; }
-    
+
     .option-list .location { background:#f2f2f2; border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; }
     .option-list .option { background:none; border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; }
     .option-list .option:hover { background:#f8fbfc; }
-    
+
     .responsive-location-results h3 {color:#333334; }
     .responsive-location-results .location-details .content .radio { background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/bkg_radio.png) 0 -32px no-repeat; }
     .responsive-location-search input.postnl-input { border-radius:0; -webkit-border-radius:0; }
