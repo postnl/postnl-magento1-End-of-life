@@ -441,4 +441,68 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $this->setRegistryKey('_helper/postnl/date', $oldHelper);
     }
+
+    public function canShowOnlyStatedAddressOptionForQuoteProvider()
+    {
+        return array(
+            array('NL', 'BE', true, false, false, true),
+            array('NL', 'BE', false, false, false, false),
+            array('NL', 'NL', true, false, false, true),
+            array('NL', 'NL', true, true, false, false),
+            array('NL', 'NL', true, false, true, false),
+            array('BE', 'BE', true, false, false, false),
+            array('BE', 'BE', true, true, false, false),
+            array('BE', 'BE', true, true, true, false),
+        );
+    }
+
+    /**
+     * @param $country
+     * @param $domesticCountry
+     * @param $canUseDutchProducts
+     * @param $isBuspakje
+     * @param $isFood
+     * @param $expected
+     *
+     * @dataProvider canShowOnlyStatedAddressOptionForQuoteProvider
+     */
+    public function testCanShowOnlyStatedAddressOptionForQuote(
+        $country,
+        $domesticCountry,
+        $canUseDutchProducts,
+        $isBuspakje,
+        $isFood,
+        $expected
+    )
+    {
+        $quoteMock = $this->getMock('Mage_Sales_Model_Quote', array('getShippingAddress', 'getCountryId', 'getId'));
+
+        $quoteMock->expects($this->any())
+            ->method('getShippingAddress')
+            ->willReturnSelf();
+
+        $quoteMock->expects($this->any())
+            ->method('getCountryId')
+            ->willReturn($country);
+
+        $quoteMock->expects($this->any())
+            ->method('getId')
+            ->willReturn(15);
+
+        $instance = $this->_getInstance();
+
+        $this->setProperty('_quote', $quoteMock);
+        $this->setProperty('_domesticCountry', $domesticCountry);
+        $this->setProperty('_canUseDutchProducts', $canUseDutchProducts);
+
+        $method = new ReflectionMethod($instance, '_canShowOnlyStatedAddressOptionForQuote');
+        $method->setAccessible(true);
+
+        Mage::unregister('can_show_only_stated_address_option_for_quote_15');
+        $this->setRegistryKey('is_buspakje_config_applicable_to_quote_15', $isBuspakje);
+        $this->setRegistryKey('postnl_quote_is_food15', $isFood);
+
+        $result = $method->invoke($instance);
+        $this->assertEquals($expected, $result);
+    }
 }
