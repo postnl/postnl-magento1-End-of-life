@@ -3210,6 +3210,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * This is only allowed for non-NL to NL shipments when dutch products is enabled.
+         */
+        if ($this->getDomesticCountry() != 'NL' && !$this->canUseDutchProducts()) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
          * This shipment cannot be used for buspakje shipments.
          */
         if ($this->quoteIsBuspakje($quote)) {
