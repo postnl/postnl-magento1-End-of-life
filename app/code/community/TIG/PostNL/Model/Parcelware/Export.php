@@ -48,8 +48,6 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const XPATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
     const XPATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
-    const CSV_SEPARATOR = ';';
-
     /**
      * The separator used for the Parcelware export.
      */
