@@ -111,48 +111,37 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     {
         $helper = $this->_getInstance();
 
-        $this->setProperty('_canUseDutchProducts', null);
+        Mage::unregister('can_use_dutch_products');
         $this->setProperty('_domesticCountry', $country);
 
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, '1');
 
-        $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
+        $this->assertEquals($shouldPass, $helper->canUseDutchProducts(false));
     }
 
     public function canUseDutchProductsWhenDisabledProvider()
     {
         return array(
-            array(
-                'country'          => 'BE',
-                'shouldPass'       => true,
-                'useDutchProducts' => 1,
-            ),
-            array(
-                'country'          => 'BE',
-                'shouldPass'       => true,
-                'useDutchProducts' => 0,
-            ),
-            array(
-                'country'          => 'NL',
-                'shouldPass'       => true,
-                'useDutchProducts' => 1,
-            ),
-            array(
-                'country'          => 'DE',
-                'shouldPass'       => false,
-                'useDutchProducts' => 0,
-            ),
+            array('BE', true, true, 1),
+            array('BE', true, false, 1),
+            array('BE', true, true, 0),
+            array('BE', false, false, 0),
+            array('BE', false, false, 0),
+            array('NL', true, true, 1),
+            array('NL', true, false, 1),
+            array('DE', false, false, 0),
         );
     }
 
     /**
      * @param $country
      * @param $shouldPass
+     * @param $useQuote
      * @param $useDutchProducts
      *
      * @dataProvider canUseDutchProductsWhenDisabledProvider
      */
-    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useDutchProducts)
+    public function testCanUseDutchProductsWhenDisabled($country, $shouldPass, $useQuote, $useDutchProducts)
     {
         $helper = $this->_getInstance();
 
@@ -167,20 +156,12 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
             ->willReturn($country);
 
         $this->setProperty('_quote', $quote);
-        $this->setProperty('_canUseDutchProducts', null);
         $this->setProperty('_domesticCountry', $country);
+        Mage::unregister('can_use_dutch_products');
 
         Mage::app()->getStore()->setConfig($helper::XPATH_USE_DUTCH_PRODUCTS, $useDutchProducts);
 
-        $this->assertEquals($shouldPass, $helper->canUseDutchProducts());
-    }
-
-    public function testCanUseDutchProductsUsesCache()
-    {
-        $value = uniqid();
-        $this->setProperty('_canUseDutchProducts', $value);
-
-        $this->assertEquals($value, $this->_getInstance()->canUseDutchProducts());
+        $this->assertEquals($shouldPass, $helper->canUseDutchProducts($useQuote));
     }
 
     public function testCanUseDeliveryOptionsForQuoteIsVirtual()
@@ -493,12 +474,12 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
 
         $this->setProperty('_quote', $quoteMock);
         $this->setProperty('_domesticCountry', $domesticCountry);
-        $this->setProperty('_canUseDutchProducts', $canUseDutchProducts);
 
         $method = new ReflectionMethod($instance, '_canShowOnlyStatedAddressOptionForQuote');
         $method->setAccessible(true);
 
         Mage::unregister('can_show_only_stated_address_option_for_quote_15');
+        $this->setRegistryKey('can_use_dutch_products_15', $canUseDutchProducts);
         $this->setRegistryKey('is_buspakje_config_applicable_to_quote_15', $isBuspakje);
         $this->setRegistryKey('postnl_quote_is_food15', $isFood);
 
