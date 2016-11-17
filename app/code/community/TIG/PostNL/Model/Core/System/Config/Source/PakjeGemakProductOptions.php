@@ -119,7 +119,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         array(
             'value'             => '4878',
             'label'             => '4878 - Post Office Belgium + Extra Cover',
-            'isExtraCover'      => true,
+            'isExtraCover'      => false,
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,

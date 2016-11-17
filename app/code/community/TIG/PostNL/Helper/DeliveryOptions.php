@@ -173,11 +173,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     protected $_configMinQty = null;
 
     /**
-     * @var null
-     */
-    protected $_canUseDutchProducts = null;
-
-    /**
      * @var array
      */
     protected $_dates = array();
@@ -3516,28 +3511,36 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Check if we can use Dutch products.
      *
+     * @param bool $useQuote
+     *
      * @return bool|null
      */
-    public function canUseDutchProducts()
+    public function canUseDutchProducts($useQuote = true)
     {
-        if ($this->_canUseDutchProducts !== null) {
-            return $this->_canUseDutchProducts;
+        $registryKey = 'can_use_dutch_products';
+
+        if ($useQuote && $this->getQuote()) {
+            $registryKey .= '_' . $this->getQuote()->getId();
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
         }
 
         /**
          * The Netherlands is always allowed.
          */
         if ($this->getDomesticCountry() == 'NL') {
-            $this->_canUseDutchProducts = true;
-            return $this->_canUseDutchProducts;
+            Mage::register($registryKey, true);
+            return true;
         }
 
         /**
          * In some cases Belgium is also allowed. Other countries are never allowed.
          */
         if ($this->getDomesticCountry() != 'BE') {
-            $this->_canUseDutchProducts = false;
-            return $this->_canUseDutchProducts;
+            Mage::register($registryKey, false);
+            return false;
         }
 
         /**
@@ -3545,24 +3548,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $use_dutch_products = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS, Mage::app()->getStore()->getId());
         if ($use_dutch_products == '1') {
-            $this->_canUseDutchProducts = true;
-            return $this->_canUseDutchProducts;
+            Mage::register($registryKey, true);
+            return true;
         }
 
         /**
          * If both the user and buyer are in Belgium, it is allowed to use Dutch products.
          */
-        $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
-        if (
-            $shippingCountry == 'BE' ||
-            (!$shippingCountry && $this->getDomesticCountry() == 'BE')
-        ) {
-            $this->_canUseDutchProducts = true;
-            return $this->_canUseDutchProducts;
+        if ($useQuote) {
+            $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
+            if ($shippingCountry == 'BE') {
+                Mage::register($registryKey, true);
+
+                return true;
+            }
         }
 
-        $this->_canUseDutchProducts = false;
-        return $this->_canUseDutchProducts;
+        Mage::register($registryKey, false);
+        return false;
     }
 
     /**
