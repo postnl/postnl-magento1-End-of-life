@@ -19,10 +19,10 @@ env:
 
 before_script:
   - phpenv config-rm xdebug.ini
+  - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
   - composer global require n98/magerun
   - composer global require colinmollenhour/modman
   - export PATH=$PATH:$HOME/.composer/vendor/bin
-  - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
 
 script:
   - bash app/code/community/TIG/PostNL/Test/setup.sh
