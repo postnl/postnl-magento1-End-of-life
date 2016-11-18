@@ -805,7 +805,7 @@ TIG_PostNL::The customer was redirected to the cart because the quote was empty.
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote de volgende errors bevat: %s."
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote voor multishipping bestemd is."
 TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
-TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 9:00 A.M.,Activeer deze filter om enkel de ophaalpunten te tonen die extra vroeg ophalen (vanaf 8.30 uur) bieden.
+TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 9:00 A.M.,Activeer deze filter om enkel de ophaalpunten te tonen die extra vroeg ophalen (vanaf 9:00 uur) bieden.
 TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Activeer deze filter om enkel postkantoor locaties te tonen die 's avonds na 19:00 uur geopend zijn op de eerstvolgende bezorgdag.
 TIG_PostNL::COD,Rembours
 TIG_PostNL::COD + Extra cover,Rembours + Verhoogd aansprakelijk

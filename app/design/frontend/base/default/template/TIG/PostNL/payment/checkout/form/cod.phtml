@@ -98,17 +98,6 @@
                         postnlCodPaymentForm.up().hide();
                     }
                 }
-
-                <?php if (!$this->canShowForBuspakje()): ?>
-                    if (deliveryOptions.selectedType == 'Overdag') {
-                        postnlCodPaymentMethod.disabled = true;
-                        postnlCodPaymentMethod.up().hide();
-
-                        if (postnlCodPaymentForm) {
-                            postnlCodPaymentForm.up().hide();
-                        }
-                    }
-                <?php endif; ?>
             }
         }
     );
