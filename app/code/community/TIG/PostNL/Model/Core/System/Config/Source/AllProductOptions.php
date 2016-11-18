@@ -525,7 +525,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '3437' => array(
             'value'             => '3437',
-            'label'             => 'Parcel with Agecheck 18+ Neighbors ',
+            'label'             => 'Parcel with Agecheck 18+ Neighbors',
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isSunday'          => true,
@@ -648,7 +648,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '3576' => array(
             'value'             => '3576',
-            'label'             => 'Post Office + Notifaction + ID Check',
+            'label'             => 'Post Office + Notification + ID Check',
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isSunday'          => true,
@@ -674,7 +674,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '3586' => array(
             'value'             => '3586',
-            'label'             => 'Post Office + Extra Cover + Notifaction + ID Check',
+            'label'             => 'Post Office + Extra Cover + Notification + ID Check',
             'isExtraCover'      => true,
             'isAvond'           => true,
             'isSunday'          => true,

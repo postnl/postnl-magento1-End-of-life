@@ -89,7 +89,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AgeCheckProductOptions
         ),
         array(
             'value'             => '3437',
-            'label'             => 'Parcel with Agecheck 18+ Neighbors ',
+            'label'             => 'Parcel with Agecheck 18+ Neighbors',
             'isExtraCover'      => false,
             'isAvond'           => true,
             'isSunday'          => true,
