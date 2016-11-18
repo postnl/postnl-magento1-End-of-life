@@ -154,7 +154,7 @@
 
         <?php if ($_addressType == 'shipping'): ?>
             $('billing:country_id').observe('change', function() {
-                postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing:country_id').getValue());
+                postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('shipping:country_id').getValue());
             });
 
             /**
