@@ -184,8 +184,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
         if ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
             if (!Mage::getSingleton('eav/config')->getAttribute('customer', 'dob')->getIsVisible()) {
                 $post = Mage::app()->getRequest()->getPost('billing');
-                $quote->setCustomerDob($post['dob']);
-                $quote->save();
+                if (isset($post['dob'])) {
+                    $quote->setCustomerDob($post['dob']);
+                    $quote->save();
+                }
             }
         } elseif ($shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
             $post = Mage::app()->getRequest()->getPost('billing_postnl_idcheck');

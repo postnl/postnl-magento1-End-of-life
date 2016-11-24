@@ -128,39 +128,6 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_U
     }
 
     /**
-     * @param $wsdlType
-     *
-     * @test
-     *
-     * @dataProvider barcodeTypeProvider
-     */
-    public function getSoapClientShouldReturnAZendSoapClientInstance($wsdlType)
-    {
-        $instance = $this->_getInstance();
-        $client = $instance->getSoapClient($wsdlType);
-
-        $this->assertInstanceOf(
-            'SoapClient',
-            $client,
-            'Unable to get a SoapClient instance for wsdl type: ' . $wsdlType
-        );
-    }
-
-    public function barcodeTypeProvider()
-    {
-        return array(
-            array('barcode'),
-            array('confirming'),
-            array('labelling'),
-            array('shippingstatus'),
-            array('checkout'),
-            array('deliverydate'),
-            array('timeframe'),
-            array('location'),
-        );
-    }
-
-    /**
      * @test
      *
      * @expectedException TIG_PostNL_Exception
