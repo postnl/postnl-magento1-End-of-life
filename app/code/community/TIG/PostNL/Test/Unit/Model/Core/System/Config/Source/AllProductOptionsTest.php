@@ -90,6 +90,10 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
 
     /**
      * @dataProvider hasPakjegemakNotInsuredDataProvider
+     *
+     * @param       $enabled
+     * @param       $available
+     * @param array $flags
      */
     public function testHasPakjegemakNotInsured($enabled, $available, $flags = array())
     {
@@ -99,6 +103,7 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
 
         $this->setProperty('_helper', $helper);
 
+        Mage::app()->getStore()->setConfig('postnl/cif_address/country', 'NL');
         Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
 
         $hasOption = false;

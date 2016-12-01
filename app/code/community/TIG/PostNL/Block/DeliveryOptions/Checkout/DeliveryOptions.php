@@ -1041,6 +1041,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     public function getCutOff($type)
     {
         /** @var  $storeId */
+        /** @noinspection PhpUndefinedMethodInspection */
         $storeId = Mage::app()->getStore()->getStoreId();
 
         /** @var TIG_PostNL_Helper_Date $helper */
