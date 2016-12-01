@@ -74,9 +74,9 @@
 
                         <?php
                         if(!Mage::helper('gomage_checkout')->getIsAnymoreVersion(1, 4, 0))
-                            $_dob = $this->getLayout()->createBlock('customer/widget_dob')->setTemplate('gomage/checkout/html/dob13.phtml');
+                            $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob')->setTemplate('gomage/checkout/html/dob13.phtml');
                         else
-                            $_dob = $this->getLayout()->createBlock('customer/widget_dob')->setTemplate('gomage/checkout/html/dob.phtml');
+                            $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob')->setTemplate('gomage/checkout/html/dob.phtml');
                         ?>
                         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
 
@@ -173,9 +173,11 @@
                     <label for="billing_use_for_shipping_yes"><?php echo  $this->__('Ship to this address') ?></label>
                 </li>
             <?php endif; ?>
+            <?php if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()): ?>
             <li>
                 <?php echo $this->getChildHtml('postnl_billing_idcheck'); ?>
             </li>
+            <?php endif; ?>
         </ul>
         <?php if (!$this->canShip()): ?>
             <input type="hidden" name="billing[use_for_shipping]" value="1" />
