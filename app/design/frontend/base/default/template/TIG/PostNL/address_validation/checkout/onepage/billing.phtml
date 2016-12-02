@@ -54,16 +54,6 @@
             endif;
             ?>
         </li>
-        <?php $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob') ?>
-        <?php if ($_dob->isEnabled()): ?>
-            <li class="fields">
-                <?php if ($_dob->isEnabled()): ?>
-                    <div class="field">
-                        <?php echo $_dob->setDate($this->getQuote()->getCustomerDob())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
-                    </div>
-                <?php endif; ?>
-            </li>
-        <?php endif ?>
     <?php endif; ?>
     <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif; ?>>
         <fieldset>
@@ -136,30 +126,22 @@
                 endif;
                 ?>
 
-                <?php $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob') ?>
-                <?php if($this->isCustomerLoggedIn() && $_dob->isEnabled()): ?>
-                    <li class="fields">
-                        <?php if ($_dob->isEnabled()): ?>
-                            <div class="field">
-                                <?php echo $_dob->setDate($this->getQuote()->getCustomerDob())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
-                            </div>
-                        <?php endif; ?>
-                    </li>
-                <?php elseif(!$this->isCustomerLoggedIn()): ?>
+                <?php if($this->isCustomerLoggedIn()): ?>
 
+                    <?php $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob'); ?>
                     <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
                     <?php if ($_dob->isEnabled() || $_gender->isEnabled()): ?>
                         <li class="fields">
-                        <?php if ($_dob->isEnabled()): ?>
-                            <div class="field">
-                                <?php echo $_dob->setDate($this->getQuote()->getCustomerDob())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
-                            </div>
-                        <?php endif; ?>
-                        <?php if ($_gender->isEnabled()): ?>
-                            <div class="field">
-                                <?php echo $_gender->setGender($this->getQuote()->getCustomerGender())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
-                            </div>
-                        <?php endif ?>
+                            <?php if ($_dob->isEnabled()): ?>
+                                <div class="field">
+                                    <?php echo $_dob->setDate($this->getQuote()->getCustomerDob())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($_gender->isEnabled()): ?>
+                                <div class="field">
+                                    <?php echo $_gender->setGender($this->getQuote()->getCustomerGender())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
+                                </div>
+                            <?php endif ?>
                         </li>
                     <?php endif ?>
 

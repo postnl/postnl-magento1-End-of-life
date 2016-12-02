@@ -120,6 +120,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(true, 'BirthdayCheck', array('billing'=>array()), 'Please provide a valid birthday'),
             array(true, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
             array(false, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
+            array(false, 'BirthdayCheck', array('billing'=>array('day' => '29', 'month' => '09', 'year' => '1999')), false),
         );
     }
 
@@ -252,5 +253,94 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
         $observer = $this->getMock('Varien_Event_Object');
 
         $instance->saveData($observer);
+    }
+
+    public function validateCustomerDataProvider()
+    {
+        return array(
+            array(false, null, null, null, true),
+            array(true, '', false, false, true),
+            array(true, '', true, true, false),
+            array(true, '19-11-2016', false, true, true),
+        );
+    }
+
+    /**
+     * @dataProvider validateCustomerDataProvider
+     *
+     * @param $isLoggedIn
+     * @param $customerDob
+     * @param $hasError
+     * @param $isBirthdayCheckShipment
+     * @param $expected
+     */
+    public function testValidateCustomerData(
+        $isLoggedIn,
+        $customerDob,
+        $hasError,
+        $isBirthdayCheckShipment,
+        $expected
+    )
+    {
+        $controllerMock = $this->getMock('Mage_Core_Controller_Varien_Action');
+
+        /** @var PHPUnit_Framework_MockObject_MockObject|Varien_Event_Observer $observerMock */
+        $observerMock = $this->getMock('Varien_Event_Observer', array('getControllerAction'));
+
+        $observerMockControllerAction = $observerMock->expects($this->any());
+        $observerMockControllerAction->method('getControllerAction');
+        $observerMockControllerAction->willReturn($controllerMock);
+
+        if ($hasError) {
+            $redirect = $controllerMock->expects($this->once());
+            $redirect->method('setRedirectWithCookieCheck');
+            $redirect->with('customer/account/edit');
+
+            $setFlag = $controllerMock->expects($this->once());
+            $setFlag->method('setFlag');
+            $setFlag->with('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+        }
+
+        /** @var PHPUnit_Framework_MockObject_MockObject|Mage_Customer_Model_Customer $observerMock */
+        $customerMock = $this->getMock('Mage_Customer_Model_Customer', array('getId', 'getDob'));
+
+        if ($isLoggedIn) {
+            $customerMockGetId = $customerMock->expects($this->once());
+            $customerMockGetId->method('getId');
+            $customerMockGetId->willReturn(10);
+
+            $customerMockGetDob = $customerMock->expects($this->once());
+            $customerMockGetDob->method('getDob');
+            $customerMockGetDob->willReturn($customerDob);
+        }
+
+        $this->registerMockSessions(array('customer'));
+
+        /** @var PHPUnit_Framework_MockObject_MockObject|Mage_Customer_Model_Session $customerSession */
+        $customerSession = Mage::getSingleton('customer/session');
+
+        $getCustomer = $customerSession->expects($this->once());
+        $getCustomer->method('getCustomer');
+        $getCustomer->willReturn($customerMock);
+
+        if ($hasError) {
+            $customerSessionAddError = $customerSession->expects($this->once());
+            $customerSessionAddError->method('addError');
+            $customerSessionAddError->with('The Date of Birth is required.');
+        }
+
+        $helperMock = $this->getMock('TIG_PostNL_Helper_Data', array('quoteIsBirthdayCheck'));
+
+        $quoteIsBirthdayCheck = $helperMock->expects($this->any());
+        $quoteIsBirthdayCheck->method('quoteIsBirthdayCheck');
+        $quoteIsBirthdayCheck->willReturn($isBirthdayCheckShipment);
+
+        $instance = $this->_getInstance();
+
+        $this->setProperty('_helpers', array('postnl' => $helperMock), $instance);
+
+        $result = $instance->validateCustomerData($observerMock);
+
+        $this->assertEquals($expected, $result);
     }
 }

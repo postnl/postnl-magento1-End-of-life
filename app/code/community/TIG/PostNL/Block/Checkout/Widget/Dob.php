@@ -36,6 +36,16 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+
+/**
+ * Class TIG_PostNL_Block_Checkout_Widget_Dob
+ *
+ * @method setFieldIdFormat(String $value) $this
+ * @method setFieldNameFormat(String $value) $this
+ * @method setGenderFieldContents(String $value) $this
+ * @method hasGenderFieldContents() bool
+ * @method getGenderFieldContents() string
+ */
 class TIG_PostNL_Block_Checkout_Widget_Dob extends Mage_Customer_Block_Widget_Dob
 {
     /**

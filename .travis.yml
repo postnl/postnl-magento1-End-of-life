@@ -20,8 +20,7 @@ env:
 before_script:
   - phpenv config-rm xdebug.ini
   - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
-  - composer global require n98/magerun
-  - composer global require colinmollenhour/modman
+  - composer global require n98/magerun colinmollenhour/modman
   - export PATH=$PATH:$HOME/.composer/vendor/bin
 
 script:

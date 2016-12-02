@@ -115,6 +115,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
 
         $post = Mage::app()->getRequest()->getPost('billing');
         if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
+            if (
+                isset($post['day']) && !empty($post['day']) &&
+                isset($post['month']) && !empty($post['month']) &&
+                isset($post['year']) && !empty($post['year']) &&
+                (!isset($post['dob']) || empty($post['dob']))
+            ) {
+                $post['dob'] = $post['year'] . '-' . $post['month'] . '-' . $post['year'];
+            }
+
             if (!isset($post['dob']) || empty($post['dob'])) {
                 return $this->error($this->getHelper()->__('Please provide a valid birthday'));
             }
@@ -198,6 +207,40 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
         }
 
         $postnlOrder->save();
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     *
+     * @return bool
+     */
+    public function validateCustomerData(Varien_Event_Observer $observer)
+    {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        if (!$customer || !$customer->getId()) {
+            return true;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $dob = $customer->getDob();
+        if (trim($dob) != '') {
+            return true;
+        }
+
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = $this->getHelper();
+        if (!$helper->quoteIsBirthdayCheck()) {
+            return true;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var Mage_Checkout_OnepageController $controller */
+        $controller = $observer->getControllerAction();
+        Mage::getSingleton('customer/session')->addError($helper->__('The Date of Birth is required.'));
+        $controller->setRedirectWithCookieCheck('customer/account/edit');
+        $controller->setFlag('', $controller::FLAG_NO_DISPATCH, true);
+
+        return false;
     }
 
     /**
