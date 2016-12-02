@@ -72,6 +72,11 @@
             <postnl_addressvalidation>
                 <class>TIG_PostNL_Block_AddressValidation</class>
             </postnl_addressvalidation>
+            <customer>
+                <rewrite>
+                    <widget_dob>TIG_PostNL_Block_Checkout_Widget_Dob</widget_dob>
+                </rewrite>
+            </customer>
         </blocks>
         <helpers>
             <postnl>
@@ -633,6 +638,16 @@
                     </save_idcheck_data>
                 </observers>
             </controller_action_postdispatch_checkout_onepage_savebilling>
+            <controller_action_postdispatch_customer_account_editPost>
+                <observers>
+                    <!-- Saves the data for the ID Check -->
+                    <save_idcheck_data>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>saveData</method>
+                    </save_idcheck_data>
+                </observers>
+            </controller_action_postdispatch_customer_account_editPost>
             <customer_address_validation_after>
                 <observers>
                     <!-- Saves the data for the ID Check -->
@@ -662,6 +677,15 @@
                     </check_idcheck_requirements>
                 </observers>
             </controller_action_predispatch_checkout_onepage_index>
+            <controller_action_predispatch_onestepcheckout_index_index>
+                <observers>
+                    <check_idcheck_requirements>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_idCheck</class>
+                        <method>validateCustomerData</method>
+                    </check_idcheck_requirements>
+                </observers>
+            </controller_action_predispatch_onestepcheckout_index_index>
         </events>
     </frontend>
 

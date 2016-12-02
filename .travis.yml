@@ -10,6 +10,8 @@ php:
 matrix:
   allow_failures:
     - php: 7.1
+    - php: hhvm
+    - php: nightly
 
 env:
   - MAGENTO_VERSION=magento-mirror-1.9.2.4
@@ -28,4 +30,4 @@ script:
 
 cache:
   directories:
-  - $HOME/.composer/cache
+  - $HOME/.composer

@@ -152,7 +152,7 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php endif; ?>
 <?php
     try {
-        $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob');
+        $_dob = $this->getLayout()->createBlock('customer/widget_dob');
     } catch (Exception $e) {
         $_dob = false;
     }

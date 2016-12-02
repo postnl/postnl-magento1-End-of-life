@@ -74,9 +74,9 @@
 
                         <?php
                         if(!Mage::helper('gomage_checkout')->getIsAnymoreVersion(1, 4, 0))
-                            $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob')->setTemplate('gomage/checkout/html/dob13.phtml');
+                            $_dob = $this->getLayout()->createBlock('customer/widget_dob')->setTemplate('gomage/checkout/html/dob13.phtml');
                         else
-                            $_dob = $this->getLayout()->createBlock('postnl/checkout_widget_dob')->setTemplate('gomage/checkout/html/dob.phtml');
+                            $_dob = $this->getLayout()->createBlock('customer/widget_dob')->setTemplate('gomage/checkout/html/dob.phtml');
                         ?>
                         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
 

@@ -179,6 +179,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             array(
                 'IDCheck',
                 true,
+                false,
                 array(
                     'billing_billing_postnl_idcheck' => array(
                         'type' => 'abroud_passport',
@@ -187,16 +188,22 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                     ),
                 )
             ),
-            array('AgeCheck', true, array()),
-            array('BirthdayCheck', true, array('billing'=>array('dob'=>'29-09-1999'))),
-            array('BirthdayCheck', false, array('billing'=>array('dob'=>'29-09-1999'))),
+            array('AgeCheck', true, false, array()),
+            array('BirthdayCheck', true, false, array('billing'=>array('dob'=>'29-09-1999'))),
+            array('BirthdayCheck', false, false, array('billing'=>array('dob'=>'29-09-1999'))),
+            array('BirthdayCheck', false, true, array('dob'=>'29-09-1999')),
         );
     }
 
     /**
      * @dataProvider saveDataProvider
+     *
+     * @param $shipmentType
+     * @param $dobIsVisible
+     * @param $isLoggedIn
+     * @param $postData
      */
-    public function testSaveData($shipmentType, $dobIsVisible, $postData)
+    public function testSaveData($shipmentType, $dobIsVisible, $isLoggedIn, $postData)
     {
         $_POST = $postData;
 
@@ -218,15 +225,16 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ->method('getPostnlOrder')
             ->willReturn($mockOrder);
 
-        $this->registerMockSessions(array('checkout'));
+        $this->registerMockSessions(array('checkout', 'customer'));
         $mockQuote = $this->getMock('Mage_Sales_Model_Quote', array('setCustomerDob'));
 
         Mage::getSingleton('eav/config')->getAttribute('customer', 'dob')->setIsVisible($dobIsVisible);
 
         if ($shipmentType == 'BirthdayCheck' && !$dobIsVisible) {
+            $value = isset($postData['billing']) ? $postData['billing']['dob'] : $postData['dob'];
             $mockQuote->expects($this->once())
                 ->method('setCustomerDob')
-                ->with($postData['billing']['dob']);
+                ->with($value);
         } elseif ($shipmentType == 'IDCheck') {
             $mockOrder->expects($this->once())
                 ->method('setIdcheckType')
@@ -239,6 +247,27 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             $mockOrder->expects($this->once())
                 ->method('setIdcheckExpirationDate')
                 ->with($postData['billing_postnl_idcheck']['expiration_date_full']);
+        }
+
+        if ($isLoggedIn) {
+            $customerMock = $this->getMock('Mage_Customer_Model_Customer');
+
+            $customerMock->expects($this->once())
+                ->method('getId')
+                ->willReturn(12);
+
+            $customerMock->expects($this->once())
+                ->method('setData')
+                ->with('dob', '29-09-1999');
+
+            $customerMock->expects($this->once())
+                ->method('save');
+
+            $customerSessionMock = Mage::getSingleton('customer/session');
+
+            $customerSessionMock->expects($this->once())
+                ->method('getCustomer')
+                ->willReturn($customerMock);
         }
 
         $mockSession = Mage::getSingleton('checkout/session');
@@ -282,7 +311,10 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
         $expected
     )
     {
-        $controllerMock = $this->getMock('Mage_Core_Controller_Varien_Action');
+        $controllerMock = $this
+            ->getMockBuilder('Mage_Core_Controller_Varien_Action')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /** @var PHPUnit_Framework_MockObject_MockObject|Varien_Event_Observer $observerMock */
         $observerMock = $this->getMock('Varien_Event_Observer', array('getControllerAction'));
