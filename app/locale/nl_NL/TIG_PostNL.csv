@@ -1447,7 +1447,7 @@ TIG_PostNL::Parcel with Birthday Check Options, Verzending met Geboortedatum Che
 "TIG_PostNL::Post Office + Extra Cover + Notification + Birthday Check","Afhaal locatie + Extra dekking + Notificatie + Geboortedatum controle"
 TIG_PostNL::PostNL verification type,PostNL verificatie type
 TIG_PostNL::Age Check,Leeftijd Check
-TIG_PostNL::Birthday Check,Verjaadags Check
+TIG_PostNL::Birthday Check,Geboortedatum Check
 TIG_PostNL::ID Check,ID Check
 TIG_PostNL::Dutch Passport,Nederlands paspoort
 TIG_PostNL::Dutch ID,Nederlandse identiteitskaart
@@ -1467,5 +1467,5 @@ TIG_PostNL::Please provide a document type,Geef een document type op
 TIG_PostNL::Please provide a valid document type,Geef een valide document type op
 TIG_PostNL::Please provide a document number,Geef een document nummer op
 TIG_PostNL::Please provide a expiration date,Geef een verval datum op
-TIG_PostNL::Please provide a valid birthday,Geef een valide verjaardag op
+TIG_PostNL::Please provide a valid birthday,Geef een valide geboortedatum op
 TIG_PostNL::This data will be used to verify your age at delivery.,De volgende gegevens worden gebruikt om uw leeftijd te verifiëren bij bezorging.
