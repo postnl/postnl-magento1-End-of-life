@@ -81,7 +81,7 @@
                         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
 
                         <?php
-                        $_show_dob = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerDob());
+                        $_show_dob = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerDob()) || Mage::helper('postnl')->quoteIsBirthdayCheck();
                         $_show_gender = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerGender());
                         ?>
 

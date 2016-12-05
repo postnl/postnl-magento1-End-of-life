@@ -198,10 +198,32 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $this->_findParcelType();
 
         /**
+         * Get the parceltype
+         */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $parcelType = $this->_request->getParcelType();
+
+        /**
+         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
+         */
+        if ($parcelType == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
+            return $this->_addShippingRateNotFoundError();
+        }
+
+        /**
+         * Which types of shipments are only allow to the Netherlands?
+         */
+        $idCheckTypes = array(
+            self::PARCEL_TYPE_AGECHECK,
+            self::PARCEL_TYPE_BIRTHDAYCHECK,
+            self::PARCEL_TYPE_IDCHECK,
+        );
+
+        /**
          * If parcel_type is food, there can be no rate shown for non-domestic shipments.
          */
         /** @noinspection PhpUndefinedMethodInspection */
-        if ($this->_request->getParcelType() == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
+        if (in_array($parcelType, $idCheckTypes) && $countryId != 'NL') {
             return $this->_addShippingRateNotFoundError();
         }
 
@@ -793,6 +815,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         switch ($parcelType) {
             case self::PARCEL_TYPE_FOOD:
                 return $this->getConfigData('foodspecificerrmsg');
+            case self::PARCEL_TYPE_AGECHECK:
+            case self::PARCEL_TYPE_BIRTHDAYCHECK:
+            case self::PARCEL_TYPE_IDCHECK:
+                return $this->getConfigData('idcheckspecificerrmsg');
             default:
                 return $this->getConfigData('specificerrmsg');
         }
