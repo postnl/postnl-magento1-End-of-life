@@ -8,6 +8,10 @@ php:
   - 7.0
 
 matrix:
+  include:
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.9.2.4 ENABLE_FLAT_CATALOG=true
+
   fast_finish: true
 
   allow_failures:
