@@ -32,8 +32,8 @@ matrix:
 before_script:
   - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ]; then phpenv config-rm xdebug.ini; fi
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
-  - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
   - export PATH=$PATH:$HOME/.composer/vendor/bin
+  - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
 
 script: bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
 
