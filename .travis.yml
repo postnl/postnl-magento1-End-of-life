@@ -29,7 +29,7 @@ matrix:
   - php: nightly
 
 before_script:
-  - phpenv config-rm xdebug.ini
+  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ]; then phpenv config-rm xdebug.ini; fi
   - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
   - composer global require n98/magerun colinmollenhour/modman
   - export PATH=$PATH:$HOME/.composer/vendor/bin
