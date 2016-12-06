@@ -445,7 +445,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $method = new ReflectionMethod(get_class($instance), '_getCutOffTimes');
         $method->setAccessible(true);
 
-        $result = $method->invoke($instance);
+        $result = $method->invokeArgs($instance, array(null));
 
         foreach ($result as $cutoff) {
             if ($cutoff['Day'] == '00') {

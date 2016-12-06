@@ -86,7 +86,7 @@ class TIG_PostNL_Test_Unit_Block_DeliveryOptions_Checkout_DeliveryOptionsTest
         $isPastCutoff,
         $errorCode,
         $errorMessage,
-        $expected
+        $expected = null
     )
     {
         $instance = $this->_getInstance();
