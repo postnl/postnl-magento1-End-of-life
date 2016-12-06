@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #set -e
-#set -x
+set -x
 
 COMPOSER_REQUIRE="";
 
@@ -16,7 +16,7 @@ if [ $? != "0" ]; then
 fi
 
 if [ ! -z "${COMPOSER_REQUIRE}" ]; then
-    composer global require "${COMPOSER_REQUIRE}"
+    composer global require ${COMPOSER_REQUIRE}
 else
     echo "All dependencies installed"
 fi;
