@@ -5,12 +5,12 @@
 
 COMPOSER_REQUIRE="";
 
-which -s n98-magerun
+which n98-magerun
 if [ $? != "0" ]; then
     COMPOSER_REQUIRE="n98/magerun"
 fi
 
-which -s modman
+which modman
 if [ $? != "0" ]; then
     COMPOSER_REQUIRE="colinmollenhour/modman"
 fi
