@@ -126,7 +126,7 @@
                 endif;
                 ?>
 
-                <?php if($this->isCustomerLoggedIn()): ?>
+                <?php if(!$this->isCustomerLoggedIn()): ?>
 
                     <?php $_dob = $this->getLayout()->createBlock('customer/widget_dob'); ?>
                     <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
