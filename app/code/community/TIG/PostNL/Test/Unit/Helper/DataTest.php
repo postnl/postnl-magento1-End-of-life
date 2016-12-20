@@ -242,4 +242,48 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
         $this->assertEquals($result, $helper->isIdevOsc());
     }
+
+    public function quoteHasIDCheckProductsProvider()
+    {
+        return array(
+            array(null, false, false, false, false),
+            array(null, true, false, false, true),
+            array(null, false, true, false, true),
+            array(null, false, false, true, true),
+            array(false, false, false, false, false),
+            array(false, true, false, false, false),
+            array(false, false, true, false, false),
+            array(false, false, false, true, false),
+        );
+    }
+
+    /**
+     * @param $cacheValue
+     * @param $isAgeCheck
+     * @param $isBirthdayCheck
+     * @param $isIDCheck
+     * @param $expected
+     *
+     * @dataProvider quoteHasIDCheckProductsProvider
+     */
+    public function testQuoteHasIDCheckProducts($cacheValue, $isAgeCheck, $isBirthdayCheck, $isIDCheck, $expected)
+    {
+        $quote_id = rand(0, 2000);
+
+        $quoteMock = $this->getMock('Mage_Sales_Model_Quote');
+
+        $getIdExpected = $quoteMock->expects($this->any());
+        $getIdExpected->method('getId');
+        $getIdExpected->willReturn($quote_id);
+
+        $this->setRegistryKey('postnl_quote_has_id_check_products_' . $quote_id, $cacheValue);
+        $this->setRegistryKey('postnl_quote_is_age_check_' . $quote_id, $isAgeCheck);
+        $this->setRegistryKey('postnl_quote_is_birthday_check_' . $quote_id, $isBirthdayCheck);
+        $this->setRegistryKey('postnl_quote_is_id_check_' . $quote_id, $isIDCheck);
+
+        $instance = $this->_getInstance();
+        $result = $instance->quoteHasIDCheckProducts($quoteMock);
+
+        $this->assertEquals($result, $expected);
+    }
 }

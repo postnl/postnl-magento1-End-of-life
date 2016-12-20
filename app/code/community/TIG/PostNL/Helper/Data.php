@@ -1174,6 +1174,40 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteHasIDCheckProducts(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_has_id_check_products_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($this->quoteIsAgeCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        if ($this->quoteIsBirthdayCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        if ($this->quoteIsIDCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if this quote has a ID Check product.
      *
      * @param Mage_Sales_Model_Quote $quote

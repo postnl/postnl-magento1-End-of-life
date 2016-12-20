@@ -487,7 +487,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
      * @param $canUseFoodDelivery
      * @param $canUseSameDayDelivery
      * @param $canUseEveningTimeframes
-     * @param $enableSundayDelivery
+     * @param $canUseSundayDelivery
      * @param $expectedResult
      */
     public function testGetDeliveryTimeframesOptionsArray(
@@ -496,7 +496,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $canUseFoodDelivery,
         $canUseSameDayDelivery,
         $canUseEveningTimeframes,
-        $enableSundayDelivery,
+        $canUseSundayDelivery,
         $expectedResult
     )
     {
@@ -522,7 +522,13 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             ->method('canUseEveningTimeframes')
             ->willReturn($canUseEveningTimeframes);
 
-        Mage::app()->getStore()->setConfig($helperMock::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
+        $helperMock->expects($this->any())
+            ->method('getCache')
+            ->willReturn(null);
+
+        $helperMock->expects($this->any())
+            ->method('canUseSundayDelivery')
+            ->willReturn($canUseSundayDelivery);
 
         $instance = $this->_getInstance();
         $this->setProperty('_helpers', array('postnl/deliveryOptions' => $helperMock));

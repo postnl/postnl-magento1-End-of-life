@@ -64,11 +64,15 @@ class TIG_PostNL_Test_Unit_Model_Carrier_Resource_MatrixrateTest extends TIG_Pos
 
     /**
      * @param $file
+     * @param $type
+     *
+     * @throws Exception
      * @dataProvider uploadAndImportProvider
      */
     public function testUploadAndImport($file, $type)
     {
         // Delete all existing records
+        /** @var TIG_PostNL_Model_Carrier_Resource_Matrixrate_Collection $collection */
         $collection = Mage::getModel('postnl_carrier/matrixrate')->getCollection();
         foreach ($collection as $model) {
             $model->delete();
@@ -86,8 +90,9 @@ class TIG_PostNL_Test_Unit_Model_Carrier_Resource_MatrixrateTest extends TIG_Pos
         $collection = Mage::getModel('postnl_carrier/matrixrate')->getCollection();
         $collection->addFieldToFilter('parcel_type', $type);
 
-        $file = file_get_contents($file);
-        $lines = count(explode("\n", $file)) - 1; // Don't count the header
-        $this->assertEquals($lines, $collection->count());
+        $fileContents = file_get_contents($file);
+        $lines = count(explode("\n", trim($fileContents))) - 1; // Don't count the header
+        $count = $collection->count();
+        $this->assertEquals($lines, $count, 'Expect that the file ' . $type . ' has ' . $lines . ' lines');
     }
 }

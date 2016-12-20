@@ -101,8 +101,10 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       " WHEN 'pakje_gemak' THEN 2" .
                                       " WHEN 'food' THEN 3" .
                                       " WHEN 'regular' THEN 4" .
-                                      " WHEN 'idcheck' THEN 5" .
-                                      " WHEN '*' THEN 6" .
+                                      " WHEN 'agecheck' THEN 5" .
+                                      " WHEN 'birthdaycheck' THEN 6" .
+                                      " WHEN 'idcheck' THEN 7" .
+                                      " WHEN '*' THEN 8" .
                                       " ELSE 100" .
                                       " END) ASC"
                                   ),
@@ -469,6 +471,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 'regular',
                 'pakje_gemak',
                 'food',
+                'agecheck',
+                'birthdaycheck',
                 'idcheck',
             );
 
@@ -628,9 +632,13 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'agecheck':          //no break
             case 'age check':         //no break
             case 'age-check':         //no break
+                $formattedType = 'agecheck';
+                break;
             case 'idcheck':           //no break
             case 'id check':          //no break
             case 'id-check':          //no break
+                $formattedType = 'idcheck';
+                break;
             case 'birthday':          //no break
             case 'birth day':         //no break
             case 'birth-day':         //no break
@@ -640,7 +648,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'birth day-check':   //no break
             case 'birth-day check':   //no break
             case 'birth-day-check':   //no break
-                $formattedType = 'idcheck';
+                $formattedType = 'birthdaycheck';
                 break;
             //no default
         }

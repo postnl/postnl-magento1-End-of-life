@@ -1608,6 +1608,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $allowed = $this->canUsePakjeGemakExpressForQuote();
         }
 
+        if ($allowed && $checkQuote && $this->quoteHasIDCheckProducts($quote)) {
+            $allowed = false;
+        }
+
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
@@ -1942,11 +1946,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
             Mage::register($registryKey, $allowed);
             return $allowed;
-        }
-
-        if ($this->quoteIsIDCheck($quote) || $this->quoteIsBirthdayCheck($quote) || $this->quoteIsAgeCheck($quote)) {
-            Mage::register($registryKey, false);
-            return false;
         }
 
         if (!$this->canUseDutchProducts()) {
@@ -2287,6 +2286,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $allowed = true;
         }
 
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
+        }
+
         return $allowed;
     }
 
@@ -2625,12 +2628,42 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
         }
 
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
+        }
+
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
              */
             $cache->setPostnlDeliveryOptionsCanUseSameDayDelivery($allowed)
                   ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    public function canUseSundayDelivery()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseSundayDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseSundayDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $allowed = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseSundayDelivery($allowed)
+                ->saveCache();
         }
 
         return $allowed;
@@ -3345,6 +3378,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $allowed = $this->_canShowOnlyStatedAddressOption();
+
+        if ($allowed && $quote && $this->quoteHasIDCheckProducts($quote)) {
+            $allowed = false;
+        }
 
         if ($cache) {
             /**

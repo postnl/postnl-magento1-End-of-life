@@ -500,4 +500,50 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $result = $method->invoke($instance);
         $this->assertEquals($expected, $result);
     }
+
+    public function canUseSundayDeliveryProvider()
+    {
+        return array(
+            array(false, false, false, false, false),
+            array(true, false, false, false, true),
+            array(true, true, false, false, false),
+            array(true, false, true, false, false),
+            array(true, false, false, true, false),
+        );
+    }
+
+    /**
+     * @param $enabled
+     * @param $isAgeCheck
+     * @param $isBirthdayCheck
+     * @param $isIDCheck
+     * @param $expected
+     *
+     * @dataProvider canUseSundayDeliveryProvider
+     */
+    public function testCanUseSundayDelivery($enabled, $isAgeCheck, $isBirthdayCheck, $isIDCheck, $expected)
+    {
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_DeliveryOptions::XPATH_ENABLE_SUNDAY_DELIVERY, $enabled);
+
+        $quote_id = rand(0, 20000);
+
+        $this->setRegistryKey('postnl_quote_is_age_check_' . $quote_id, $isAgeCheck);
+        $this->setRegistryKey('postnl_quote_is_birthday_check_' . $quote_id, $isBirthdayCheck);
+        $this->setRegistryKey('postnl_quote_is_id_check_' . $quote_id, $isIDCheck);
+
+        $quoteMock = $this->getMock('Mage_Sales_Model_Quote');
+
+        $getIdExpects = $quoteMock->expects($this->any());
+        $getIdExpects->method('getId');
+        $getIdExpects->willReturn($quote_id);
+
+        $instance = $this->_getInstance();
+        $instance->setCache(null);
+
+        $this->setProperty('_quote', $quoteMock);
+
+        $result = $instance->canUseSundayDelivery();
+
+        $this->assertEquals($expected, $result);
+    }
 }

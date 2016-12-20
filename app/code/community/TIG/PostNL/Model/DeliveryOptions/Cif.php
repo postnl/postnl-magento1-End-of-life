@@ -607,8 +607,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
-        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
-        if ($country == 'NL' && $sundayDelivery) {
+        if ($country == 'NL' && $helper->canUseSundayDelivery()) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
         }
 
