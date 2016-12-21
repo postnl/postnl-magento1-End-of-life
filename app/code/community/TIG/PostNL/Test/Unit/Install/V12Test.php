@@ -40,12 +40,12 @@ class TIG_PostNL_Test_Unit_Install_V12Test extends TIG_PostNL_Test_Unit_Framewor
 {
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
 
-    public function attributesProvider()
+    /*public function attributesProvider()
     {
         return array(
             array('postnl_idcheck_type'),
         );
-    }
+    }*/
 
     /**
      * @param $attribute
@@ -53,12 +53,12 @@ class TIG_PostNL_Test_Unit_Install_V12Test extends TIG_PostNL_Test_Unit_Framewor
      * @throws Mage_Core_Exception
      * @dataProvider attributesProvider
      */
-    public function testIfAttributesExists($attribute)
+    /*public function testIfAttributesExists($attribute)
     {
         $attr = Mage::getResourceModel('catalog/eav_attribute')->loadByCode('catalog_product', $attribute);
 
         $this->assertNotNull($attr->getId(), 'Check that the attribute ' .$attribute . ' does exists');
-    }
+    }*/
 
     public function columnsProvider()
     {

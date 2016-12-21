@@ -32,13 +32,13 @@
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Volg uw pakket op <a href="{{var barcode_url}}" target="_blank">PostNL.nl</a> om te zien wanneer PostNL het pakket bij u bezorgt. <p>
                         {{if is_age_check}}
-                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als u uw leeftijd heeft kunnen valideren.<p>
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij uw leeftijd van 18 jaar of ouder hebben kunnen verifiëren op basis van uw legitimatiebewijs.<p>
                         {{/if}}
                         {{if is_birthday_check}}
-                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij met een geldig legitimatiebewijs uw geboortedatum hebben kunnen verifiëren.<p>
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij uw geboortedatum hebben kunnen verifiëren op basis van uw legitimatiebewijs.<p>
                         {{/if}}
                         {{if is_id_check}}
-                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij de door u opgegeven legitimatiegegevens hebben kunnen verifiëren.<p>
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als er een persoonsidentificatie heeft kunnen plaatsvinden op basis van uw legitimatiebewijs. Het gaat om het legitimatiebewijs dat u bij de bestelling heeft doorgegeven aan de webshop.<p>
                         {{/if}}
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Met vriendelijke groet,</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>

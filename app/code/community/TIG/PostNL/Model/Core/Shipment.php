@@ -830,6 +830,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
         }
 
+        if ($this->isAgeCheckShipment()) {
+            return self::SHIPMENT_TYPE_AGECHECK;
+        }
+
+        if ($this->isBirthdayCheckShipment()) {
+            return self::SHIPMENT_TYPE_BIRTHDAYCHECK;
+        }
+
+        if ($this->isIDCheckShipment()) {
+            return self::SHIPMENT_TYPE_IDCHECK;
+        }
+
         if ($this->isPgeShipment()) {
             return self::SHIPMENT_TYPE_PGE;
         }
@@ -868,18 +880,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->isFoodShipment()) {
             return self::SHIPMENT_TYPE_FOOD;
-        }
-
-        if ($this->isAgeCheckShipment()) {
-            return self::SHIPMENT_TYPE_AGECHECK;
-        }
-
-        if ($this->isBirthdayCheckShipment()) {
-            return self::SHIPMENT_TYPE_BIRTHDAYCHECK;
-        }
-
-        if ($this->isIDCheckShipment()) {
-            return self::SHIPMENT_TYPE_IDCHECK;
         }
 
         if ($this->isDomesticShipment()) {

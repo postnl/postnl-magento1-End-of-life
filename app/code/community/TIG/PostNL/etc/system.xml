@@ -2702,7 +2702,7 @@
                                 </country>
                             </depends>
                         </food_delivery_default_product_type>
-                        <mijnpakket_header translate="label" module="postnl">
+                        <!--<mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>500</sort_order>
@@ -2725,8 +2725,8 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </mijnpakket_header>
-                        <mijnpakket_login_active translate="label tooltip" module="postnl">
+                        </mijnpakket_header>-->
+                        <!--<mijnpakket_login_active translate="label tooltip" module="postnl">
                             <label>Enable PostNL account login</label>
                             <tooltip>PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.</tooltip>
                             <frontend_type>checkbox</frontend_type>
@@ -2752,8 +2752,8 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </mijnpakket_login_active>
-                        <mijnpakket_notification translate="label tooltip" module="postnl">
+                        </mijnpakket_login_active>-->
+                        <!--<mijnpakket_notification translate="label tooltip" module="postnl">
                             <label>Show PostNL account notification on the order success page</label>
                             <tooltip>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.</tooltip>
                             <frontend_type>checkbox</frontend_type>
@@ -2779,8 +2779,8 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </mijnpakket_notification>
-                        <show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
+                        </mijnpakket_notification>-->
+                        <!--<show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
                             <label>Show create PostNL account link</label>
                             <tooltip>If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form.</tooltip>
                             <frontend_type>checkbox</frontend_type>
@@ -2807,8 +2807,8 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </show_create_mijnpakket_account_link>
-                        <show_mijnpakket_app_link translate="label tooltip" module="postnl">
+                        </show_create_mijnpakket_account_link>-->
+                        <!--<show_mijnpakket_app_link translate="label tooltip" module="postnl">
                             <label>Show PostNL app link</label>
                             <tooltip>If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order.</tooltip>
                             <frontend_type>checkbox</frontend_type>
@@ -2835,7 +2835,7 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </show_mijnpakket_app_link>
+                        </show_mijnpakket_app_link>-->
                         <buspakje_header translate="label" module="postnl">
                             <label>Letter box parcels</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
