@@ -1079,6 +1079,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * ID Check orders are never letter box parcels.
+         */
+        if ($this->quoteHasIDCheckProducts($quote)) {
+            return false;
+        }
+
+        /**
          * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
          * option rules will apply.
          */
