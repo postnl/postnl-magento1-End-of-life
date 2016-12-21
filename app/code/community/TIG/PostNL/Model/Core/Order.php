@@ -68,7 +68,6 @@
  * @method TIG_PostNL_Model_Core_Order setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Order setQuote(Mage_Sales_Model_Quote $value)
  * @method TIG_PostNL_Model_Core_Order setOrderId(int $value)
- * @method TIG_PostNL_Model_Core_Order setType(string $value)
  * @method TIG_PostNL_Model_Core_Order setQuoteId(int $value)
  * @method TIG_PostNL_Model_Core_Order setDeliveryDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
@@ -558,14 +557,14 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
 
         if ($type == $deliveryOptionsHelper::IDCHECK_TYPE_AGE) {
-            return $this->setData('type', 'AgeCheck');
+            return $this->setData('type', self::TYPE_AGECHECK);
         } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
-            return $this->setData('type', 'BirthdayCheck');
+            return $this->setData('type', self::TYPE_BIRTHDAYCHECK);
         } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
-            return $this->setData('type', 'IDCheck');
+            return $this->setData('type', self::TYPE_IDCHECK);
         }
 
-        return $this->setData($type);
+        return $this->setData('type', $type);
     }
 
     /**

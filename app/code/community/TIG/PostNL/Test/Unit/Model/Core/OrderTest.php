@@ -119,6 +119,9 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
             array('AgeCheck', true),
             array('BirthdayCheck', true),
             array('IDCheck', true),
+            array(3, true),
+            array(4, true),
+            array(5, true),
             array('wrong', false),
         );
     }
