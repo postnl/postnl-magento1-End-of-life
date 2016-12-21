@@ -46,6 +46,28 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         return Mage::helper('postnl');
     }
 
+    /**
+     * @param $type
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    protected function convertIDCheckType($type)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        if ($type === 'AgeCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        } elseif ($type === 'BirthdayCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        } elseif ($type === 'IDCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        return $type;
+    }
+
     public function canUsePakjegemakNotInsuredDataProvider()
     {
         return array(
@@ -151,14 +173,22 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
     /**
      * @dataProvider checkIsQuoteProvider
+     *
+     * @param $method
+     * @param $oldType
+     * @param $result
+     *
+     * @throws Exception
      */
-    public function testQuoteIsCheck($method, $type, $result)
+    public function testQuoteIsCheck($method, $oldType, $result)
     {
+        $type = $this->convertIDCheckType($oldType);
+
         /** @var PHPUnit_Framework_MockObject_MockObject $item */
-        $item = $this->getMock('Mage_Sales_Model_Quote_Item', array('getPostnlIdcheckType'));
+        $item = $this->getMock('Mage_Sales_Model_Quote_Item', array('getPostnlProductType'));
 
         $item->expects($this->once())
-            ->method('getPostnlIdcheckType')
+            ->method('getPostnlProductType')
             ->willReturn($type);
 
         /** @var Mage_Sales_Model_Quote|PHPUnit_Framework_MockObject_MockObject $quote */
@@ -201,11 +231,11 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
      * @param $ageCheck
      * @param $idCheck
      * @param $birthdayCheck
-     * @param $result
+     * @param $oldResult
      *
      * @dataProvider getQuoteIdCheckTypeProvider
      */
-    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $result)
+    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $oldResult)
     {
         $quote = $this->getMock('Mage_Sales_Model_Quote');
 
@@ -219,6 +249,7 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
         $instance = $this->_getInstance();
 
+        $result = $this->convertIDCheckType($oldResult);
         $this->assertEquals($result, $instance->getQuoteIdCheckType($quote), 'The result should be ' . $result);
     }
 

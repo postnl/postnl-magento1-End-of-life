@@ -47,6 +47,28 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
         return new TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck();
     }
 
+    /**
+     * @param $type
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    protected function convertIDCheckType($type)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        if ($type === 'AgeCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        } elseif ($type === 'BirthdayCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        } elseif ($type === 'IDCheck') {
+            return $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        return $type;
+    }
+
     public function validateProvider()
     {
         return array(
@@ -127,8 +149,10 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
     /**
      * @dataProvider validateProvider
      */
-    public function testValidate($useObserver, $shipmentType, $postData, $error)
+    public function testValidate($useObserver, $oldShipmentType, $postData, $error)
     {
+        $shipmentType = $this->convertIDCheckType($oldShipmentType);
+
         if (version_compare(Mage::getVersion(), '1.9.0.0', '<=')) {
             $this->markTestIncomplete('Needs to be fixed for 1.8.0 and lower');
         }
@@ -198,13 +222,15 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
     /**
      * @dataProvider saveDataProvider
      *
-     * @param $shipmentType
+     * @param $oldShipmentType
      * @param $dobIsVisible
      * @param $isLoggedIn
      * @param $postData
      */
-    public function testSaveData($shipmentType, $dobIsVisible, $isLoggedIn, $postData)
+    public function testSaveData($oldShipmentType, $dobIsVisible, $isLoggedIn, $postData)
     {
+        $shipmentType = $this->convertIDCheckType($oldShipmentType);
+
         $_POST = $postData;
 
         $mockHelper = $this->getMock('TIG_PostNL_Helper_Data');

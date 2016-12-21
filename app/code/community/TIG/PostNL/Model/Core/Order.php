@@ -548,6 +548,27 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        if ($type == $deliveryOptionsHelper::IDCHECK_TYPE_AGE) {
+            return $this->setData('type', 'AgeCheck');
+        } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
+            return $this->setData('type', 'BirthdayCheck');
+        } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
+            return $this->setData('type', 'IDCheck');
+        }
+
+        return $this->setData($type);
+    }
+
+    /**
      * Sets new PostNL Orders to active before saving
      *
      * @return Mage_Core_Model_Abstract::_beforeSave();

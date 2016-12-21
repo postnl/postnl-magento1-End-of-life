@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_IdcheckTypeTest
+class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_ProductTypeTest
     extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
     public function types()
@@ -45,6 +45,8 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Idchec
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
 
         return array(
+            array($deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES),
+            array($deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS),
             array($deliveryOptionsHelper::IDCHECK_TYPE_AGE),
             array($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY),
             array($deliveryOptionsHelper::IDCHECK_TYPE_ID),
@@ -57,7 +59,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Idchec
     public function testHasAllTheOptions($type)
     {
         /** @var TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType $model */
-        $model = Mage::getModel('postnl_deliveryoptions/product_attribute_source_IdcheckType');
+        $model = Mage::getModel('postnl_deliveryoptions/product_attribute_source_productType');
 
         $options = $model->getAllOptions();
 

@@ -3086,10 +3086,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /** @var Mage_Sales_Model_Quote_Item $quoteItem */
         foreach ($quote->getAllItems() as $quoteItem) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $postnlIDCheckType = $quoteItem->getProduct()->getPostnlIdcheckType();
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
 
             foreach ($types as $type) {
-                if ($postnlIDCheckType === $type) {
+                if ($postnlProductType == $type) {
                     $quoteHasIDCheckType = true;
                     break;
                 }
