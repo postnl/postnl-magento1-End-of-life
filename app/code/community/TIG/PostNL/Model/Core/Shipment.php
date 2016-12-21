@@ -1773,13 +1773,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $allowedProductCodes = $cifHelper->getFoodProductCodes($flat);
                 break;
             case self::SHIPMENT_TYPE_AGECHECK:
-                $allowedProductCodes = $cifHelper->getAgeCheckProductCodes($flat);
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getAgeCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getAgeCheckProductCodes($flat);
+                }
                 break;
             case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
-                $allowedProductCodes = $cifHelper->getBirthdayCheckProductCodes($flat);
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getBirthdayCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getBirthdayCheckProductCodes($flat);
+                }
                 break;
             case self::SHIPMENT_TYPE_IDCHECK:
-                $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getIDCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
+                }
                 break;
             default:
                 $allowedProductCodes = array();

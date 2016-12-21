@@ -565,6 +565,18 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return mixed
      */
+    public function getAgeCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AgeCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_ageCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
     public function getBirthdayCheckProductCodes($flat = true)
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_BirthdayCheckProductOptions $productCode */
@@ -577,10 +589,34 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return mixed
      */
+    public function getBirthdayCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BirthdayCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_birthdayCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
     public function getIDCheckProductCodes($flat = true)
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
         $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getIDCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckPakjegemakProductOptions');
         return $productCodes->getAvailableOptions($flat);
     }
 
