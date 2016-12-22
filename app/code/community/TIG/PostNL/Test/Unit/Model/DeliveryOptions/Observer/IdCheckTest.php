@@ -76,6 +76,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 true,
                 'IDCheck',
                 array(),
+                false,
                 false
             ),
 
@@ -86,6 +87,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                     'billing_postnl_idcheck' => array(
                     ),
                 ),
+                false,
                 'Please provide a document type'
             ),
 
@@ -97,6 +99,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                         'type' => 'wrong',
                     ),
                 ),
+                false,
                 'Please provide a valid document type'
             ),
 
@@ -109,6 +112,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                         'number' => '',
                     ),
                 ),
+                false,
                 'Please provide a document number',
             ),
 
@@ -122,6 +126,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                         'expiration_date_full' => '',
                     ),
                 ),
+                false,
                 'Please provide a expiration date',
             ),
 
@@ -135,26 +140,34 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                         'expiration_date_full' => '12-04-2112',
                     ),
                 ),
+                false,
                 false
             ),
-            array(true, 'AgeCheck', array(), false),
-            array(true, 'BirthdayCheck', array(), false),
-            array(true, 'BirthdayCheck', array('billing'=>array()), 'Please provide a valid birthday'),
-            array(true, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
-            array(false, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false),
-            array(false, 'BirthdayCheck', array('billing'=>array('day' => '29', 'month' => '09', 'year' => '1999')), false),
+            array(true, 'AgeCheck', array(), false, false),
+            array(true, 'BirthdayCheck', array(), false, false),
+            array(true, 'BirthdayCheck', array('billing'=>array()), false, 'Please provide a valid birthday'),
+            array(true, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false, false),
+            array(false, 'BirthdayCheck', array('billing'=>array('dob' => '29-09-1999')), false, false),
+            array(false, 'BirthdayCheck', array('billing'=>array('day' => '29', 'month' => '09', 'year' => '1999')), false, false),
+            array(false, 'BirthdayCheck', array('billing'=>array()), true, false),
         );
     }
 
     /**
+     * @param $useObserver
+     * @param $oldShipmentType
+     * @param $postData
+     * @param $customerIsLoggedIn
+     * @param $error
+     *
      * @dataProvider validateProvider
      */
-    public function testValidate($useObserver, $oldShipmentType, $postData, $error)
+    public function testValidate($useObserver, $oldShipmentType, $postData, $customerIsLoggedIn, $error)
     {
         $shipmentType = $this->convertIDCheckType($oldShipmentType);
 
         if (version_compare(Mage::getVersion(), '1.9.0.0', '<=')) {
-            $this->markTestIncomplete('Needs to be fixed for 1.8.0 and lower');
+            $this->markTestIncomplete('No support for 1.8.0 and lower');
         }
 
         $_POST = $postData;
@@ -182,6 +195,13 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ->method('getAddress')
                 ->willReturn($addressMock);
         }
+
+        $this->registerMockSessions(array('customer'));
+        $sessionMock = Mage::getSingleton('customer/session');
+
+        $isLoggedInExpects = $sessionMock->expects($this->any());
+        $isLoggedInExpects->method('isLoggedIn');
+        $isLoggedInExpects->willReturn($customerIsLoggedIn);
 
         $instance = $this->_getInstance();
         $this->setProperty('_helpers', array('postnl' => $mockHelper), $instance);

@@ -113,8 +113,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_IdCheck
             }
         }
 
+        $customer = Mage::getSingleton('customer/session');
         $post = Mage::app()->getRequest()->getPost('billing');
-        if ($post !== null && $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
+        if (
+            $post !== null &&
+            $shipmentType == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY &&
+            !$customer->isLoggedIn()
+        ) {
             if (
                 isset($post['day']) && !empty($post['day']) &&
                 isset($post['month']) && !empty($post['month']) &&

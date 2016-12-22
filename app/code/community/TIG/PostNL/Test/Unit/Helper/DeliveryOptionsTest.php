@@ -538,7 +538,7 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $getIdExpects->willReturn($quote_id);
 
         $instance = $this->_getInstance();
-        $instance->setCache(null);
+        $instance->setCache(false);
 
         $this->setProperty('_quote', $quoteMock);
 

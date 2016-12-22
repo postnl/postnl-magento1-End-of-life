@@ -58,7 +58,6 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
             array(true, true, false, false, true, true, false, false, 'US', false, 'PostNL COD is not available, because the shipping destination country is not allowed.'),
             array(true, true, false, false, true, true, true, false, 'NL', false, 'PostNL COD is not available, because the shipping address is a P.O. box.'),
             array(true, true, false, false, true, true, false, true, 'NL', false, 'PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.'),
-            array(true, true, false, false, true, true, false, false, 'NL', true, false),
         );
     }
 

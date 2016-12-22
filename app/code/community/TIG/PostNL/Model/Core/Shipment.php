@@ -1320,10 +1320,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 }
                 break;
             case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
-                $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION;
+                if ($this->isPakjeGemakShipment()) {
+                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION;
+                }
                 break;
             case self::SHIPMENT_TYPE_IDCHECK:
-                $xpath = self::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
+                if ($this->isPakjeGemakShipment()) {
+                    $xpath = self::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
+                }
                 break;
 
 
