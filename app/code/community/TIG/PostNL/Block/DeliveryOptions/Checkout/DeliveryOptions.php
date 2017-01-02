@@ -557,8 +557,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return 0;
         }
 
-        $currentRate = $this->getMethodRate();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if ($helper->quoteHasIDCheckProducts()) {
+            return 0;
+        }
 
+        $currentRate = $this->getMethodRate();
         /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getPakjeGemakFee($currentRate, $formatted, $includingTax);
