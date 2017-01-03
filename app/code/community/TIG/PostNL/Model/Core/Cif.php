@@ -144,6 +144,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const DEFAULT_HS_TARIFF = '000000';
 
     /**
+     * Can we use the dutch address (BE -> NL shipments only)
+     */
+    const XPATH_USE_DUTCH_ADDRESS = 'postnl/cif_address/use_dutch_address';
+
+    /**
      * Array containing possible address types.
      *
      * N.B. the value of the return and alternative sender addresses were switched in v1.5.0.
@@ -887,17 +892,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
             $customer = array_merge($customer, $additionalCustomerData);
 
-            /**
-             * This is an edge case:
-             *
-             * If the domestic country is BE, the shipment is being sent to Netherlands and the
-             * option "Use Dutch products" is enabled, we must fool CIF and return the alternative customer id,
-             * customer code and the Dutch alternative address.
-             */
             if (
                 $this->getHelper()->getDomesticCountry() == 'BE' &&
                 $shipment->getShippingAddress()->getCountryId() == 'NL' &&
-                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts()
+                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts() &&
+                Mage::getStoreConfigFlag(self::XPATH_USE_DUTCH_ADDRESS)
             ) {
                 $customer['CustomerCode'] = $this->_getDutchCustomerCode();
                 $customer['CustomerNumber'] = $this->_getDutchCustomerNumber();

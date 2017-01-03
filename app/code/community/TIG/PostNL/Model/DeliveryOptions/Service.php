@@ -130,9 +130,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * @param StdClass[] $timeframes
      * @param string     $destinationCountry
      *
+     * @param null       $deliveryDate
+     *
      * @return false|StdClass[]
      */
-    public function filterTimeframes($timeframes, $destinationCountry = 'NL')
+    public function filterTimeframes($timeframes, $destinationCountry = 'NL', $deliveryDate = null)
     {
         /**
          * If the time frames are not an array, something has gone wrong.
@@ -144,7 +146,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry);
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry, $deliveryDate);
     }
 
     /**
@@ -213,11 +215,16 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
         $deliveryDate->setTimezone($utcTimeZone);
 
+        $isPGBE = false;
+        if ($data['type'] == 'PG' && $quote->getShippingAddress() !== null && $quote->getShippingAddress()->getCountryId() == 'BE') {
+            $isPGBE = true;
+        }
+
         if ($data['type'] == 'Food' || $data['type'] == 'Cooledfood') {
             $confirmDate = $deliveryDate;
         } else {
             $deliveryDateClone = clone $deliveryDate;
-            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId(), $isPGBE);
         }
 
         /**

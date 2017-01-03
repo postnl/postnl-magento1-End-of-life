@@ -234,7 +234,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             (
                 $value == 'NL' &&
                 $domesticCountry == 'BE' &&
-                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts()
+                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts(false)
             )
         ) {
             return $this->_getDomesticRenderedValue($row, $value);

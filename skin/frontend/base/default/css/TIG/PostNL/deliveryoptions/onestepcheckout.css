@@ -25,7 +25,7 @@
 #postnl_add_moment .add-moment a { display:inline-block; text-decoration:underline; margin:1px 8px 0 0; height:14px; padding-right:21px; font-weight:bold; line-height:13px; background: url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-location.png) 100% 0 no-repeat; white-space:nowrap; }
 #postnl_add_moment .add-moment a:hover { text-decoration:none; }
 
-#osc_initial_loader { display:inline-block; width:14px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
+#osc_initial_loader { display:inline-block; width:140px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
 
 /* Delivery Options Popup */
 #postnl_delivery_options .popup-window { width:665px; height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }

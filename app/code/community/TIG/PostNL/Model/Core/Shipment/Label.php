@@ -45,6 +45,8 @@
  * @method TIG_PostNL_Model_Core_Shipment_Label setLabel(string $value)
  * @method int getParentId()
  * @method TIG_PostNL_Model_Core_Shipment_Label setParentId(int $value)
+ * @method bool getResize()
+ * @method TIG_PostNL_Model_Core_Shipment_Label setResize(bool $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 {

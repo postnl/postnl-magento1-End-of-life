@@ -395,7 +395,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         /**
          * Filter out unavailable time frames.
          */
-        $timeframes = $this->getService()->filterTimeframes($response, $data['country']);
+        $timeframes = $this->getService()->filterTimeframes($response, $data['country'], $data['deliveryDate']);
 
         if (!$timeframes) {
             $this->getResponse()
@@ -1310,11 +1310,37 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
 
+            $housenumber = $postData['housenumber'];
+            $housenumberValidator      = new Zend_Validate_Digits();
+            if (!$housenumberValidator->isValid($housenumber)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid housenumber supplied for getNearestLocations request: %s',
+                        $housenumber
+                    ),
+                    'POSTNL-0242'
+                );
+            }
+
+            $city = $postData['city'];
+            $cityValidator      = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
+            if (!$cityValidator->isValid($city)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid city supplied for getNearestLocations request: %s',
+                        $city
+                    ),
+                    'POSTNL-0242'
+                );
+            }
+
             $data = array(
                 'postcode'     => $postcode,
                 'street'       => $street,
                 'country'      => $country,
                 'deliveryDate' => $deliveryDate,
+                'housenumber'  => $housenumber,
+                'city'         => $city,
             );
             return $data;
         }
