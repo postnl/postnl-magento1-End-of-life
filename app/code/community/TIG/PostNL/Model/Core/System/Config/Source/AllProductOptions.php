@@ -281,13 +281,35 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4932' => array(
             'value'             => '4932',
-            'label'             => 'Post Office',
+            'label'             => '4932 - Post Office Belgium + Extra Cover',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_be_options',
+        ),
+        '4878' => array(
+            'value'             => '4878',
+            'label'             => '4878 - Post Office Belgium + Extra Cover',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
+            'group'             => 'pakjegemak_be_options',
+        ),
+        '4880' => array(
+            'value'             => '4880',
+            'label'             => '4880 - Post Office Belgium',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
             'group'             => 'pakjegemak_be_options',
         ),
         '4952' => array(
@@ -517,8 +539,39 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
             }
 
-            ksort($options);
         }
+
+        if (
+            $helper->canUsePakjegemakBeNotInsured()
+            && (!isset($flags['isBelgiumOnly'])
+                || $flags['isBelgiumOnly'] == true
+            )
+            && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
+            )
+            && (!isset($flags['countryLimitation'])
+                || $flags['countryLimitation'] == 'NL'
+            )
+        ) {
+            if (!$asFlatArray) {
+                $options[] = array(
+                    'value'             => '4936',
+                    'label'             => $helper->__('4936 - Post Office Belgium'),
+                    'isBelgiumOnly'     => true,
+                    'isExtraCover'      => false,
+                    'isAvond'           => false,
+                    'isSunday'          => false,
+                    'isCod'             => false,
+                    'statedAddressOnly' => false,
+                    'countryLimitation' => 'NL',
+                    'group'             => 'pakjegemak_be_options'
+                );
+            } else {
+                $options['4936'] = $helper->__('4936 - Post Office Belgium');
+            }
+        }
+
+        ksort($options);
 
         return $options;
     }

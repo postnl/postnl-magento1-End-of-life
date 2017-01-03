@@ -40,9 +40,42 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
 {
     protected $_class = 'TIG_PostNL_DeliveryOptionsController';
 
+    protected $mockHelper = false;
+
+    protected $mockedHelpers = array();
+
     public static function setUpBeforeClass()
     {
         require_once(__DIR__ . '/../../controllers/DeliveryOptionsController.php');
+    }
+
+    /**
+     * @param string $helperClass
+     * @param object $mock
+     *
+     * @return TIG_PostNL_Test_Framework_TIG_Test_TestCase
+     */
+    public function setHelperMock($helperClass, $mock)
+    {
+        $this->mockedHelpers[$helperClass] = $mock;
+
+        return parent::setHelperMock($helperClass, $mock);
+    }
+
+    /**
+     * Reset the helpers back to the original.
+     *
+     * @return $this
+     */
+    public function breakDown()
+    {
+        if ($this->mockHelper) {
+            foreach ($this->mockedHelpers as $helper => $instance) {
+                parent::setHelperMock($helper, $instance);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -154,8 +187,6 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      */
     public function shouldValidatePostDataWithoutAnAddress($data, $success)
     {
-        $this->markTestSkipped('Skip this test');
-
         $controller = $this->_getInstance($data);
 
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
@@ -256,6 +287,95 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
         $this->assertTrue($isCallable);
     }
 
+    public function shouldValidateAddressDataDataProvider()
+    {
+        return array(
+            array(
+                '',
+                'POSTNL-0139',
+                false,
+            ),
+            array(
+                array(
+                    'City' => 'ANTWERPEN',
+                    'Countrycode' => 'BE',
+                    'HouseNr' => '2',
+                    'HouseNrExt' => '3',
+                    'Street' => 'BRESSTRAAT',
+                    'Zipcode' => '2018',
+                    'Name' => 'DE STER',
+                ),
+                null,
+                true,
+            ),
+        );
+    }
+
+    /**
+     * @param $address
+     * @param $errorCode
+     * @param $success
+     *
+     * @test
+     * @group failing
+     *
+     * @depend s saveSelectedOptionActionShouldBeCallable
+     *
+     * @dataProvider shouldValidateAddressDataDataProvider
+     */
+    public function shouldValidatePGAddressData($address, $errorCode, $success)
+    {
+        $this->markTestIncomplete('Should get more data');
+
+        $data = array(
+            'isAjax' => true,
+            'type' => 'PG',
+            'date' => '18-03-2014',
+            'from' => '15:00:00',
+            'to' => '',
+            'costs' => '{"incl":0,"excl":0}',
+            'address' => json_encode($address),
+            'locationCode' => '"BE0Q23"',
+            'retailNetworkId' => '"LD-01"',
+        );
+
+        $controller = $this->_getInstance($data);
+
+        if ($errorCode !== null) {
+            $mock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
+            $mock->expects($this->any())
+                ->method('logException')
+                ->with($this->callback( function (TIG_PostNL_Exception $exception) use ($errorCode) {
+                    $this->assertEquals($errorCode, $exception->getCode());
+
+                    return true;
+                }));
+
+            $this->setHelperMock('postnl/deliveryOptions', $mock);
+        }
+
+        $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
+        if ($success) {
+            $mockService->expects($this->once())
+                ->method('saveDeliveryOption')
+                ->withAnyParameters()
+                ->will($this->returnSelf());
+        }
+
+        $controller->setService($mockService);
+
+        $controller->setCanUseDeliveryOptions(true);
+        $controller->saveSelectedOptionAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+
+        if ($success) {
+            $this->assertTrue(strpos($body, 'OK') !== false);
+        } else {
+            $this->assertTrue(strpos($body, 'invalid_data') !== false);
+        }
+    }
+
     /**
      * @test
      *
@@ -263,8 +383,6 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      */
     public function shouldRejectSaveOptionCostsActionWithoutAjax()
     {
-        $this->markTestSkipped('Skip this test');
-
         $controller = $this->_getInstance();
         $controller->setCanUseDeliveryOptions(true);
         $controller->saveOptionCostsAction();
@@ -282,8 +400,6 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      */
     public function shouldRejectSaveOptionCostsActionIfUnableToUseDeliveryOptions()
     {
-        $this->markTestSkipped('Skip this test');
-
         $controller = $this->_getInstance(array('isAjax' => true));
         $controller->setCanUseDeliveryOptions(false);
         $controller->saveOptionCostsAction();
@@ -303,8 +419,6 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      */
     public function shouldValidatePostDataForSaveOptionCostsAction($data, $success)
     {
-        $this->markTestSkipped('Skip this test');
-
         $controller = $this->_getInstance($data);
 
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');

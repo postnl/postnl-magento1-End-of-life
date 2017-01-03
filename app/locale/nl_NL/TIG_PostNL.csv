@@ -254,8 +254,6 @@ TIG_PostNL::Invalid Table Rate code type:,Ongeldig code type
 TIG_PostNL::Invalid Table Rate code for type %s:,Ongeldige code voor %s
 TIG_PostNL::Flat,Plat
 TIG_PostNL::Table,Tabel
-TIG_PostNL::Post Office + Extra Cover,Postkantoor + extra verzekerd
-TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + extra verzekerd + notificatie
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
 TIG_PostNL::Metric,Metrisch
@@ -312,6 +310,12 @@ TIG_PostNL::Post Office + Extra Cover,Postkantoor + verhoogd aansprakelijk
 TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + verhoogd aansprakelijk + notificatie
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
+TIG_PostNL::Post Office Belgium + Extra Cover,Ophalen bij PostNL Locatie België - verzekerd
+TIG_PostNL::4878 - Post Office Belgium + Extra Cover,4878 - Ophalen bij PostNL Locatie België - verzekerd
+TIG_PostNL::Post Office Belgium,Ophalen bij PostNL Locatie België
+TIG_PostNL::4932 - Post Office Belgium + Extra Cover,4932 - Ophalen bij PostNL Locatie België - verzekerd
+TIG_PostNL::4936 - Post Office Belgium,4936 - Ophalen bij PostNL Locatie België
+TIG_PostNL::4880 - Post Office Belgium,4880 - Ophalen bij PostNL Locatie België
 TIG_PostNL::EU options,EU opties
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
 "TIG_PostNL::EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen België zonder handtekening)
@@ -435,8 +439,8 @@ TIG_PostNL::Time,Tijd
 TIG_PostNL::Date,Datum
 TIG_PostNL::We urge you to read these instructions before you proceed to use this extension.,Volg deze instructies aandachtig voordat u met de extensie aan de slag gaat.
 TIG_PostNL::You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. You will have to split heavier orders into separate parcels. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality.,U kunt met deze extensie alleen producten versturen die binnen de maximale omvang (175 x 78 x 58 cm) en gewicht (30 kg) vallen. Voor zwaardere producten moet u meerdere zendingen aanmaken voor één bestelling of gebruik maken van de multi-colli functionaliteit.
-TIG_PostNL::Configure the PostNL sending method under system > config > shipping methods > PostNL. You may choose to charge either a flat rate or a table rate-based shipping fee. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.,"Configureer de PostNL verzendmethode correct in systeem > configuratie > verzendmethodes > PostNL. U kunt kiezen om een plat tarief of een tabel tarief in rekening te brengen voor het gebruik van PostNL. Voor meer informatie over hoe u de tabel tarieven kunt instellen, kunt u hier kijken. "
-"TIG_PostNL::PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. To do so, you need to enable the postcode validation or configure the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",Als u gebruik maakt van de postcode check zal de extensie het afrekenproces goed voor u instellen. Als u daar geen gebruik van maakt moet PostNL uit het afrekenproces een correct opgemaakt adres kunnen lezen om een juiste verzending te kunnen garanderen. Om hier zeker van te zijn moet u het goede aantal straat regels aanzetten en deze voorzien van duidelijke labels en validatie. U kunt hier meer lezen over hoe u dit kunt configureren.
+TIG_PostNL::Configure the PostNL sending method under system > config > shipping methods > PostNL. You may choose to charge either a flat rate or a table rate-based shipping fee. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.,"Configureer de PostNL verzendmethode correct in systeem > configuratie > verzendmethodes > PostNL. U kunt kiezen om een plat tarief of een tabel tarief in rekening te brengen voor het gebruik van PostNL. Voor meer informatie over hoe u de tabel tarieven kunt instellen, kunt u <a href='%s' target='_blank'>hier</a> kijken. "
+"TIG_PostNL::PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. To do so, you need to enable the postcode validation or configure the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",Als u gebruik maakt van de postcode check zal de extensie het afrekenproces goed voor u instellen. Als u daar geen gebruik van maakt moet PostNL uit het afrekenproces een correct opgemaakt adres kunnen lezen om een juiste verzending te kunnen garanderen. Om hier zeker van te zijn moet u het goede aantal straat regels aanzetten en deze voorzien van duidelijke labels en validatie. U kunt <a href='%s' target='_blank'>hier</a> meer lezen over hoe u dit kunt configureren.
 "TIG_PostNL::We highly recommend you place several 'test' shipments, before you use the extension for real shipments.",Maak altijd enkele testzendingen aan voordat u de extensie voor echte bestellingen gebruikt.
 TIG_PostNL::We cannot guarantee compatibility with non supported extensions and versions of Magento.,De compatibiliteit met niet ondersteunde extensies en versies van Magento wordt niet gegarandeerd.
 "TIG_PostNL::The extension is developed by TIG, commissioned by PostNL.",De extensie is ontwikkeld door TIG in opdracht van PostNL.
@@ -577,6 +581,8 @@ TIG_PostNL::available,beschikbaar
 TIG_PostNL::evening,avond
 TIG_PostNL::Post Office,Postkantoor
 TIG_PostNL::Delivery Options,Bezorgopties
+TIG_PostNL::Delivery Options NL,Bezorgopties NL
+TIG_PostNL::Delivery Options INT,Bezorgopties INT
 TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
 TIG_PostNL::Su,Zo
@@ -610,8 +616,8 @@ TIG_PostNL::Connection timeout duration,Connectie time-out duur
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,Na dit aantal seconden kan uw klant het adres handmatig invullen. Laat dit veld leeg om de functionaliteit uit te schakelen. Let op: als een klant te lang moet wachten verlaat hij wellicht het bestelproces.
 TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Toon PostNL checkout exclusief aan gebruikers met een PostNL account
 TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activeer om de PostNL Checkout enkel te tonen aan uw klanten die beschikken over een PostNL account. Let op: de bezorgopties moeten geactiveerd zijn.
-TIG_PostNL::Delivery Options,Bezorgopties
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Met de PostNL bezorgopties kunnen uw klanten kiezen waar, wanneer en hoe zij hun bestelling willen ontvangen. Zo kunnen uw klanten de dag van ontvangst kiezen en wordt er direct aangegeven op welk moment ze het pakket kunnen verwachten. Van maandag tot en met vrijdag bezorgt PostNL ook in de avond en zelfs op de dag van bestelling laten bezorgen is mogelijk. Halen uw klanten het pakket liever af op één van de 2000 PostNL pakketpunten? Dit kan vanaf 15:00 uur en op sommige locaties zelfs vanaf 9:00 uur."
+TIG_PostNL::Delivery Options,Bezorgopties
 TIG_PostNL::Enable PostNL delivery options,Activeer PostNL bezorgopties
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,U kunt PostNL bezorgopties deactiveren indien de bestelling een product bevat dat niet op voorraad is of indien de gehele bestelling minder weegt dan 2 kg.
 TIG_PostNL::Activate the PostNL Checkout for orders containing out of stock products,Activeer PostNL bezorgopties voor bestellingen van minder dan 2 kg
@@ -1148,7 +1154,6 @@ TIG_PostNL::Use the button below to request help from the PostNL servicedesk.,Ge
 TIG_PostNL::Request help from the servicedesk,Stel een vraag aan de servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activatie
 TIG_PostNL::Shipment and order grids,Verzendingen -en bestellingenoverzicht
-TIG_PostNL::Delivery Options NL,Bezorgopties NL
 TIG_PostNL::Globalpack and barcode settings,Globalpack en barcode-instellingen
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technische instellingen
@@ -1312,6 +1317,7 @@ TIG_PostNL::PostNL delivery options are only available when shipping from the Ne
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Bezorgopties zijn alleen beschikbaar wanneer u verstuurd vanuit Nederland.
 TIG_PostNL::Delivery options based on contractual agreements,Bezorgopties op basis van contractafspraken
 "TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday, sunday or same day delivery.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van Maandagbezorging, Zondagbezorging en/of Dezelfde dag bezorgd."
+"TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use Monday.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van Maandagbezorging."
 TIG_PostNL::Enable monday delivery,Activeer maandagbezorging
 TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten.
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""maandagbezorging"">hier</a> meer lezen over maandagbezorging."

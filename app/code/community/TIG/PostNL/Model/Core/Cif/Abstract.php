@@ -118,6 +118,16 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const SHIPMENT_NOT_FOUND_ERROR_NUMBER = 13;
 
     /**
+     * @var array
+     */
+    protected $_helpers = array();
+
+    /**
+     * @var array
+     */
+    protected $_dates = array();
+
+    /**
      * Check if the required PHP extensions are installed.
      *
      * @throws TIG_PostNL_Exception
@@ -702,5 +712,25 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $helper
+     *
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_DeliveryOptions
+     */
+    protected function _getHelper($helper = '')
+    {
+        if ($helper == '') {
+            $helper = 'postnl';
+        } else {
+            $helper = 'postnl/' . $helper;
+        }
+
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
     }
 }

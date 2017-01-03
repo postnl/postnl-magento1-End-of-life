@@ -45,7 +45,7 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
     {
         Mage::reset();
 
-        Mage::setIsDeveloperMode(true);
+        Mage::setIsDeveloperMode(false);
         Mage::app(
             'admin',
                 'store',
@@ -216,7 +216,7 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
      * @param string $helperClass
      * @param object $mock
      *
-     * @return TIG_Test_TestCase
+     * @return $this
      */
     public function setHelperMock($helperClass, $mock)
     {
@@ -261,12 +261,46 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
             $instance = $this->_getInstance();
         }
 
-        $reflection = new ReflectionObject($instance);
-        $property = $reflection->getProperty($property);
-        $property->setAccessible(true);
+        $property = $this->_getProperty($property, $instance);
         $property->setValue($instance, $value);
 
         return $this;
+    }
+
+    /**
+     * Get the value of a protected property using reflection.
+     *
+     * @param $property
+     *
+     * @return mixed
+     */
+    public function getProtectedPropertyValue($property)
+    {
+        $instance = $this->_getInstance();
+        $property = $this->_getProperty($property, $instance);
+
+        return $property->getValue($instance);
+    }
+
+    /**
+     * Retrieve the ReflectionProperty object, and set the visibility to public.
+     *
+     * @param      $property
+     * @param null $instance
+     *
+     * @return ReflectionProperty
+     */
+    protected function _getProperty($property, $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $reflection = new ReflectionObject($instance);
+        $property = $reflection->getProperty($property);
+        $property->setAccessible(true);
+
+        return $property;
     }
 
     /**

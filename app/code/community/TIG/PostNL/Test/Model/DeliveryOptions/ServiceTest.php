@@ -87,12 +87,10 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
      */
     public function getPostnlOrderShouldReturnAPostnlOrderFromAQuote()
     {
-        $this->markTestSkipped('Skip this test');
-
         $instance = $this->_getInstance();
 
         $mockQuote = $this->getMock('Mage_Sales_Model_Quote');
-        $mockQuote->expects($this->once())
+        $mockQuote->expects($this->any())
                   ->method('getId');
 
         $instance->setQuote($mockQuote);
