@@ -1165,7 +1165,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>RC1</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
