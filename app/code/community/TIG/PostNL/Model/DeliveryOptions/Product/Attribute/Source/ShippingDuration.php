@@ -137,6 +137,7 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ShippingDuration
             'type'      => Varien_Db_Ddl_Table::TYPE_VARCHAR,
             'is_null'   => true,
             'comment'   => $attributeCode . ' column',
+            'unsigned'  => false,
         );
 
         $columnDefinition = array($attributeCode => $column);

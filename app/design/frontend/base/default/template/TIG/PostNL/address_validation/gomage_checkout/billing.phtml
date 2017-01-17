@@ -81,7 +81,7 @@
                         <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
 
                         <?php
-                        $_show_dob = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerDob());
+                        $_show_dob = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerDob()) || Mage::helper('postnl')->quoteIsBirthdayCheck();
                         $_show_gender = !$this->isCustomerLoggedIn() || ($this->isCustomerLoggedIn() && !$this->getQuote()->getCustomerGender());
                         ?>
 
@@ -172,6 +172,11 @@
                     <input type="checkbox" name="billing[use_for_shipping]" id="billing_use_for_shipping_yes" value="1" <?php if($this->shippingAsBilling()):?> checked="checked" <?php endif;?> title="<?php echo  $this->__('Ship to this address') ?>" onclick="checkout.changeAddressMode(this.checked)" class="radio" />
                     <label for="billing_use_for_shipping_yes"><?php echo  $this->__('Ship to this address') ?></label>
                 </li>
+            <?php endif; ?>
+            <?php if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()): ?>
+            <li>
+                <?php echo $this->getChildHtml('postnl_billing_idcheck'); ?>
+            </li>
             <?php endif; ?>
         </ul>
         <?php if (!$this->canShip()): ?>

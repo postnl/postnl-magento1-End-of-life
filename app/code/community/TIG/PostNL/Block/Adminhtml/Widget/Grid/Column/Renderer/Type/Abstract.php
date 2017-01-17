@@ -136,6 +136,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case $postnlShipmentClass::SHIPMENT_TYPE_COOLED:
                 $label = $helper->__('Cooled Food Delivery');
                 break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_AGECHECK:
+                $label = $helper->__('Age Check');
+                break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                $label = $helper->__('Birthday Check');
+                break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_IDCHECK:
+                $label = $helper->__('ID Check');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -219,6 +228,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getFoodRenderedValue($row);
         } elseif ($optionType == 'Cooledfood') {
             return $this->_getCooledfoodRenderedValue($row);
+        } elseif ($optionType == 'AgeCheck') {
+            return $this->_getAgeCheckfoodRenderedValue($row);
+        } elseif ($optionType == 'BirthdayCheck') {
+            return $this->_getBirthdayCheckfoodRenderedValue($row);
+        } elseif ($optionType == 'IDCheck') {
+            return $this->_getIDCheckfoodRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -226,9 +241,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         }
 
         /**
-         * Check if this order is domestic.
+         * Check if this order is domestic OR
+         * Check if this is a BE to NL shipment with the "use dutch products" option active.
          */
-        if ($value == $domesticCountry) {
+        if (
+            $value == $domesticCountry ||
+            (
+                $value == 'NL' &&
+                $domesticCountry == 'BE' &&
+                Mage::helper('postnl/deliveryOptions')->canUseDutchProducts(false)
+            )
+        ) {
             return $this->_getDomesticRenderedValue($row, $value);
         }
 
@@ -439,6 +462,63 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label = $helper->__('Cooled Food Delivery');
         $type = 'cooledfood';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a age check shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getAgeCheckfoodRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Age Check');
+        $type = 'agecheck';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a birthday check shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getBirthdayCheckfoodRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Birthday Check');
+        $type = 'birthdaycheck';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a age check shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getIDCheckfoodRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('ID Check');
+        $type = 'idcheck';
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 

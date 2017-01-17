@@ -156,13 +156,25 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'Cooledfood':
                 $shipmentType = $this->__('Cooled Food Delivery');
                 break;
+            case 'AgeCheck':
+                $shipmentType = $this->__('Age Check');
+                break;
+            case 'BirthdayCheck':
+                $shipmentType = $this->__('Birthday Check');
+                break;
+            case 'IDCheck':
+                $shipmentType = $this->__('ID Check');
+                break;
         }
 
         if ($shipmentType) {
             return $shipmentType;
         }
 
-        if ($countryId == $domesticCountry) {
+        if (
+            $countryId == $domesticCountry ||
+            Mage::helper('postnl/deliveryOptions')->canUseDutchProducts(false)
+        ) {
             $shipmentType = $this->__('Domestic');
 
             return $shipmentType;

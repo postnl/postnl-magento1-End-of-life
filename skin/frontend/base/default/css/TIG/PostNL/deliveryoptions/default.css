@@ -30,7 +30,7 @@
 /* Buttons */
 .postnl-container .button { border:0; padding:0; margin:0; background:transparent; overflow:visible; cursor:pointer; vertical-align:middle; height:26px !important; }
 .postnl-container .button span { border:0;  margin:0; cursor:pointer; display:-moz-inline-stack; display:inline-block; height:26px; color:#fff; text-decoration:none; background:transparent url(../../../../images/TIG/PostNL/deliveryoptions/bkg_button.png) 0 -68px no-repeat !important; }
-.postnl-container .button span span { padding:0 12px 0 0; background-position:100% -68px !important; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
+.postnl-container .button span span { padding:0 12px 0; background-position:100% -68px !important; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
 .postnl-container .button.disabled span { background-position:0 -94px !important; color:#b0b0b0 !important; cursor:default !important; }
 .postnl-container .button.disabled span span { background-position:100% -94px !important; }
 
@@ -68,7 +68,8 @@
 .postnl-container .location .show-map { color:#fff; }
 .postnl-container .location .show-map:hover { text-decoration:none; }
 .postnl-container .location .location-name { font-size:13px; line-height:24px; }
-.postnl-container .location .location-type { color:#eaeaeb; line-height:25px; margin-left:6px; }
+.postnl-container .location .location-type,
+.postnl-container .location .location-distance-text { color:#eaeaeb; line-height:25px; margin-left:6px; }
 .postnl-container .location .location-info { float:right; }
 .postnl-container .location .location-info span { position: absolute; top:0; right: 7px; margin-right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; }
 .postnl-container .location .tooltip-container:hover .location-info span,
@@ -153,7 +154,7 @@
 #postnl_add_location .search-location .input-text { display:block; width:186px !important; height:26px; padding:4px 12px; border:none; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_location-search_input.gif) 0 0 no-repeat; color:#575756; font:12px/26px Arial, sans-serif; }
 #postnl_add_location .search-location .btn-search { margin-left:2px; }
 #postnl_add_location .search-location .btn-search:hover { background: none; opacity: 0.6; }
-#postnl_add_location .search-location .btn-search span span { width:70px; }
+/*#postnl_add_location .search-location .btn-search span span { width:70px; }*/
 #postnl_add_location .search-location .no-results { display:block; clear:both; color:#f10; padding:8px 0; }
 
 /* Google Auto-complete */
@@ -179,10 +180,9 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_add_location .location-list .location.selected { background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_location-selected.png) 753px 11px no-repeat; }
 #postnl_add_location .location-list .location-icon { display:block; float:left; margin:9px 6px 0 0; max-width:16px; }
 #postnl_add_location .location-list .location-name { margin-right:4px; }
-#postnl_add_location .location-list .location-distance { height:35px; }
-#postnl_add_location .location-list .location-info { text-decoration:none; width:92px; float:right; text-align:right; }
+#postnl_add_location .location-list .location-info { text-decoration:none; width:122px; float:right; text-align:right; }
 #postnl_add_location .location-list .location-info:hover { text-decoration:underline; }
-#postnl_add_location .location-list .location-distance { width:101px; float:right; text-align:right; }
+#postnl_add_location .location-list .location-distance { height:35px; width:71px; float:right; text-align:right; }
 
 /* Scrollbar */
 #scrollbar_container { width:800px; position:relative; }
@@ -277,4 +277,9 @@ cufon[alt=" "] { display:none !important; width:0 !important; height:0 !importan
 .responsive-switch-wrapper,
 .responsive-tooltip,
 .responsive-tooltip-open { display:none; }
+/* ======================================================================================= */
+
+/* ID Check Expiration Date=============================================================== */
+.postnl-date .postnl-month, .postnl-date .postnl-day { width: 40px; float: left; margin-right: 10px; }
+.postnl-date .postnl-year { width: 80px; float: left; }
 /* ======================================================================================= */

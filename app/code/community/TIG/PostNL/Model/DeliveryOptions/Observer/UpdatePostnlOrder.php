@@ -333,31 +333,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     }
 
     /**
-     * Recollect quote totals.
-     *
-     * @return $this
-     *
-     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
-     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
-     *
-     * @observer checkout_shipping_method_recollect_quote_totals
-     */
-    public function recollectQuoteTotals()
-    {
-        /** @var Mage_Checkout_Model_Session $session */
-        $session = Mage::getSingleton('checkout/session');
-        $quote = $session->getQuote();
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $quote->setTotalsCollectedFlag(false);
-        $quote->getShippingAddress()->setCollectShippingRates(true);
-        $quote->collectTotals();
-        $quote->save();
-
-        return $this;
-    }
-
-    /**
      * Validates the PostNl order. This is to prevent problems when quotes have been deleted from the database with
      * foreign key checks disabled.
      *
@@ -394,7 +369,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         /**
-         * Check if this order has a shipping address.
+         * Check if this order is being shipped to a domestic country.
          */
         $shippingAddress = $order->getShippingAddress();
 

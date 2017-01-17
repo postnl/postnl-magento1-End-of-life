@@ -118,6 +118,16 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const SHIPMENT_NOT_FOUND_ERROR_NUMBER = 13;
 
     /**
+     * @var array
+     */
+    protected $_helpers = array();
+
+    /**
+     * @var array
+     */
+    protected $_dates = array();
+
+    /**
      * Check if the required PHP extensions are installed.
      *
      * @throws TIG_PostNL_Exception
@@ -556,6 +566,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $n = 0;
         $responseWarnings = array();
         foreach ($warnings as $warning) {
+            if ($this->hasEpsCombiLabelWarning($warning)) {
+                continue;
+            }
+
             foreach ($warning->getElementsByTagName('Code') as $code) {
                 $responseWarnings[$n]['code'] = $code->nodeValue;
             }
@@ -584,6 +598,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         Mage::register('postnl_cif_warnings', $responseWarnings);
 
         return $this;
+    }
+
+    /**
+     * Check if the supplied warning has an EPS Combi Label warning. We don't want to show it so skip it.
+     *
+     * @param $warning
+     *
+     * @return bool
+     */
+    protected function hasEpsCombiLabelWarning($warning) {
+        foreach ($warning->getElementsByTagName('Code') as $code) {
+            if ($code->nodeValue == TIG_PostNL_Model_Core_Shipment::EPS_COMBI_LABEL_WARNING_CODE) {
+                return true;
+            }
+        }
     }
 
     /**
@@ -683,5 +712,25 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $helper
+     *
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_DeliveryOptions
+     */
+    protected function _getHelper($helper = '')
+    {
+        if ($helper == '') {
+            $helper = 'postnl';
+        } else {
+            $helper = 'postnl/' . $helper;
+        }
+
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
     }
 }

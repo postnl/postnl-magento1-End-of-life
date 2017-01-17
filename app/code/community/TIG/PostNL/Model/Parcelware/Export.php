@@ -49,6 +49,11 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const XPATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
+     * The separator used for the Parcelware export.
+     */
+    const CSV_SEPARATOR = ';';
+
+    /**
      * @var Mage_Core_Model_Resource_Transaction|void
      */
     protected $_transactionSave;
@@ -138,16 +143,16 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Write the CSV headers and then each row of data.
          */
-        $io->streamWrite(implode(',', $csvHeaders));
+        $io->streamWrite(implode(self::CSV_SEPARATOR, $csvHeaders));
         foreach ($content as $item) {
             /**
-             * Remove any comma's as these will break Parcelware's import.
+             * Remove any comma's and semicolon as these will break Parcelware's import.
              */
             foreach ($item as &$value) {
-                $value = str_replace(',', '', $value);
+                $value = str_replace(array(',', self::CSV_SEPARATOR), '', $value);
             }
 
-            $io->streamWrite(PHP_EOL . implode(',', $item));
+            $io->streamWrite(PHP_EOL . implode(self::CSV_SEPARATOR, $item));
         }
 
         /**

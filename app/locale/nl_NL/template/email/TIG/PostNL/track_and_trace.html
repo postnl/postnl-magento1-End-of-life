@@ -6,7 +6,10 @@
 "var barcode":"Barcode",
 "var barcode_url":"Barcode URL",
 "store url=\"customer/account/\"":"Customer Account Url",
-"var shipment.increment_id":"Shipment Id"}
+"var shipment.increment_id":"Shipment Id",
+"var is_age_check":"Is dit een leeftijd check verzending?",
+"var is_birthday_check":"Is dit een verjaardags check verzending?",
+"var is_id_check":"Is dit een id check verzending?"}
 @-->
 
 <body style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
@@ -28,6 +31,15 @@
                         <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Beste heer/mevrouw {{htmlescape var=$order.getCustomerName()}},</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Volg uw pakket op <a href="{{var barcode_url}}" target="_blank">PostNL.nl</a> om te zien wanneer PostNL het pakket bij u bezorgt. <p>
+                        {{if is_age_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij uw leeftijd van 18 jaar of ouder hebben kunnen verifiëren op basis van uw legitimatiebewijs.<p>
+                        {{/if}}
+                        {{if is_birthday_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als wij uw geboortedatum hebben kunnen verifiëren op basis van uw legitimatiebewijs.<p>
+                        {{/if}}
+                        {{if is_id_check}}
+                            <p style="font-size:11px; line-height:1.5em; margin:0;">PostNL zal de zending pas overhandigen als er een persoonsidentificatie heeft kunnen plaatsvinden op basis van uw legitimatiebewijs. Het gaat om het legitimatiebewijs dat u bij de bestelling heeft doorgegeven.<p>
+                        {{/if}}
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Met vriendelijke groet,</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
                     </td>

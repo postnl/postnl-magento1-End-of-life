@@ -63,7 +63,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Constants containing xpaths to cif configuration options.
      */
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
+    const XPATH_DUTCH_CUSTOMER_CODE         = 'postnl/cif/dutch_customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
+    const XPATH_DUTCH_CUSTOMER_NUMBER       = 'postnl/cif/dutch_customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
     const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif_globalpack_settings/global_barcode_range';
@@ -142,6 +144,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const DEFAULT_HS_TARIFF = '000000';
 
     /**
+     * Can we use the dutch address (BE -> NL shipments only)
+     */
+    const XPATH_USE_DUTCH_ADDRESS = 'postnl/cif_address/use_dutch_address';
+
+    /**
      * Array containing possible address types.
      *
      * N.B. the value of the return and alternative sender addresses were switched in v1.5.0.
@@ -155,6 +162,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Collection'  => '04',
         'Return'      => '08',
         'Delivery'    => '09', // Post office address. For use with PakjeGemak.
+        'Dutch'       => '02',
     );
 
     /**
@@ -280,6 +288,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'Characteristic' => '118',
                 'Option'         => '006',
             ),
+        ),
+        'AgeCheck' => array(
+            'Characteristic' => '014',
+            'Option'         => '002',
+        ),
+        'BirthdayCheck' => array(
+            'Characteristic' => '016',
+            'Option'         => '002',
+        ),
+        'IDCheck' => array(
+            'Characteristic' => '012',
+            'Option'         => '002',
         ),
     );
 
@@ -883,6 +903,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
 
             $customer = array_merge($customer, $additionalCustomerData);
+
+            if (
+                $this->getHelper()->getDomesticCountry() == 'BE' &&
+                $shipment->getShippingAddress()->getCountryId() == 'NL' &&
+                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts() &&
+                Mage::getStoreConfigFlag(self::XPATH_USE_DUTCH_ADDRESS)
+            ) {
+                $customer['CustomerCode'] = $this->_getDutchCustomerCode();
+                $customer['CustomerNumber'] = $this->_getDutchCustomerNumber();
+                $customer['Address'] = $this->_getAddress('Dutch');
+            }
         }
 
         return $customer;
@@ -962,8 +993,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
             'CollectionTimeStampStart' => '',
-            'DownPartnerBarcode'       => '',
-            'DownPartnerID'            => '',
+            'DownPartnerBarcode'       => $postnlShipment->getDownPartnerBarcode(),
+            'DownPartnerID'            => $postnlShipment->getDownPartnerId(),
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Contacts'                 => array(
                 'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
@@ -1024,6 +1055,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $productOptions = $this->_getProductOptions($postnlShipment);
         if ($productOptions) {
             $shipmentData['ProductOptions'] = $productOptions;
+        }
+
+        if ($postnlShipment->isBirthdayCheckShipment()) {
+            $customerDob = $order->getCustomerDob();
+            $customerDobObject = new DateTime($customerDob, new DateTimeZone('UTC'));
+            $customerDobObject->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $shipmentData['ReceiverDateOfBirth'] = $customerDobObject->format('d-m-Y');
+        }
+
+        /**
+         * @source https://developer.postnl.nl/apis/confirming-webservice/documentation#toc-14
+         */
+        if ($postnlShipment->isIDCheckShipment()) {
+            $expirationDate = $postnlShipment->getIdcheckExpirationDate();
+            $expirationDateObject = new DateTime($expirationDate, new DateTimeZone('UTC'));
+            $expirationDateObject->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $shipmentData['IDExpiration'] = $expirationDateObject->format('d-m-Y');
+            $shipmentData['IDNumber'] = $postnlShipment->getIdcheckNumber();
+            $shipmentData['IDType'] = $postnlShipment->getIdcheckType();
         }
 
         /**
@@ -1145,7 +1197,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Determine which address to use. Currently only 'Sender', 'Alternative', 'PakjeGemak' and 'Receiver' are fully
+         * Determine which address to use. Currently only 'Sender', 'Alternative', 'PakjeGemak', 'Receiver' and 'Dutch' are fully
          * supported.
          */
         $streetData = false;
@@ -1225,6 +1277,37 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 $address = new Varien_Object($returnAddressData);
+                break;
+            case 'Dutch':
+                /**
+                 * Get all cif_address fields with the 'dutch_address_' prefix as an array and convert that to a
+                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
+                 */
+                $dutchAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+
+                $streetData = array(
+                    'streetname'           => $dutchAddress['dutch_address_streetname'],
+                    'housenumber'          => $dutchAddress['dutch_address_housenumber'],
+                    'housenumberExtension' => $dutchAddress['dutch_address_housenumber_extension'],
+                    'fullStreet'           => '',
+                );
+
+                $dutchAddressData = array();
+                foreach($dutchAddress as $field => $value) {
+                    if (strpos($field, 'dutch_address_') === false) {
+                        continue;
+                    }
+
+                    $dutchAddressData[substr($field, 14)] = $value;
+                }
+
+                /**
+                 * Dutch is mandatory.
+                 */
+                $dutchAddressData['country'] = 'NL';
+
+                $address = new Varien_Object($dutchAddressData);
                 break;
             case 'PakjeGemak': //no break
             case 'Receiver': //no break
@@ -1885,6 +1968,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * Gets the dutch customer code from system/config
+     *
+     * @return string
+     */
+    protected function _getDutchCustomerCode()
+    {
+        $storeId = $this->getStoreId();
+        $customerCode = (string) Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_CODE, $storeId);
+
+        return $customerCode;
+    }
+
+    /**
      * Gets the customer number from system/config
      *
      * @return string
@@ -1893,6 +1989,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $customerNumber = (string) Mage::getStoreConfig(self::XPATH_CUSTOMER_NUMBER, $storeId);
+
+        return $customerNumber;
+    }
+
+    /**
+     * Gets the dutch customer number from system/config
+     *
+     * @return string
+     */
+    protected function _getDutchCustomerNumber()
+    {
+        $storeId = $this->getStoreId();
+        $customerNumber = (string) Mage::getStoreConfig(self::XPATH_DUTCH_CUSTOMER_NUMBER, $storeId);
 
         return $customerNumber;
     }

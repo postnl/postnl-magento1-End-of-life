@@ -45,17 +45,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Xpath to delivery options enabled config settings.
      */
     const XPATH_DELIVERY_OPTIONS_ACTIVE    = 'postnl/delivery_options/delivery_options_active';
-    const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options/delivery_options_be_active';
+    const XPATH_DELIVERY_OPTIONS_BE_ACTIVE = 'postnl/delivery_options_int/delivery_options_be_active';
+    const XPATH_USE_DUTCH_PRODUCTS         = 'postnl/cif_labels_and_confirming/use_dutch_products';
 
     /**
      * Xpaths to various possible delivery option settings.
      */
     const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
-    const XPATH_ENABLE_PAKJEGEMAK_BE            = 'postnl/delivery_options/enable_pakjegemak_be';
+    const XPATH_ENABLE_PAKJEGEMAK_BE            = 'postnl/delivery_options_int/enable_pakjegemak_be';
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
     const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
-    const XPATH_ENABLE_DELIVERY_DAYS_BE         = 'postnl/delivery_options/enable_delivery_days_be';
+    const XPATH_ENABLE_DELIVERY_DAYS_BE         = 'postnl/delivery_options_int/enable_delivery_days_be';
     const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
     const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
@@ -64,7 +65,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options/allow_sunday_sorting_be';
+    const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
     const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
@@ -74,6 +75,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_SUNDAY_DELIVERY             = 'postnl/delivery_options/enable_sunday_delivery';
     const XPATH_ENABLE_SAMEDAY_DELIVERY            = 'postnl/delivery_options/enable_sameday_delivery';
     const XPATH_ENABLE_FOOD_DELIVERY               = 'postnl/delivery_options/enable_food_delivery';
+    const XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY     = 'postnl/delivery_options/enable_birthday_check_delivery';
+    const XPATH_ENABLE_ID_CHECK_DELIVERY           = 'postnl/delivery_options/enable_id_check_delivery';
+    const XPATH_ENABLE_AGE_CHECK_DELIVERY          = 'postnl/delivery_options/enable_age_check_delivery';
     const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
@@ -136,6 +140,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const FOOD_TYPE_COOL_PRODUCTS = 2;
 
     /**
+     * The two supported validation delivery types.
+     */
+    const IDCHECK_TYPE_AGE = 3;
+    const IDCHECK_TYPE_BIRTHDAY = 4;
+    const IDCHECK_TYPE_ID = 5;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -156,6 +167,28 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         '3084',
     );
 
+    protected $_idCheckProductCodes = array(
+        '3442',
+        '3445',
+        '3448',
+        '3451',
+    );
+
+    protected $_ageCheckProductCodes = array(
+        '3437',
+        '3438',
+        '3449',
+        '3443',
+        '3446',
+    );
+
+    protected $_birthdayCheckProductCodes = array(
+        '3440',
+        '3444',
+        '3447',
+        '3450',
+    );
+
     /**
      * @var null
      */
@@ -170,6 +203,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @var null
      */
     protected $_configMinQty = null;
+
+    /**
+     * @var array
+     */
+    protected $_dates = array();
 
     /**
      * @return int
@@ -670,12 +708,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param StdClass[] $timeframes
      * @param int        $storeId
      * @param string     $destinationCountry
+     * @param null       $firstDeliveryDate
      *
      * @return false|StdClass[]
-     * @throws TIG_PostNL_Exception
+     * @internal param null $deliveryDate
+     *
+     * @todo     Add unit tests
      */
-    public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL')
+    public function filterTimeFrames($timeframes, $storeId, $destinationCountry = 'NL', $firstDeliveryDate = null)
     {
+        if ($firstDeliveryDate === null) {
+            $firstDeliveryDate = new DateTime('now', new DateTimeZone('UTC'));
+        } else {
+            $firstDeliveryDate = new DateTime($firstDeliveryDate, new DateTimeZone('UTC'));
+        }
+
         /**
          * Retrieves required config values.
          */
@@ -687,15 +734,53 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $deliveryDateArray = $helper->getValidDeliveryDaysArray($storeId);
         $today = new DateTime('now', new DateTimeZone('UTC'));
+        $tomorrow = clone $today;
+        $tomorrow->add(new DateInterval('P1D'));
+
+        $helper->setUseFoodCutOffTime(false);
+        $isPastCutoff = $helper->isPastCutOff($today, $storeId);
 
         foreach ($timeframes as $key => $timeFrame) {
             $forceSameDayTimeFrame = false;
             $timeFrameDate = new DateTime($timeFrame->Date, new DateTimeZone('UTC'));
 
             /**
-             * Check if the time frame's date is today. If so, it is probably a same day delivery time frame.
+             * If this is the first possible deliverydate, and we are after the last cutoff time, then filter all
+             * timeframes that are not Sameday.
              */
-            if ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
+            if (
+                $timeFrameDate->format('Y-m-d') == $firstDeliveryDate->format('Y-m-d') &&
+                $firstDeliveryDate->format('Y-m-d') == $tomorrow->format('Y-m-d') &&
+                $this->_canUseSameDayDelivery() &&
+                $isPastCutoff
+            ) {
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    $sameDay = false;
+
+                    /**
+                     * Same day delivery timeframes may have multiple 'options'. Only one of these needs to actually be
+                     * 'Sameday'.
+                     */
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if ($timeFrameTimeFrameOption == 'Sameday') {
+                            $sameDay = true;
+                        }
+                    }
+
+                    if (!$sameDay) {
+                        unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                    }
+                }
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
+
+                /**
+                 * Check if the time frame's date is today, or the first shipping date. If so, it is probably a
+                 * same day delivery time frame.
+                 */
+            } elseif ($timeFrameDate->format('Y-m-d') == $today->format('Y-m-d') && $this->canUseSameDayDelivery(true)) {
                 /**
                  * Check for each sub-timeframe if it is indeed same day delivery.
                  */
@@ -727,6 +812,25 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                  */
                 unset($timeframes[$key]);
                 continue;
+            } elseif (
+                $timeFrameDate->format('Y-m-d') != $today->format('Y-m-d') &&
+                !$this->canUseTimeframes() &&
+                !$this->quoteIsFood()
+            ) {
+                $allowedOptions = array('Daytime', 'Sunday', 'Monday');
+                foreach ($timeFrame->Timeframes->TimeframeTimeFrame as $timeFrameTimeFrameKey => $timeFrameTimeFrame) {
+                    foreach ($timeFrameTimeFrame->Options->string as $timeFrameTimeFrameOption) {
+                        if (!in_array($timeFrameTimeFrameOption, $allowedOptions)) {
+                            unset($timeFrame->Timeframes->TimeframeTimeFrame[$timeFrameTimeFrameKey]);
+                            break;
+                        }
+                    }
+                }
+
+                /**
+                 * Reset the indices of the TimeframeTimeFrame's array.
+                 */
+                $timeFrame->Timeframes->TimeframeTimeFrame = array_values($timeFrame->Timeframes->TimeframeTimeFrame);
             }
 
             $timeFrameDay = $timeFrameDate->format('N');
@@ -741,7 +845,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     /**
                      * If:
                      * - Sunday delivery is not active
-                     * - Sunday sorting (monday delivery) IS active
+                     * - Sunday sorting (monday delivery) IS NOT active
                      * - Today is saturday
                      * - We are after the cut-off time
                      *
@@ -750,6 +854,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     if (
                         !$sundayDelivery &&
                         $sundaySorting &&
+                        !array_key_exists(6, $deliveryDateArray) &&
                         $today->format('N') == TIG_PostNL_Helper_Date::SATURDAY &&
                         $helper->isPastCutOff($today, $storeId)
                     ) {
@@ -1244,9 +1349,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean $storeId
      * @param boolean $checkQuote
      *
-     * @return boolean
+     * @param mixed   $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak($storeId = false, $checkQuote = true)
+    public function canUsePakjeGemak($storeId = false, $checkQuote = true, $country = false)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
@@ -1257,6 +1364,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $quote = $this->getQuote();
         if ($quote) {
             $registryKey .= '_' . $quote->getId();
+        }
+
+        if (!$country) {
+            $registryKey .= '_' . $country;
         }
 
         /**
@@ -1279,24 +1390,33 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $cache = $this->getCache();
+        $hasPostnlDeliveryOptionsCanUsePakjeGemak = 'hasPostnlDeliveryOptionsCanUsePakjeGemak';
+        $getPostnlDeliveryOptionsCanUsePakjeGemak = 'getPostnlDeliveryOptionsCanUsePakjeGemak';
+        $setPostnlDeliveryOptionsCanUsePakjeGemak = 'setPostnlDeliveryOptionsCanUsePakjeGemak';
 
-        if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
+        if ($country) {
+            $hasPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+            $getPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+            $setPostnlDeliveryOptionsCanUsePakjeGemak .= $country;
+        }
+
+        if ($cache && $cache->$hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
             /**
              * Check if the result of this method has been cached in the PostNL cache.
              */
-            $allowed = $cache->getPostnlDeliveryOptionsCanUsePakjeGemak();
+            $allowed = $cache->$getPostnlDeliveryOptionsCanUsePakjeGemak();
 
             Mage::register($registryKey, $allowed);
             return $allowed;
         }
 
-        $allowed = $this->_canUsePakjeGemak();
+        $allowed = $this->_canUsePakjeGemak($country);
 
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
              */
-            $cache->setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
+            $cache->$setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
                   ->saveCache();
         }
 
@@ -1393,9 +1513,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if PakjeGemak is available.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    protected function _canUsePakjeGemak()
+    protected function _canUsePakjeGemak($country = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
@@ -1403,15 +1525,22 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Check if PakjeGemak has ben enabled in the configuration.
          */
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
-        if (!$enabled) {
+        if ($country && $country == 'NL' && !$enabled) {
             return false;
         }
 
         /**
-         * PakjeGemak is only available when sending from the Netherlands.
+         * Check if PakjeGemak is enabled for Belgium
          */
-        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($senderCountry != 'NL') {
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_BE, $storeId);
+        if ($country && $country == 'BE' && !$enabled) {
+            return false;
+        }
+
+        /**
+         * PakjeGemak is only available when sending using Dutch products.
+         */
+        if (!$this->canUseDutchProducts()) {
             return false;
         }
 
@@ -1477,6 +1606,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * Check if these options are allowed for this specific quote.
              */
             $allowed = $this->canUsePakjeGemakExpressForQuote();
+        }
+
+        if ($allowed && $checkQuote && $this->quoteHasIDCheckProducts($quote)) {
+            $allowed = false;
         }
 
         if ($cache) {
@@ -1745,8 +1878,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Pakketautomaat is only available when sending from the Netherlands.
          */
-        $senderCountry = Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($senderCountry != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             return false;
         }
 
@@ -1816,7 +1948,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
             $storeId = Mage::app()->getStore()->getId();
@@ -2154,6 +2286,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $allowed = true;
         }
 
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
+        }
+
         return $allowed;
     }
 
@@ -2195,30 +2331,23 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
-        if ($this->getDomesticCountry() != 'NL') {
-            $allowed = false;
-        } else {
-            $storeId = Mage::app()->getStore()->getId();
+        $allowedXpathNl = self::XPATH_ALLOW_SUNDAY_SORTING;
+        $allowedXpathBe = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
 
-            $quote = $this->getQuote();
+        $storeId = Mage::app()->getStore()->getId();
 
-            $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING;
-            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
-                $allowedXpath = self::XPATH_ALLOW_SUNDAY_SORTING_BE;
-            }
-
-            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
-        }
+        $allowedNl = Mage::getStoreConfigFlag($allowedXpathNl, $storeId);
+        $allowedBe = Mage::getStoreConfigFlag($allowedXpathBe, $storeId);
 
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
              */
-            $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
+            $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowedNl || $allowedBe)
                   ->saveCache();
         }
 
-        return $allowed;
+        return $allowedNl || $allowedBe;
     }
 
     /**
@@ -2257,7 +2386,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $storeId = Mage::app()->getStore()->getId();
         $foodDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_FOOD_DELIVERY, $storeId);
 
-        if ($this->getDomesticCountry() == 'NL'
+        if ($this->canUseDutchProducts() == 'NL'
             && $foodDeliveryEnabled
             && $this->_getFoodProductOptionsAvailable($storeId)
         ) {
@@ -2276,7 +2405,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if at least one food product code is avaialble in the config.
+     * Check if at least one food product code is available in the config.
      *
      * @param null $storeId
      *
@@ -2294,6 +2423,154 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         foreach ($this->_foodProductCodes as $foodProductCode) {
             if (in_array($foodProductCode, $availableProductOptions)) {
+                $available = true;
+                break;
+            }
+        }
+
+        return $available;
+    }
+
+    /**
+     * Determines if id check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseIdCheckDelivery()
+    {
+        return $this->_canUseIdCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if ID Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseIdCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseIdCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseIdCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_ID_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_idCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseIdCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if age check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseAgeCheckDelivery()
+    {
+        return $this->_canUseAgeCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if Age Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseAgeCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseAgeCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseAgeCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_AGE_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_ageCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseAgeCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Determines if birthday check delivery is allowed, by checking the configuration.
+     *
+     * @return bool
+     */
+    public function canUseBirthdayCheckDelivery()
+    {
+        return $this->_canUseBirthdayCheckDelivery();
+    }
+
+    /**
+     * Checks the configured (and possibly cached) options to determine if Birthday Check Delivery is allowed
+     *
+     * @return bool
+     */
+    protected function _canUseBirthdayCheckDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseBirthdayCheckDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseBirthdayCheckDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $idCheckDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY, $storeId);
+
+        if ($idCheckDeliveryEnabled && $this->_getCheckProductOptionsAvailable($this->_birthdayCheckProductCodes,$storeId)) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseBirthdayCheckDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check if at least one Check product code is available in the config.
+     *
+     * @param null $storeId
+     * @param array $productCodes
+     *
+     * @return bool
+     */
+    protected function _getCheckProductOptionsAvailable($productCodes, $storeId = null)
+    {
+        $available = false;
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $availableProductOptions = explode(',', Mage::getStoreConfig(self::XPATH_AVAILABLE_PRODUCT_OPTIONS, $storeId));
+
+        foreach ($productCodes as $idCheckProductCode) {
+            if (in_array($idCheckProductCode, $availableProductOptions)) {
                 $available = true;
                 break;
             }
@@ -2345,15 +2622,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $storeId = Mage::app()->getStore()->getId();
 
-        if ($this->getDomesticCountry() != 'NL'
-            || ($this->getQuote()
-                && $this->getQuote()->getShippingAddress()
-                && $this->getQuote()->getShippingAddress()->getCountryId() != 'NL'
-            )
-        ) {
+        if (!$this->canUseDutchProducts()) {
             $allowed = false;
         } else {
             $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+        }
+
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
         }
 
         if ($cache) {
@@ -2362,6 +2638,32 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              */
             $cache->setPostnlDeliveryOptionsCanUseSameDayDelivery($allowed)
                   ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    public function canUseSundayDelivery()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseSundayDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseSundayDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $allowed = Mage::getStoreConfig(self::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+
+        if ($allowed && $this->quoteHasIDCheckProducts()) {
+            $allowed = false;
+        }
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseSundayDelivery($allowed)
+                ->saveCache();
         }
 
         return $allowed;
@@ -2380,7 +2682,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.
          */
-        $registryKey = 'can_use_delivery_options';
+        $registryKey = 'can_use_delivery_options_' . $this->getDomesticCountry();
         if ($quote && $quote->getId()) {
             $registryKey .= '_quote_id_' . $quote->getId();
         }
@@ -2396,9 +2698,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
         /**
-         * Delivery options are only available when shipping from the Netherlands.
+         * Delivery options are only available when shipping from the Netherlands or Belgium.
          */
-        if ($this->getDomesticCountry() != 'NL') {
+        if (!$this->getDomesticCountry() == 'NL' || !$this->getDomesticCountry() == 'BE') {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2409,7 +2711,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0237',
                     'message' => $this->__(
-                        'Delivery options are only available when shipping from the Netherlands.'
+                        'Delivery options are only available when shipping from the Netherlands or Belgium.'
                     ),
                 )
             );
@@ -2500,9 +2802,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0121',
                     'message' => $this->__(
-                                     'Delivery options are not allowed for one or more itme sin the cart based on the' .
-                                     ' configured stock options.'
-                                 ),
+                         'Delivery options are not allowed for one or more itme sin the cart based on the' .
+                         ' configured stock options.'
+                     ),
                 )
             );
             Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
@@ -2569,6 +2871,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 return false;
             }
+        }
+
+        if (
+            $quote->getShippingAddress()->getCountryId() !== null &&
+            $quote->getShippingAddress()->getCountryId() == 'NL' &&
+            $this->getDomesticCountry() == 'NL' &&
+            $quote->getShippingAddress()->getCountryId() == 'BE' &&
+            $this->getDomesticCountry() == 'BE'
+        ) {
+            return false;
         }
 
         return true;
@@ -3067,6 +3379,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $allowed = $this->_canShowOnlyStatedAddressOption();
 
+        if ($allowed && $quote && $this->quoteHasIDCheckProducts($quote)) {
+            $allowed = false;
+        }
+
         if ($cache) {
             /**
              * Save the result in the PostNL cache.
@@ -3106,6 +3422,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress->getCountryId() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * This is only allowed for non-NL to NL shipments when dutch products is enabled.
+         */
+        if ($this->getDomesticCountry() != 'NL' && !$this->canUseDutchProducts()) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -3307,9 +3631,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $isActive = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        $isActiveNL = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        $isActiveBE = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $storeId);
 
-        return $isActive;
+        return $isActiveNL || $isActiveBE;
     }
 
     /**
@@ -3403,6 +3728,83 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allow;
+    }
 
+    /**
+     * Check if we can use Dutch products.
+     *
+     * @param bool $useQuote
+     *
+     * @return bool|null
+     */
+    public function canUseDutchProducts($useQuote = true)
+    {
+        $registryKey = 'can_use_dutch_products';
+
+        if ($useQuote && $this->getQuote()) {
+            $registryKey .= '_' . $this->getQuote()->getId();
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * The Netherlands is always allowed.
+         */
+        if ($this->getDomesticCountry() == 'NL') {
+            Mage::register($registryKey, true);
+            return true;
+        }
+
+        /**
+         * In some cases Belgium is also allowed. Other countries are never allowed.
+         */
+        if ($this->getDomesticCountry() != 'BE') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If the user enabled the option "Use dutch products", and is in Belgium, it is allowed to use Dutch products.
+         */
+        $use_dutch_products = Mage::getStoreConfig(self::XPATH_USE_DUTCH_PRODUCTS, Mage::app()->getStore()->getId());
+        if ($use_dutch_products == '1') {
+            Mage::register($registryKey, true);
+            return true;
+        }
+
+        /**
+         * If both the user and buyer are in Belgium, it is allowed to use Dutch products.
+         */
+        if ($useQuote) {
+            $shippingCountry = $this->getQuote()->getShippingAddress()->getCountryId();
+            if ($shippingCountry == 'BE') {
+                Mage::register($registryKey, true);
+
+                return true;
+            }
+        }
+
+        Mage::register($registryKey, false);
+        return false;
+    }
+
+    /**
+     * @param $dateString
+     * @param $storeId
+     *
+     * @return DateTime
+     */
+    public function getDateTime($dateString, $storeId = null)
+    {
+        if (!array_key_exists($dateString, $this->_dates)) {
+            $date   = new DateTime('now', $this->getStoreTimeZone($storeId, true));
+            $date->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $this->_dates[$dateString] = $date;
+        }
+
+        return $this->_dates[$dateString];
     }
 }

@@ -76,7 +76,7 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if ($_isDomesticShipment || $_isBelgium): ?>
+            <?php if ((isset($_isDomesticShipment) && $_isDomesticShipment) || $_isBelgium): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
                     <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>

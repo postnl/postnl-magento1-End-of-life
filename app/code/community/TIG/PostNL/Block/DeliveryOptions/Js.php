@@ -72,6 +72,18 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptio
     }
 
     /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $version =  $helper->getModuleVersion();
+
+        return $version;
+    }
+
+    /**
      * Render the template if allowed.
      *
      * @return string

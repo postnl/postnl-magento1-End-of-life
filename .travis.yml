@@ -1,0 +1,39 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - hhvm
+
+env:
+  - MAGENTO_VERSION=magento-mirror-1.9.3.1
+  - MAGENTO_VERSION=magento-mirror-1.9.2.4
+  - MAGENTO_VERSION=magento-mirror-1.8.1.0
+  - MAGENTO_VERSION=magento-mirror-1.8.0.0
+  - MAGENTO_VERSION=magento-mirror-1.7.0.2
+
+matrix:
+  include:
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.9.2.4 ENABLE_FLAT_CATALOG=true
+
+  fast_finish: true
+
+  allow_failures:
+  - php: nightly
+
+before_script:
+  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ]; then phpenv config-rm xdebug.ini; fi
+  - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
+  - export PATH=$PATH:$HOME/.composer/vendor/bin
+  - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
+
+script: bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
+
+cache:
+  directories:
+  - $HOME/.composer

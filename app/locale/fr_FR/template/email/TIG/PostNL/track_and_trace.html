@@ -1,0 +1,40 @@
+<!--@subject PostNL - Information track & trace pour votre envoi {{var shipment.increment_id}} @-->
+<!--@vars
+{"store url=\"\"":"URL magasin",
+"var logo_url":"URL image logo e-mail",
+"var logo_alt":"Alt image logo e-mail",
+"var barcode":"Code-barres",
+"var barcode_url":"URL code-barres",
+"store url=\"customer/account/\"":"URL compte client",
+"var shipment.increment_id":"Identifiant envoi"}
+@-->
+
+<body style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<div style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+    <tr>
+        <td align="center" valign="top" style="padding:20px 0 20px 0">
+            <!-- [ header starts here] -->
+            <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
+                <tr>
+                    <td valign="top">
+                        <a href='{{store url=""}}' style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
+                        <img src='{{skin url="images/TIG/PostNL/postnl_email_logo.png" _area="frontend"}}' alt="PostNL" border="0" style="float:right"/>
+                    </td>
+                </tr>
+                <!-- [ middle starts here] -->
+                <tr>
+                    <td valign="top">
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Madame, Monsieur {{htmlescape var=$order.getCustomerName()}},</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Votre commande de {{var store.getFrontendName()}}, avec le code-barres {{var barcode}} a été expédiée aujourd’hui.</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Suivez votre colis sur <a href="{{var barcode_url}}" target="_blank">PostNL.nl</a> pour voir quand PostNL vous livrera celui-ci..<p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Cordialement,</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</div>
+</body>

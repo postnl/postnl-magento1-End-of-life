@@ -103,12 +103,20 @@
  * @method boolean                        getIsSameDayShipment()
  * @method boolean                        getIsFoodShipment()
  * @method boolean                        getIsCooledShipment()
+ * @method boolean                        getIsAgeCheckShipment()
+ * @method boolean                        getIsBirthdayCheckShipment()
+ * @method boolean                        getIsIDCheckShipment()
+ * @method boolean                        getIdcheckExpirationDate()
+ * @method boolean                        getIdcheckNumber()
+ * @method boolean                        getIdcheckType()
  * @method int                            getReturnLabelsPrinted()
  * @method string                         getExpectedDeliveryTimeStart()
  * @method string                         getExpectedDeliveryTimeEnd()
  * @method int                            getReturnPhase()
  * @method string                         getPgLocationCode()
  * @method string                         getPgRetailNetworkId()
+ * @method string                         getDownPartnerId()
+ * @method string                         getDownPartnerBarcode()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -145,6 +153,9 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsSameDayShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsFoodShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsCooledShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsAgeCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsBirthdayCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsIDCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -156,6 +167,8 @@
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcodeUrl(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgLocationCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPgRetailNetworkId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDownPartnerId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDownPartnerBarcode(string $value)
  *
  * @method boolean                        hasBarcodeUrl()
  * @method boolean                        hasPostnlOrder()
@@ -182,6 +195,9 @@
  * @method boolean                        hasIsSameDayShipment()
  * @method boolean                        hasIsFoodShipment()
  * @method boolean                        hasIsCooledShipment()
+ * @method boolean                        hasIsAgeCheckShipment()
+ * @method boolean                        hasIsBirthdayCheckShipment()
+ * @method boolean                        hasIsIDCheckShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -220,49 +236,61 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Possible shipment types.
      */
-    const SHIPMENT_TYPE_DOMESTIC     = 'domestic';
-    const SHIPMENT_TYPE_DOMESTIC_COD = 'domestic_cod';
-    const SHIPMENT_TYPE_AVOND        = 'avond';
-    const SHIPMENT_TYPE_AVOND_COD    = 'avond_cod';
-    const SHIPMENT_TYPE_PG           = 'pg';
-    const SHIPMENT_TYPE_PG_COD       = 'pg_cod';
-    const SHIPMENT_TYPE_PGE          = 'pge';
-    const SHIPMENT_TYPE_PGE_COD      = 'pge_cod';
-    const SHIPMENT_TYPE_PA           = 'pa';
-    const SHIPMENT_TYPE_EPS          = 'eps';
-    const SHIPMENT_TYPE_GLOBALPACK   = 'globalpack';
-    const SHIPMENT_TYPE_BUSPAKJE     = 'buspakje';
-    const SHIPMENT_TYPE_SUNDAY       = 'sunday';
-    const SHIPMENT_TYPE_MONDAY       = 'monday';
-    const SHIPMENT_TYPE_SAMEDAY      = 'sameday';
-    const SHIPMENT_TYPE_FOOD         = 'food';
-    const SHIPMENT_TYPE_COOLED       = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
+    const SHIPMENT_TYPE_DOMESTIC      = 'domestic';
+    const SHIPMENT_TYPE_DOMESTIC_COD  = 'domestic_cod';
+    const SHIPMENT_TYPE_AVOND         = 'avond';
+    const SHIPMENT_TYPE_AVOND_COD     = 'avond_cod';
+    const SHIPMENT_TYPE_PG            = 'pg';
+    const SHIPMENT_TYPE_PG_COD        = 'pg_cod';
+    const SHIPMENT_TYPE_PGE           = 'pge';
+    const SHIPMENT_TYPE_PGE_COD       = 'pge_cod';
+    const SHIPMENT_TYPE_PA            = 'pa';
+    const SHIPMENT_TYPE_EPS           = 'eps';
+    const SHIPMENT_TYPE_GLOBALPACK    = 'globalpack';
+    const SHIPMENT_TYPE_BUSPAKJE      = 'buspakje';
+    const SHIPMENT_TYPE_SUNDAY        = 'sunday';
+    const SHIPMENT_TYPE_MONDAY        = 'monday';
+    const SHIPMENT_TYPE_SAMEDAY       = 'sameday';
+    const SHIPMENT_TYPE_FOOD          = 'food';
+    const SHIPMENT_TYPE_COOLED        = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
+    const SHIPMENT_TYPE_AGECHECK      = 'AgeCheck';
+    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
+    const SHIPMENT_TYPE_IDCHECK       = 'IDCheck';
 
     /**
      * Xpaths to default product options settings.
      */
-    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
-    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cod/default_cod_product_option';
-    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/grid/default_evening_product_option';
-    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cod/default_evening_cod_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/grid/default_pakjegemak_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION  = 'postnl/grid/default_pakjegemak_be_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION = 'postnl/cod/default_pakjegemak_cod_product_option';
-    const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/grid/default_pge_product_option';
-    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cod/default_pge_cod_product_option';
-    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/delivery_options/default_pakketautomaat_product_option';
-    const XPATH_DEFAULT_FOOD_PRODUCT_OPTION           = 'postnl/delivery_options/default_food_product_option';
-    const XPATH_DEFAULT_COOLED_PRODUCT_OPTION         = 'postnl/delivery_options/default_cooled_product_option';
-    const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/grid/default_eu_product_option';
-    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_globalpack_settings/default_global_product_option';
-    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/grid/default_buspakje_product_option';
-    const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/grid/use_alternative_default';
-    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/grid/alternative_default_max_amount';
-    const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/grid/alternative_default_option';
-    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION    = 'postnl/grid/default_stated_address_only_product_option';
-    const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION         = 'postnl/grid/default_sunday_product_option';
-    const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION        = 'postnl/grid/default_sameday_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION                  = 'postnl/grid/default_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS      = 'postnl/grid/default_product_option_netherlands';
+    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION              = 'postnl/cod/default_cod_product_option';
+    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION                   = 'postnl/grid/default_evening_product_option';
+    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION               = 'postnl/cod/default_evening_cod_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION                = 'postnl/grid/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION          = 'postnl/grid/default_pakjegemak_nl_be_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION          = 'postnl/grid/default_pakjegemak_be_be_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION = 'postnl/grid/default_pakjegemak_be_not_insured_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION            = 'postnl/cod/default_pakjegemak_cod_product_option';
+    const XPATH_DEFAULT_PGE_PRODUCT_OPTION                       = 'postnl/grid/default_pge_product_option';
+    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION                   = 'postnl/cod/default_pge_cod_product_option';
+    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION            = 'postnl/delivery_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_FOOD_PRODUCT_OPTION                      = 'postnl/delivery_options/default_food_product_option';
+    const XPATH_DEFAULT_COOLED_PRODUCT_OPTION                    = 'postnl/delivery_options/default_cooled_product_option';
+    const XPATH_DEFAULT_AGECHECK_DELIVERY_PRODUCT_OPTION         = 'postnl/grid/default_age_check_delivery_product_option';
+    const XPATH_DEFAULT_AGECHECK_PICKUP_PRODUCT_OPTION           = 'postnl/grid/default_age_check_pickup_product_option';
+    const XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION    = 'postnl/grid/default_birthday_check_delivery_product_option';
+    const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
+    const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
+    const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
+    const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
+    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
+    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION                  = 'postnl/grid/default_buspakje_product_option';
+    const XPATH_USE_ALTERNATIVE_DEFAULT                          = 'postnl/grid/use_alternative_default';
+    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT                   = 'postnl/grid/alternative_default_max_amount';
+    const XPATH_ALTERNATIVE_DEFAULT_OPTION                       = 'postnl/grid/alternative_default_option';
+    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION               = 'postnl/grid/default_stated_address_only_product_option';
+    const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION                    = 'postnl/grid/default_sunday_product_option';
+    const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION                   = 'postnl/grid/default_sameday_product_option';
 
     /**
      * Xpath to weight per parcel config setting.
@@ -802,6 +830,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
         }
 
+        if ($this->isAgeCheckShipment()) {
+            return self::SHIPMENT_TYPE_AGECHECK;
+        }
+
+        if ($this->isBirthdayCheckShipment()) {
+            return self::SHIPMENT_TYPE_BIRTHDAYCHECK;
+        }
+
+        if ($this->isIDCheckShipment()) {
+            return self::SHIPMENT_TYPE_IDCHECK;
+        }
+
         if ($this->isPgeShipment()) {
             return self::SHIPMENT_TYPE_PGE;
         }
@@ -1220,7 +1260,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_PG:
                 if ($this->isBelgiumShipment()) {
-                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_PRODUCT_OPTION;
+                    if ($this->getHelper()->getDomesticCountry() == 'BE') {
+                        $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION;
+                    } else {
+                        if ($this->getHelper()->canUsePakjegemakBeNotInsured($this->getStoreId())) {
+                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
+                        } else {
+                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
+                        }
+                    }
                 } else {
                     $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
                 }
@@ -1264,13 +1312,34 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case self::SHIPMENT_TYPE_COOLED:
                 $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
                 break;
+            case self::SHIPMENT_TYPE_AGECHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $xpath = self::XPATH_DEFAULT_AGECHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_AGECHECK_DELIVERY_PRODUCT_OPTION;
+                }
+                break;
+            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION;
+                }
+                break;
+            case self::SHIPMENT_TYPE_IDCHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $xpath = self::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
+                }
+                break;
 
 
             //no default
         }
 
         /**
-         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).         *
+         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).
          */
         if (!$xpath && $postnlOrder && $postnlOrder->hasOptions()) {
             $xpath = $this->_getDefaultProductCodeXpathByOptions();
@@ -1298,7 +1367,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If we still don't have an xpath, the shipment is a regular domestic shipment.
          */
         if (!$xpath) {
-            $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
+            $helper = $this->getHelper('deliveryOptions');
+            $shippingAddress = $this->getShippingAddress();
+            if (
+                $shippingAddress->getCountryId() == 'NL' &&
+                $helper->canUseDutchProducts()
+            ) {
+                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS;
+            } else {
+                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
+            }
         }
 
         /**
@@ -1639,7 +1717,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         switch ($shipmentType) {
             case self::SHIPMENT_TYPE_DOMESTIC:
             case self::SHIPMENT_TYPE_MONDAY:
-                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
+                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat, $this->getShippingAddress()->getCountryId());
                 break;
             case self::SHIPMENT_TYPE_DOMESTIC_COD:
                 $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
@@ -1658,7 +1736,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                     $destination = $shippingAddress->getCountryId();
                 }
 
-                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat, $destination);
+                $group = 'default';
+                if ($this->isAgeCheckShipment()) {
+                    $group = 'AgeCheck';
+                } elseif ($this->isBirthdayCheckShipment()) {
+                    $group = 'BirthdayCheck';
+                } elseif ($this->isIDCheckShipment()) {
+                    $group = 'IDCheck';
+                }
+
+                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat, $destination, $group);
                 break;
             case self::SHIPMENT_TYPE_PG_COD:
                 $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
@@ -1692,6 +1779,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_FOOD:
                 $allowedProductCodes = $cifHelper->getFoodProductCodes($flat);
+                break;
+            case self::SHIPMENT_TYPE_AGECHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getAgeCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getAgeCheckProductCodes($flat);
+                }
+                break;
+            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getBirthdayCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getBirthdayCheckProductCodes($flat);
+                }
+                break;
+            case self::SHIPMENT_TYPE_IDCHECK:
+                if ($this->isPakjeGemakShipment()) {
+                    $allowedProductCodes = $cifHelper->getIDCheckPakjegemakProductCodes($flat);
+                } else {
+                    $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
+                }
                 break;
             default:
                 $allowedProductCodes = array();
@@ -2279,6 +2387,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
+        if ($domesticCountry == 'BE' && $this->getHelper('deliveryOptions')->canUseDutchProducts(false)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -2592,6 +2704,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a age check shipment.
+     *
+     * @return bool
+     */
+    public function isAgeCheckShipment()
+    {
+        if ($this->hasIsAgeCheckShipment()) {
+            return $this->getIsAgeCheckShipment();
+        }
+
+        $value = $this->isAgeCheck();
+
+        $this->setIsAgeCheckShipment($value);
+        return $value;
+    }
+
+    /**
+     * Check if this shipment is a birthday check shipment.
+     *
+     * @return bool
+     */
+    public function isBirthdayCheckShipment()
+    {
+        if ($this->hasIsBirthdayCheckShipment()) {
+            return $this->getIsBirthdayCheckShipment();
+        }
+
+        $value = $this->isBirthdayCheck();
+
+        $this->setIsAgeCheckShipment($value);
+        return $value;
+    }
+
+    /**
+     * Check if this shipment is a ID check shipment.
+     *
+     * @return bool
+     */
+    public function isIDCheckShipment()
+    {
+        if ($this->hasIsIDCheckShipment()) {
+            return $this->getIsIDCheckShipment();
+        }
+
+        $value = $this->isIDCheck();
+
+        $this->setIsIDCheckShipment($value);
+        return $value;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
@@ -2668,6 +2831,51 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_COOLED_FOOD) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a age check order.
+     *
+     * @return bool
+     */
+    public function isAgeCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_AGECHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a birthday check order.
+     *
+     * @return bool
+     */
+    public function isBirthdayCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_BIRTHDAYCHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is a ID check order.
+     *
+     * @return bool
+     */
+    public function isIDCheck()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_IDCHECK) {
             return true;
         }
 
@@ -2783,7 +2991,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Return barcodes are only available for Dutch parcel shipments.
          */
-        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment() || $this->isFoodShipment()) {
+        if (
+            $this->getShippingAddress()->getCountryId() != 'NL' ||
+            !$this->isDomesticShipment() ||
+            $this->isBuspakjeShipment() ||
+            $this->isFoodShipment()
+        ) {
             return false;
         }
 
@@ -3546,12 +3759,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0071'
             );
         }
+
+        $this->_saveDownPartnerData($shipment);
+
         $labels = $shipment->Labels->Label;
 
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
-        if ($this->isEuShipment() && !$this->_isCombiLabelShipment()) {
+        if ($this->isEuShipment()) {
             $this->setProductCode($shipment->ProductCodeDelivery);
         }
 
@@ -3934,6 +4150,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @param $shipment
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _saveDownPartnerData($shipment)
+    {
+        if (isset($shipment->DownPartnerID)
+            && isset($shipment->DownPartnerBarcode)
+            && !is_null($shipment->DownPartnerID)
+            && !is_null($shipment->DownPartnerBarcode)
+        ) {
+            try {
+                $this->setDownPartnerId($shipment->DownPartnerID);
+                $this->setDownPartnerBarcode($shipment->DownPartnerBarcode);
+            } catch (Exception $e) {
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Unable to save down partner data.'),
+                    'POSTNL-0245'
+                );
+            }
+        }
+    }
+
+    /**
      * Update the complete status history for the specified barcode.
      *
      * @param string $barcode
@@ -4197,18 +4437,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /** @noinspection PhpUndefinedMethodInspection */
         $templateVariables = array(
-            'postnlshipment'   => $this,
-            'barcode'          => $this->getMainBarcode(),
-            'barcode_url'      => $this->getBarcodeUrl(false),
-            'shipment'         => $shipment,
-            'order'            => $order,
-            'payment_html'     => $paymentBlockHtml,
-            'customer'         => $order->getCustomer(),
-            'quote'            => $order->getQuote(),
-            'shipment_comment' => '', /** @todo add last shipment comment */
-            'billing'          => $order->getBillingAddress(),
-            'shipping'         => $order->getShippingAddress(),
-            'pakje_gemak'      => $this->getPakjeGemakAddress(),
+            'postnlshipment'    => $this,
+            'barcode'           => $this->getMainBarcode(),
+            'barcode_url'       => $this->getBarcodeUrl(false),
+            'shipment'          => $shipment,
+            'order'             => $order,
+            'payment_html'      => $paymentBlockHtml,
+            'customer'          => $order->getCustomer(),
+            'quote'             => $order->getQuote(),
+            'shipment_comment'  => '', /** @todo add last shipment comment */
+            'billing'           => $order->getBillingAddress(),
+            'shipping'          => $order->getShippingAddress(),
+            'pakje_gemak'       => $this->getPakjeGemakAddress(),
+            'is_age_check'      => $this->isAgeCheckShipment(),
+            'is_birthday_check' => $this->isBirthdayCheckShipment(),
+            'is_id_check'       => $this->isIDCheckShipment(),
         );
 
         $templateVariables = new Varien_Object($templateVariables);
@@ -4432,6 +4675,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $postnlLabel->setParentId($this->getId())
                     ->setLabel(base64_encode($label->Content))
                     ->setLabelType($labelType);
+
+        /**
+         * PG BE labels are slightly bigger than the rest, so resize them back so they fix everywhere.
+         */
+        if ($this->getShipmentType() == self::SHIPMENT_TYPE_PG && $this->getShippingAddress()->getCountryId() == 'BE') {
+            $postnlLabel->setResize(true);
+        }
 
         $labels = $this->getLabels();
         $labels[] = $postnlLabel;
@@ -4781,6 +5031,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _getIsBuspakje()
     {
         if (!$this->isDomesticShipment()
+            || $this->getShippingAddress()->getCountryId() != 'NL'
             || $this->isPakketautomaatShipment()
             || $this->isPakjeGemakShipment()
             || $this->isCod()
@@ -5133,7 +5384,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Only Dutch shipments that are not COD support multi-colli shipments.
          */
-        if (!$this->isDomesticShipment() || $this->isCod()) {
+        if ($this->getShippingAddress()->getCountryId() != 'NL' || $this->isCod()) {
             return 1;
         }
 
