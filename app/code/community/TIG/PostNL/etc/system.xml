@@ -1046,10 +1046,23 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                         </alternative_sender_region>
+                        <alternative_sender_country translate="label" module="postnl">
+                            <label>Country</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_senderCountry</source_model>
+                            <backend_model>postnl_core/system_config_backend_senderCountry</backend_model>
+                            <sort_order>380</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </alternative_sender_country>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>380</sort_order>
+                            <sort_order>390</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2093,13 +2106,55 @@
                                 </country>
                             </depends>
                         </allow_streetview>
+                        <enable_id_check_delivery>
+                            <label>Enable ID check delivery (based on ID-number)</label>
+                            <comment>With this product person verification is done based on the ID document number.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_id_check_delivery>
+                        <enable_birthday_check_delivery>
+                            <label>Enable ID check delivery (based on date of birth)</label>
+                            <comment>With this product person verification is done based on date of birth.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_birthday_check_delivery>
+                        <enable_age_check_delivery>
+                            <label>Enable Age check delivery</label>
+                            <comment>With this product is checked whether a person is older than 18 years.</comment>
+                            <tooltip>Activate ID check delivery, if you have some product(s) were identification or age control is required, it is possible to let the deliverer check the ID at the door.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </enable_age_check_delivery>
                         <show_options_for_buspakje translate="label tooltip" module="postnl">
                             <label>Show PostNL delivery options for letter box parcel orders</label>
                             <tooltip>By default delivery options are not shown for shipments sent as a letterbox parcel. If you choose to show delivery options nonetheless, you might be forced to process an order as a regular package even though the package complies with the weight and size of a letterbox parcel.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2128,7 +2183,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2157,7 +2212,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2189,7 +2244,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2221,7 +2276,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2250,7 +2305,7 @@
                         <stated_address_header translate="label" module="postnl">
                             <label>Only stated address</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2277,7 +2332,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2303,7 +2358,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2329,7 +2384,7 @@
                             <label>Stated address only fee</label>
                             <frontend_type>text</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2354,7 +2409,7 @@
                         <premium_delivery_options_header translate="label" module="postnl">
                             <label>Delivery options based on contractual agreements</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2378,7 +2433,7 @@
                         <premium_delivery_options_info translate="comment" module="postnl">
                             <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday, sunday or same day delivery.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2406,14 +2461,13 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>340</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2436,14 +2490,13 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>320</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2464,7 +2517,7 @@
                             <tooltip>Additional costs for sunday delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for sunday delivery.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee_sundayDeliveryFee</backend_model>
-                            <sort_order>330</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2495,14 +2548,13 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>340</sort_order>
+                            <sort_order>370</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
-                                <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
@@ -2523,7 +2575,7 @@
                             <tooltip>Additional costs for same day delivery in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for same day delivery.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee_sameDayDeliveryFee</backend_model>
-                            <sort_order>350</sort_order>
+                            <sort_order>380</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2554,7 +2606,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
                             <source_model>postnl_core/system_config_source_hourMinute</source_model>
                             <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
-                            <sort_order>360</sort_order>
+                            <sort_order>390</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2583,6 +2635,7 @@
                             <backend_model>postnl_adminhtml/system_config_form_foodWarnings</backend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_store>1</show_in_store>
+                            <sort_order>400</sort_order>
                             <depends>
                                 <enable_food_delivery>1</enable_food_delivery>
                                 <delivery_options_active>1</delivery_options_active>
@@ -2595,7 +2648,6 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                            <sort_order>370</sort_order>
                         </food_delivery_warnings>
                         <enable_food_delivery>
                             <label>Enable food delivery</label>
@@ -2604,7 +2656,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>380</sort_order>
+                            <sort_order>410</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_store>1</show_in_store>
                             <depends>
@@ -2633,7 +2685,7 @@
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_productType</backend_model>
                             <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>390</sort_order>
+                            <sort_order>420</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2650,265 +2702,96 @@
                                 </country>
                             </depends>
                         </food_delivery_default_product_type>
-                        <delivery_options_in_belgium_header translate="label" module="postnl">
-                            <label>PostNL delivery options in Belgium</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>400</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </delivery_options_in_belgium_header>
-                        <delivery_options_be_active translate="label" module="postnl">
-                            <label>Enable PostNL delivery options in Belgium</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>410</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
-                        </delivery_options_be_active>
-                        <enable_delivery_days_be translate="label tooltip" module="postnl">
-                            <label>Enable delivery days for Belgium</label>
-                            <tooltip>Delivery days allow customers to choose on which date they want their order delivered.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>420</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </enable_delivery_days_be>
-                        <allow_sunday_sorting_be translate="label comment tooltip" module="postnl">
-                            <label>Enable monday delivery for Belgium</label>
-                            <comment><![CDATA[You can read more about monday delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/" target="_blank" title="monday delivery">here</a>.]]></comment>
-                            <tooltip>Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>430</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <enable_delivery_days_be>1</enable_delivery_days_be>
-                                <enable_timeframes>1</enable_timeframes>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </allow_sunday_sorting_be>
-                        <delivery_days_number_be translate="label tooltip" module="postnl">
-                            <label>Maximum number of delivery days for Belgium</label>
-                            <tooltip>Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>440</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <enable_delivery_days_be>1</enable_delivery_days_be>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </delivery_days_number_be>
-                        <!--<enable_pakjegemak_be translate="label tooltip" module="postnl">
-                            <label>Enable post office locations for Belgium</label>
-                            <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>450</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <delivery_options_be_active>1</delivery_options_be_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </enable_pakjegemak_be>-->
-                        <mijnpakket_header translate="label" module="postnl">
+                        <!--<mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>460</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </mijnpakket_header>
-                        <mijnpakket_login_active translate="label tooltip" module="postnl">
-                            <label>Enable PostNL account login</label>
-                            <tooltip>PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>470</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </mijnpakket_login_active>
-                        <mijnpakket_notification translate="label tooltip" module="postnl">
-                            <label>Show PostNL account notification on the order success page</label>
-                            <tooltip>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>480</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </mijnpakket_notification>
-                        <show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
-                            <label>Show create PostNL account link</label>
-                            <tooltip>If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>490</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <mijnpakket_notification>1</mijnpakket_notification>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </show_create_mijnpakket_account_link>
-                        <show_mijnpakket_app_link translate="label tooltip" module="postnl">
-                            <label>Show PostNL app link</label>
-                            <tooltip>If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>500</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </mijnpakket_header>-->
+                        <!--<mijnpakket_login_active translate="label tooltip" module="postnl">
+                            <label>Enable PostNL account login</label>
+                            <tooltip>PostNL account login will only be available to customers who have a PostNL account. This will be automatically detected.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>510</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </mijnpakket_login_active>-->
+                        <!--<mijnpakket_notification translate="label tooltip" module="postnl">
+                            <label>Show PostNL account notification on the order success page</label>
+                            <tooltip>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about PostNL accounts or the PostNL app.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>520</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </mijnpakket_notification>-->
+                        <!--<show_create_mijnpakket_account_link translate="label tooltip" module="postnl">
+                            <label>Show create PostNL account link</label>
+                            <tooltip>If enabled, customers who do not yet have a PostNL account will be shown a link through which they can create a PostNL account without having to fully fill in the registration form.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>530</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
                                 <mijnpakket_notification>1</mijnpakket_notification>
                                 <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
@@ -2924,11 +2807,39 @@
                                     <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
                                 </country>
                             </depends>
-                        </show_mijnpakket_app_link>
+                        </show_create_mijnpakket_account_link>-->
+                        <!--<show_mijnpakket_app_link translate="label tooltip" module="postnl">
+                            <label>Show PostNL app link</label>
+                            <tooltip>If enabled, customers who already have a PostNL account will be informed about the PostNL app with which they can easily track their order.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>540</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <mijnpakket_notification>1</mijnpakket_notification>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </show_mijnpakket_app_link>-->
                         <buspakje_header translate="label" module="postnl">
                             <label>Letter box parcels</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>510</sort_order>
+                            <sort_order>550</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2949,7 +2860,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>520</sort_order>
+                            <sort_order>560</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2970,7 +2881,7 @@
                             <tooltip>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
-                            <sort_order>530</sort_order>
+                            <sort_order>570</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2989,20 +2900,183 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>540</sort_order>
+                            <sort_order>580</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <next_step_rel>postnl_delivery_options_int</next_step_rel>
+                        </save_and_continue>
+                    </fields>
+                </delivery_options>
+                <delivery_options_int translate="label comment" module="postnl">
+                    <label>Delivery Options INT</label>
+                    <comment>Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
+                    <sort_order>800</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <delivery_options_in_belgium_header translate="label" module="postnl">
+                            <label>PostNL delivery options in Belgium</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </delivery_options_in_belgium_header>
+                        <delivery_options_be_active translate="label" module="postnl">
+                            <label>Enable PostNL delivery options in Belgium</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </delivery_options_be_active>
+                        <enable_delivery_days_be translate="label tooltip" module="postnl">
+                            <label>Enable delivery days for Belgium</label>
+                            <tooltip>Delivery days allow customers to choose on which date they want their order delivered.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </enable_delivery_days_be>
+                        <delivery_days_number_be translate="label tooltip" module="postnl">
+                            <label>Maximum number of delivery days for Belgium</label>
+                            <tooltip>Submit how many days in the future after the first delivery moment your customers can choose to receive their orders.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </delivery_days_number_be>
+                        <enable_pakjegemak_be translate="label tooltip" module="postnl">
+                            <label>Enable post office locations for Belgium</label>
+                            <tooltip>Whether or not customers may choose to have their order delivered to a nearby post office.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </enable_pakjegemak_be>
+                        <premium_delivery_options_int_header translate="label" module="postnl">
+                            <label>Delivery options based on contractual agreements</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </premium_delivery_options_int_header>
+                        <premium_delivery_options_int_info translate="comment" module="postnl">
+                            <comment>Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use Monday.</comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </premium_delivery_options_int_info>
+                        <allow_sunday_sorting_be translate="label comment tooltip" module="postnl">
+                            <label>Enable monday delivery for Belgium</label>
+                            <comment><![CDATA[You can read more about monday delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/" target="_blank" title="monday delivery">here</a>.]]></comment>
+                            <tooltip>Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </allow_sunday_sorting_be>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>500</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <next_step_rel>postnl_cif</next_step_rel>
                         </save_and_continue>
                     </fields>
-                </delivery_options>
+                </delivery_options_int>
                 <cif translate="label comment" module="postnl">
                     <label>Account Settings</label>
                     <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.tig.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
-                    <sort_order>800</sort_order>
+                    <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -3204,7 +3278,7 @@
                     <label>Label, Packing Slip and Weight Settings</label>
                     <comment>Here you decide which information you would like to show on shipping labels and packing slips. The weight unit and the maximum weight of a package are also configured from here.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>900</sort_order>
+                    <sort_order>1000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -3474,7 +3548,7 @@
                     <label>Track &amp; Trace</label>
                     <comment>You can choose to send a Track &amp; Trace email automatically after an order is confirmed. From this menu you can also define how you would like to send Track &amp; Trace emails.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1000</sort_order>
+                    <sort_order>1100</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -3549,7 +3623,7 @@
                 <returns translate="label comment" module="postnl">
                     <label>Returns</label>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1100</sort_order>
+                    <sort_order>1200</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -3750,7 +3824,7 @@
                         </params>
                     </comment_url>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1200</sort_order>
+                    <sort_order>1300</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -3888,7 +3962,7 @@
                     <label>Worldwide Shipping</label>
                     <comment>Are you planning to ship outside of the EU? Activate GlobalPack with the details you have received from PostNL. You can ignore the GlobalPack settings for domestic shipping and shipping within the EU.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1300</sort_order>
+                    <sort_order>1400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -4094,11 +4168,11 @@
                         </product_sorting_direction>
                     </fields>
                 </cif_globalpack_settings>
-                <checkout translate="label comment" module="postnl">
+                <!--<checkout translate="label comment" module="postnl">
                     <label>PostNL Checkout Settings</label>
                     <comment><![CDATA[PostNL Checkout is a method alongside your own order process that allows your customers to choose where, when and how to receive their order. Please note: Use the Delivery Options to configure the PostNL settings in your own checkout. Use the settings below to configure the settings for the PostNL Checkout.<br/><br/>Does the PostNL Checkout button stay gray? Click <a href="http://kb.tig.nl/topic/39102986" target="_blank">here</a> for possible causes and solutions.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1400</sort_order>
+                    <sort_order>1500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -4391,12 +4465,12 @@
                             </depends>
                         </service_url>
                     </fields>
-                </checkout>
-                <checkout_payment_methods translate="label comment" module="postnl">
+                </checkout>-->
+                <!--<checkout_payment_methods translate="label comment" module="postnl">
                     <label>PostNL Checkout Payment Settings</label>
                     <comment>This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1500</sort_order>
+                    <sort_order>1600</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -4441,7 +4515,7 @@
                                 </country>
                             </depends>
                         </postnl_checkout_inactive_header>
-                        <!-- iDEAL -->
+                        &lt;!&ndash; iDEAL &ndash;&gt;
                         <ideal_header translate="label" module="postnl">
                             <label>iDEAL</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4508,7 +4582,7 @@
                                 </show_summary_page>
                             </depends>
                         </ideal_option_field>
-                        <!-- Creditcard -->
+                        &lt;!&ndash; Creditcard &ndash;&gt;
                         <creditcard_header translate="label" module="postnl">
                             <label>Credit Card</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4575,7 +4649,7 @@
                                 </show_summary_page>
                             </depends>
                         </creditcard_option_field>
-                        <!-- Checkpay -->
+                        &lt;!&ndash; Checkpay &ndash;&gt;
                         <creckpay_header translate="label" module="postnl">
                             <label>Checkpay</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4622,7 +4696,7 @@
                                 </active>
                             </depends>
                         </checkpay_method>
-                        <!-- Paypal -->
+                        &lt;!&ndash; Paypal &ndash;&gt;
                         <paypal_header translate="label" module="postnl">
                             <label>PayPal</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4669,7 +4743,7 @@
                                 </active>
                             </depends>
                         </paypal_method>
-                        <!-- Machtiging -->
+                        &lt;!&ndash; Machtiging &ndash;&gt;
                         <directdebit_header translate="label" module="postnl">
                             <label>Direct Debit</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4716,7 +4790,7 @@
                                 </active>
                             </depends>
                         </directdebit_method>
-                        <!-- Accept Giro -->
+                        &lt;!&ndash; Accept Giro &ndash;&gt;
                         <acceptgiro_header translate="label" module="postnl">
                             <label>Acceptgiro</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4763,7 +4837,7 @@
                                 </active>
                             </depends>
                         </acceptgiro_method>
-                        <!-- Betaling Vooraf -->
+                        &lt;!&ndash; Betaling Vooraf &ndash;&gt;
                         <vooraf_betalen_header translate="label" module="postnl">
                             <label>Vooraf Betalen</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4810,7 +4884,7 @@
                                 </active>
                             </depends>
                         </vooraf_betalen_method>
-                        <!-- Termijnen -->
+                        &lt;!&ndash; Termijnen &ndash;&gt;
                         <termijnen_header translate="label" module="postnl">
                             <label>Betaling in Termijnen</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4857,7 +4931,7 @@
                                 </active>
                             </depends>
                         </termijnen_method>
-                        <!-- Kadobon -->
+                        &lt;!&ndash; Kadobon &ndash;&gt;
                         <giftcard_header translate="label" module="postnl">
                             <label>Giftcard</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4904,7 +4978,7 @@
                                 </active>
                             </depends>
                         </giftcard_method>
-                        <!-- Rabobank Internet Kassa -->
+                        &lt;!&ndash; Rabobank Internet Kassa &ndash;&gt;
                         <rabobank_internetkassa_header translate="label" module="postnl">
                             <label>Rabobank Internetkassa</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4951,7 +5025,7 @@
                                 </active>
                             </depends>
                         </rabobank_internetkassa_method>
-                        <!-- Afterpay -->
+                        &lt;!&ndash; Afterpay &ndash;&gt;
                         <afterpay_header translate="label" module="postnl">
                             <label>AfterPay</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -4998,7 +5072,7 @@
                                 </active>
                             </depends>
                         </afterpay_method>
-                        <!-- Klarna -->
+                        &lt;!&ndash; Klarna &ndash;&gt;
                         <klarna_header translate="label" module="postnl">
                             <label>Klarna</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -5046,12 +5120,12 @@
                             </depends>
                         </klarna_method>
                     </fields>
-                </checkout_payment_methods>
+                </checkout_payment_methods>-->
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Settings</label>
                     <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1600</sort_order>
+                    <sort_order>1700</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -5141,7 +5215,7 @@
                     <label>User Settings</label>
                     <comment>From this menu you can add columns containing PostNL specific information to the orders and shipments grid. Here you can also define default values for actions.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1700</sort_order>
+                    <sort_order>1800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -5388,6 +5462,162 @@
                                 </country>
                             </depends>
                         </default_sunday_product_option>
+                        <default_id_check_delivery_product_option translate="label tooltip" module="postnl">
+                            <label>Default ID check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_idCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_id_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_id_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_id_check_delivery_product_option>
+                        <default_id_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default ID check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getIDCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_id_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_id_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_id_check_pickup_product_option>
+                        <default_age_check_delivery_product_option translate="label tooltip" module="postnl">
+                            <label>Default Age check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_ageCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_age_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_age_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_age_check_delivery_product_option>
+                        <default_age_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default Age check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getAgeCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_age_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_age_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_age_check_pickup_product_option>
+                        <default_birthday_check_delivery_product_option translate="label tooltip" module="postnl">
+                            <label>Default Birthday check delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_birthdayCheckProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_birthday_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_birthday_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_birthday_check_delivery_product_option>
+                        <default_birthday_check_pickup_product_option translate="label tooltip" module="postnl">
+                            <label>Default Birthday check pickup option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjegemakProductOptions::getBirthdayCheckOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_birthday_check_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_birthday_check_delivery>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_birthday_check_pickup_product_option>
                         <default_sameday_product_option translate="label tooltip" module="postnl">
                             <label>Default same day delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
@@ -5395,7 +5625,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableSameDayOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>170</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5425,7 +5655,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>180</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5451,7 +5681,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>190</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5481,7 +5711,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>200</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5503,7 +5733,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>210</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5535,7 +5765,7 @@
                     <label>Technical Settings</label>
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1800</sort_order>
+                    <sort_order>1900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>

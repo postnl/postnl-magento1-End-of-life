@@ -52,18 +52,33 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
 
         $helper = Mage::helper('postnl');
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
         $options = array(
             array(
                 'label' => $helper->__('Non-Food'),
                 'value' => 0,
             ),
             array(
-                'value' => 1,
+                'value' => $deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES,
                 'label' => $helper->__('Dry & Groceries'),
             ),
             array(
-                'value' => 2,
+                'value' => $deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS,
                 'label' => $helper->__('Cooled Products'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_AGE,
+                'label' => $helper->__('Age Check'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY,
+                'label' => $helper->__('Birthday Check'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_ID,
+                'label' => $helper->__('ID Check'),
             ),
         );
 

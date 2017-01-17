@@ -162,6 +162,16 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     protected $_canManageRecurringProfiles  = false;
 
     /**
+     * @var array
+     */
+    protected $_helpers                     = array();
+
+    /**
+     * @var array
+     */
+    protected $_models                      = array();
+
+    /**
      * @var boolean
      */
 
@@ -187,7 +197,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     public function isAvailable($quote = null)
     {
         /** @var TIG_PostNL_Helper_Payment $helper */
-        $helper = Mage::helper('postnl/payment');
+        $helper = $this->getHelper('postnl/payment');
 
         /**
          * Make sure the quote is available.
@@ -237,7 +247,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             }
 
             /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
-            $carrierHelper = Mage::helper('postnl/carrier');
+            $carrierHelper = $this->getHelper('postnl/carrier');
             if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
                 $helper->log(
                     $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
@@ -288,7 +298,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check if the delivery type is not a Sunday Delivery, since COD is not available for Sunday delivery
          */
         /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = $this->getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getType() == 'Sunday') {
             $helper->log(
                 $helper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
@@ -459,5 +469,33 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * @param $helper
+     *
+     * @return Mage_Core_Helper_Data
+     */
+    protected function getHelper($helper)
+    {
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
+    }
+
+    /**
+     * @param $model
+     *
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function getModel($model)
+    {
+        if (!array_key_exists($model, $this->_models)) {
+            $this->_models[$model] = Mage::getModel($model);
+        }
+
+        return $this->_models[$model];
     }
 }

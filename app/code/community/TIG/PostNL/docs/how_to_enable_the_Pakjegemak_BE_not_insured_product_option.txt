@@ -1,0 +1,5 @@
+It's very simple: just add the 'postnl/cif_product_options/allow_pakjegemak_not_insured' cpath to the core_config_data
+table with a value of '1'. Or edit the config.xml default values accordingly.
+
+Then just clear the cache, select the option in the 'allowed options' setting in the shop's configuration and you're
+done.

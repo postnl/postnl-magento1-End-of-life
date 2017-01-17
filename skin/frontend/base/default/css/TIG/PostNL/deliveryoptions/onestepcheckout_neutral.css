@@ -19,7 +19,7 @@
 #postnl_add_moment .option .bkg { background:#fff; }
 #postnl_add_moment .option .option-comment { color:#546f91; font-weight:bold; }
 
-#osc_initial_loader { display:inline-block; width:14px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
+#osc_initial_loader { display:inline-block; width:140px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
 
 /* Delivery Options Popup */
 #postnl_delivery_options *,
@@ -31,7 +31,8 @@
 #postnl_delivery_options .location { border-top:1px solid #d6d6d4; }
 #postnl_delivery_options .location .bkg { background:#f2f2f2; }
 #postnl_delivery_options .location .location-name { font-weight:normal; }
-#postnl_delivery_options .location .location-type { font-size:11px; color:#555; }
+#postnl_delivery_options .location .location-type,
+#postnl_delivery_options .location .location-distance-text { font-size:11px; color:#555; }
 #postnl_delivery_options .location .location-info span { background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/bkg_more-info.png) -2px 5px no-repeat; }
 #postnl_delivery_options .location .location-info:hover span { position:relative; z-index:600; background-position:5px -41px; }
 
@@ -60,14 +61,14 @@
 @media screen and (max-width : 953px) {
     button.postnl-button { background:#546f91; border-radius:0; -webkit-border-radius:0; }
     button.postnl-button.white { border-color:#546f91; color:#546f91; }
-       
+
     .responsive-switch-wrapper li a { border-radius:0 !important; -webkit-border-radius:0 !important; -moz-border-radius:0 !important; }
     .responsive-switch-wrapper li a.active { background:#546f91; color:#fff !important; }
-    
+
     .option-list .location { background:#f2f2f2; border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; }
     .option-list .option { background:none; border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; }
     .option-list .option:hover { background:#f8fbfc; }
-    
+
     .responsive-location-results h3 {color:#333334; }
     .responsive-location-results .location-details .content .radio { background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/bkg_radio.png) 0 -32px no-repeat; }
     .responsive-location-search input.postnl-input { border-radius:0; -webkit-border-radius:0; }
