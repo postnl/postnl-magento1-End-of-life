@@ -255,6 +255,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     {
         $shipment = $this->getShipment();
         $items = $shipment->getAllItems();
+        $order = $this->getPostnlOrder();
+
+        if ($order->isIDCheck()) {
+            return false;
+        }
 
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item

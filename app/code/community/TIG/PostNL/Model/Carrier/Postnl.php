@@ -324,16 +324,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
             $postnlOrder = Mage::getModel('postnl_core/order');
             $postnlOrder = $postnlOrder->loadByQuote($quote);
-            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $this->_request->setParcelType(self::PARCEL_TYPE_PAKJE_GEMAK);
-            } elseif ($this->getHelper()->quoteIsBuspakje($quote)) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $this->_request->setParcelType(self::PARCEL_TYPE_LETTERBOX);
-            } elseif ($this->getHelper()->quoteIsFood()) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $this->_request->setParcelType(self::PARCEL_TYPE_FOOD);
-            } elseif ($this->getHelper()->quoteIsAgeCheck()) {
+            
+            if ($this->getHelper()->quoteIsAgeCheck()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
             } elseif ($this->getHelper()->quoteIsBirthdayCheck()) {
@@ -342,6 +334,15 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             } elseif ($this->getHelper()->quoteIsIDCheck()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_IDCHECK);
+            } elseif ($postnlOrder && $postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_PAKJE_GEMAK);
+            } elseif ($this->getHelper()->quoteIsBuspakje($quote)) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_LETTERBOX);
+            } elseif ($this->getHelper()->quoteIsFood()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_FOOD);
             } else {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_REGULAR);
