@@ -13,11 +13,6 @@
         </testsuite>
     </testsuites>
 
-    <testsuite name="Magento Unit Tests">
-        <directory suffix="Test.php">Build/Magento 2/vendor/tig/buckaroo/Test/Unit</directory>
-        <directory suffix="Test.php">Build/Magento 2/vendor/tig/buckaroo/Test/Functional</directory>
-    </testsuite>
-
     <filter>
         <whitelist>
             <directory>../../PostNL/Block</directory>

@@ -8,7 +8,6 @@ php:
   - 7.0
   - 7.1
   - hhvm
-  - nightly
 
 env:
   - MAGENTO_VERSION=magento-mirror-1.9.3.1
