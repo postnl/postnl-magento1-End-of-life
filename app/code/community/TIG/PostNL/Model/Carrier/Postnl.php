@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -324,7 +324,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
             $postnlOrder = Mage::getModel('postnl_core/order');
             $postnlOrder = $postnlOrder->loadByQuote($quote);
-            
+
             if ($this->getHelper()->quoteIsAgeCheck()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
