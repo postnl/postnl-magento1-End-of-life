@@ -11,15 +11,19 @@ php:
 
 env:
   - MAGENTO_VERSION=magento-mirror-1.9.3.1
-  - MAGENTO_VERSION=magento-mirror-1.9.2.4
-  - MAGENTO_VERSION=magento-mirror-1.8.1.0
-  - MAGENTO_VERSION=magento-mirror-1.8.0.0
-  - MAGENTO_VERSION=magento-mirror-1.7.0.2
 
 matrix:
   include:
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.2.4 ENABLE_FLAT_CATALOG=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.9.2.4
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.8.1.0
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.8.0.0
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.7.0.2
 
   fast_finish: true
 

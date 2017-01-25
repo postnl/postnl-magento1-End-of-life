@@ -57,7 +57,7 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
 
         $options = array(
             array(
-                'label' => $helper->__('Non-Food'),
+                'label' => $helper->__('Regular'),
                 'value' => 0,
             ),
             array(

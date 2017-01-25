@@ -1400,3 +1400,4 @@ TIG_PostNL::Please provide a document number,Please provide a document number
 TIG_PostNL::Please provide a expiration date,Please provide a expiration date
 TIG_PostNL::Please provide a valid birthday,Please provide a valid birthday
 TIG_PostNL::This data will be used to verify your age at delivery.,This data will be used to verify your age at delivery.
+TIG_PostNL::Regular,Regular
