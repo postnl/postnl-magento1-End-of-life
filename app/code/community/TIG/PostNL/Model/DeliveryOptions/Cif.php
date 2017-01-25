@@ -639,7 +639,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $sameDayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SAMEDAY_CUTOFF_TIME, $storeId);
         $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
 
-        if ($shippingDuration == null) {
+        if ($shippingDuration === null) {
             $shippingDuration = Mage::getStoreConfig($helper::XPATH_SHIPPING_DURATION, $storeId);
         }
 
