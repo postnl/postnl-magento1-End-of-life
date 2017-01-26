@@ -13,6 +13,9 @@ env:
   - MAGENTO_VERSION=magento-mirror-1.9.3.1
 
 matrix:
+  global:
+  - env: TESTUITE=unit
+
   include:
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
@@ -35,8 +38,9 @@ before_script:
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
   - export PATH=$PATH:$HOME/.composer/vendor/bin
   - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
+  - bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
 
-script: bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
+script: phpunit -c "/tmp/magento/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE
 
 cache:
   directories:

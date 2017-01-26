@@ -7,7 +7,6 @@ if [ -z $MAGENTO_DB_PORT ]; then MAGENTO_DB_PORT="3306"; fi
 if [ -z $MAGENTO_DB_USER ]; then MAGENTO_DB_USER="root"; fi
 if [ -z $MAGENTO_DB_PASS ]; then MAGENTO_DB_PASS=""; fi
 if [ -z $MAGENTO_DB_NAME ]; then MAGENTO_DB_NAME="magento"; fi
-if [ -z $TESTSUITE ]; then TESTSUITE="--testsuite unit"; fi
 
 CURRENT_DIR=`pwd`
 BUILDENV="/tmp/magento"
@@ -55,5 +54,3 @@ fi
 cd "${PUBLIC_DIR}/.modman/project";
 mkdir -p "${PUBLIC_DIR}var/session";
 chmod -R 777 "${PUBLIC_DIR}var/session";
-
-phpunit -c "${PUBLIC_DIR}/app/code/community/TIG/PostNL/Test/phpunit.xml" $TESTSUITE
