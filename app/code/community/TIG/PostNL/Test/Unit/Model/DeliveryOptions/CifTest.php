@@ -287,8 +287,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
 
             'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
-            'before_sunday_cutoff' => array('next sunday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Daytime', 'Evening')),
-            'after_regular_cutoff_on_sunday' => array('next sunday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Daytime', 'Evening')),
         );
     }
 
