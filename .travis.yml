@@ -14,7 +14,7 @@ env:
 
 matrix:
   global:
-  - TESTUITE=unit
+  - TESTSUITE=unit
 
   include:
   - php: 7.0
@@ -34,7 +34,7 @@ matrix:
   - php: nightly
 
 before_script:
-  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ]; then phpenv config-rm xdebug.ini; fi
+  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ]; then phpenv config-rm xdebug.ini; fi
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
   - export PATH=$PATH:$HOME/.composer/vendor/bin
   - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
