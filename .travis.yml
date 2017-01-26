@@ -10,12 +10,13 @@ php:
   - hhvm
 
 env:
-  - MAGENTO_VERSION=magento-mirror-1.9.3.1
+  global:
+    - TESTSUITE=unit
+
+  matrix:
+    - MAGENTO_VERSION=magento-mirror-1.9.3.1
 
 matrix:
-  global:
-  - TESTSUITE=unit
-
   include:
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
