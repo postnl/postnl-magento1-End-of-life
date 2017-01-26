@@ -14,7 +14,7 @@ env:
 
 matrix:
   global:
-  - env: TESTUITE=unit
+  - TESTUITE=unit
 
   include:
   - php: 7.0
