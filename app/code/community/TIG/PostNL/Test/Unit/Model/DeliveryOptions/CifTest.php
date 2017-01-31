@@ -285,6 +285,8 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
+
+            'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
         );
     }
 
@@ -354,13 +356,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
 
         $result = $method->invokeArgs($instance, array($shippingDuration, $country, $for));
 
-        foreach ($expectedResult as $option) {
-            $this->assertTrue(
-                in_array($option, $result),
-                'Validate that the result contains ' . $option . '. Result: ' . print_r($result, true)
-            );
-        }
-
+        $this->assertEquals($expectedResult, $result, 'Compare the contents of the array', 0.0, 10, true);
         $this->assertEquals(count($expectedResult), count($result));
     }
 

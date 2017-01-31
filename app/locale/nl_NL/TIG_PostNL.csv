@@ -1470,3 +1470,4 @@ TIG_PostNL::Please provide a document number,Geef een document nummer op
 TIG_PostNL::Please provide a expiration date,Geef een verval datum op
 TIG_PostNL::Please provide a valid birthday,Geef een valide geboortedatum op
 TIG_PostNL::This data will be used to verify your age at delivery.,De volgende gegevens worden gebruikt om uw leeftijd te verifiëren bij bezorging.
+TIG_PostNL::Regular,Regulier

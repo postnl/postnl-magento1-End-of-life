@@ -3190,7 +3190,8 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-length minimum-length-6 maximum-length-6 postnl-validate-empty</validate>
                         </collection_location>
-                        <webshop_id translate="label" module="postnl">
+                        <!-- These belong to the Mijn Checkout functionality. As it is deprecated we disabled this config option -->
+                        <!--<webshop_id translate="label" module="postnl">
                             <label>Webshop ID</label>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
@@ -3208,7 +3209,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </public_webshop_id>
+                        </public_webshop_id>-->
                         <dutch_customer_number translate="label tooltip" module="postnl">
                             <label>Customer Number used for shipments to the Netherlands</label>
                             <frontend_type>text</frontend_type>
