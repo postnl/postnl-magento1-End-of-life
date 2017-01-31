@@ -665,6 +665,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             }
         }
 
+        $sundayCutoffGapOptions = $this->_getSundayCutoffGapOptions();
+        if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7 && $sundayCutoffGapOptions) {
+            return $sundayCutoffGapOptions;
+        }
+
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
         if ($country == 'NL' && $sundayDelivery) {
             $options[] = self::SUNDAY_DELIVERY_OPTION;
@@ -703,5 +708,37 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $cutoff->setTime($hour, $minute);
 
         return $cutoff;
+    }
+
+    protected function _getSundayCutoffGapOptions()
+    {
+        $storeId = $this->getStoreId();
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $date = $helper->getDateTime('now');
+        $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
+        $sundayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+
+        if (
+            $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp() ||
+            $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp()
+        ) {
+            return false;
+        }
+
+        $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
+        if (!$sundayDelivery) {
+            return false;
+        }
+
+        if (!$helper->canUseEveningTimeframes()) {
+            return false;
+        }
+
+        return array(
+            self::SUNDAY_DELIVERY_OPTION,
+            self::SAMEDAY_DELIVERY_OPTION,
+            self::EVENING_DELIVERY_OPTION,
+        );
     }
 }

@@ -10,16 +10,24 @@ php:
   - hhvm
 
 env:
-  - MAGENTO_VERSION=magento-mirror-1.9.3.1
-  - MAGENTO_VERSION=magento-mirror-1.9.2.4
-  - MAGENTO_VERSION=magento-mirror-1.8.1.0
-  - MAGENTO_VERSION=magento-mirror-1.8.0.0
-  - MAGENTO_VERSION=magento-mirror-1.7.0.2
+  global:
+    - TESTSUITE=unit
+
+  matrix:
+    - MAGENTO_VERSION=magento-mirror-1.9.3.1
 
 matrix:
   include:
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.2.4 ENABLE_FLAT_CATALOG=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.9.2.4
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.8.1.0
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.8.0.0
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.7.0.2
 
   fast_finish: true
 
@@ -27,12 +35,13 @@ matrix:
   - php: nightly
 
 before_script:
-  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ]; then phpenv config-rm xdebug.ini; fi
+  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ]; then phpenv config-rm xdebug.ini; fi
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
   - export PATH=$PATH:$HOME/.composer/vendor/bin
   - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
+  - bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
 
-script: bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
+script: phpunit -c "/tmp/magento/public/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE
 
 cache:
   directories:
