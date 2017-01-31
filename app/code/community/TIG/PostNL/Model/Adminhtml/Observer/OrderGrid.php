@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -463,6 +463,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'pakje_gemak_express' => $helper->__('Early Pickup'),
                 'food'                => $helper->__('Food Delivery'),
                 'cooledfood'          => $helper->__('Cooled Food Delivery'),
+                'agecheck'            => $helper->__('Age Check'),
+                'birthdaycheck'       => $helper->__('Birthday Check'),
+                'idcheck'             => $helper->__('ID Check'),
             ),
         );
 
@@ -1596,32 +1599,25 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $this;
         }
 
-        /**
-         * If the filter is set to cooled food, only return postnlorders of the type 'Cooledfood'.
-         */
-        if ($filterCond == 'cooledfood') {
-            $collection->addFieldToFilter(
-                'postnl_order.type',
-                array(
-                    array('eq'   => 'Cooledfood'),
-                )
-            );
+        $filters = array(
+            'cooledfood' => 'Cooledfood',
+            'food' => 'Food',
+            'agecheck' => 'AgeCheck',
+            'birthdaycheck' => 'BirthdayCheck',
+            'idcheck' => 'IDCheck',
+        );
 
-            return $this;
-        }
+        foreach ($filters as $filterName => $value) {
+            if ($filterCond == $filterName) {
+                $collection->addFieldToFilter(
+                    'postnl_order.type',
+                    array(
+                        array('eq'   => $value),
+                    )
+                );
 
-        /**
-         * If the filter is set to food, only return postnlorders of the type 'Food'.
-         */
-        if ($filterCond == 'food') {
-            $collection->addFieldToFilter(
-                'postnl_order.type',
-                array(
-                    array('eq'   => 'Food'),
-                )
-            );
-
-            return $this;
+                return $this;
+            }
         }
 
         /**

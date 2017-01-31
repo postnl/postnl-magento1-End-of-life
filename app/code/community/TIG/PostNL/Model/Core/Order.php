@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Order
@@ -59,13 +59,15 @@
  * @method string                      getCreatedAt()
  * @method string                      getPgLocationCode()
  * @method string                      getPgRetailNetworkId()
+ * @method string                      getIdcheckType()
+ * @method string                      getIdcheckNumber()
+ * @method string                      getIdcheckExpirationDate()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
  * @method TIG_PostNL_Model_Core_Order setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Order setQuote(Mage_Sales_Model_Quote $value)
  * @method TIG_PostNL_Model_Core_Order setOrderId(int $value)
- * @method TIG_PostNL_Model_Core_Order setType(string $value)
  * @method TIG_PostNL_Model_Core_Order setQuoteId(int $value)
  * @method TIG_PostNL_Model_Core_Order setDeliveryDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
@@ -82,6 +84,9 @@
  * @method TIG_PostNL_Model_Core_Order setStoreId(int $value)
  * @method TIG_PostNL_Model_Core_Order setPgLocationCode(string $value)
  * @method TIG_PostNL_Model_Core_Order setPgRetailNetworkId(string $value)
+ * @method TIG_PostNL_Model_Core_Order setIdcheckType(string $value)
+ * @method TIG_PostNL_Model_Core_Order setIdcheckNumber(string $value)
+ * @method TIG_PostNL_Model_Core_Order setIdcheckExpirationDate(string $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
@@ -95,6 +100,9 @@
  * @method boolean                     hasStoreId()
  * @method string                      hasPgLocationCode()
  * @method string                      hasPgRetailNetworkId()
+ * @method string                      hasIdcheckType()
+ * @method string                      hasIdcheckNumber()
+ * @method string                      hasIdcheckExpirationDate()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -109,15 +117,18 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     /**
      * Available types.
      */
-    const TYPE_OVERDAG      = 'Overdag';
-    const TYPE_AVOND        = 'Avond';
-    const TYPE_SUNDAY       = 'Sunday';
-    const TYPE_PG           = 'PG';
-    const TYPE_PGE          = 'PGE';
-    const TYPE_PA           = 'PA';
-    const TYPE_SAMEDAY      = 'Sameday';
-    const TYPE_FOOD         = 'Food';
-    const TYPE_COOLED_FOOD  = 'Cooledfood';
+    const TYPE_OVERDAG       = 'Overdag';
+    const TYPE_AVOND         = 'Avond';
+    const TYPE_SUNDAY        = 'Sunday';
+    const TYPE_PG            = 'PG';
+    const TYPE_PGE           = 'PGE';
+    const TYPE_PA            = 'PA';
+    const TYPE_SAMEDAY       = 'Sameday';
+    const TYPE_FOOD          = 'Food';
+    const TYPE_COOLED_FOOD   = 'Cooledfood';
+    const TYPE_AGECHECK      = 'AgeCheck';
+    const TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
+    const TYPE_IDCHECK       = 'IDCheck';
 
     /**
      * Prefix of model events names.
@@ -448,6 +459,21 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this order needs verification at the door.
+     *
+     * @return bool
+     */
+    public function isIDCheck()
+    {
+        $type = $this->getType();
+        if ($type == self::TYPE_AGECHECK || $type == self::TYPE_BIRTHDAYCHECK || $type == self::TYPE_IDCHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Validate the chosen extra options. If an option is invalid, it will be unset.
      *
      * @return $this
@@ -518,6 +544,27 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         $this->setIsCanceled(true);
 
         return $this;
+    }
+
+    /**
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        if ($type == $deliveryOptionsHelper::IDCHECK_TYPE_AGE) {
+            return $this->setData('type', self::TYPE_AGECHECK);
+        } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY) {
+            return $this->setData('type', self::TYPE_BIRTHDAYCHECK);
+        } elseif ($type == $deliveryOptionsHelper::IDCHECK_TYPE_ID) {
+            return $this->setData('type', self::TYPE_IDCHECK);
+        }
+
+        return $this->setData('type', $type);
     }
 
     /**

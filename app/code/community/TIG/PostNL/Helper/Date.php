@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -312,12 +312,16 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
     /**
      * Gets the shipping date calculated from the supplied deliveryDate.
      *
-     * @param $deliveryDate
-     * @param $storeId
+     * @param      $deliveryDate
+     * @param      $storeId
+     *
+     * @param bool $isPGBE
      *
      * @return DateTime
+     * @note In the future this could be refactored to use this:
+     *       https://developer.postnl.nl/apis/deliverydate-webservice/documentation#toc-10
      */
-    public function getShippingDateFromDeliveryDate($deliveryDate, $storeId)
+    public function getShippingDateFromDeliveryDate($deliveryDate, $storeId, $isPGBE = false)
     {
         /**
          * Get required config values and date object.
@@ -342,10 +346,19 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
             }
         }
 
+        $deliveryDelay = $this->_postnlDeliveryDelay;
+
+        /**
+         * PG BE defaults to a delivery delay of 2 days, no exceptions.
+         */
+        if ($isPGBE) {
+            $deliveryDelay = 2;
+        }
+
         /**
          * Substract the delivery delay from the delivery date to get to the shipping date.
          */
-        $dateObject->sub(new DateInterval("P{$this->_postnlDeliveryDelay}D"));
+        $dateObject->sub(new DateInterval("P{$deliveryDelay}D"));
 
         /**
          * If the projected shipping date is not a valid shipping date, substract 1 day and check again.

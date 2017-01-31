@@ -1,0 +1,113 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+/**
+ * @var TIG_PostNL_Block_Checkout_Widget_Date $this
+ */
+
+/** @var TIG_PostNL_Helper_Data $helper */
+$helper = Mage::helper('postnl');
+
+if ($this->hasLabel()) {
+?>
+    <label for="<?php echo $this->getFieldId('month') ?>">
+        <?php echo $this->getLabel() ?>
+        <?php if ($this->getIsRequired()): ?>
+            <span class="required"><?php if ($helper->isIdevOsc()): echo '*'; endif; ?></span>
+        <?php endif; ?>
+    </label>
+<?php
+}
+?>
+<div class="input-box postnl-date">
+<?php
+    $this->setDateInput('d',
+        '<div class="postnl-day">
+             <input type="text" id="' . $this->getFieldId('day') . '" name="' . $this->getFieldName('day') . '" value="' . $this->getDay() . '" title="' . $this->__('Day') . '" class="input-text" ' . $this->getFieldParams() . ' />
+             <label for="' . $this->getFieldId('day') . '">' . $this->__('DD') . '</label>
+         </div>'
+    );
+
+    $this->setDateInput('m',
+        '<div class="postnl-month">
+             <input type="text" id="' . $this->getFieldId('month') . '" name="' . $this->getFieldName('month') . '" value="' . $this->getMonth()  . '" title="' . $this->__('Month')  . '" class="input-text" ' . $this->getFieldParams()  . ' />
+             <label for="' . $this->getFieldId('month') . '">' . $this->__('MM')  . '</label>
+         </div>'
+    );
+
+    $this->setDateInput('y',
+        '<div class="postnl-year">
+             <input type="text" id="' . $this->getFieldId('year') . '" name="' . $this->getFieldName('year') . '" value="' . $this->getYear()  . '" title="' . $this->__('Year')  . '" class="input-text" ' . $this->getFieldParams()  . ' />
+             <label for="' . $this->getFieldId('year') . '">' . $this->__('YYYY')  . '</label>
+         </div>'
+    );
+
+    echo $this->getSortedDateInputs();
+?>
+    <div class="postnl-full">
+        <input type="hidden" id="<?php echo $this->getFieldId('full')?>" name="<?php echo $this->getFieldName('full')?>" />
+    </div>
+
+    <div class="postnl-idcheck-validation-advice validation-advice-container" style="display:none;"></div>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    var el = $$('.postnl-date')[0];
+    var container       = {};
+    container.day       = Element.select(el, '.postnl-day input')[0];
+    container.month     = Element.select(el, '.postnl-month input')[0];
+    container.year      = Element.select(el, '.postnl-year input')[0];
+    container.full      = Element.select(el, '.postnl-full input')[0];
+    container.advice    = Element.select(el, '.postnl-idcheck-validation-advice')[0];
+
+    var result = new Varien.DateElement('container', container, <?php echo $this->getIsRequired() ? 'true' : 'false' ?>, '<?php echo $this->getDateFormat() ?>');
+
+    result.validateDataErrorText = 'Please enter a date that is in the future.';
+
+    /**
+     * The default is to check that the date is in the past, but we need to check that the date is in the future.
+     *
+     * @returns {boolean}
+     */
+    result.validateData = function () {
+        var date = new Date;
+        return date < this.fullDate;
+    };
+    //]]>
+</script>

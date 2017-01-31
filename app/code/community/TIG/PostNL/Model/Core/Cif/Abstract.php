@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Base CIF model. Contains general code for communicating with the CIF API
@@ -116,6 +116,16 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * The error number CIF uses for the 'shipment not found' error.
      */
     const SHIPMENT_NOT_FOUND_ERROR_NUMBER = 13;
+
+    /**
+     * @var array
+     */
+    protected $_helpers = array();
+
+    /**
+     * @var array
+     */
+    protected $_dates = array();
 
     /**
      * Check if the required PHP extensions are installed.
@@ -702,5 +712,25 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $helper
+     *
+     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_DeliveryOptions
+     */
+    protected function _getHelper($helper = '')
+    {
+        if ($helper == '') {
+            $helper = 'postnl';
+        } else {
+            $helper = 'postnl/' . $helper;
+        }
+
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
     }
 }

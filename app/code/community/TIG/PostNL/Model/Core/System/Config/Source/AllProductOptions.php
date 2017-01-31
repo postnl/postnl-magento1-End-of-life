@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
@@ -281,13 +281,35 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4932' => array(
             'value'             => '4932',
-            'label'             => 'Post Office',
+            'label'             => '4932 - Post Office Belgium + Extra Cover',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
             'isCod'             => false,
             'isBelgiumOnly'     => true,
             'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_be_options',
+        ),
+        '4878' => array(
+            'value'             => '4878',
+            'label'             => '4878 - Post Office Belgium + Extra Cover',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
+            'group'             => 'pakjegemak_be_options',
+        ),
+        '4880' => array(
+            'value'             => '4880',
+            'label'             => '4880 - Post Office Belgium',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'BE',
             'group'             => 'pakjegemak_be_options',
         ),
         '4952' => array(
@@ -452,6 +474,317 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'cooled_options',
         ),
+        /** New Codes for Age, ID and Birthday check */
+        '3438' => array(
+            'value'             => '3438',
+            'label'             => 'Parcel with Agecheck 18+',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'agecheck_options'
+        ),
+        '3443' => array(
+            'value'             => '3443',
+            'label'             => 'Parcel with Extra Cover + Agecheck 18+',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'agecheck_options'
+        ),
+        '3446' => array(
+            'value'             => '3446',
+            'label'             => 'Parcel with Extra Cover + Agecheck 18+ Return when not home',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'agecheck_options'
+        ),
+        '3449' => array(
+            'value'             => '3449',
+            'label'             => 'Parcel with Agecheck 18+ Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'agecheck_options'
+        ),
+        '3437' => array(
+            'value'             => '3437',
+            'label'             => 'Parcel with Agecheck 18+ Neighbors',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'agecheck_options'
+        ),
+        '3571' => array(
+            'value'             => '3571',
+            'label'             => 'Post Office + Agecheck 18+',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3574' => array(
+            'value'             => '3574',
+            'label'             => 'Post Office + Notification + Agecheck 18+',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3581' => array(
+            'value'             => '3581',
+            'label'             => 'Post Office + Extra Cover + Agecheck 18+',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3584' => array(
+            'value'             => '3584',
+            'label'             => 'Post Office + Extra Cover + Notification + Agecheck 18+',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3442' => array(
+            'value'             => '3442',
+            'label'             => 'Parcel with ID check (based on ID-number)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'id_check_options'
+        ),
+        '3445' => array(
+            'value'             => '3445',
+            'label'             => 'Parcel with Extra Cover + ID check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'id_check_options'
+        ),
+        '3448' => array(
+            'value'             => '3448',
+            'label'             => 'Parcel with Extra Cover + ID check + Return when not home',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'id_check_options'
+        ),
+        '3451' => array(
+            'value'             => '3451',
+            'label'             => 'Parcel with ID check + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'id_check_options'
+        ),
+        '3573' => array(
+            'value'             => '3573',
+            'label'             => 'Post Office + ID Check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3576' => array(
+            'value'             => '3576',
+            'label'             => 'Post Office + Notification + ID Check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isPge'             => true,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3583' => array(
+            'value'             => '3583',
+            'label'             => 'Post Office + Extra Cover + ID Check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isPge'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3586' => array(
+            'value'             => '3586',
+            'label'             => 'Post Office + Extra Cover + Notification + ID Check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isPge'             => true,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3440' => array(
+            'value'             => '3440',
+            'label'             => 'Parcel with Birthday Check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'birthday_check_options'
+        ),
+        '3444' => array(
+            'value'             => '3444',
+            'label'             => 'Parcel with Extra Cover + Birthday Check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'birthday_check_options'
+        ),
+        '3447' => array(
+            'value'             => '3447',
+            'label'             => 'Parcel with Extra Cover + Birthday Check + Return when not home',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'birthday_check_options'
+        ),
+        '3450' => array(
+            'value'             => '3450',
+            'label'             => 'Parcel with Birthday Check + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'birthday_check_options'
+        ),
+        '3572' => array(
+            'value'             => '3572',
+            'label'             => 'Post Office + Birthday Check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3575' => array(
+            'value'             => '3575',
+            'label'             => 'Post Office + Notification + Birthday Check',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3582' => array(
+            'value'             => '3582',
+            'label'             => 'Post Office + Extra Cover + Birthday Check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
+        '3585' => array(
+            'value'             => '3585',
+            'label'             => 'Post Office + Extra Cover + Notification + Birthday Check',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isSunday'          => true,
+            'isCod'             => false,
+            'isSameDay'         => true,
+            'isPge'             => true,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_options'
+        ),
     );
 
     /**
@@ -468,6 +801,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'sunday_options'         => 'Sunday options',
         'food_options'           => 'Food Delivery Options',
         'cooled_options'         => 'Cooled Delivery Options',
+        'agecheck_options'       => 'Parcel with Age check Options',
+        'id_check_options'       => 'Parcel with ID check Options',
+        'birthday_check_options' => 'Parcel with Birthday Check Options',
     );
 
     /**
@@ -517,8 +853,39 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
             }
 
-            ksort($options);
         }
+
+        if (
+            $helper->canUsePakjegemakBeNotInsured()
+            && (!isset($flags['isBelgiumOnly'])
+                || $flags['isBelgiumOnly'] == true
+            )
+            && (!isset($flags['isExtraCover'])
+                || $flags['isExtraCover'] == false
+            )
+            && (!isset($flags['countryLimitation'])
+                || $flags['countryLimitation'] == 'NL'
+            )
+        ) {
+            if (!$asFlatArray) {
+                $options[] = array(
+                    'value'             => '4936',
+                    'label'             => $helper->__('4936 - Post Office Belgium'),
+                    'isBelgiumOnly'     => true,
+                    'isExtraCover'      => false,
+                    'isAvond'           => false,
+                    'isSunday'          => false,
+                    'isCod'             => false,
+                    'statedAddressOnly' => false,
+                    'countryLimitation' => 'NL',
+                    'group'             => 'pakjegemak_be_options'
+                );
+            } else {
+                $options['4936'] = $helper->__('4936 - Post Office Belgium');
+            }
+        }
+
+        ksort($options);
 
         return $options;
     }

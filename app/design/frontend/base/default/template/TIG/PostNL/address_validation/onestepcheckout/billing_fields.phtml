@@ -18,6 +18,7 @@
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
  *                 \______  /|__|    \____/ |____/ |   __/
  *                        \/                       |__|
+ * OneStepCheckout
  *
  * NOTICE OF LICENSE
  *
@@ -33,11 +34,13 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
 <?php
+$billingFields = array();
+$extraBillingFields = array();
 $formErrors = $this->getParentBlock()->formErrors;
 $formErrors = (!empty($formErrors['billing_errors'])) ? $formErrors['billing_errors'] : array();
 
@@ -45,12 +48,12 @@ $helper = Mage::helper('onestepcheckout/checkout');
 $dataHelper = Mage::helper('onestepcheckout');
 
     $billingFields['firstname'] = '
-        <div class="input-box input-firstname'.((in_array('firstname', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-firstname'.((in_array('firstname', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:firstname">'.$this->__('First Name').' <span class="required">*</span></label><br />
             <input class="required-entry input-text" type="text" name="billing[firstname]" id="billing:firstname" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getFirstname()).'" />
         </div>';
     $billingFields['lastname'] = '
-        <div class="input-box input-lastname'.((in_array('lastname', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-lastname'.((in_array('lastname', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:lastname">'.$this->__('Last Name').' <span class="required">*</span></label><br />
             <input class="required-entry input-text" type="text" name="billing[lastname]" id="billing:lastname" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getLastname()).'" />
         </div>';
@@ -66,32 +69,61 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php endif; ?>
 <?php if(!$this->isCustomerLoggedIn()): ?>
     <?php $billingFields['email'] = $billingFields['email'].'
-        <div class="input-box input-email'.((in_array('email', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-email'.((in_array('email', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:email">'.$this->__('Email Address').' <span class="required">*</span></label><br />
-            <input type="text" name="billing[email]" id="billing:email" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getEmail()).'" title="'.$this->__('Email Address') .'" class="validate-email required-entry input-text" />
+            <input type="email" name="billing[email]" id="billing:email" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getEmail()).'" title="'.$this->__('Email Address') .'" class="validate-email required-entry input-text" />
         </div>';
     ?>
 <?php endif; ?>
+
+<?php
+// In some cases email might be 2 div-s inside one <li> and it messes up a good solution for css widths.
+// Therefore here I make sure email creates just one div inside <li>
+if (in_array('email', $billingFields) && $billingFields['email']) {
+    $billingFields['email'] = '<div style="overflow: hidden">'.$billingFields['email'].'</div>';
+}
+?>
 
 
 <?php if(!$this->settings['exclude_telephone']):?>
     <?php $billingFields['telephone'] = '
-        <div class="input-box input-telephone'.((in_array('telephone', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-telephone'.((in_array('telephone', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:telephone">'.$this->__('Telephone').' <span class="required">*</span></label><br/>
-            <input type="text" name="billing[telephone]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getTelephone()).'" title="'.$this->__('Telephone').'" class="required-entry input-text" id="billing:telephone" />
+            <input type="tel" name="billing[telephone]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getTelephone()).'" title="'.$this->__('Telephone').'" class="required-entry input-text" id="billing:telephone" />
         </div>';
     ?>
 <?php endif; ?>
 
-<?php $billingFields['street'] = $this->getChild('postnl_billing_postcodecheck')
-                                      ->setAddressType('billing')
-                                      ->setAddress($this->getQuote()->getBillingAddress())
-                                      ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
-                                      ->toHtml();
+<?php if(!$this->settings['exclude_address']):?>
+    <?php $billingFields['street'] = $this->getChild('postnl_billing_postcodecheck')
+        ->setAddressType('billing')
+        ->setAddress($this->getQuote()->getBillingAddress())
+        ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
+        ->toHtml();
+    ?>
+<?php endif; ?>
+
+<?php
+/**
+ * TIG: Removed the postcode, city and country fields as they are already generated by the PostNL extension.
+ */
 ?>
+<?php /* if(!$this->settings['exclude_country_id']):?>
+<?php
+$billingFields['country_id'] = '
+    <div class="input-box input-country'.((in_array('country', $formErrors)) ? ' input-error' : '').'">
+        <label for="billing:country_id">'.$this->__('Country').' <span class="required">*</span></label><br />
+            '.$this->getCountryHtmlSelect('billing').'
+    </div>';
+?>
+<?php else: ?>
+<?php $billingFields['country_id'] = '
+    <input type="hidden" name="billing[country_id]" id="billing:country_id" value="'.$this->settings['default_country'].'" />';
+?>
+<?php endif; */ ?>
 <?php if(!$this->settings['exclude_region']): ?>
     <?php $billingFields['region_id'] = '
-        <div class="input-box input-region'.((in_array('region', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-region input-region_id'.((in_array('region', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:region">'.$this->__('State/Province').' <span class="required">*</span></label><br/>
             <select id="billing:region_id" name="billing[region_id]" title="'.$this->__('State/Province').'" class="validate-select" style="display:none">
                 <option value="">'.$this->__('Please select region, state or province').'</option>
@@ -103,10 +135,32 @@ $dataHelper = Mage::helper('onestepcheckout');
         </div>';
     ?>
 <?php endif; ?>
+<?php
+/**
+ * TIG: Removed the postcode, city and country fields as they are already generated by the PostNL extension.
+ */
+?>
+<?php /* if(!$this->settings['exclude_city']):?>
+    <?php $billingFields['city'] = '
+        <div class="osc-short input-box input-city'.((in_array('city', $formErrors)) ? ' input-error' : '').'">
+            <label for="billing:city">'.$this->__('City').' <span class="required">*</span></label><br/>
+            <input type="text" name="billing[city]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getCity()).'" title="'.$this->__('City').'" class="required-entry input-text" id="billing:city" />
+        </div>';
+    ?>
+<?php endif; ?>
+
+<?php if(!$this->settings['exclude_zip']): ?>
+    <?php $billingFields['postcode'] = '
+        <div class="osc-short input-box input-postcode'.((in_array('postcode', $formErrors)) ? ' input-error' : '').'" >
+            <label for="billing:postcode">'.$this->__('Zip/Postal Code').' <span class="required">*</span></label><br />
+            <input type="text" title="'.$this->__('Zip/Postal Code').'" name="billing[postcode]" id="billing:postcode" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getPostcode()).'" class="validate-zip-international required-entry input-text" />
+        </div>';
+    ?>
+<?php endif; */ ?>
 
 <?php if(!$this->settings['exclude_company']): ?>
     <?php $billingFields['company'] = '
-        <div class="input-box input-company'.((in_array('company', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-company'.((in_array('company', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:company">'.$this->__('Company').'</label><br/>
             <input type="text" name="billing[company]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getCompany()).'" title="'.$this->__('Company').'" class="input-text" id="billing:company" />
         </div>';
@@ -115,7 +169,7 @@ $dataHelper = Mage::helper('onestepcheckout');
 
 <?php if(!$this->settings['exclude_fax']): ?>
     <?php $billingFields['fax'] = '
-        <div class="input-box input-fax'.((in_array('fax', $formErrors)) ? ' input-error' : '').'">
+        <div class="osc-short input-box input-fax'.((in_array('fax', $formErrors)) ? ' input-error' : '').'">
             <label for="billing:fax">'.$this->__('Fax').'</label><br/>
             <input type="text" name="billing[fax]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getFax()).'" title="'.$this->__('Fax').'" class="input-text" id="billing:fax" />
         </div>';
@@ -130,6 +184,7 @@ $dataHelper = Mage::helper('onestepcheckout');
         }
     } catch (Exception $e) {
     }
+
     if(!is_object($_taxvat)){
         $_taxvat = $this->getLayout()->createBlock('customer/widget_taxvat');
     }
@@ -143,7 +198,7 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php if (method_exists(Mage::helper('customer/address'), 'isVatAttributeVisible') && Mage::helper('customer/address')->isVatAttributeVisible()) : ?>
     <?php $billingFields['taxvat'] = '
             <label for="billing:vat_id">'.$this->__('VAT Number').'</label>
-            <div class="input-box">
+            <div class="input-box input-vat">
                 <input type="text" id="billing:vat_id" name="billing[vat_id]" value="'.$dataHelper->clearDash($this->getQuote()->getBillingAddress()->getVatId()).'" title="'.$this->__('VAT Number').'" class="input-text '.Mage::helper('customer/address')->getAttributeValidationClass('vat_id').'" />
             </div>';
     ?>
@@ -151,6 +206,7 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php
     try {
         $_dob = $this->getLayout()->createBlock('customer/widget_dob');
+
     } catch (Exception $e) {
         $_dob = false;
     }
@@ -178,9 +234,12 @@ $dataHelper = Mage::helper('onestepcheckout');
     ?>
 <?php endif ?>
 <?php if(!$this->isCustomerLoggedIn() && $helper->showCreateAccount()): ?>
-    <?php $billingFields['create_account'] = '
+    <?php
+    $getCreateAccount = $this->getRequest()->getPost('create_account', false);
+    $billingFields['create_account'] = '
+        <div>
         <div class="input-box">
-            <input id="id_create_account" type="checkbox" name="create_account" value="1" '.((isset($_POST['create_account']) && $_POST['create_account'] == '1') ? ' checked="checked"' : '').' />
+            <input id="id_create_account" type="checkbox" name="create_account" value="1" '.((isset($getCreateAccount) && $getCreateAccount == '1') ? ' checked="checked"' : '').' />
             <label for="id_create_account">'.$this->__('Create an account for later use').'</label>
         </div>
 
@@ -196,21 +255,24 @@ $dataHelper = Mage::helper('onestepcheckout');
                 }
             });
         });
-        </script>';
+        </script>
+        </div>
+        ';
     ?>
 <?php endif; ?>
 <?php if($helper->showPasswords() && !$this->isCustomerLoggedIn()): ?>
     <?php
+        $billing_data = $this->getRequest()->getPost('billing', array());
         //id="onestepcheckout-li-password"
         $billingFields['password'] = '
         <li id="onestepcheckout-li-password" '.(($helper->hidePasswords()) ? 'style="display: none;"':'').'>
-            <div class="input-box input-password'.((in_array('password', $formErrors)) ? ' input-error' : '').'">
+            <div class="osc-short input-box input-password'.((in_array('password', $formErrors)) ? ' input-error' : '').'">
                 <label for="billing:customer_password">'.$this->__('Password').'</label><br/>
-                <input type="password" class="input-text required-entry validate-password" value="'.((isset($_POST['billing']['customer_password'])) ? Mage::helper('core')->escapeHtml($_POST['billing']['customer_password']) : '').'" title="Password" id="billing:customer_password" name="billing[customer_password]"/>
+                <input type="password" class="input-text required-entry validate-password" value="'.((isset($billing_data['customer_password'])) ? Mage::helper('core')->escapeHtml($billing_data['customer_password']) : '').'" title="Password" id="billing:customer_password" name="billing[customer_password]"/>
             </div>
-            <div class="input-box input-password'.((in_array('confirm_password', $formErrors)) ? ' input-error' : '').'">
+            <div class="osc-short input-box input-password'.((in_array('confirm_password', $formErrors)) ? ' input-error' : '').'">
                 <label for="billing:confirm_password">'.$this->__('Confirm password').'</label><br/>
-                <input type="password" class="input-text required-entry validate-cpassword" value="'.((isset($_POST['billing']['confirm_password'])) ? Mage::helper('core')->escapeHtml($_POST['billing']['confirm_password']) : '').'" id="billing:confirm_password" title="Confirm Password" name="billing[confirm_password]"/>
+                <input type="password" class="input-text required-entry validate-cpassword" value="'.((isset($billing_data['confirm_password'])) ? Mage::helper('core')->escapeHtml($billing_data['confirm_password']) : '').'" id="billing:confirm_password" title="Confirm Password" name="billing[confirm_password]"/>
             </div>
         </li>';
     ?>
@@ -219,7 +281,9 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php if ($this->isCustomerLoggedIn() && $this->customerHasAddresses()):?>
     <?php $billingFields['save_in_address_book'] = '
         <li class="control">
-            <input type="checkbox" name="billing[save_in_address_book]" value="1" title="'.$this->__('Save in address book').'" id="billing:save_in_address_book" onchange="shipping.setSameAsBilling(false);"'.(($dataHelper->clearDash($this->getQuote()->getBillingAddress()->getSaveInAddressBook())) ? 'checked="checked"':'').' class="checkbox" /><label for="billing:save_in_address_book">'.$this->__('Save in address book').'</label>
+            <div class="input-box input-save-address">
+                <input type="checkbox" name="billing[save_in_address_book]" value="1" title="'.$this->__('Save in address book').'" id="billing:save_in_address_book" onchange="shipping.setSameAsBilling(false);"'.(($dataHelper->clearDash($this->getQuote()->getBillingAddress()->getSaveInAddressBook())) ? 'checked="checked"':'').' class="checkbox" /><label for="billing:save_in_address_book">'.$this->__('Save in address book').'</label>
+            </div>
         </li>';
     ?>
 <?php else:?>
@@ -228,12 +292,58 @@ $dataHelper = Mage::helper('onestepcheckout');
     ?>
 <?php endif; ?>
 
-<?php $billingFields = $this->getBillingFieldsOrder($billingFields);?>
-<?php $_streetFieldSortOrder = Mage::helper('postnl/addressValidation')->getOscStreetFieldSortOrder(); ?>
-<?php foreach($billingFields as $key => $value):?>
-    <?php if(!empty($value['has_li']) || $key == $_streetFieldSortOrder):?>
-        <?php echo implode('',$value['fields']);?>
-    <?php else:?>
-        <li class="clearfix"><?php echo implode('',$value['fields']);?></li>
-    <?php endif;?>
-<?php endforeach;?>
+<?php
+
+if ($this->helper('postnl/deliveryOptions')->quoteIsIDCheck()):
+    $extraBillingFields[11] = array(
+        'positionNr' => 11,
+        'fieldKey' => 'postnl_idcheck',
+        'inputElementHtml' => '<li class="control">' . $this->getChildHtml('postnl_billing_idcheck') . '</li>',
+        'isNewlineAfter' => '0',
+    );
+endif;
+
+$addressFields = $this->echoAddressFields($billingFields);
+
+/**
+ * 1. Go from top to bottom and move all items 1 position up (14 -> 15, 10 -> 11, etc)
+ * 2. Place the new items in the array if at the right position.
+ * 3. Sort the array by key.
+ */
+foreach ($extraBillingFields as $position => $field):
+    $fieldAdded = false;
+    for ($i = max(array_keys($addressFields)); $i <= 0; $i--):
+        if (isset($addressFields[$i])):
+            $addressFields[$i + 1] = $addressFields[$i];
+            unset($addressFields[$i]);
+        endif;
+
+        if ($position == $i):
+            $fieldAdded = true;
+            $addressFields[$position] = $field;
+            break;
+        endif;
+    endfor;
+
+    if (!$fieldAdded):
+        $addressFields[$position] = $field;
+    endif;
+endforeach;
+
+ksort($addressFields);
+
+// write out the sorted array, inserting <li> where there is Newline After
+echo '<li class="clearfix">';
+
+foreach ($addressFields as $inputElemArray ) {
+    echo $inputElemArray ["inputElementHtml"];
+
+    if ($inputElemArray ["isNewlineAfter"]) {
+        echo '</li>';
+        echo '<li class="clearfix">';
+    }
+} // foreach
+
+echo '</li>';
+
+?>

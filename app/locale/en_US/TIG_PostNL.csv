@@ -258,6 +258,12 @@ TIG_PostNL::Post Office + Extra Cover,Post Office + Extra Cover
 TIG_PostNL::Post Office + Extra Cover + Notification,Post Office + Extra Cover + Notification
 TIG_PostNL::Post Office + Signature on Delivery,Post Office + Signature on Delivery
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Post Office + Signature on Delivery + Notification
+TIG_PostNL::Post Office Belgium + Extra Cover,Post Office Belgium + Extra Cover
+TIG_PostNL::4878 - Post Office Belgium + Extra Cover,4878 - Post Office Belgium + Extra Cover
+TIG_PostNL::Post Office Belgium,Post Office Belgium
+TIG_PostNL::4932 - Post Office Belgium + Extra Cover,4932 - Post Office Belgium + Extra Cover
+TIG_PostNL::4936 - Post Office Belgium,4936 - Post Office Belgium
+TIG_PostNL::4880 - Post Office Belgium,4880 - Post Office Belgium
 TIG_PostNL::Metric,Metric
 TIG_PostNL::Tonne (t),Tonne (t)
 TIG_PostNL::Kilogram (kg),Kilogram (kg)
@@ -575,6 +581,8 @@ TIG_PostNL::available,available
 TIG_PostNL::evening,evening
 TIG_PostNL::Post Office,Post Office
 TIG_PostNL::Delivery Options,Delivery Options
+TIG_PostNL::Delivery Options NL,Delivery Options NL
+TIG_PostNL::Delivery Options INT,Delivery Options INT
 TIG_PostNL::Delivery,Delivery
 TIG_PostNL::or Pickup,or Pickup
 TIG_PostNL::Su,Su
@@ -608,7 +616,6 @@ TIG_PostNL::Connection timeout duration,Connection timeout duration
 TIG_PostNL::After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.,After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.
 TIG_PostNL::Show PostNL Checkout exclusively to users with a PostNL account,Show PostNL Checkout exclusively to users with a PostNL account
 TIG_PostNL::Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.,Activate the PostNL Checkout only for customers with a PostNL account. Please note: The Delivery Options must be activated.
-TIG_PostNL::Delivery Options NL,Delivery Options NL
 "TIG_PostNL::Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning.","Your customers choose when, where and how they would like to receive their orders with PostNL's delivery options. Let your customers pick a day and the extension will show the estimated time of delivery. On Tuesdays and Wednesdays PostNL also delivers in the evening. Maybe your customers prefer to pick up their orders from one of the 2000 Post offices? No problem, a growing number of locations even have the orders ready for pickup early in the morning."
 TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.
@@ -1145,7 +1152,6 @@ TIG_PostNL::Use the button below to request help from the PostNL servicedesk.,Us
 TIG_PostNL::Request help from the servicedesk,Request help from the servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activation
 TIG_PostNL::Shipment and order grids,Shipment and order grids
-TIG_PostNL::Delivery options,Delivery options
 TIG_PostNL::Globalpack and barcode settings,Globalpack and barcode settings
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technical settings
@@ -1309,6 +1315,7 @@ TIG_PostNL::PostNL delivery options are only available when shipping from the Ne
 TIG_PostNL::Delivery options are only available when shipping from the Netherlands.,Delivery options are only available when shipping from the Netherlands.
 TIG_PostNL::Delivery options based on contractual agreements,Delivery options based on contractual agreements
 TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.,Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday and/or sunday delivery.
+TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use Monday.,Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use Monday.
 TIG_PostNL::Enable monday delivery,Enable monday delivery
 TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers.,Activate monday delivery (also known as sunday sorting) for your customers.
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>."
@@ -1344,3 +1351,52 @@ TIG_PostNL::Please enter your Dutch customer code and number.,Please enter your 
 TIG_PostNL::View the documentation.,View the documentation.
 TIG_PostNL::Documentation,Documentation
 TIG_PostNL::Unable to save down partner data.,Unable to save down partner data.
+TIG_PostNL::PostNL verification type,PostNL verification type
+"TIG_PostNL::Parcel with Agecheck 18+","Parcel with Agecheck 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+","Parcel with Extra Cover + Agecheck 18+"
+"TIG_PostNL::Parcel with Extra Cover + Agecheck 18+ Return when not home","Parcel with Extra Cover + Agecheck 18+ Return when not home"
+"TIG_PostNL::Parcel with Agecheck 18+ Return when not home","Parcel with Agecheck 18+ Return when not home"
+"TIG_PostNL::Parcel with Agecheck 18+ Neighbors","Parcel with Agecheck 18+ Neighbors"
+"TIG_PostNL::Post Office + Agecheck 18+","Post Office + Agecheck 18+"
+"TIG_PostNL::Post Office + Notification + Agecheck 18+","Post Office + Notification + Agecheck 18+"
+"TIG_PostNL::Post Office + Extra Cover + Agecheck 18+","Post Office + Extra Cover + Agecheck 18+"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Agecheck 18+","Post Office + Extra Cover + Notification + Agecheck 18+"
+"TIG_PostNL::Parcel with ID check (based on ID-number)","Parcel with ID check (based on ID-number)"
+"TIG_PostNL::Parcel with Extra Cover + ID check","Parcel with Extra Cover + ID check"
+"TIG_PostNL::Parcel with Extra Cover + ID check + Return when not home","Parcel with Extra Cover + ID check + Return when not home"
+"TIG_PostNL::Parcel with ID check + Return when not home","Parcel with ID check + Return when not home"
+"TIG_PostNL::Post Office + ID Check","Post Office + ID Check"
+"TIG_PostNL::Post Office + Notification + ID Check","Post Office + Notification + ID Check"
+"TIG_PostNL::Post Office + Extra Cover + ID Check","Post Office + Extra Cover + ID Check"
+"TIG_PostNL::Post Office + Extra Cover + Notification + ID Check","Post Office + Extra Cover + Notification + ID Check"
+"TIG_PostNL::Parcel with Birthday Check","Parcel with Birthday Check"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check","Parcel with Extra Cover + Birthday Check"
+"TIG_PostNL::Parcel with Extra Cover + Birthday Check + Return when not home","Parcel with Extra Cover + Birthday Check + Return when not home"
+"TIG_PostNL::Parcel with Birthday Check + Return when not home","Parcel with Birthday Check + Return when not home"
+"TIG_PostNL::Post Office + Birthday Check","Post Office + Birthday Check"
+"TIG_PostNL::Post Office + Notification + Birthday Check","Post Office + Notification + Birthday Check"
+"TIG_PostNL::Post Office + Extra Cover + Birthday Check","Post Office + Extra Cover + Birthday Check"
+"TIG_PostNL::Post Office + Extra Cover + Notification + Birthday Check","Post Office + Extra Cover + Notification + Birthday Check"
+TIG_PostNL::Age Check,Age Check
+TIG_PostNL::Birthday Check,Birthday Check
+TIG_PostNL::ID Check,ID Check
+TIG_PostNL::Dutch Passport,Nederlands paspoort
+TIG_POSTNL::Dutch ID,Dutch ID
+TIG_POSTNL::Dutch drivers license,Dutch drivers license
+TIG_POSTNL::Foreigners document,Foreigners document
+TIG_POSTNL::European ID,European ID
+TIG_POSTNL::Abroad passport,Abroad passport
+TIG_PostNL::Documentnumber:,Documentnumber:
+TIG_PostNL::Expiration date:,Expiration date:
+TIG_PostNL::Document type,Document type
+TIG_PostNL::Day,Day
+TIG_PostNL::Month,Month
+TIG_PostNL::Year,Year
+TIG_PostNL::The following data will be used for a personidentification when delivering the parcel.,The following data will be used for a personidentification when delivering the parcel.
+TIG_PostNL::Please enter a date that is in the future.,Please enter a date that is in the future.
+TIG_PostNL::Please provide a document type,Please provide a document type
+TIG_PostNL::Please provide a valid document type,Please provide a valid document type
+TIG_PostNL::Please provide a document number,Please provide a document number
+TIG_PostNL::Please provide a expiration date,Please provide a expiration date
+TIG_PostNL::Please provide a valid birthday,Please provide a valid birthday
+TIG_PostNL::This data will be used to verify your age at delivery.,This data will be used to verify your age at delivery.

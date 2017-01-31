@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                  hasQuote()
@@ -44,6 +44,8 @@
  * @method TIG_PostNL_Model_DeliveryOptions_Service setShippingDuration(int $duration)
  * @method boolean                                  hasConfirmDate()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setConfirmDate(string $date)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setIdcheckType(string $value)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setIdcheckExpirationDate(string $value)
  */
 class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 {
@@ -130,9 +132,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * @param StdClass[] $timeframes
      * @param string     $destinationCountry
      *
+     * @param null       $deliveryDate
+     *
      * @return false|StdClass[]
      */
-    public function filterTimeframes($timeframes, $destinationCountry = 'NL')
+    public function filterTimeframes($timeframes, $destinationCountry = 'NL', $deliveryDate = null)
     {
         /**
          * If the time frames are not an array, something has gone wrong.
@@ -144,7 +148,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry);
+        return $helper->filterTimeFrames($timeframes, Mage::app()->getStore()->getId(), $destinationCountry, $deliveryDate);
     }
 
     /**
@@ -198,11 +202,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveDeliveryOption($data)
     {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+
         /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
+        $dateHelper = Mage::helper('postnl/date');
 
         if ($data['type'] == 'Sameday') {
-            $helper->setPostnlDeliveryDelay(0);
+            $dateHelper->setPostnlDeliveryDelay(0);
         }
 
         $quote = $this->getQuote();
@@ -213,11 +220,16 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = DateTime::createFromFormat('d-m-Y', $data['date'], $amsterdamTimeZone);
         $deliveryDate->setTimezone($utcTimeZone);
 
+        $isPGBE = false;
+        if ($data['type'] == 'PG' && $quote->getShippingAddress() !== null && $quote->getShippingAddress()->getCountryId() == 'BE') {
+            $isPGBE = true;
+        }
+
         if ($data['type'] == 'Food' || $data['type'] == 'Cooledfood') {
             $confirmDate = $deliveryDate;
         } else {
             $deliveryDateClone = clone $deliveryDate;
-            $confirmDate = $helper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId());
+            $confirmDate = $dateHelper->getShippingDateFromDeliveryDate($deliveryDateClone, $quote->getStoreId(), $isPGBE);
         }
 
         /**
@@ -231,12 +243,32 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setIsPakketautomaat(false)
                     ->setProductCode(false)
                     ->setMobilePhoneNumber(false, true)
-                    ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'))
                     ->setConfirmDate($confirmDate->format('Y-m-d H:i:s'))
                     ->setExpectedDeliveryTimeStart(false)
                     ->setExpectedDeliveryTimeEnd(false);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        /**
+         * Age, Birthday and ID don't have deliveryoptions, so default to their value.
+         */
+        $newType = false;
+        if ($helper->quoteIsAgeCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        } elseif ($helper->quoteIsBirthdayCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        } elseif ($helper->quoteIsIDCheck($quote)) {
+            $newType = $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        if ($newType) {
+            $postnlOrder->setType($newType);
+        } else {
+            $postnlOrder->setType($data['type']);
+        }
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -63,10 +63,13 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     /**
      * String values for parcel types.
      */
-    const PARCEL_TYPE_REGULAR     = 'regular';
-    const PARCEL_TYPE_LETTERBOX   = 'letter_box';
-    const PARCEL_TYPE_FOOD        = 'food';
-    const PARCEL_TYPE_PAKJE_GEMAK = 'pakje_gemak';
+    const PARCEL_TYPE_REGULAR       = 'regular';
+    const PARCEL_TYPE_LETTERBOX     = 'letter_box';
+    const PARCEL_TYPE_FOOD          = 'food';
+    const PARCEL_TYPE_PAKJE_GEMAK   = 'pakje_gemak';
+    const PARCEL_TYPE_AGECHECK      = 'agecheck';
+    const PARCEL_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
+    const PARCEL_TYPE_IDCHECK       = 'idcheck';
 
     /**
      * String values for different rate types.
@@ -195,10 +198,32 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $this->_findParcelType();
 
         /**
+         * Get the parceltype
+         */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $parcelType = $this->_request->getParcelType();
+
+        /**
+         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
+         */
+        if ($parcelType == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
+            return $this->_addShippingRateNotFoundError();
+        }
+
+        /**
+         * Which types of shipments are only allow to the Netherlands?
+         */
+        $idCheckTypes = array(
+            self::PARCEL_TYPE_AGECHECK,
+            self::PARCEL_TYPE_BIRTHDAYCHECK,
+            self::PARCEL_TYPE_IDCHECK,
+        );
+
+        /**
          * If parcel_type is food, there can be no rate shown for non-domestic shipments.
          */
         /** @noinspection PhpUndefinedMethodInspection */
-        if ($this->_request->getParcelType() == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
+        if (in_array($parcelType, $idCheckTypes) && $countryId != 'NL') {
             return $this->_addShippingRateNotFoundError();
         }
 
@@ -299,7 +324,17 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
             $postnlOrder = Mage::getModel('postnl_core/order');
             $postnlOrder = $postnlOrder->loadByQuote($quote);
-            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
+
+            if ($this->getHelper()->quoteIsAgeCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
+            } elseif ($this->getHelper()->quoteIsBirthdayCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_BIRTHDAYCHECK);
+            } elseif ($this->getHelper()->quoteIsIDCheck()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_IDCHECK);
+            } elseif ($postnlOrder && $postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_PAKJE_GEMAK);
             } elseif ($this->getHelper()->quoteIsBuspakje($quote)) {
@@ -781,6 +816,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         switch ($parcelType) {
             case self::PARCEL_TYPE_FOOD:
                 return $this->getConfigData('foodspecificerrmsg');
+            case self::PARCEL_TYPE_AGECHECK:
+            case self::PARCEL_TYPE_BIRTHDAYCHECK:
+            case self::PARCEL_TYPE_IDCHECK:
+                return $this->getConfigData('idcheckspecificerrmsg');
             default:
                 return $this->getConfigData('specificerrmsg');
         }

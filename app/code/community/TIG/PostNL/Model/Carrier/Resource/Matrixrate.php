@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_Resource_Carrier_Tablerate
@@ -101,7 +101,10 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       " WHEN 'pakje_gemak' THEN 2" .
                                       " WHEN 'food' THEN 3" .
                                       " WHEN 'regular' THEN 4" .
-                                      " WHEN '*' THEN 5" .
+                                      " WHEN 'agecheck' THEN 5" .
+                                      " WHEN 'birthdaycheck' THEN 6" .
+                                      " WHEN 'idcheck' THEN 7" .
+                                      " WHEN '*' THEN 8" .
                                       " ELSE 100" .
                                       " END) ASC"
                                   ),
@@ -468,6 +471,9 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 'regular',
                 'pakje_gemak',
                 'food',
+                'agecheck',
+                'birthdaycheck',
+                'idcheck',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -622,6 +628,27 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'cooledfood':       //no break
             case 'gekoeld':          //no break
                 $formattedType = 'food';
+                break;
+            case 'agecheck':          //no break
+            case 'age check':         //no break
+            case 'age-check':         //no break
+                $formattedType = 'agecheck';
+                break;
+            case 'idcheck':           //no break
+            case 'id check':          //no break
+            case 'id-check':          //no break
+                $formattedType = 'idcheck';
+                break;
+            case 'birthday':          //no break
+            case 'birth day':         //no break
+            case 'birth-day':         //no break
+            case 'birthdaycheck':     //no break
+            case 'birthday check':    //no break
+            case 'birth day check':   //no break
+            case 'birth day-check':   //no break
+            case 'birth-day check':   //no break
+            case 'birth-day-check':   //no break
+                $formattedType = 'birthdaycheck';
                 break;
             //no default
         }

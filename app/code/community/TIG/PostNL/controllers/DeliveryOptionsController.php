@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Action
@@ -395,7 +395,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         /**
          * Filter out unavailable time frames.
          */
-        $timeframes = $this->getService()->filterTimeframes($response, $data['country']);
+        $timeframes = $this->getService()->filterTimeframes($response, $data['country'], $data['deliveryDate']);
 
         if (!$timeframes) {
             $this->getResponse()
@@ -1310,11 +1310,37 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
 
+            $housenumber = $postData['housenumber'];
+            $housenumberValidator      = new Zend_Validate_Digits();
+            if (!$housenumberValidator->isValid($housenumber)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid housenumber supplied for getNearestLocations request: %s',
+                        $housenumber
+                    ),
+                    'POSTNL-0242'
+                );
+            }
+
+            $city = $postData['city'];
+            $cityValidator      = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
+            if (!$cityValidator->isValid($city)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid city supplied for getNearestLocations request: %s',
+                        $city
+                    ),
+                    'POSTNL-0242'
+                );
+            }
+
             $data = array(
                 'postcode'     => $postcode,
                 'street'       => $street,
                 'country'      => $country,
                 'deliveryDate' => $deliveryDate,
+                'housenumber'  => $housenumber,
+                'city'         => $city,
             );
             return $data;
         }

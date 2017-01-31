@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
@@ -92,6 +92,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * XPATH to allow EPS BE only product option setting.
      */
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
+
+    /**
+     * XPATH to the allow Pakjegemak not insured setting.
+     */
+    const XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED = 'postnl/cif_product_options/allow_pakjegemak_not_insured';
 
     /**
      * XML path to weight unit used
@@ -153,6 +158,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Xpath to the sender country setting.
      */
     const XPATH_SENDER_COUNTRY = 'postnl/cif_address/country';
+
+    /**
+     * Xpath to the used checkout extension
+     */
+    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_labels_and_confirming/checkout_extension';
 
     /**
      * Required configuration fields.
@@ -674,7 +684,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
+     * Checks to see if the module may ship to the Netherlands or Belgium using PostNL standard shipments.
      *
      * @return boolean
      */
@@ -686,12 +696,44 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $cache->getPostnlCoreCanUseStandard();
         }
 
+        $canUseStandardNL = $this->canUseStandardForCountry('NL');
+        $canUseStandardBE = $this->canUseStandardForCountry('BE');
+
+        $result = $canUseStandardNL || $canUseStandardBE;
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseStandard($result)
+                  ->saveCache();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
+     *
+     * @param $country
+     *
+     * @return bool
+     */
+    public function canUseStandardForCountry($country)
+    {
+        $cache = $this->getCache();
+
+        $hasPostnlCoreCanUseStandard = 'hasPostnlCoreCanUseStandard' . $country;
+        $getPostnlCoreCanUseStandard = 'getPostnlCoreCanUseStandard' . $country;
+        $setPostnlCoreCanUseStandard = 'setPostnlCoreCanUseStandard' . $country;
+
+        if ($cache && $cache->$hasPostnlCoreCanUseStandard()) {
+            return $cache->$getPostnlCoreCanUseStandard();
+        }
+
         /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $standardProductOptionsModel */
         $standardProductOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
-        $standardProductOptions = $standardProductOptionsModel->getAvailableOptions();
+        $standardProductOptions = $standardProductOptionsModel->getAvailableOptions(false, $country);
         if (empty($standardProductOptions)) {
             if ($cache) {
-                $cache->setPostnlCoreCanUseStandard(false)
+                $cache->$setPostnlCoreCanUseStandard(false)
                       ->saveCache();
             }
 
@@ -699,7 +741,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($cache) {
-            $cache->setPostnlCoreCanUseStandard(true)
+            $cache->$setPostnlCoreCanUseStandard(true)
                   ->saveCache();
         }
 
@@ -709,23 +751,45 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship using PakjeGemak.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak()
+    public function canUsePakjeGemak($country = false)
     {
         $cache = $this->getCache();
 
-        if ($cache && $cache->hasPostnlCoreCanUsePakjeGemak()) {
-            return $cache->getPostnlCoreCanUsePakjeGemak();
+        $setPostnlCoreCanUsePakjeGemak = 'setPostnlCoreCanUsePakjeGemak';
+        $hasPostnlCoreCanUsePakjeGemak = 'hasPostnlCoreCanUsePakjeGemak';
+        $getPostnlCoreCanUsePakjeGemak = 'getPostnlCoreCanUsePakjeGemak';
+
+        if ($country) {
+            $setPostnlCoreCanUsePakjeGemak .= $country;
+            $hasPostnlCoreCanUsePakjeGemak .= $country;
+            $getPostnlCoreCanUsePakjeGemak .= $country;
+        }
+
+        if ($cache && $cache->$hasPostnlCoreCanUsePakjeGemak()) {
+            return $cache->$getPostnlCoreCanUsePakjeGemak();
+        }
+
+        $options = array(
+            'isCod' => false,
+        );
+
+        if ($country) {
+            $options['countryLimitation'] = $country;
+        } else {
+            $options['isBelgiumOnly'] = false;
         }
 
         /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductoptionsModel */
         $pakjeGemakProductoptionsModel = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions');
-        $pakjeGemakProductoptions = $pakjeGemakProductoptionsModel->getAvailableOptions();
+        $pakjeGemakProductoptions = $pakjeGemakProductoptionsModel->getOptions($options, false, true);
 
         if (empty($pakjeGemakProductoptions)) {
             if ($cache) {
-                $cache->setPostnlCoreCanUsePakjeGemak(false)
+                $cache->$setPostnlCoreCanUsePakjeGemak(false)
                       ->saveCache();
             }
 
@@ -733,7 +797,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($cache) {
-            $cache->setPostnlCoreCanUsePakjeGemak(true)
+            $cache->$setPostnlCoreCanUsePakjeGemak(true)
                   ->saveCache();
         }
         return true;
@@ -889,6 +953,35 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Checks if the productcode 4936 is allowed.
+     *
+     * @param bool $storeId
+     *
+     * @return bool
+     */
+    public function canUsePakjegemakBeNotInsured($storeId = false)
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUsePakjegemakNotInsured()) {
+            return $cache->getPostnlCoreCanUsePakjegemakNotInsured();
+        }
+
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $pakjegemakNotInsuredAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUsePakjegemakNotInsured($pakjegemakNotInsuredAllowed)
+                ->saveCache();
+        }
+
+        return $pakjegemakNotInsuredAllowed;
+    }
+
+    /**
      * Save state of configuration field sets
      *
      * @param array $configState
@@ -986,6 +1079,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * ID Check orders are never letter box parcels.
+         */
+        if ($this->quoteHasIDCheckProducts($quote)) {
+            return false;
+        }
+
+        /**
          * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
          * option rules will apply.
          */
@@ -1078,6 +1178,118 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $foodType;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteHasIDCheckProducts(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_has_id_check_products_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($this->quoteIsAgeCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        if ($this->quoteIsBirthdayCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        if ($this->quoteIsIDCheck($quote)) {
+            Mage::registry($registryKey, true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if this quote has a ID Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsIDCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_id_check_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_ID, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
+    }
+
+    /**
+     * Check if this quote has a Age Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsAgeCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_age_check_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_AGE, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
+    }
+
+    /**
+     * Check if this quote has a Age Check product.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsBirthdayCheck(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_birthday_check_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
     }
 
     /**
@@ -2798,6 +3010,44 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param null $quote
+     *
+     * @return bool
+     */
+    public function getQuoteIdCheckType($quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
+        $shipmentType = false;
+        if ($this->quoteIsAgeCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_AGE;
+        }
+
+        if ($this->quoteIsBirthdayCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY;
+        }
+
+        if ($this->quoteIsIdCheck($quote)) {
+            $shipmentType = $deliveryOptionsHelper::IDCHECK_TYPE_ID;
+        }
+
+        return $shipmentType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIdevOsc()
+    {
+        return Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION) == 'idev_onestepcheckout';
+    }
+
+    /**
      * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error
      * occurs.
      *
@@ -2821,6 +3071,39 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * @param array|string           $types
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    protected function _hasQuotePostnlProductType($types, Mage_Sales_Model_Quote $quote = null)
+    {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
+
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $quoteHasIDCheckType = false;
+        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+        foreach ($quote->getAllItems() as $quoteItem) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $postnlProductType = $quoteItem->getProduct()->getPostnlProductType();
+
+            foreach ($types as $type) {
+                if ($postnlProductType == $type) {
+                    $quoteHasIDCheckType = true;
+                    break;
+                }
+            }
+        }
+
+        return $quoteHasIDCheckType;
     }
 
     /**

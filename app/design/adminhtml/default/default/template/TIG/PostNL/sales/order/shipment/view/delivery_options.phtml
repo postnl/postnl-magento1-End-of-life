@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  */
@@ -76,7 +76,7 @@
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if ($_isDomesticShipment || $_isBelgium): ?>
+            <?php if ((isset($_isDomesticShipment) && $_isDomesticShipment) || $_isBelgium): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
                     <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>

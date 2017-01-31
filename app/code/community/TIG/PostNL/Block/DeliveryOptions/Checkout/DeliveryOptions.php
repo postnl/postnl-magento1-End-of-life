@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
@@ -292,6 +292,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get the currently inserted shipping address's city.
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        $city = $this->getShippingAddress()->getCity();
+
+        return $city;
+    }
+
+    /**
      * Get the currently selected shipping address's country.
      *
      * @return string
@@ -310,11 +322,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     /**
      * Get the earliest possible delivery date.
      *
+     * @param string $for delivery or pickup
+     *
      * @return null|string
      */
-    public function getDeliveryDate()
+    public function getDeliveryDate($for = 'delivery')
     {
-        $deliveryDate = $this->_deliveryDate;
+        $deliveryDate = isset($this->_deliveryDate[$for]) ? $this->_deliveryDate[$for] : null;
 
         if ($deliveryDate !== null) {
             return $deliveryDate;
@@ -326,7 +340,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $country  = $this->getCountry();
 
         try {
-            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote);
+            $deliveryDate = $this->_getDeliveryDate($postcode, $country, $quote, $for);
         } catch (Exception $e) {
             /** @var TIG_PostNL_Helper_Date $helper */
             $helper = Mage::helper('postnl/date');
@@ -336,7 +350,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
                                    ->format('d-m-Y');
         }
 
-        $this->setDeliveryDate($deliveryDate);
+        $this->setDeliveryDate($deliveryDate, $for);
+
         return $deliveryDate;
     }
 
@@ -345,11 +360,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param string $deliveryDate
      *
+     * @param string $for delivery or pickup
+     *
      * @return $this
      */
-    public function setDeliveryDate($deliveryDate)
+    public function setDeliveryDate($deliveryDate, $for = 'delivery')
     {
-        $this->_deliveryDate = $deliveryDate;
+        $this->_deliveryDate[$for] = $deliveryDate;
 
         return $this;
     }
@@ -540,8 +557,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return 0;
         }
 
-        $currentRate = $this->getMethodRate();
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        if ($helper->quoteHasIDCheckProducts()) {
+            return 0;
+        }
 
+        $currentRate = $this->getMethodRate();
         /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getPakjeGemakFee($currentRate, $formatted, $includingTax);
@@ -634,13 +656,15 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     /**
      * Checks whether PakjeGemak locations are allowed.
      *
-     * @return boolean
+     * @param mixed $country
+     *
+     * @return bool
      */
-    public function canUsePakjeGemak()
+    public function canUsePakjeGemak($country = false)
     {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
-        $canUsePakjeGemak = $helper->canUsePakjeGemak();
+        $canUsePakjeGemak = $helper->canUsePakjeGemak(false, true, $country);
         return $canUsePakjeGemak;
     }
 
@@ -921,20 +945,31 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * @param string                 $country
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @throws TIG_PostNL_Exception
+     * @param string                 $for delivery or pickup
      *
      * @return string
+     * @throws TIG_PostNL_Exception
      */
-    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote) {
+    protected function _getDeliveryDate($postcode, $country, Mage_Sales_Model_Quote $quote, $for)
+    {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
-        if (!$validator->isValid($postcode)) {
+        $validatorBe = new Zend_Validate_PostCode('nl_BE');
+        if (!$validator->isValid($postcode) && !$validatorBe->isValid($postcode)) {
+            $exceptionMessage = 'Invalid postcode supplied for GetDeliveryDate request: '
+                . '%s Postcodes may only contain 4 numbers';
+
+            if ($country == 'NL') {
+                $exceptionMessage .= ' and 2 letters';
+            }
+
+            $exceptionMessage .= '.';
+
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers '
-                        . 'and 2 letters.',
-                     $postcode
+                    $exceptionMessage,
+                    $postcode
                 ),
                 'POSTNL-0131'
             );
@@ -944,22 +979,43 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             throw new TIG_PostNL_Exception(
                 $this->__(
                     'Invalid country supplied for GetDeliveryDate request: %s. Only "NL" and "BE" are allowed.',
-                    $postcode
+                    $country
                 ),
                 'POSTNL-0235'
             );
         }
 
-        /** @var TIG_PostNL_Model_DeliveryOptions_Cif $cif */
-        $cif = Mage::getModel('postnl_deliveryoptions/cif');
-        $response = $cif->setStoreId(Mage::app()->getStore()->getId())
-                        ->getDeliveryDate($postcode, $country, $quote);
+        $storeId = Mage::app()->getStore()->getId();
 
-        /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
+        /** @var TIG_PostNL_Model_DeliveryOptions_Cif $cif */
+        $cif = $this->_getModel('postnl_deliveryoptions/cif');
+
+        $response = $cif->setStoreId($storeId)
+                        ->getDeliveryDate($postcode, $country, $quote, $for);
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = $this->_getHelper('deliveryOptions');
+
+        /** @var TIG_PostNL_Helper_Date $dateHelper */
+        $dateHelper = $this->_getHelper('date');
 
         $dateObject = new DateTime($response, new DateTimeZone('UTC'));
-        $correction = $helper->getDeliveryDateCorrection($dateObject);
+
+        /**
+         * If we are after the cutoff time, the deliverydate webservice will return the next day if sameday is
+         * enabled. That's why we need to add a day. The getDeliveryDateCorrection will check if it is
+         * not in the weekend etc.
+         */
+        if (
+            $country == 'NL' &&
+            $deliveryOptionsHelper->canUseSameDayDelivery() &&
+            $dateHelper->isPastCutOff($dateObject, $storeId) &&
+            $for == 'pickup'
+        ) {
+            $dateObject->add(new DateInterval("P1D"));
+        }
+
+        $correction = $dateHelper->getDeliveryDateCorrection($dateObject);
         $dateObject->add(new DateInterval("P{$correction}D"));
 
         return $dateObject->format('d-m-Y');
@@ -980,5 +1036,22 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         } else {
             return parent::escapeHtml($data, $allowedTags);
         }
+    }
+
+    /**
+     * @param $type
+     *
+     * @return DateTime
+     */
+    public function getCutOff($type)
+    {
+        /** @var  $storeId */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        /** @var TIG_PostNL_Helper_Date $helper */
+        $helper = $this->_getHelper('date');
+
+        return $helper->getCutOff($storeId, $type);
     }
 }

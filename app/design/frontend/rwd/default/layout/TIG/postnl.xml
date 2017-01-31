@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -374,6 +374,7 @@
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
+            <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
         </reference>
         <reference name="checkout.onepage.shipping">
             <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
@@ -463,6 +464,7 @@
 
         <reference name="onestepcheckout.billing.address">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/onestepcheckout/postcode_check.phtml"/>
+            <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
         </reference>
 
         <reference name="onestepcheckout.shipping.address">
@@ -507,6 +509,7 @@
                 <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
                 <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
                 <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
             <block type="postnl_addressvalidation/goMage_lightCheckout_shipping" name="checkout.onepage.address.shipping" as="shipping" template="TIG/PostNL/address_validation/gomage_checkout/shipping.phtml">
                 <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>

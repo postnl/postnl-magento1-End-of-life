@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -43,14 +43,19 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
-<?php $_store         = Mage::app()->getStore(); ?>
-<?php $_address       = $this->getShippingAddress(); ?>
-<?php $_postcode      = $this->getPostcode(); ?>
-<?php $_country       = $this->getCountry(); ?>
-<?php $_deliveryDate  = $this->getDeliveryDate(); ?>
-<?php $_streetData    = $this->getStreetData(); ?>
-<?php $_housenumber   = $_streetData['housenumber']; ?>
-<?php $_street        = $_streetData['streetname']; ?>
+<?php $_store               = Mage::app()->getStore(); ?>
+<?php $_address             = $this->getShippingAddress(); ?>
+<?php $_postcode            = $this->getPostcode(); ?>
+<?php $_country             = $this->getCountry(); ?>
+<?php $_deliveryDate        = $this->getDeliveryDate('delivery'); ?>
+<?php $_pickupDate          = $this->getDeliveryDate('pickup'); ?>
+<?php $_streetData          = $this->getStreetData(); ?>
+<?php $_housenumber         = $_streetData['housenumber']; ?>
+<?php $_street              = $_streetData['streetname']; ?>
+<?php $_city                = $this->getCity(); ?>
+<?php $_weekdayCutOffTime   = $this->getCutOff('weekday'); ?>
+<?php $_sundayCutOffTime    = $this->getCutOff('sunday'); ?>
+<?php $_sameDayCutOffTime   = $this->getCutOff('sameday'); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
 
@@ -333,9 +338,16 @@
             housenumber        : housenumber,
             street             : street,
             country            : '<?php echo $this->escapeHtml($_country); ?>',
-            deliveryDate       : '<?php echo $_deliveryDate; ?>',
+            city               : '<?php echo $this->escapeHtml($_city); ?>',
+            deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
+            pickupDate         : '<?php echo $this->escapeJavascriptHtml($_pickupDate); ?>',
             imageBaseUrl       : baseUrl,
-            fullAddress        : fullAddress
+            fullAddress        : fullAddress,
+            cutOffTimes        : {
+                weekday: '<?php echo $_weekdayCutOffTime; ?>',
+                sunday: '<?php echo $_sundayCutOffTime; ?>',
+                sameday: '<?php echo $_sameDayCutOffTime; ?>'
+            }
         };
 
         options = {
@@ -593,10 +605,15 @@
         var fieldsToObserve = [
             'virtual:billing:street' + streetnameField,
             'billing:street' + streetnameField,
+            'virtual:billing:city',
+            'billing:city',
             'virtual:shipping:street' + streetnameField,
             'shipping:street' + streetnameField,
             'billing:postcode',
-            'shipping:postcode'
+            'shipping:postcode',
+            'postnl_idcheck:type',
+            'postnl_idcheck:number',
+            'postnl_idcheck:expiration_date_full'
         ];
 
         if (streetnameField != housenumberField) {
@@ -640,6 +657,26 @@
                 }
 
                 get_save_billing_function(url_save_billing, url_set_methods, true)();
+            });
+        });
+
+        var fieldsToValidate = [
+            'billing_postnl_idcheck:expiration_date_day',
+            'billing_postnl_idcheck:expiration_date_month',
+            'billing_postnl_idcheck:expiration_date_year'
+        ];
+
+        fieldsToValidate.each( function (field) {
+            var element = $(field);
+            console.log('field, element', field, element);
+            if (!element) {
+                return;
+            }
+
+            element.observe('change', function() {
+                if (this.validate()) {
+                    get_save_billing_function(url_save_billing, url_set_methods, true)();
+                }
             });
         });
 

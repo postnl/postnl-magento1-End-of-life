@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -380,18 +380,20 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @param boolean     $flat
      * @param string|bool $destination
      *
+     * @param string      $group
+     *
      * @return array
      */
-    public function getPakjeGemakProductCodes($flat = true, $destination = false)
+    public function getPakjeGemakProductCodes($flat = true, $destination = false, $group = 'default')
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions $pakjeGemakProductCodes */
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
 
         if ($destination == 'BE') {
-            return $pakjeGemakProductCodes->getAvailableBeOptions($flat);
+            return $pakjeGemakProductCodes->getAvailableBeOptions($flat, $group);
         }
 
-        return $pakjeGemakProductCodes->getAvailableOptions($flat);
+        return $pakjeGemakProductCodes->getAvailableOptions($flat, $group);
     }
 
     /**
@@ -544,6 +546,78 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /** @var TIG_PostNL_Model_Core_System_Config_Source_CooledProductOptions $cooledProductCodes */
         $cooledProductCodes = Mage::getSingleton('postnl_core/system_config_source_cooledProductOptions');
         return $cooledProductCodes->getAvailableSameDayOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getAgeCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AgeCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_ageCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getAgeCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AgeCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_ageCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getBirthdayCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BirthdayCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_birthdayCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getBirthdayCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BirthdayCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_birthdayCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getIDCheckProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getIDCheckPakjegemakProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
     }
 
     /**

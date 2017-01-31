@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
@@ -52,18 +52,33 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
 
         $helper = Mage::helper('postnl');
 
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+
         $options = array(
             array(
                 'label' => $helper->__('Non-Food'),
                 'value' => 0,
             ),
             array(
-                'value' => 1,
+                'value' => $deliveryOptionsHelper::FOOD_TYPE_DRY_GROCERIES,
                 'label' => $helper->__('Dry & Groceries'),
             ),
             array(
-                'value' => 2,
+                'value' => $deliveryOptionsHelper::FOOD_TYPE_COOL_PRODUCTS,
                 'label' => $helper->__('Cooled Products'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_AGE,
+                'label' => $helper->__('Age Check'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY,
+                'label' => $helper->__('Birthday Check'),
+            ),
+            array(
+                'value' => $deliveryOptionsHelper::IDCHECK_TYPE_ID,
+                'label' => $helper->__('ID Check'),
             ),
         );
 

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_PackingSlip setStoreId(int $value)
@@ -904,6 +904,15 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                         break;
                     case $postnlShipment::SHIPMENT_TYPE_COOLED:
                         $text .= ' (' . $this->getHelper()->__('Cooled Food Delivery') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_AGECHECK:
+                        $text .= ' (' . $this->getHelper()->__('Age Check') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_BIRTHDAYCHECK:
+                        $text .= ' (' . $this->getHelper()->__('Birthday Check') . ')';
+                        break;
+                    case $postnlShipment::SHIPMENT_TYPE_IDCHECK:
+                        $text .= ' (' . $this->getHelper()->__('ID Check') . ')';
                         break;
                     // no default
                 }

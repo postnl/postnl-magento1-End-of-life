@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class containing all default methods used for CIF communication by this extension.
@@ -142,6 +142,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Default HS tariff value.
      */
     const DEFAULT_HS_TARIFF = '000000';
+
+    /**
+     * Can we use the dutch address (BE -> NL shipments only)
+     */
+    const XPATH_USE_DUTCH_ADDRESS = 'postnl/cif_address/use_dutch_address';
 
     /**
      * Array containing possible address types.
@@ -283,6 +288,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'Characteristic' => '118',
                 'Option'         => '006',
             ),
+        ),
+        'AgeCheck' => array(
+            'Characteristic' => '014',
+            'Option'         => '002',
+        ),
+        'BirthdayCheck' => array(
+            'Characteristic' => '016',
+            'Option'         => '002',
+        ),
+        'IDCheck' => array(
+            'Characteristic' => '012',
+            'Option'         => '002',
         ),
     );
 
@@ -887,17 +904,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
             $customer = array_merge($customer, $additionalCustomerData);
 
-            /**
-             * This is an edge case:
-             *
-             * If the domestic country is BE, the shipment is being sent to Netherlands and the
-             * option "Use Dutch products" is enabled, we must fool CIF and return the alternative customer id,
-             * customer code and the Dutch alternative address.
-             */
             if (
                 $this->getHelper()->getDomesticCountry() == 'BE' &&
                 $shipment->getShippingAddress()->getCountryId() == 'NL' &&
-                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts()
+                Mage::helper('postnl/deliveryoptions')->canUseDutchProducts() &&
+                Mage::getStoreConfigFlag(self::XPATH_USE_DUTCH_ADDRESS)
             ) {
                 $customer['CustomerCode'] = $this->_getDutchCustomerCode();
                 $customer['CustomerNumber'] = $this->_getDutchCustomerNumber();
@@ -1044,6 +1055,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $productOptions = $this->_getProductOptions($postnlShipment);
         if ($productOptions) {
             $shipmentData['ProductOptions'] = $productOptions;
+        }
+
+        if ($postnlShipment->isBirthdayCheckShipment()) {
+            $customerDob = $order->getCustomerDob();
+            $customerDobObject = new DateTime($customerDob, new DateTimeZone('UTC'));
+            $customerDobObject->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $shipmentData['ReceiverDateOfBirth'] = $customerDobObject->format('d-m-Y');
+        }
+
+        /**
+         * @source https://developer.postnl.nl/apis/confirming-webservice/documentation#toc-14
+         */
+        if ($postnlShipment->isIDCheckShipment()) {
+            $expirationDate = $postnlShipment->getIdcheckExpirationDate();
+            $expirationDateObject = new DateTime($expirationDate, new DateTimeZone('UTC'));
+            $expirationDateObject->setTimezone(new DateTimeZone('Europe/Berlin'));
+
+            $shipmentData['IDExpiration'] = $expirationDateObject->format('d-m-Y');
+            $shipmentData['IDNumber'] = $postnlShipment->getIdcheckNumber();
+            $shipmentData['IDType'] = $postnlShipment->getIdcheckType();
         }
 
         /**

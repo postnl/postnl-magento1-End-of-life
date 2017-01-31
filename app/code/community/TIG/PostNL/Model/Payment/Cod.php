@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
@@ -47,6 +47,11 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      * Xpath to the PostNL COD fee setting.
      */
     const XPATH_COD_FEE = 'payment/postnl_cod/fee';
+
+    /**
+     * Xpath to the 'allow_for_buspakje' configuration setting.
+     */
+    const XPATH_ALLOW_FOR_BUSPAKJE = 'payment/postnl_cod/allow_for_buspakje';
 
     /**
      * This payment method's unique code.
@@ -157,6 +162,16 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     protected $_canManageRecurringProfiles  = false;
 
     /**
+     * @var array
+     */
+    protected $_helpers                     = array();
+
+    /**
+     * @var array
+     */
+    protected $_models                      = array();
+
+    /**
      * @var boolean
      */
 
@@ -182,7 +197,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     public function isAvailable($quote = null)
     {
         /** @var TIG_PostNL_Helper_Payment $helper */
-        $helper = Mage::helper('postnl/payment');
+        $helper = $this->getHelper('postnl/payment');
 
         /**
          * Make sure the quote is available.
@@ -232,7 +247,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             }
 
             /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
-            $carrierHelper = Mage::helper('postnl/carrier');
+            $carrierHelper = $this->getHelper('postnl/carrier');
             if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
                 $helper->log(
                     $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
@@ -283,10 +298,20 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check if the delivery type is not a Sunday Delivery, since COD is not available for Sunday delivery
          */
         /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = $this->getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getType() == 'Sunday') {
             $helper->log(
                 $helper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
+            );
+            return false;
+        }
+
+        /**
+         * Check if COD is available in combination with Buspakje.
+         */
+        if (!$this->canShowForBuspakje()) {
+            $helper->log(
+                $helper->__('PostNL Cod is not for Buspakje shipments.')
             );
             return false;
         }
@@ -406,5 +431,71 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          */
         $title = sprintf($title, $fee);
         return $title;
+    }
+
+    /**
+     * Check if the PostNL COD payment method may be shown for letter box parcel orders.
+     *
+     * @return boolean
+     */
+    protected function canShowForBuspakje()
+    {
+        /**
+         * Check the configuration setting.
+         */
+        $showForBuspakje = Mage::getStoreConfigFlag(self::XPATH_ALLOW_FOR_BUSPAKJE, Mage::app()->getStore()->getId());
+        if ($showForBuspakje) {
+            return true;
+        }
+
+        /**
+         * Check if the buspakje calculation mode is set to automatic.
+         */
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $calculationMode = $helper->getBuspakjeCalculationMode();
+        if ($calculationMode != 'automatic') {
+            return true;
+        }
+
+        /**
+         * Check if the current quote fits as a letter box parcel.
+         */
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
+        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $helper
+     *
+     * @return Mage_Core_Helper_Data
+     */
+    protected function getHelper($helper)
+    {
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
+    }
+
+    /**
+     * @param $model
+     *
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function getModel($model)
+    {
+        if (!array_key_exists($model, $this->_models)) {
+            $this->_models[$model] = Mage::getModel($model);
+        }
+
+        return $this->_models[$model];
     }
 }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Block_Core_Template extends Mage_Core_Block_Template
@@ -42,6 +42,50 @@ abstract class TIG_PostNL_Block_Core_Template extends Mage_Core_Block_Template
      * @var string
      */
     protected $_eventPrefix = 'postnl_core_template';
+
+    /**
+     * @var array
+     */
+    protected $_helpers = array();
+
+    /**
+     * @var array
+     */
+    protected $_models = array();
+
+    /**
+     * @param null $helperName
+     *
+     * @return TIG_PostNL_Helper_Data
+     */
+    protected function _getHelper($helperName = null)
+    {
+        $helper = 'postnl';
+
+        if ($helperName !== null) {
+            $helper .= '/' . $helperName;
+        }
+
+        if (!array_key_exists($helper, $this->_helpers)) {
+            $this->_helpers[$helper] = Mage::helper($helper);
+        }
+
+        return $this->_helpers[$helper];
+    }
+
+    /**
+     * @param $model
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    protected function _getModel($model)
+    {
+        if (array_key_exists($model, $this->_models)) {
+            return $this->_models[$model];
+        }
+
+        return Mage::getModel($model);
+    }
 
     /**
      * Renders a template block. Also throws 2 events based on the current event prefix.

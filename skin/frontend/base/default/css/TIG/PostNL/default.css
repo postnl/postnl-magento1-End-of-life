@@ -30,7 +30,7 @@
 /* Buttons */
 .postnl-container .button { border:0; padding:0; margin:0; background:transparent; overflow:visible; cursor:pointer; vertical-align:middle; }
 .postnl-container .button span { border:0; padding:0 0 0 12px; margin:0; cursor:pointer; display:-moz-inline-stack; display:inline-block; height:26px; color:#fff; text-decoration:none; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_button.png) 0 -68px no-repeat; }
-.postnl-container .button span span { padding:0 12px 0 0; background-position:100% -68px; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
+.postnl-container .button span span { padding:0 12px 0; background-position:100% -68px; white-space:nowrap; font:14px/24px Arial, sans-serif; text-transform:none; }
 .postnl-container .button.disabled span { background-position:0 -94px; color:#b0b0b0 !important; cursor:default !important; }
 .postnl-container .button.disabled span span { background-position:100% -94px; }
 
@@ -61,7 +61,8 @@
 .postnl-container .location { color:#fff; height:24px; margin:0 0 2px; }
 .postnl-container .location .bkg { height:24px; background-image:url(../../../images/TIG/PostNL/deliveryoptions/bkg_location.gif); }
 .postnl-container .location .location-name { font-size:14px; line-height:24px; }
-.postnl-container .location .location-type { color:#eaeaeb; font-size:12px; line-height:24px; margin-left:6px; }
+.postnl-container .location .location-type,
+.postnl-container .location .location-distance-text { color:#eaeaeb; font-size:12px; line-height:24px; margin-left:6px; }
 .postnl-container .location .location-info { float:right; }
 .postnl-container .location .location-info span { margin-right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; }
 .postnl-container .location .location-info:hover span { width:31px; background-position:5px -41px; }

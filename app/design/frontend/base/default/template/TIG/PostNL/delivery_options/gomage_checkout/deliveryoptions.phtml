@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -43,13 +43,19 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
-<?php $_store         = Mage::app()->getStore(); ?>
-<?php $_address       = $this->getShippingAddress(); ?>
-<?php $_postcode      = $this->getPostcode(); ?>
-<?php $_country       = $this->getCountry(); ?>
-<?php $_deliveryDate  = $this->getDeliveryDate(); ?>
-<?php $_streetData    = $this->getStreetData(); ?>
-<?php $_housenumber   = $_streetData['housenumber']; ?>
+<?php $_store               = Mage::app()->getStore(); ?>
+<?php $_address             = $this->getShippingAddress(); ?>
+<?php $_postcode            = $this->getPostcode(); ?>
+<?php $_country             = $this->getCountry(); ?>
+<?php $_deliveryDate        = $this->getDeliveryDate('delivery'); ?>
+<?php $_pickupDate          = $this->getDeliveryDate('pickup'); ?>
+<?php $_streetData          = $this->getStreetData(); ?>
+<?php $_housenumber         = $_streetData['housenumber']; ?>
+<?php $_street              = $_streetData['streetname']; ?>
+<?php $_city                = $this->getCity(); ?>
+<?php $_weekdayCutOffTime   = $this->getCutOff('weekday'); ?>
+<?php $_sundayCutOffTime    = $this->getCutOff('sunday'); ?>
+<?php $_sameDayCutOffTime   = $this->getCutOff('sameday'); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
 
@@ -249,6 +255,7 @@
 
     var postcode;
     var housenumber;
+    var street;
     var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
 
     /**
@@ -276,11 +283,12 @@
 
         postcode    = getPostnlPostcode(billingOrShipping);
         housenumber = getPostnlHousenumber(billingOrShipping);
+        street      = getPostnlStreet(billingOrShipping);
 
         /**
          * If we don't have a postcode or house number, we cant retrieve the available time frames and locations.
          */
-        if (!postcode || !housenumber) {
+        if (!postcode || !housenumber || !street) {
             return;
         }
 
@@ -295,7 +303,7 @@
         /**
          * Start the delivery options script.
          */
-        startDeliveryOptions(postcode, housenumber, fullAddress);
+        startDeliveryOptions(postcode, housenumber, street, fullAddress);
     }
 
     /**
@@ -303,9 +311,10 @@
      *
      * @param {string} postcode
      * @param {int}    housenumber
+     * @param {string} street
      * @param {string} fullAddress
      */
-    function startDeliveryOptions(postcode, housenumber, fullAddress) {
+    function startDeliveryOptions(postcode, housenumber, street, fullAddress) {
         var options;
         var params;
         var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
@@ -317,10 +326,18 @@
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
             postcode           : postcode,
             housenumber        : housenumber,
+            street             : street,
+            city               : '<?php echo $this->escapeHtml($_city); ?>',
             country            : '<?php echo $this->escapeHtml($_country); ?>',
-            deliveryDate       : '<?php echo $_deliveryDate; ?>',
+            deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
+            pickupDate         : '<?php echo $this->escapeJavascriptHtml($_pickupDate); ?>',
             imageBaseUrl       : baseUrl,
-            fullAddress        : fullAddress
+            fullAddress        : fullAddress,
+            cutOffTimes        : {
+                weekday: '<?php echo $_weekdayCutOffTime; ?>',
+                sunday: '<?php echo $_sundayCutOffTime; ?>',
+                sameday: '<?php echo $_sameDayCutOffTime; ?>'
+            }
         };
 
         options = {
@@ -515,6 +532,55 @@
     }
 
     /**
+     * @param {string} billingOrShipping
+     *
+     * @returns {string|int}
+     */
+    function getPostnlStreet(billingOrShipping) {
+        var street = '<?php echo $_street; ?>';
+        var addressSelectField;
+
+        if (billingOrShipping == 'billing') {
+            addressSelectField = $('billing-address-select');
+        } else {
+            addressSelectField = $('shipping-address-select');
+        }
+
+        /**
+         * If we don't have a street and no preset address is chosen, get the street from the street address field.
+         */
+        if (!street
+            || (
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && street != $(billingOrShipping + '_street' + streetnameField).getValue()
+            )
+        ) {
+            var streetFieldValue = $(billingOrShipping + '_street' + streetnameField).getValue();
+
+            if (streetFieldValue) {
+                street = streetFieldValue;
+            }
+        }
+
+        /**
+         * If we still don't have a street, get it from the streetname field.
+         */
+        if (!street) {
+            var streetname = $(billingOrShipping + '_street' + streetnameField).getValue();
+            var streetnameRegex = /([a-zA-Z]+)/;
+
+            var streetnameArray = streetname.match(streetnameRegex);
+            if (!streetnameArray || streetnameArray.length < 1) {
+                throw "Unable to parse streetname";
+            }
+
+            street = streetnameArray[0];
+        }
+
+        return street;
+    }
+
+    /**
      * Register a bunch of OSC specific observers
      */
     function registerGoMageObservers() {
@@ -556,12 +622,17 @@
         /**
          * These fields' values are used to determine available delivery options.
          */
-        if (!$('virtual_billing_street' + streetnameField) && !$('virtual_shipping_street' + streetnameField)) {
+        if (!$('virtual_billing_street' + streetnameField) || !$('virtual_shipping_street' + streetnameField)) {
             var fieldsToObserve = [
                 'billing_street' + streetnameField,
                 'shipping_street' + streetnameField,
                 'billing_postcode',
-                'shipping_postcode'
+                'billing_city',
+                'shipping_postcode',
+                'billing_city',
+                'postnl_idcheck:type',
+                'postnl_idcheck:number',
+                'postnl_idcheck:expiration_date_full'
             ];
 
             if (streetnameField != housenumberField) {

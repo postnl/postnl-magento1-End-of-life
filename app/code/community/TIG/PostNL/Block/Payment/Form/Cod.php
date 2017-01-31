@@ -33,16 +33,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
 {
-    /**
-     * Xpath to the 'allow_for_buspakje' configuration setting.
-     */
-    const XPATH_ALLOW_FOR_BUSPAKJE = 'payment/postnl_cod/allow_for_buspakje';
-
     /**
      * @var string
      */
@@ -70,44 +65,6 @@ class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
             $this->_instructions = $this->getMethod()->getInstructions();
         }
         return $this->_instructions;
-    }
-
-    /**
-     * Check if the PostNL COD payment method may be shown for letter box parcel orders.
-     *
-     * @return boolean
-     */
-    public function canShowForBuspakje()
-    {
-        /**
-         * Check the configuration setting.
-         */
-        $showForBuspakje = Mage::getStoreConfigFlag(self::XPATH_ALLOW_FOR_BUSPAKJE, Mage::app()->getStore()->getId());
-        if ($showForBuspakje) {
-            return true;
-        }
-
-        /**
-         * Check if the buspakje calculation mode is set to automatic.
-         */
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        $calculationMode = $helper->getBuspakjeCalculationMode();
-        if ($calculationMode != 'automatic') {
-            return true;
-        }
-
-        /**
-         * Check if the current quote fits as a letter box parcel.
-         */
-        /** @var Mage_Checkout_Model_Session $session */
-        $session = Mage::getSingleton('checkout/session');
-        $quote = $session->getQuote();
-        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

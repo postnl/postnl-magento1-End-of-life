@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
@@ -371,29 +371,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * Check if this order is being shipped to a domestic country.
          */
-        $domesticCountry = Mage::helper('postnl')->getDomesticCountry();
         $shippingAddress = $order->getShippingAddress();
 
-        if (
-            !$shippingAddress ||
-            $shippingAddress->getCountryId() != $domesticCountry
-        ) {
-            /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
-            $helper = Mage::helper('postnl/deliveryOptions');
-            $helper->setDomesticCountry($domesticCountry);
-            $canUseDutchProducts = $helper->canUseDutchProducts();
-
-            if (
-                $domesticCountry != 'BE' ||
-                $shippingAddress->getCountryId() != 'NL' ||
-                (
-                    $domesticCountry == 'BE' &&
-                    $shippingAddress->getCountryId() == 'NL' &&
-                    !$canUseDutchProducts
-                )
-            ) {
-                return false;
-            }
+        if (!$shippingAddress) {
+            return false;
         }
 
         /**

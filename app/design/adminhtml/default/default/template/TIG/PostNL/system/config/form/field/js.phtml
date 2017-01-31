@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @var TIG_PostNL_Block_Adminhtml_System_Config_Js $this
@@ -80,7 +80,7 @@
                 window.location.href = url;
                 return true;
             }
-            alert('<?php echo $_helper->__('You did not enter the correct verification text. Try again.'); ?>');
+            alert('<?php echo $this->jsQuoteEscape($_helper->__('You did not enter the correct verification text. Try again.')); ?>');
         }
         console.log('redirect not');
         return false;
@@ -169,16 +169,16 @@
             onComplete: function(response) {
                 response = response.responseText;
                 if (response == 'ok') {
-                    alert('<?php echo $_helper->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
+                    alert('<?php echo $this->jsQuoteEscape($_helper->__('Account settings have been succesfully validated. Please save this page to keep these settings.')); ?>');
                     return;
                 }
 
                 if (response == 'missing_data') {
-                    alert('<?php echo $_helper->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
+                    alert('<?php echo $this->jsQuoteEscape($_helper->__('One or more fields are missing. Please fill these fields and try again.')); ?>');
                     return;
                 }
 
-                alert('<?php echo $_helper->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
+                alert('<?php echo $this->jsQuoteEscape($_helper->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.')); ?>');
             }
         });
     }
