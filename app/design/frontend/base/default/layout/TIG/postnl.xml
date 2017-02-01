@@ -364,6 +364,7 @@
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
+            <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
         </reference>
         <reference name="checkout.onepage.shipping">
             <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
@@ -387,7 +388,6 @@
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
                 <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
-                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl.add.idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
         </reference>
     </checkout_onepage_shippingmethod>
@@ -463,7 +463,7 @@
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
                 <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
-                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl.add.idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
         </reference>
 
@@ -479,7 +479,7 @@
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
                 <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
-                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl.add.idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
         </reference>
     </onestepcheckout_ajax_save_billing>
@@ -510,6 +510,7 @@
                 <action method="setRegionTemplate"><template>gomage/checkout/html/address/field/region.phtml</template></action>
                 <action method="setStreetTemplate"><template>gomage/checkout/html/address/field/street.phtml</template></action>
                 <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/gomage_checkout/postcode_check.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
             <block type="postnl_addressvalidation/goMage_lightCheckout_shipping" name="checkout.onepage.address.shipping" as="shipping" template="TIG/PostNL/address_validation/gomage_checkout/shipping.phtml">
                 <action method="setCountryIdTemplate"><template>gomage/checkout/html/address/field/country.phtml</template></action>
@@ -523,7 +524,7 @@
             <block type="postnl_deliveryoptions/checkout_goMage_lightCheckout_deliveryOptions" name="postnl.gomage.delivery.options" template="TIG/PostNL/delivery_options/gomage_checkout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.gomage.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
                 <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
-                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl.add.idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
+                <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
         </reference>
 
