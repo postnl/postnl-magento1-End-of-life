@@ -2,10 +2,27 @@
 
 ---
 
-## Installatie
+## Installatie via Modman
+
+Zorg er eerst voor dat de symlinks aanstaan in uw Magento installatie.
+Ga naar System > Configuration > Advanced > Developer en schakel Allow Symlinks aan.
+
+Login via ssh en ga naar de Root van uw Magento installatie.
+
+Om Modman te installeren
+$ modman init
+
+Om de PostNL extensie te installeren via Modman.
+$ cd .modman
+$ modman clone git@github.com:tig-nl/tig-extension-tig-postnl.git
+$ cd tig-extension-tig-postnl
+$ modman deploy
+
+---
+
+## Installatie via SFTP
 
 1. Log in op uw Magento beheeromgeving.
- 
 
 2. Controleer of de compiler uit staat via  Systeem >  Gereedschap >  Compilatie. Zet de compiler uit wanneer deze ingeschakeld staat.
 Let op: Wanneer de compiler toch aan staat, dan kan de installatie mislukken.
