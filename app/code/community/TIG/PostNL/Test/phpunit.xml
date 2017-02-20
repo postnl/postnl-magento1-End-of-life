@@ -14,7 +14,7 @@
     </testsuites>
 
     <filter>
-        <whitelist>
+        <whitelist addUncoveredFilesFromWhiteList="true">
             <directory>../../PostNL/Block</directory>
             <directory>../../PostNL/controllers</directory>
             <directory>../../PostNL/Helper</directory>
