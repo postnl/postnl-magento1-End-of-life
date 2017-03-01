@@ -16,12 +16,14 @@ env:
     - TEST_RUNNER_OPTIONS=""
 
   matrix:
-    - MAGENTO_VERSION=magento-mirror-1.9.3.1 CODE_COVERAGE=true
+    - MAGENTO_VERSION=magento-mirror-1.9.3.1
 
 matrix:
   include:
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
+  - php: 7.0
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.1 CODE_COVERAGE=true
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.2.4
   - php: 7.0
