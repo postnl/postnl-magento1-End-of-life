@@ -1004,7 +1004,7 @@
                 <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
                 <create_account_base_url>https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?</create_account_base_url> <!-- Base URl for create MijnPakket account link -->
                 <mijnpakket_live_base_url>https://mijnpakket.postnl.nl/</mijnpakket_live_base_url> <!-- Base URL for MijnPakket in live mode -->
-                <mijnpakket_test_base_url>https://mijnpakket.postnl.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->		
+                <mijnpakket_test_base_url>https://mijnpakket.postnl.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
                 <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
                 <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
                 <mijnpakket_login_btn_live_base_url>checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
@@ -1271,7 +1271,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>RC3</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
