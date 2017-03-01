@@ -120,17 +120,30 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
         /**
          * Get the blocks alias and alter it's template based on this.
          */
+        $legacy = $this->isLegacy() ? 'legacy/' : '';
         $blockAlias = $block->getBlockAlias();
         switch ($blockAlias) {
             case self::BILLING_ADDRESS_BLOCK_ALIAS:
-                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/billing_fields.phtml');
+                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/' . $legacy . 'billing_fields.phtml');
                 break;
             case self::SHIPPING_ADDRESS_BLOCK_ALIAS:
-                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/shipping_fields.phtml');
+                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/' . $legacy . 'shipping_fields.phtml');
                 break;
             //no default
         }
 
         return $this;
+    }
+
+    /**
+     * Idev changed the layout of the OSC fields in version 4.5.6. Now we have 2 files: The files working for 4.5.6 and
+     * the files for version 4.5.5 and lower. These latter files are located in the "legacy" folder. We use this check
+     * to see if the current version is 4.5.6 and higher.
+     *
+     * @return bool
+     */
+    private function isLegacy()
+    {
+        return !method_exists('Idev_OneStepCheckout_Block_Checkout', 'echoAddressFields');
     }
 }

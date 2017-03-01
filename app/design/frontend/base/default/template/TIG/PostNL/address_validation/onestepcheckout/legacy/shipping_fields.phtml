@@ -1,0 +1,124 @@
+<?php /**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@tig.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@tig.nl for more information.
+ *
+ * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php
+$formErrors = $this->getParentBlock()->formErrors;
+$formErrors = (!empty($formErrors['shipping_errors'])) ? $formErrors['shipping_errors'] : array();
+
+$helper = Mage::helper('onestepcheckout/checkout');
+$dataHelper = Mage::helper('onestepcheckout');
+    $shippingFields['firstname'] = '
+        <div class="input-box input-firstname'.((in_array('firstname', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:firstname">'.$this->__('First Name').' <span class="required">*</span></label><br />
+            <input class="required-entry input-text" type="text" name="shipping[firstname]" id="shipping:firstname" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getFirstname()).'" />
+        </div>';
+    $shippingFields['lastname'] = '
+        <div class="input-box input-lastname'.((in_array('lastname', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:lastname">'.$this->__('Last Name').' <span class="required">*</span></label><br />
+            <input class="required-entry input-text" type="text" name="shipping[lastname]" id="shipping:lastname" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getLastname()).'" />
+        </div>';
+    ?>
+
+
+<?php $shippingFields['street'] = $this->getChild('postnl_shipping_postcodecheck')
+                                      ->setAddressType('shipping')
+                                      ->setAddress($this->getQuote()->getBillingAddress())
+                                      ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
+                                      ->toHtml();
+?>
+<?php if(!$this->settings['exclude_region'] ): ?>
+    <?php $shippingFields['region_id'] = '
+        <div class="input-box input-region'.((in_array('region', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:region">'.$this->__('State/Province').' <span class="required">*</span></label><br/>
+            <select id="shipping:region_id" name="shipping[region_id]" title="'.$this->__('State/Province').'" class="validate-select" style="display:none">
+                <option value="">'.$this->__('Please select region, state or province').'</option>
+            </select>
+            <script type="text/javascript">
+                $("shipping:region_id").setAttribute("defaultValue",  "'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getRegionId()).'");
+            </script>
+            <input type="text" id="shipping:region" name="shipping[region]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getRegion()).'"  title="'.$this->__('State/Province').'" class="required-entry input-text" style="display:none" />
+        </div>';
+    ?>
+<?php endif; ?>
+<?php if(!$this->settings['exclude_telephone']):?>
+    <?php $shippingFields['telephone'] = '
+        <div class="input-box input-telephone'.((in_array('telephone', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:telephone">'.$this->__('Telephone').' <span class="required">*</span></label><br/>
+            <input type="text" name="shipping[telephone]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getTelephone()).'" title="'.$this->__('Telephone').'" class="required-entry input-text" id="shipping:telephone" />
+        </div>';
+    ?>
+<?php endif; ?>
+<?php if(!$this->settings['exclude_company']): ?>
+    <?php $shippingFields['company'] = '
+        <div class="input-box input-company'.((in_array('company', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:company">'.$this->__('Company').'</label><br/>
+            <input type="text" name="shipping[company]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getCompany()).'" title="'.$this->__('Company').'" class="input-text" id="shipping:company" />
+        </div>';
+    ?>
+<?php endif; ?>
+
+<?php if(!$this->settings['exclude_fax']): ?>
+    <?php $shippingFields['fax'] = '
+        <div class="input-box input-fax'.((in_array('fax', $formErrors)) ? ' input-error' : '').'">
+            <label for="shipping:fax">'.$this->__('Fax').'</label><br/>
+            <input type="text" name="shipping[fax]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getFax()).'" title="'.$this->__('Fax').'" class="input-text" id="shipping:fax" />
+        </div>';
+    ?>
+<?php endif; ?>
+
+<?php if ($this->isCustomerLoggedIn() && $this->customerHasAddresses()):?>
+    <?php $shippingFields['save_in_address_book'] = '
+        <li class="control">
+            <input type="checkbox" name="shipping[save_in_address_book]" value="1" title="'.$this->__('Save in address book').'" id="shipping:save_in_address_book" '.(($this->getQuote()->getShippingAddress()->getSaveInAddressBook()) ? 'checked="checked"':'').' class="checkbox" /><label for="shipping:save_in_address_book">'.$this->__('Save in address book').'</label>
+        </li>';
+    ?>
+<?php else:?>
+    <?php $shippingFields['save_in_address_book'] = '
+        <li class="no-display"><input type="hidden" name="shipping[save_in_address_book]" value="1" /></li>';
+    ?>
+<?php endif; ?>
+
+<?php $shippingFields = $this->getshippingFieldsOrder($shippingFields);?>
+<?php $_streetFieldSortOrder = Mage::helper('postnl/addressValidation')->getOscStreetFieldSortOrder(); ?>
+<?php foreach($shippingFields as $key => $value):?>
+    <?php if(!empty($value['has_li']) || $key == $_streetFieldSortOrder):?>
+        <?php echo implode('',$value['fields']);?>
+    <?php else:?>
+        <li class="clearfix"><?php echo implode('',$value['fields']);?></li>
+    <?php endif;?>
+<?php endforeach;?>
