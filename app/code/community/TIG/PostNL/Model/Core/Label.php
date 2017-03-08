@@ -248,23 +248,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     );
 
     /**
-     * An array of label default page orientation L = landscape. P = portrait.
-     *
-     * @var array
-     */
-    protected $_labelDefaultOrientation = array(
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL             => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL      => 'L',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE          => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA     => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI       => 'L',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD           => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23              => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE => 'P',
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71              => 'P',
-    );
-
-    /**
      * @param string $outputMode
      *
      * @return $this
@@ -687,13 +670,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $labelType = $label->getLabelType();
 
-        /**
-         * Get orientation bvased on $labelType returns L = Landscape, P = Portrait
-         */
-        $pageOrientation = (isset($this->_labelDefaultOrientation[$labelType]))
-            ? $this->_labelDefaultOrientation[$labelType]
-            : 'L';
-
         if ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
@@ -708,7 +684,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             }
 
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
-                $pdf->addOrientedPage($pageOrientation, 'A4');
+                $pdf->addOrientedPage('L', 'A4');
                 $this->setIsFirstLabel(false);
                 if (!$this->getLabelCounter()) {
                     $this->resetLabelCounter();
@@ -718,7 +694,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                     !$this->getLabelCounter() || $this->getLabelCounter() > 4
                 )
             ) {
-                $pdf->addOrientedPage($pageOrientation, 'A4');
+                $pdf->addOrientedPage('L', 'A4');
                 $this->resetLabelCounter();
             }
 
@@ -727,15 +703,15 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
              */
             if($this->getLabelSize() == 'A6') {
                 $this->setLabelCounter(3); //used to calculate the top left position
-                $pdf->addOrientedPage($pageOrientation, 'A6');
+                $pdf->addOrientedPage('L', 'A6');
             }
         } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD) {
-            $pdf->addOrientedPage($pageOrientation, array(156.65, 73.85));
+            $pdf->addOrientedPage('P', array(156.65, 73.85));
         } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD
         ) {
-            $pdf->addOrientedPage($pageOrientation, 'A4');
+            $pdf->addOrientedPage('P', 'A4');
         }
 
         /**
@@ -768,18 +744,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL:
-                $pdf->Rotate(90);
+                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
-                $position['x'] = $this->pix2pt(-1037);
-                $position['y'] = $this->pix2pt(413);
-                $position['w'] = $this->pix2pt(538);
-
-                /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page.
-                 */
-                $this->setLabelCounter(5);
-
-                $rotate = true;
+                $this->increaseLabelCounter();
                 break;
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE:
