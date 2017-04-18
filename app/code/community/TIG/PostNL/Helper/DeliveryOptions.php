@@ -3807,4 +3807,31 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         return $this->_dates[$dateString];
     }
+
+    /**
+     * Checks if for any of the products in the order the option postnl_allow_delivery_options is disabled.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool
+     */
+    public function orderHasUsedDeliveryOptions(Mage_Sales_Model_Order $order)
+    {
+        $orderedItems = $order->getAllVisibleItems();
+        $orderedProductIds = array_map( function (Mage_Sales_Model_Order_Item $item) {
+            return $item->getProductId();
+        }, $orderedItems);
+
+        $productCollection = Mage::getModel('catalog/product')->getCollection();
+        $productCollection->addAttributeToSelect('postnl_allow_delivery_options');
+        $productCollection->addIdFilter($orderedProductIds);
+
+        foreach ($productCollection as $product) {
+            if ($product->getData('postnl_allow_delivery_options') == '0') {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

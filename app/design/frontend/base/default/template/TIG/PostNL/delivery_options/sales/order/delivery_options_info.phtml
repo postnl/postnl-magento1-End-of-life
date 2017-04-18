@@ -42,7 +42,12 @@
 <?php $_deliveryOptionsInfo = $_helper->getDeliveryOptionsInfo($_order); ?>
 <?php $_deliveryOptionsActive = $_helper->isDeliveryOptionsActive(); ?>
 
-<?php if (!$_deliveryOptionsInfo || !$_deliveryOptionsInfo->getType() || !$_deliveryOptionsActive): ?>
+<?php if (
+    !$_deliveryOptionsInfo ||
+    !$_deliveryOptionsInfo->getType() ||
+    !$_helper->orderHasUsedDeliveryOptions($_order) ||
+    !$_deliveryOptionsActive
+): ?>
     <?php return ''; ?>
 <?php endif; ?>
 
