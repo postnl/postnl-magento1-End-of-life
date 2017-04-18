@@ -15,9 +15,13 @@ if [ $? != "0" ]; then
     COMPOSER_REQUIRE="${COMPOSER_REQUIRE} colinmollenhour/modman"
 fi
 
-which modman
+which coveralls
 if [ $? != "0" ] && [ "${CODE_COVERAGE}" = "true" ]; then
     COMPOSER_REQUIRE="${COMPOSER_REQUIRE} satooshi/php-coveralls"
+fi
+
+if [ ! -f "${COMPOSER_HOME}phpunit" ]; then
+    COMPOSER_REQUIRE="${COMPOSER_REQUIRE} phpunit/phpunit 4.8.*"
 fi
 
 if [ ! -z "${COMPOSER_REQUIRE}" ]; then
