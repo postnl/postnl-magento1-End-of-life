@@ -46,7 +46,7 @@ before_script:
   - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
   - bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
 
-script: phpunit -c "/tmp/magento/public/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE ${TEST_RUNNER_OPTIONS}
+script: $HOME/.composer/vendor/bin/phpunit -c "/tmp/magento/public/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE ${TEST_RUNNER_OPTIONS}
 
 cache:
   directories:
