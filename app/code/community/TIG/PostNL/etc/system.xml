@@ -1159,6 +1159,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cutoff_time>
+                        <saturday_cutoff_time translate="label tooltip" module="postnl">
+                            <label>Saturday cut-off time</label>
+                            <tooltip><![CDATA[When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.]]></tooltip>
+                            <tooltip_block>postnl_adminhtml/system_config_form_field_tooltip_hourMinute</tooltip_block>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
+                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
+                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </saturday_cutoff_time>
                         <sunday_cutoff_time translate="label tooltip" module="postnl">
                             <label>Sunday cut-off time</label>
                             <tooltip><![CDATA[When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.]]></tooltip>
@@ -1166,7 +1178,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
                             <source_model>postnl_core/system_config_source_hourMinute</source_model>
                             <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1182,7 +1194,7 @@
                             <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
                             <source_model>postnl_core/system_config_source_shippingDays</source_model>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1190,7 +1202,7 @@
                         <checkout_settings_header translate="titel" module="postnl">
                             <label>Checkout settings (only active in the Netherlands)</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1200,7 +1212,7 @@
                             <tooltip>Postcode validation and delivery options are only available for supported checkouts.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_checkoutExtensions</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1208,7 +1220,7 @@
                         <checkout_extension_other translate="label" module="postnl">
                             <label>Specify checkout extension</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1219,7 +1231,7 @@
                         <postcode_nl_extension_active>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_postcodeNlExtensionActive</frontend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1227,7 +1239,7 @@
                         <postcode_nl_extension_conflict_info translate="comment" module="postnl">
                             <comment><![CDATA[You are currently using the Postcode.nl extension. This extension conflicts with the PostNL extension's built-in postcode validator. We recommend you disable the Postcode.nl extension if you wish to use the PostNL extensions' postcode validator.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3118,24 +3130,8 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
-                        <live_username translate="label tooltip" module="postnl">
-                            <label>Live Username</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>postnl-validate-empty</validate>
-                            <depends>
-                                <mode>
-                                    <value>0||2</value>
-                                    <separator>||</separator>
-                                </mode>
-                            </depends>
-                        </live_username>
-                        <live_password translate="label tooltip" module="postnl">
-                            <label>Live Password</label>
+                        <live_apikey translate="label tooltip" module="postnl">
+                            <label>Live Apikey</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
@@ -3152,21 +3148,9 @@
                                     <separator>||</separator>
                                 </mode>
                             </depends>
-                        </live_password>
-                        <test_username translate="label" module="postnl">
-                            <label>Test Username</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>postnl-validate-empty</validate>
-                            <depends>
-                                <mode>1</mode>
-                            </depends>
-                        </test_username>
-                        <test_password translate="label" module="postnl">
-                            <label>Test Password</label>
+                        </live_apikey>
+                        <test_apikey translate="label" module="postnl">
+                            <label>Test Apikey</label>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -3179,7 +3163,7 @@
                             <depends>
                                 <mode>1</mode>
                             </depends>
-                        </test_password>
+                        </test_apikey   >
                         <collection_location translate="label tooltip" module="postnl">
                             <label>BLS (location) Code</label>
                             <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>

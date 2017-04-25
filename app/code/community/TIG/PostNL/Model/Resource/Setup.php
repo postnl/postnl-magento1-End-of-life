@@ -79,12 +79,14 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      * Test data.
      */
     const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
+    const DEFAULT_TEST_APIKEY = 'qLNy5m86BYYjD67CPrGZ1BaYU2A6OFrl';
     const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
 
     /**
      * Xpaths for test data.
      */
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_TEST_APIKEY   = 'postnl/cif/test_apikey';
     const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
 
     /**
@@ -845,6 +847,29 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $config->setValue($encryptedPassword)
                ->setPath(self::XPATH_TEST_PASSWORD)
                ->save();
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test apikey in the database as an encrypted string.
+     *
+     * @return $this
+     */
+    public function installTestApikey()
+    {
+        $testApikey = self::DEFAULT_TEST_APIKEY;
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $encryptedApikey = $helper->encrypt($testApikey);
+
+        /** @var Mage_Core_Model_Config_Data $config */
+        $config = Mage::getModel('core/config_data')
+            ->load(self::XPATH_TEST_APIKEY, 'path');
+
+        $config->setValue($encryptedApikey)
+            ->setPath(self::XPATH_TEST_APIKEY)
+            ->save();
 
         return $this;
     }

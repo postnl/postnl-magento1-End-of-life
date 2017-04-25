@@ -190,8 +190,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_liveModeRequiredFields = array(
-        'postnl/cif/live_username',
-        'postnl/cif/live_password',
+        'postnl/cif/live_apikey',
     );
 
     /**
@@ -200,8 +199,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_testModeRequiredFields = array(
-        'postnl/cif/test_username',
-        'postnl/cif/test_password',
+        'postnl/cif/test_apikey',
     );
 
     /**

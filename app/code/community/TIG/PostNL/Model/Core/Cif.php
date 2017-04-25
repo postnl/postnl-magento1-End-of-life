@@ -427,8 +427,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        $this->setPassword($data['password']);
-        $this->setUsername($data['username']);
+        $this->setApikey($data['apikey']);
 
         $barcode = $this->_getBarcodeData('NL');
 

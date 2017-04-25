@@ -5382,8 +5382,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             ("0" + now.getMinutes()).slice(-2) + ":" +
             ("0" + now.getSeconds()).slice(-2);
         var isPastWeekdayCutoff = cutOffTimes.weekday < currentTime;
+        var isPastSaturdayCutoff = cutOffTimes.saturday < currentTime;
         var isPastSundayCutoff = cutOffTimes.sunday < currentTime;
-        var isPastCutoff = isPastWeekdayCutoff || isPastSundayCutoff;
+        var isPastCutoff = isPastWeekdayCutoff || isPastSundayCutoff || isPastSaturdayCutoff;
 
         var type = '';
         timeframe.Options.string.each(function(value) {

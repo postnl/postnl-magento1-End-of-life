@@ -198,95 +198,96 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             /**
              * Sameday tests
              */
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
 
-            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next friday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Evening')),
-            array('next friday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Evening')),
+            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next friday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening')),
+            array('next friday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening')),
 
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
 
-            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Evening')),
-            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Sameday', 'Evening')),
-            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', false, array('Daytime')),
+            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening')),
+            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
 
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next friday 10:00', 'Regular', 0, 'NL', 'delivery', false, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next friday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next friday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
 
-            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
-            array('next friday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Evening')),
-            array('next friday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Evening')),
+            array('next friday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
+            array('next friday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening')),
+            array('next friday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening')),
 
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
 
-            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
-            array('next thursday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Evening')),
-            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening')),
+            array('next thursday 10:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
+            array('next thursday 13:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening')),
+            array('next thursday 23:00', 'Cooled', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sameday', 'Evening')),
 
             /**
              * BE
              */
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Daytime')),
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', true, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
 
             /**
              * BE Pickup
              */
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
 
             /**
              * NL Pickup
              */
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
 
-            'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
+            'before_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '16:00', true, array('Daytime', 'Evening', 'Sunday')),
+            'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Sunday', 'Sameday', 'Evening')),
         );
     }
 
@@ -301,6 +302,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
      * @param $regularCutoff
      * @param $shippingDurationConfig
      * @param $enableSundayDelivery
+     * @param $sundayCutoffTime
      * @param $canUseEveningTimeframes
      * @param $expectedResult
      *
@@ -317,6 +319,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $regularCutoff,
         $shippingDurationConfig,
         $enableSundayDelivery,
+        $sundayCutoffTime,
         $canUseEveningTimeframes,
         $expectedResult
     )
@@ -329,6 +332,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SHIPPING_DURATION, $shippingDurationConfig);
         Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayCutoffTime);
 
         $helperMock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
 
@@ -353,8 +357,8 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
 
         $method = new ReflectionMethod(get_class($instance), '_getDeliveryDateOptionsArray');
         $method->setAccessible(true);
-
         $result = $method->invokeArgs($instance, array($shippingDuration, $country, $for));
+
 
         $this->assertEquals($expectedResult, $result, 'Compare the contents of the array', 0.0, 10, true);
         $this->assertEquals(count($expectedResult), count($result));
@@ -363,29 +367,29 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
     public function cutoffTimesProvider()
     {
         return array(
-            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next thursday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next thursday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next thursday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next thursday 15:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
 
-            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next thursday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next thursday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next thursday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next thursday 10:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next thursday 15:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next thursday 23:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
 
-            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next friday 10:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next friday 15:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next friday 23:00', 'Regular', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 10:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next friday 10:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next friday 15:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next friday 23:00', 'Regular', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
 
-            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next friday 10:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next friday 15:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
-            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00', '15:00:00'),
-            array('next friday 23:00', 'Cooled', '22:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00', '15:00:00'),
+            array('next friday 10:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next friday 10:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next friday 15:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next friday 15:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
+            array('next friday 23:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', true, /* Response --> */ '10:30:00','21:00:00', '15:00:00'),
+            array('next friday 23:00', 'Cooled', '22:00:00', '21:00:00', '15:00:00', '10:30:00', false, /* Response --> */ '22:00:00','21:00:00', '15:00:00'),
         );
     }
 
@@ -395,11 +399,13 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
      * @param $timestamp
      * @param $shipmentType
      * @param $regularDeliveryCutoff
+     * @param $saturdayDeliveryCutoff
      * @param $sundayDeliveryCutoff
      * @param $sameDayDeliveryCutoff
      * @param $enableSameDayDelivery
-     * @param $monSatCutoff
+     * @param $saturdayCutoff
      * @param $sundayCutoff
+     * @param $regularCutoff
      *
      * @internal     param $expectedResult
      */
@@ -407,16 +413,19 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $timestamp,
         $shipmentType,
         $regularDeliveryCutoff,
+        $saturdayDeliveryCutoff,
         $sundayDeliveryCutoff,
         $sameDayDeliveryCutoff,
         $enableSameDayDelivery,
-        $monSatCutoff,
+        $regularCutoff,
+        $saturdayCutoff,
         $sundayCutoff
     ) {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularDeliveryCutoff);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SATURDAY_CUTOFF_TIME, $saturdayDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SAMEDAY_CUTOFF_TIME, $sameDayDeliveryCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $enableSameDayDelivery);
@@ -444,8 +453,10 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $result = $method->invokeArgs($instance, array(null));
 
         foreach ($result as $cutoff) {
-            if ($cutoff['Day'] == '00') {
-                $this->assertEquals($monSatCutoff, $cutoff['Time'], 'Assert that mon-sat has a cutoff of ' . $monSatCutoff);
+            if ($cutoff['Day'][1] < 6) {
+                $this->assertEquals($regularCutoff, $cutoff['Time'], 'Assert that mon-sat has a cutoff of ' . $regularCutoff);
+            } elseif ($cutoff['Day'] == '06') {
+                $this->assertEquals($saturdayCutoff, $cutoff['Time'], 'Assert that saturday has a cutoff of ' . $saturdayCutoff);
             } elseif ($cutoff['Day'] == '07') {
                 $this->assertEquals($sundayCutoff, $cutoff['Time'], 'Assert that sunday has a cutoff of ' . $sundayCutoff);
             }

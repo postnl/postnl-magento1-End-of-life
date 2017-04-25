@@ -104,6 +104,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION   = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME         = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_SUNDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SATURDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/saturday_cutoff_time';
     const XPATH_SAMEDAY_CUTOFF_TIME = 'postnl/delivery_options/sameday_delivery_cutoff_time';
     const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
 
