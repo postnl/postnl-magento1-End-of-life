@@ -42,10 +42,10 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptions_ValidatorTest extends TIG_Post
 
     public function invalidCitiesProvider()
     {
-        return [
-            ['123'],
-            ['random123'],
-        ];
+        return array(
+            array('123'),
+            array('random123'),
+        );
     }
 
     /**
@@ -62,12 +62,12 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptions_ValidatorTest extends TIG_Post
 
     public function validCitiesProvider()
     {
-        return [
-            ['amsterdam'],
-            ['\'s gravenhage'],
-            ['den haag'],
-            ['Stad aan \'t Haringvliet'],
-        ];
+        return array(
+            array('amsterdam'),
+            array('\'s gravenhage'),
+            array('den haag'),
+            array('Stad aan \'t Haringvliet'),
+        );
     }
 
     /**
