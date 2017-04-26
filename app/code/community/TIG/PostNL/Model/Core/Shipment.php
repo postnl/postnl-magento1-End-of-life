@@ -326,6 +326,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_RETURN_LABEL_EMAIL_TEMPLATE = 'postnl/returns/email_template';
 
     /**
+     * Xpaths to PostNL product attributes.
+     */
+    const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
+    const ATTRIBUTE_PARCEL_COUNT = 'postnl_product_parcel_count';
+
+    /**
+     * Product types.
+     */
+    const PRODUCTY_TYPE_NON_FOOD       = '0';
+    const PRODUCTY_TYPE_DRY_GROCERIES  = '1';
+    const PRODUCTY_TYPE_COOL_PRODUCTS  = '2';
+    const PRODUCTY_TYPE_AGE_CHECK      = '3';
+    const PRODUCTY_TYPE_BIRTHDAY_CHECK = '4';
+    const PRODUCTY_TYPE_ID_CHECK       = '5';
+    const PRODUCTY_TYPE_EXTRA_AT_HOME  = '6';
+
+    /**
      * CIF warning code returned when an EPS combi label is not available.
      */
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
@@ -5375,7 +5392,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the number of parcels in this shipment.
+     * Gets the number of parcels in this shipment
+     * based on it's weight and the configured parcel count of each product.
      *
      * @return int
      */
@@ -5389,30 +5407,43 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Get this shipment's total weight.
-         */
-        $weight = $this->getTotalWeight(true);
-
-        /**
          * Get the weight per parcel.
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
-        $helper = $this->getHelper();
         $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
-        $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
 
         /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
+         * Get all items in the shipment.
          */
-        $parcelCount = ceil($weight / $weightPerParcel);
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
+        $items = $this->getShipment()->getAllItems();
+
+        /**
+         * Calculate the total configured parcel count and the remaining weight.
+         */
+        $parcelCount = 0;
+        $remainingWeight = 0;
+        $hasProductsWithoutOwnParcel = false;
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        foreach ($items as $item) {
+            if($item->getData(self::ATTRIBUTE_CODE_PRODUCT_TYPE) == self::PRODUCTY_TYPE_EXTRA_AT_HOME) {
+                $parcelCount += ($item->getData(self::ATTRIBUTE_PARCEL_COUNT) * $item->getQty());
+            }else {
+                $remainingWeight += ($item->getWeight() * $item->getQty());
+                $hasProductsWithoutOwnParcel = true;
+            }
         }
 
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
+        /**
+         * Calculate the remaining parcel count.
+         */
+        $remainingParcelCount = ceil($remainingWeight / $weightPerParcel);
+        if ($remainingParcelCount < 1 && $hasProductsWithoutOwnParcel) {
+            $remainingParcelCount = 1;
         }
+        $parcelCount += $remainingParcelCount;
 
         return $parcelCount;
     }

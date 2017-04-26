@@ -71,6 +71,155 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         return $this;
     }
 
+    public function calculateParcelCountDataProvider(){
+        return array(
+            'domestic_cod_2ConfiguredParcels'=>
+            array('NL',true,array(
+                array(
+                    'weight'=>1,
+                    'qty'=>1,
+                    TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_EXTRA_AT_HOME,
+                    TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>1,
+                ),
+                array(
+                    'weight'=>1,
+                    'qty'=>1,
+                    TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_EXTRA_AT_HOME,
+                    TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>1,
+                ),
+            ),1),
+
+            'domestic_notCod_2ConfiguredParcels'=>
+                array('NL',false,array(
+                    array(
+                        'weight'=>1,
+                        'qty'=>1,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_EXTRA_AT_HOME,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>1,
+                    ),
+                    array(
+                        'weight'=>1,
+                        'qty'=>1,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_EXTRA_AT_HOME,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>1,
+                    ),
+                ),2),
+
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome'=>
+                array('NL',false,array(
+                    array(
+                        'weight'=>1,
+                        'qty'=>1,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>0,
+                    ),
+                    array(
+                        'weight'=>1,
+                        'qty'=>1,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>12,
+                    ),
+                ),1),
+
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome'=>
+                array('NL',false,array(
+                    array(
+                        'weight'=>10,
+                        'qty'=>50,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>0,
+                    ),
+                    array(
+                        'weight'=>11,
+                        'qty'=>50,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>12,
+                    ),
+                ),1),
+
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome_heighWeight'=>
+                array('NL',false,array(
+                    array(
+                        'weight'=>200,
+                        'qty'=>50,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>0,
+                    ),
+                    array(
+                        'weight'=>210,
+                        'qty'=>50,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                            TIG_PostNL_Model_Core_Shipment::PRODUCTY_TYPE_ID_CHECK,
+                        TIG_PostNL_Model_Core_Shipment::ATTRIBUTE_PARCEL_COUNT=>12,
+                    ),
+                ),2),
+        );
+    }
+
+    /**
+     *
+     * @dataProvider calculateParcelCountDataProvider
+     */
+    public function testCalculateParcelCount($countryCode,$isCod,$orderItems,$expectedParcelCount)
+    {
+        /**
+         *
+         * Set shipping address to overwrite the destionation country code.
+         *
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($countryCode);
+        $this->_getInstance()->setShippingAddress($shippingAddress);
+
+        /**
+         * Mock the Magento shipment to overwrite the products.
+         *
+         * @var Mage_Sales_Model_Order_Shipment $shipmentMock
+         */
+        $products = array();
+        foreach($orderItems as $orderItem){
+            $product =  new Varien_Object();
+            $product->setData($orderItem);
+            $products[] = $product;
+        }
+
+        $shipmentMock = $this->getMock('Mage_Sales_Model_Order_Shipment');
+        $shipmentMock->method('getAllItems')->willReturn($products);
+        $this->_getInstance()->setShipment($shipmentMock);
+
+        /**
+         *
+         * @var TIG_PostNL_Helper_Payment $paymentHelperMock
+         */
+        $paymentHelperMock = $this->getMock('TIG_PostNL_Helper_Payment');
+        $paymentHelperMock->method('getCodPaymentMethods')->willReturn(array('cod'));
+        $this->_getInstance()->setData('helper_payment',$paymentHelperMock);
+
+        /**
+         *
+         * @var Mage_Sales_Model_Order_Payment $payment
+         */
+        $payment = new Mage_Sales_Model_Order_Payment;
+        $payment->setMethod($isCod?'cod':'notcod');
+        $this->_getInstance()->setPayment($payment);
+
+        $result = $this->invokeMethod(
+            $this->_getInstance(), '_calculateParcelCount'
+        );
+
+        $this->assertequals($expectedParcelCount, $result);
+    }
+
     public function testCanGenerateReturnBarcodeWhenFood()
     {
         $this->_getInstance()->setIsDomesticShipment(true);
