@@ -1324,7 +1324,12 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
             $city = $postData['city'];
             $cityValidator      = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
-            if (!$cityValidator->isValid($city)) {
+
+            /**
+             * Some Dutch cities start with an apostrophe. They won't get past the city validation if we leave it there.
+             */
+            $cityToValidate     = ltrim($city, '\'');
+            if (!$cityValidator->isValid($cityToValidate)) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'Invalid city supplied for getNearestLocations request: %s',
