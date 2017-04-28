@@ -1291,6 +1291,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Check if the quote has an Extra@Home product
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsExtraAtHome(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_extra_at_home_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
+    }
+
+    /**
      * Gets the currently configured buspakje calculation mode.
      *
      * @param null|int|string $storeId
