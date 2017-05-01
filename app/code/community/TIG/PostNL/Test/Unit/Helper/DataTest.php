@@ -368,7 +368,7 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
             ->setMethods(array('getId', 'getAllItems'))
             ->getMock();
         $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
-        $quoteMock->expects($this->any())->method('getAllItems')->willReturn([$quoteItemMock]);
+        $quoteMock->expects($this->any())->method('getAllItems')->willReturn(array($quoteItemMock));
 
         $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
 
