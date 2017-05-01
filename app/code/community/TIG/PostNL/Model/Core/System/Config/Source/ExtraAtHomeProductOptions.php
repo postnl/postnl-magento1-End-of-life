@@ -115,7 +115,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_ExtraAtHomeProductOptions
         ),
         array(
             'value'             => '3793',
-            'label'             => 'Extra@Home Drempelservice Btl 2 persons delivery',
+            'label'             => 'Extra@Home Drempelservice Btl 2 person delivery',
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isSunday'          => false,
