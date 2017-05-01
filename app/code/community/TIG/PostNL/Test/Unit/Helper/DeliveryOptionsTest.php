@@ -38,6 +38,33 @@
  */
 class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
+    private $defaultAvailableProductOptions;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp()
+    {
+        $this->defaultAvailableProductOptions = Mage::getStoreConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        /**
+         * Some unittests depend on the default config value of the product options.
+         * By resetting this config option those tests won't be broken.
+         */
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS,
+            $this->defaultAvailableProductOptions
+        );
+    }
+
     /**
      * @return TIG_PostNL_Helper_DeliveryOptions
      */
@@ -543,6 +570,85 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $this->setProperty('_quote', $quoteMock);
 
         $result = $instance->canUseSundayDelivery();
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function canUseExtraAtHomeDeliveryProvider()
+    {
+        return array(
+            'enabled, product options not available, checkQuote success' => array(
+                true,
+                '3083',
+                false,
+                true,
+                false
+            ),
+            'disabled, product options available, checkQuote success' => array(
+                false,
+                '3442,3628',
+                false,
+                true,
+                false
+            ),
+            'enabled, product options available, do not checkQuote' => array(
+                true,
+                '3437,3629',
+                false,
+                null,
+                true
+            ),
+            'enabled, product options available, checkQuote success' => array(
+                true,
+                '3653',
+                true,
+                true,
+                true
+            ),
+            'enabled, product options available, checkQuote failure' => array(
+                true,
+                '3440,3783',
+                true,
+                false,
+                false
+            ),
+        );
+    }
+
+    /**
+     * @param $enabled
+     * @param $productOptions
+     * @param $checkQuote
+     * @param $registryValue
+     * @param $expected
+     *
+     * @dataProvider canUseExtraAtHomeDeliveryProvider
+     */
+    public function testCanUseExtraAtHomeDelivery($enabled, $productOptions, $checkQuote, $registryValue, $expected)
+    {
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY,
+            $enabled
+        );
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS,
+            $productOptions
+        );
+
+        $quoteId = rand(0, 1000);
+        $quoteMock = $this->getMockBuilder(Mage_Sales_Model_Quote::class)->setMethods(['getId'])->getMock();
+        $quoteMock->expects($this->any())->method('getId')->willReturn($quoteId);
+
+        $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
+
+        $instance = $this->_getInstance();
+        $instance->setCache(false);
+        $this->setProperty('_quote', $quoteMock, $instance);
+
+        $result = $instance->canUseExtraAtHomeDelivery($checkQuote);
 
         $this->assertEquals($expected, $result);
     }
