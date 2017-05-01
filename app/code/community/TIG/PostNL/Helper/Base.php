@@ -32,7 +32,7 @@
 
 class TIG_PostNL_Helper_Base extends Mage_Core_Helper_Abstract
 {
-    protected $_helpers = [];
+    protected $_helpers = array();
 
     /**
      * Gets a PostNL helper object.

@@ -54,7 +54,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
 
     public function getXpathOptions()
     {
-        return [
+        return array(
             PostNLShipment::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION              => 'domestic_cod',
             PostNLShipment::XPATH_DEFAULT_EVENING_PRODUCT_OPTION                   => 'avond',
             PostNLShipment::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION               => 'avond_cod',
@@ -81,31 +81,31 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
             PostNLShipment::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            => 'idcheck_pickup',
             PostNLShipment::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          => 'idcheck_delivery',
             PostNLShipment::XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION               => 'stated_address_only',
-        ];
+        );
     }
 
     public function returnsTheRightCodeProvider()
     {
-        return [
-            'domestic_cod'  => [PostNLShipment::SHIPMENT_TYPE_DOMESTIC_COD, 'domestic_cod'],
-            'avond'         => [PostNLShipment::SHIPMENT_TYPE_AVOND, 'avond'],
-            'avond_cod'     => [PostNLShipment::SHIPMENT_TYPE_AVOND_COD, 'avond_cod'],
-            'pg'            => [PostNLShipment::SHIPMENT_TYPE_PG, 'pg'],
-            'pg_cod'        => [PostNLShipment::SHIPMENT_TYPE_PG_COD, 'pg_cod'],
-            'pge'           => [PostNLShipment::SHIPMENT_TYPE_PGE, 'pge'],
-            'pge_cod'       => [PostNLShipment::SHIPMENT_TYPE_PGE_COD, 'pge_cod'],
-            'pa'            => [PostNLShipment::SHIPMENT_TYPE_PA, 'pa'],
-            'eps'           => [PostNLShipment::SHIPMENT_TYPE_EPS, 'eps'],
-            'globalpack'    => [PostNLShipment::SHIPMENT_TYPE_GLOBALPACK, 'globalpack'],
-            'buspakje'      => [PostNLShipment::SHIPMENT_TYPE_BUSPAKJE, 'buspakje'],
-            'sunday'        => [PostNLShipment::SHIPMENT_TYPE_SUNDAY, 'sunday'],
-            'sameday'       => [PostNLShipment::SHIPMENT_TYPE_SAMEDAY, 'sameday'],
-            'food'          => [PostNLShipment::SHIPMENT_TYPE_FOOD, 'food'],
-            'cooled'        => [PostNLShipment::SHIPMENT_TYPE_COOLED, 'cooled'],
-            'agecheck'      => [PostNLShipment::SHIPMENT_TYPE_AGECHECK, 'agecheck_delivery'],
-            'birthdaycheck' => [PostNLShipment::SHIPMENT_TYPE_BIRTHDAYCHECK, 'birthdaycheck_delivery'],
-            'idcheck'       => [PostNLShipment::SHIPMENT_TYPE_IDCHECK, 'idcheck_delivery'],
-        ];
+        return array(
+            'domestic_cod'  => array(PostNLShipment::SHIPMENT_TYPE_DOMESTIC_COD, 'domestic_cod'),
+            'avond'         => array(PostNLShipment::SHIPMENT_TYPE_AVOND, 'avond'),
+            'avond_cod'     => array(PostNLShipment::SHIPMENT_TYPE_AVOND_COD, 'avond_cod'),
+            'pg'            => array(PostNLShipment::SHIPMENT_TYPE_PG, 'pg'),
+            'pg_cod'        => array(PostNLShipment::SHIPMENT_TYPE_PG_COD, 'pg_cod'),
+            'pge'           => array(PostNLShipment::SHIPMENT_TYPE_PGE, 'pge'),
+            'pge_cod'       => array(PostNLShipment::SHIPMENT_TYPE_PGE_COD, 'pge_cod'),
+            'pa'            => array(PostNLShipment::SHIPMENT_TYPE_PA, 'pa'),
+            'eps'           => array(PostNLShipment::SHIPMENT_TYPE_EPS, 'eps'),
+            'globalpack'    => array(PostNLShipment::SHIPMENT_TYPE_GLOBALPACK, 'globalpack'),
+            'buspakje'      => array(PostNLShipment::SHIPMENT_TYPE_BUSPAKJE, 'buspakje'),
+            'sunday'        => array(PostNLShipment::SHIPMENT_TYPE_SUNDAY, 'sunday'),
+            'sameday'       => array(PostNLShipment::SHIPMENT_TYPE_SAMEDAY, 'sameday'),
+            'food'          => array(PostNLShipment::SHIPMENT_TYPE_FOOD, 'food'),
+            'cooled'        => array(PostNLShipment::SHIPMENT_TYPE_COOLED, 'cooled'),
+            'agecheck'      => array(PostNLShipment::SHIPMENT_TYPE_AGECHECK, 'agecheck_delivery'),
+            'birthdaycheck' => array(PostNLShipment::SHIPMENT_TYPE_BIRTHDAYCHECK, 'birthdaycheck_delivery'),
+            'idcheck'       => array(PostNLShipment::SHIPMENT_TYPE_IDCHECK, 'idcheck_delivery'),
+        );
     }
 
     /**
