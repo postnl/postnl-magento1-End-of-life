@@ -213,9 +213,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $payment->setMethod($isCod?'cod':'notcod');
         $this->_getInstance()->setPayment($payment);
 
-        $result = $this->invokeMethod(
-            $this->_getInstance(), '_calculateParcelCount'
-        );
+        $result = $this->_getInstance()->calculateParcelCount();
 
         $this->assertequals($expectedParcelCount, $result);
     }

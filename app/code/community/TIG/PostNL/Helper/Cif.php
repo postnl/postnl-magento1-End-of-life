@@ -1067,34 +1067,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipment($shipment);
 
-        /**
-         * Only NL shipments support multi-colli shipments.
-         */
-        if ($postnlShipment->getShippingAddress()->getCountryId() != 'NL') {
-            return 1;
-        }
-
-        /**
-         * Get this shipment's total weight.
-         */
-        $weight = $postnlShipment->getTotalWeight(true);
-
-        /**
-         * Get the weight per parcel.
-         */
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
-        $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
-
-        /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
-         */
-        $parcelCount = ceil($weight / $weightPerParcel);
-
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        return $parcelCount;
+        return $postnlShipment->calculateParcelCount();
     }
 
     /**

@@ -3536,7 +3536,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
         }
 
         /**
@@ -3584,7 +3584,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
         }
 
         /**
@@ -3655,7 +3655,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
         }
 
         /**
@@ -3837,7 +3837,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
         }
 
         /**
@@ -3946,7 +3946,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
         }
 
         /**
@@ -5397,7 +5397,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return int
      */
-    protected function _calculateParcelCount()
+    public function calculateParcelCount()
     {
         /**
          * Only Dutch shipments that are not COD support multi-colli shipments.
@@ -5807,7 +5807,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Set the parcel count.
          */
         if (!$this->getParcelCount() || $this->getParcelCount() < 1) {
-            $parcelCount = $this->_calculateParcelCount();
+            $parcelCount = $this->calculateParcelCount();
             $this->setParcelCount($parcelCount);
         }
 
