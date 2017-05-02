@@ -50,6 +50,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Produc
             array($deliveryOptionsHelper::IDCHECK_TYPE_AGE),
             array($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY),
             array($deliveryOptionsHelper::IDCHECK_TYPE_ID),
+            array($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE),
         );
     }
 

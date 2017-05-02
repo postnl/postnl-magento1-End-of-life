@@ -80,6 +80,10 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
                 'value' => $deliveryOptionsHelper::IDCHECK_TYPE_ID,
                 'label' => $helper->__('ID Check'),
             ),
+            array(
+                'value' => $deliveryOptionsHelper::EXTRA_AT_HOME_TYPE,
+                'label' => $helper->__('Extra@Home'),
+            ),
         );
 
         $this->_options = $options;

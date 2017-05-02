@@ -317,4 +317,64 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
         $this->assertEquals($result, $expected);
     }
+
+    /**
+     * @return array
+     */
+    public function quoteIsExtraAtHomeProvider()
+    {
+        return array(
+            'succes from registry' => array(
+                true,
+                4,
+                true
+            ),
+            'failure from registry' => array(
+                false,
+                6,
+                false
+            ),
+            'success from products' => array(
+                null,
+                6,
+                true
+            ),
+            'failure from products' => array(
+                null,
+                5,
+                false
+            ),
+        );
+    }
+
+    /**
+     * @param $registryValue
+     * @param $productType
+     * @param $expected
+     *
+     * @dataProvider quoteIsExtraAtHomeProvider
+     */
+    public function testQuoteIsExtraAtHome($registryValue, $productType, $expected)
+    {
+        $quoteId = rand(0, 1000);
+
+        $quoteItemMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Item')
+            ->setMethods(array('getProduct', 'getPostnlProductType'))
+            ->getMock();
+        $quoteItemMock->expects($this->any())->method('getProduct')->willReturnSelf();
+        $quoteItemMock->expects($this->any())->method('getPostnlProductType')->willReturn($productType);
+
+        $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')
+            ->setMethods(array('getId', 'getAllItems'))
+            ->getMock();
+        $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
+        $quoteMock->expects($this->any())->method('getAllItems')->willReturn(array($quoteItemMock));
+
+        $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
+
+        $instance = $this->_getInstance();
+        $result = $instance->quoteIsExtraAtHome($quoteMock);
+
+        $this->assertEquals($expected, $result);
+    }
 }
