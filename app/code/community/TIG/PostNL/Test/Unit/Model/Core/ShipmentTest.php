@@ -265,7 +265,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
      */
     public function testIsExtraAtHomeShipment($isShipment, $orderType, $expected)
     {
-        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')->setMethods(['getType'])->getMock();
+        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')->setMethods(array('getType'))->getMock();
         $postnlOrderMock->method('getType')->willReturn($orderType);
 
         $instance = $this->_getInstance();
