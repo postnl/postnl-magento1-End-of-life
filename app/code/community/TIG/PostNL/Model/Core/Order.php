@@ -129,6 +129,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const TYPE_AGECHECK      = 'AgeCheck';
     const TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
     const TYPE_IDCHECK       = 'IDCheck';
+    const TYPE_EXTRA_AT_HOME = 'ExtraAtHome';
 
     /**
      * Prefix of model events names.

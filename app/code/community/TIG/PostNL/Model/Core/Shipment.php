@@ -106,6 +106,7 @@
  * @method boolean                        getIsAgeCheckShipment()
  * @method boolean                        getIsBirthdayCheckShipment()
  * @method boolean                        getIsIDCheckShipment()
+ * @method boolean                        getIsExtraAtHomeShipment()
  * @method boolean                        getIdcheckExpirationDate()
  * @method boolean                        getIdcheckNumber()
  * @method boolean                        getIdcheckType()
@@ -156,6 +157,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsAgeCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBirthdayCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsIDCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsExtraAtHomeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -198,6 +200,7 @@
  * @method boolean                        hasIsAgeCheckShipment()
  * @method boolean                        hasIsBirthdayCheckShipment()
  * @method boolean                        hasIsIDCheckShipment()
+ * @method boolean                        hasIsExtraAtHomeShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -882,6 +885,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->isFoodShipment()) {
             return self::SHIPMENT_TYPE_FOOD;
+        }
+
+        if ($this->isExtraAtHomeShipment()) {
+            return self::SHIPMENT_TYPE_EXTRAATHOME;
         }
 
         if ($this->isDomesticShipment()) {
@@ -2571,6 +2578,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is an Extra@Home shipment.
+     *
+     * @return bool
+     */
+    public function isExtraAtHomeShipment()
+    {
+        if ($this->hasIsExtraAtHomeShipment()) {
+            return $this->getIsExtraAtHomeShipment();
+        }
+
+        $value = $this->isExtraAtHome();
+
+        $this->setIsExtraAtHomeShipment($value);
+        return $value;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
@@ -2692,6 +2716,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_IDCHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is an Extra@Home order.
+     *
+     * @return bool
+     */
+    public function isExtraAtHome()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_EXTRA_AT_HOME) {
             return true;
         }
 
