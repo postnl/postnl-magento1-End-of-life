@@ -59,9 +59,11 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
      *
      * @param Mage_Sales_Model_Order|Mage_Sales_Model_Order_Shipment $shipment
      *
+     * @param bool|array                                             $productList
+     *
      * @return int
      */
-    public function calculateParcelCount($shipment)
+    public function calculateParcelCount($shipment,$productList = false)
     {
         /**
          * @var TIG_PostNL_Helper_Cif $cifHelper
@@ -96,10 +98,12 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
         $remainingWeight             = 0;
         $hasProductsWithoutOwnParcel = false;
 
-        $productList = $this->getProductDictionary(
-            $items, array(self::ATTRIBUTE_CODE_PRODUCT_TYPE,
-                          self::ATTRIBUTE_PARCEL_COUNT)
-        );
+        if(!$productList) {
+            $productList = $this->getProductDictionary(
+                $items, array(self::ATTRIBUTE_CODE_PRODUCT_TYPE,
+                              self::ATTRIBUTE_PARCEL_COUNT)
+            );
+        }
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -145,7 +149,7 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    public function getProductDictionary($items,$attributesToSelect){
+    protected function getProductDictionary($items,$attributesToSelect){
         $productSkus = array_map(
             function ($item) {
                 return $item->getSku();

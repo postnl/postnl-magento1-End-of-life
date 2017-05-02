@@ -947,6 +947,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
+        $tempPostnlShipment->setPayment($shipment->getOrder()->getPayment());
 
         return $tempPostnlShipment->isCod();
     }
