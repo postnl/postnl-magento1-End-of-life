@@ -226,4 +226,54 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $result = $this->_getInstance()->isDomesticShipment();
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @return array
+     */
+    public function isExtraAtHomeShipmentProvider()
+    {
+        return array(
+            'valid by isShipment' => array(
+                true,
+                TIG_PostNL_Model_Core_Order::TYPE_OVERDAG,
+                true
+            ),
+            'valid by order' => array(
+                null,
+                TIG_PostNL_Model_Core_Order::TYPE_EXTRA_AT_HOME,
+                true
+            ),
+            'invalid by isShipment' => array(
+                false,
+                TIG_PostNL_Model_Core_Order::TYPE_EXTRA_AT_HOME,
+                false
+            ),
+            'invalid by order' => array(
+                null,
+                TIG_PostNL_Model_Core_Order::TYPE_AVOND,
+                false
+            ),
+        );
+    }
+
+    /**
+     * @param $isShipment
+     * @param $orderType
+     * @param $expected
+     *
+     * @dataProvider isExtraAtHomeShipmentProvider
+     */
+    public function testIsExtraAtHomeShipment($isShipment, $orderType, $expected)
+    {
+        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')->setMethods(['getType'])->getMock();
+        $postnlOrderMock->method('getType')->willReturn($orderType);
+
+        $instance = $this->_getInstance();
+        $instance->setIsExtraAtHomeShipment($isShipment);
+        $instance->setPostnlOrder($postnlOrderMock);
+
+        $result = $instance->isExtraAtHomeShipment();
+
+        $this->assertEquals($expected, $result);
+    }
 }
