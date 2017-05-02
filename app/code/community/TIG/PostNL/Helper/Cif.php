@@ -1063,11 +1063,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getParcelCount($shipment)
     {
-        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipment($shipment);
-
-        return $postnlShipment->calculateParcelCount();
+        /**
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
+         */
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($shipment);
     }
 
     /**

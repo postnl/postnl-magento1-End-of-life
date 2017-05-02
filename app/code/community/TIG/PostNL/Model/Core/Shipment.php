@@ -293,11 +293,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION                   = 'postnl/grid/default_sameday_product_option';
 
     /**
-     * Xpath to weight per parcel config setting.
-     */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
-
-    /**
      * Xpath to setting that determines whether or not to send track and trace emails.
      */
     const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/track_and_trace/send_track_and_trace_email';
@@ -324,23 +319,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpath to the email template used to email the customer a return label.
      */
     const XPATH_RETURN_LABEL_EMAIL_TEMPLATE = 'postnl/returns/email_template';
-
-    /**
-     * Xpaths to PostNL product attributes.
-     */
-    const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
-    const ATTRIBUTE_PARCEL_COUNT = 'postnl_product_parcel_count';
-
-    /**
-     * Product types.
-     */
-    const PRODUCTY_TYPE_NON_FOOD       = '0';
-    const PRODUCTY_TYPE_DRY_GROCERIES  = '1';
-    const PRODUCTY_TYPE_COOL_PRODUCTS  = '2';
-    const PRODUCTY_TYPE_AGE_CHECK      = '3';
-    const PRODUCTY_TYPE_BIRTHDAY_CHECK = '4';
-    const PRODUCTY_TYPE_ID_CHECK       = '5';
-    const PRODUCTY_TYPE_EXTRA_AT_HOME  = '6';
 
     /**
      * CIF warning code returned when an EPS combi label is not available.
@@ -3536,7 +3514,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
         }
 
         /**
@@ -3584,7 +3562,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
         }
 
         /**
@@ -3655,7 +3633,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
         }
 
         /**
@@ -3837,7 +3815,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
         }
 
         /**
@@ -3946,7 +3924,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
         }
 
         /**
@@ -5397,93 +5375,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return int
      */
-    public function calculateParcelCount()
+    public function _calculateParcelCount()
     {
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments.
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
          */
-        if ($this->getShippingAddress()->getCountryId() != 'NL' || $this->isCod()) {
-            return 1;
-        }
-
-        /**
-         * Get the weight per parcel.
-         *
-         * @var TIG_PostNL_Helper_Cif $helper
-         */
-        $weightPerParcel = Mage::getStoreConfig(
-            self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId()
-        );
-
-        /**
-         * Get all items in the shipment.
-         */
-        $items = $this->getShipment()->getAllItems();
-
-        /**
-         * Calculate the total configured parcel count and the remaining weight.
-         */
-        $parcelCount                 = 0;
-        $remainingWeight             = 0;
-        $hasProductsWithoutOwnParcel = false;
-
-        /**
-         * Create a dictionary of all simple products in the shipment.
-         */
-        $productIds = array_map(
-            function ($item) {
-                return $item->getProductId();
-            }, $items
-        );
-        $products   = Mage::getModel('catalog/product')->getCollection()
-            ->addAttributeToSelect(
-                array(self::ATTRIBUTE_CODE_PRODUCT_TYPE,
-                      self::ATTRIBUTE_PARCEL_COUNT)
-            )
-            ->addFieldToFilter('entity_id', array('in' => $productIds))
-            ->addAttributeToFilter(
-                'type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
-            );
-
-        $productList = array();
-        foreach ($products as $product) {
-            $productList[$product->getId()] = $product;
-        }
-
-        /**
-         * @var Mage_Sales_Model_Order_Shipment_Item $item
-         */
-        foreach ($items as $item) {
-            /**
-             * If the product does not exists in the products list its not a simple type.
-             */
-            if (!array_key_exists($item->getProductId(), $productList)) {
-                continue;
-            }
-            $product = $productList[$item->getProductId()];
-
-            $productType        = $product->getData(self::ATTRIBUTE_CODE_PRODUCT_TYPE);
-            $isAtHomeProduct    = $productType == self::PRODUCTY_TYPE_EXTRA_AT_HOME;
-            $productParcelCount = $product->getData(self::ATTRIBUTE_PARCEL_COUNT);
-
-            if ($isAtHomeProduct) {
-                $parcelCount += ($productParcelCount * $item->getQty());
-            } else {
-                $remainingWeight += ($item->getWeight() * $item->getQty());
-                $hasProductsWithoutOwnParcel = true;
-            }
-        }
-
-        /**
-         * Calculate the remaining parcel count.
-         */
-        $remainingParcelCount = ceil($remainingWeight / $weightPerParcel);
-        if ($remainingParcelCount < 1 && $hasProductsWithoutOwnParcel) {
-            $remainingParcelCount = 1;
-        }
-        $parcelCount += $remainingParcelCount;
-
-        return $parcelCount;
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($this->getShipment());
     }
 
     /*******************************************************************************************************************
@@ -5845,7 +5743,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Set the parcel count.
          */
         if (!$this->getParcelCount() || $this->getParcelCount() < 1) {
-            $parcelCount = $this->calculateParcelCount();
+            $parcelCount = $this->_calculateParcelCount();
             $this->setParcelCount($parcelCount);
         }
 
