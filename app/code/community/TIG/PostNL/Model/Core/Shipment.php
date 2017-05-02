@@ -5411,7 +5411,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
+        $weightPerParcel = Mage::getStoreConfig(
+            self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId()
+        );
 
         /**
          * Get all items in the shipment.
@@ -5421,16 +5423,52 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Calculate the total configured parcel count and the remaining weight.
          */
-        $parcelCount = 0;
-        $remainingWeight = 0;
+        $parcelCount                 = 0;
+        $remainingWeight             = 0;
         $hasProductsWithoutOwnParcel = false;
+
+        /**
+         * Create a dictionary of all simple products in the shipment.
+         */
+        $productIds = array_map(
+            function ($item) {
+                return $item->getProductId();
+            }, $items
+        );
+        $products   = Mage::getModel('catalog/product')->getCollection()
+            ->addAttributeToSelect(
+                array(self::ATTRIBUTE_CODE_PRODUCT_TYPE,
+                      self::ATTRIBUTE_PARCEL_COUNT)
+            )
+            ->addFieldToFilter('entity_id', array('in' => $productIds))
+            ->addAttributeToFilter(
+                'type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
+            );
+
+        $productList = array();
+        foreach ($products as $product) {
+            $productList[$product->getId()] = $product;
+        }
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
         foreach ($items as $item) {
-            if($item->getData(self::ATTRIBUTE_CODE_PRODUCT_TYPE) == self::PRODUCTY_TYPE_EXTRA_AT_HOME) {
-                $parcelCount += ($item->getData(self::ATTRIBUTE_PARCEL_COUNT) * $item->getQty());
-            }else {
+            /**
+             * If the product does not exists in the products list its not a simple type.
+             */
+            if (!array_key_exists($item->getProductId(), $productList)) {
+                continue;
+            }
+            $product = $productList[$item->getProductId()];
+
+            $productType        = $product->getData(self::ATTRIBUTE_CODE_PRODUCT_TYPE);
+            $isAtHomeProduct    = $productType == self::PRODUCTY_TYPE_EXTRA_AT_HOME;
+            $productParcelCount = $product->getData(self::ATTRIBUTE_PARCEL_COUNT);
+
+            if ($isAtHomeProduct) {
+                $parcelCount += ($productParcelCount * $item->getQty());
+            } else {
                 $remainingWeight += ($item->getWeight() * $item->getQty());
                 $hasProductsWithoutOwnParcel = true;
             }
