@@ -1310,7 +1310,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
-        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE, $quote);
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE_REGULAR, $quote);
 
         Mage::register($registryKey, $result);
         return $result;
