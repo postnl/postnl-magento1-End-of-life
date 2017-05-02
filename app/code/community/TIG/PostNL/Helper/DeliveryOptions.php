@@ -2863,6 +2863,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * Check if the quote contains an Extra@Home product. If so, disable the delivery options.
+         */
+        $helper = Mage::helper('postnl');
+        if ($helper->quoteIsExtraAtHome($quote)) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0253',
+                    'message' => $this->__('Delivery options are not allowed for Extra @ Home orders'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        /**
          * Check if delivery options may be shown for the stock level of the current products.
          */
         if (!$this->canShowDeliveryOptionsForStock($quote)) {
