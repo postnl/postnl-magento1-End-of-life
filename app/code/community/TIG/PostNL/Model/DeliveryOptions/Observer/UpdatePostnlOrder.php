@@ -439,6 +439,13 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             }
         }
 
+        /**
+         * @TODO: What if an order/quote has both Food and Extra@Home products? Which one has priority?
+         */
+        if ($helper->canUseExtraAtHomeDelivery(false) && $helper->quoteIsExtraAtHome($order->getQuote())) {
+            return $postnlOrder::TYPE_EXTRA_AT_HOME;
+        }
+
         return $postnlOrder::TYPE_OVERDAG;
     }
 
