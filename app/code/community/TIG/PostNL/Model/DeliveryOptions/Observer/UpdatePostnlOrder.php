@@ -428,25 +428,30 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        $orderType = $postnlOrder::TYPE_OVERDAG;
+
         /** @noinspection PhpUndefinedMethodInspection */
         if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
             /** @noinspection PhpUndefinedMethodInspection */
             switch ($helper->getQuoteFoodType($order->getQuote())) {
                 case 1:
-                    return $postnlOrder::TYPE_FOOD;
+                    $orderType = $postnlOrder::TYPE_FOOD;
+                    break;
                 case 2:
-                    return $postnlOrder::TYPE_COOLED_FOOD;
+                    $orderType = $postnlOrder::TYPE_COOLED_FOOD;
+                    break;
             }
         }
 
         /**
-         * @TODO: What if an order/quote has both Food and Extra@Home products? Which one has priority?
+         * Extra@Home always takes priority over other order types.
+         * Therefore overrule the ordertype when the quote has an Extra@Home item.
          */
         if ($helper->canUseExtraAtHomeDelivery(false) && $helper->quoteIsExtraAtHome($order->getQuote())) {
-            return $postnlOrder::TYPE_EXTRA_AT_HOME;
+            $orderType = $postnlOrder::TYPE_EXTRA_AT_HOME;
         }
 
-        return $postnlOrder::TYPE_OVERDAG;
+        return $orderType;
     }
 
     /**
