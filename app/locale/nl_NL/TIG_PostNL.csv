@@ -1469,6 +1469,16 @@ TIG_PostNL::Please provide a expiration date,Geef een verval datum op
 TIG_PostNL::Please provide a valid birthday,Geef een valide geboortedatum op
 TIG_PostNL::This data will be used to verify your age at delivery.,De volgende gegevens worden gebruikt om uw leeftijd te verifiëren bij bezorging.
 TIG_PostNL::Regular,Regulier
+TIG_PostNL::Extra@Home Top service 2 person delivery NL,Extra@Home Topservice 2 persoons levering NL
+TIG_PostNL::Extra@Home Top service Btl 2 person delivery,Extra@Home Topservice Btl 2 persoons levering
+TIG_PostNL::Extra@Home Top service 1 person delivery NL,Extra@Home Topservice 1 persoons levering NL
+TIG_PostNL::Extra@Home Top service Btl 1 person delivery,Extra@Home Topservice Btl 1 persoons levering
+TIG_PostNL::Extra@Home Drempelservice 1 person delivery NL,Extra@Home Drempelservice 1 persoons levering NL
+TIG_PostNL::Extra@Home Drempelservice 2 person delivery NL,Extra@Home Drempelservice 2 persoons levering NL
+TIG_PostNL::Extra@Home Drempelservice Btl 1 person delivery,Extra@Home Drempelservice Btl 1 persoons levering
+TIG_PostNL::Extra@Home Drempelservice Btl 2 person delivery,Extra@Home Drempelservice Btl 2 persoons levering
+TIG_PostNL::Extra@Home Options,Extra@Home Opties
+TIG_PostNL::Default Extra@Home shipping option,Standaard Extra@Home verzendoptie
 TIG_PostNL::Extra@Home,Extra@Home
 TIG_PostNL::Enable Extra@Home,Activeer Extra@Home
 TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home kan gebruikt worden voor het verzenden van grote en zware producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.

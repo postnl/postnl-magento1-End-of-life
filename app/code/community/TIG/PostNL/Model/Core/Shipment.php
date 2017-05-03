@@ -256,6 +256,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_AGECHECK      = 'AgeCheck';
     const SHIPMENT_TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
     const SHIPMENT_TYPE_IDCHECK       = 'IDCheck';
+    const SHIPMENT_TYPE_EXTRAATHOME   = 'ExtraAtHome';
 
     /**
      * Xpaths to default product options settings.
@@ -281,6 +282,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
     const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
     const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
+    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION            = 'postnl/grid/default_extra_at_home_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
@@ -1800,6 +1802,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 } else {
                     $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
                 }
+                break;
+            case self::SHIPMENT_TYPE_EXTRAATHOME:
+                $allowedProductCodes = $cifHelper->getExtraAtHomeProductCodes($flat);
                 break;
             default:
                 $allowedProductCodes = array();

@@ -621,6 +621,18 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getExtraAtHomeProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_ExtraAtHomeProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_extraAtHomeProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array
