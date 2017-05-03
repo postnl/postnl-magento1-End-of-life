@@ -149,9 +149,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const IDCHECK_TYPE_ID = 5;
 
     /**
-     * The supported Extra @ Home type.
+     * Extra@Home
      */
-    const EXTRA_AT_HOME_TYPE = 6;
+    const EXTRA_AT_HOME_TYPE_REGULAR = 6;
 
     /**
      * @var array
