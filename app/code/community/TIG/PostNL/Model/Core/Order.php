@@ -578,6 +578,20 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             $this->setIsActive(1);
         }
 
+        $this->calculateProductCode();
+
         return parent::_beforeSave();
+    }
+
+    /**
+     * Calculates the product code that is likely to going be used. The merchant will be able to override this when
+     * manually creating a shipment. For the mass of the shipments this is the correct product code.
+     */
+    protected function calculateProductCode()
+    {
+        /** @var TIG_PostNL_Model_Core_Shipment $postNLShipment */
+        $type        = strtolower($this->getType());
+        $productCode = Mage::helper('postnl/productCode')->getDefault($this, $this->getStoreId(), $type);
+        $this->setProductCode($productCode);
     }
 }
