@@ -143,7 +143,9 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                     $xpath = PostNLShipment::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
                 }
                 break;
-
+            case PostNLShipment::SHIPMENT_TYPE_EXTRAATHOME:
+                $xpath = PostNLShipment::XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION;
+                break;
 
             //no default
         }

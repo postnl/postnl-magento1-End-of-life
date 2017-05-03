@@ -81,6 +81,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
             PostNLShipment::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            => 'idcheck_pickup',
             PostNLShipment::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          => 'idcheck_delivery',
             PostNLShipment::XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION               => 'stated_address_only',
+            PostNLShipment::XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION             => 'extra_at_home'
         );
     }
 
@@ -105,6 +106,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
             'agecheck'      => array(PostNLShipment::SHIPMENT_TYPE_AGECHECK, 'agecheck_delivery'),
             'birthdaycheck' => array(PostNLShipment::SHIPMENT_TYPE_BIRTHDAYCHECK, 'birthdaycheck_delivery'),
             'idcheck'       => array(PostNLShipment::SHIPMENT_TYPE_IDCHECK, 'idcheck_delivery'),
+            'extra_at_home' => array(PostNLShipment::SHIPMENT_TYPE_EXTRAATHOME, 'extra_at_home'),
         );
     }
 
@@ -164,6 +166,15 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AVOND;
         $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
         $this->assertEquals('stated_address_only', $result);
+    }
+
+    public function testExtraAtHome()
+    {
+        $postnlOrderMock = $this->prepareMocks();
+
+        $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EXTRAATHOME;
+        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $this->assertEquals('extra_at_home', $result);
     }
 
     /**
