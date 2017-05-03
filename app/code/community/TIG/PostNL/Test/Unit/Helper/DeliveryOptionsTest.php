@@ -640,7 +640,7 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
 
         $quoteId = rand(0, 1000);
         $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')->setMethods(array('getId'))->getMock();
-        $quoteMock->expects($this->any())->method('getId')->willReturn($quoteId);
+        $quoteMock->method('getId')->willReturn($quoteId);
 
         $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
 

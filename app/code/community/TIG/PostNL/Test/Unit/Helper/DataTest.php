@@ -361,14 +361,14 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         $quoteItemMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Item')
             ->setMethods(array('getProduct', 'getPostnlProductType'))
             ->getMock();
-        $quoteItemMock->expects($this->any())->method('getProduct')->willReturnSelf();
-        $quoteItemMock->expects($this->any())->method('getPostnlProductType')->willReturn($productType);
+        $quoteItemMock->method('getProduct')->willReturnSelf();
+        $quoteItemMock->method('getPostnlProductType')->willReturn($productType);
 
         $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')
             ->setMethods(array('getId', 'getAllItems'))
             ->getMock();
         $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
-        $quoteMock->expects($this->any())->method('getAllItems')->willReturn(array($quoteItemMock));
+        $quoteMock->method('getAllItems')->willReturn(array($quoteItemMock));
 
         $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
 
