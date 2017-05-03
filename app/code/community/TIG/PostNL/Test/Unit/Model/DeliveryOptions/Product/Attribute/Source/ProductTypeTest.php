@@ -50,6 +50,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Produc
             array($deliveryOptionsHelper::IDCHECK_TYPE_AGE),
             array($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY),
             array($deliveryOptionsHelper::IDCHECK_TYPE_ID),
+            array($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE_REGULAR),
         );
     }
 
@@ -61,12 +62,20 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Produc
         /** @var TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_IdcheckType $model */
         $model = Mage::getModel('postnl_deliveryoptions/product_attribute_source_productType');
 
-        $options = $model->getAllOptions();
+        $optionsGroups = $model->getAllOptions();
 
-        foreach ($options as $option) {
-            if ($option['value'] === $type) {
-                $this->assertEquals($type, $option['value']);
-                return $this;
+        foreach ($optionsGroups as $optionsGroup) {
+            $options = $optionsGroup['value'];
+
+            if (!is_array($options)) {
+                $options = array($optionsGroups);
+            }
+
+            foreach ($options as $option) {
+                if ($option['value'] === $type) {
+                    $this->assertEquals($type, $option['value']);
+                    return $this;
+                }
             }
         }
 
