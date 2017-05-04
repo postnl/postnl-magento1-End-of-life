@@ -328,6 +328,7 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
     }
 
     /**
+
      * @param $method
      * @param $instance
      *
