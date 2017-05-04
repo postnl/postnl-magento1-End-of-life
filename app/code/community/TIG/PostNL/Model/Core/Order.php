@@ -43,6 +43,7 @@
  * @method string                      getToken()
  * @method string                      getShipmentCosts()
  * @method string                      getProductCode()
+ * @method int                         getParcelCount()
  * @method int                         getIsPakjeGemak()
  * @method int                         getIsCanceled()
  * @method string                      getDeliveryDate()
@@ -73,6 +74,7 @@
  * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
  * @method TIG_PostNL_Model_Core_Order setIsPakjeGemak(int $value)
  * @method TIG_PostNL_Model_Core_Order setProductCode(string $value)
+ * @method TIG_PostNL_Model_Core_Order setParcelCount(int $value)
  * @method TIG_PostNL_Model_Core_Order setShipmentCosts(string $value)
  * @method TIG_PostNL_Model_Core_Order setToken(string $value)
  * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
@@ -580,6 +582,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         }
 
         $this->calculateProductCode();
+        $this->calculateParcelCount();
 
         return parent::_beforeSave();
     }
@@ -594,5 +597,16 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         $type        = strtolower($this->getType());
         $productCode = Mage::helper('postnl/productCode')->getDefault($this, $this->getStoreId(), $type);
         $this->setProductCode($productCode);
+    }
+
+    /**
+     *
+     */
+    protected function calculateParcelCount()
+    {
+        /** @var TIG_PostNL_Helper_Parcel $parcelHelper */
+        $parcelHelper = Mage::helper('postnl/parcel');
+        $parcelCount = $parcelHelper->calculateParcelCount($this->getOrder());
+        $this->setParcelCount($parcelCount);
     }
 }

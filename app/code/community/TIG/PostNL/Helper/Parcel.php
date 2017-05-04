@@ -120,11 +120,12 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
             $productType        = $product->getData(self::ATTRIBUTE_CODE_PRODUCT_TYPE);
             $isAtHomeProduct    = $productType == self::PRODUCT_TYPE_EXTRA_AT_HOME;
             $productParcelCount = $product->getData(self::ATTRIBUTE_PARCEL_COUNT);
+            $qty = $item->getQty() ? $item->getQty() : $item->getQtyOrdered();
 
             if ($isAtHomeProduct) {
-                $parcelCount += ($productParcelCount * $item->getQty());
+                $parcelCount += ($productParcelCount * $qty);
             } else {
-                $remainingWeight += ($item->getWeight() * $item->getQty());
+                $remainingWeight += ($item->getWeight() * $qty);
                 $hasProductsWithoutOwnParcel = true;
             }
         }
