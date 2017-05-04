@@ -65,10 +65,10 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Product_Attribute_Source_Produc
         $optionsGroups = $model->getAllOptions();
 
         foreach ($optionsGroups as $optionsGroup) {
-            $options = $optionsGroup['value'];
-
-            if (!is_array($options)) {
-                $options = array($optionsGroups);
+            if (is_array($optionsGroup['value'])) {
+                $options = $optionsGroup['value'];
+            } else {
+                $options = array($optionsGroup);
             }
 
             foreach ($options as $option) {
