@@ -656,6 +656,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'extra @ home':      //no break
             case 'extraathome':       //no break
             case 'extra_at_home':     //no break
+            case 'extra at_home':     //no break
+            case 'extra_at home':     //no break
             case 'extra at home':     //no break
             case 'extra-at-home':     //no break
             case 'extra-at home':     //no break
