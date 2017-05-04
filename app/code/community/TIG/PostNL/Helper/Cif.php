@@ -959,6 +959,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
+        $tempPostnlShipment->setPayment($shipment->getOrder()->getPayment());
 
         return $tempPostnlShipment->isCod();
     }
@@ -1075,38 +1076,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getParcelCount($shipment)
     {
-        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipment($shipment);
-
         /**
-         * Only NL shipments support multi-colli shipments.
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
          */
-        if ($postnlShipment->getShippingAddress()->getCountryId() != 'NL') {
-            return 1;
-        }
-
-        /**
-         * Get this shipment's total weight.
-         */
-        $weight = $postnlShipment->getTotalWeight(true);
-
-        /**
-         * Get the weight per parcel.
-         */
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
-        $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
-
-        /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
-         */
-        $parcelCount = ceil($weight / $weightPerParcel);
-
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        return $parcelCount;
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($shipment);
     }
 
     /**

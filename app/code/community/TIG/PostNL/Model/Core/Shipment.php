@@ -298,11 +298,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION                   = 'postnl/grid/default_sameday_product_option';
 
     /**
-     * Xpath to weight per parcel config setting.
-     */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
-
-    /**
      * Xpath to setting that determines whether or not to send track and trace emails.
      */
     const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/track_and_trace/send_track_and_trace_email';
@@ -5230,46 +5225,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the number of parcels in this shipment.
+     * Gets the number of parcels in this shipment
+     * based on it's weight and the configured parcel count of each product.
      *
      * @return int
      */
     protected function _calculateParcelCount()
     {
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments.
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
          */
-        if ($this->getShippingAddress()->getCountryId() != 'NL' || $this->isCod()) {
-            return 1;
-        }
-
-        /**
-         * Get this shipment's total weight.
-         */
-        $weight = $this->getTotalWeight(true);
-
-        /**
-         * Get the weight per parcel.
-         *
-         * @var TIG_PostNL_Helper_Cif $helper
-         */
-        $helper = $this->getHelper();
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
-        $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
-
-        /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
-         */
-        $parcelCount = ceil($weight / $weightPerParcel);
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        return $parcelCount;
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($this->getShipment());
     }
 
     /*******************************************************************************************************************
