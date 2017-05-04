@@ -259,17 +259,41 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             ->method('getQuoteIdCheckType')
             ->willReturn($shipmentType);
 
-        $mockOrder = $this->getMock('TIG_PostNL_Model_Core_Order', array(
+        $mockPostNLOrder = $this->getMock('TIG_PostNL_Model_Core_Order', array(
             'setIdcheckType',
             'setIdcheckNumber',
             'setIdcheckExpirationDate',
         ));
 
+        /**
+         * @var Mage_Sales_Model_Order $orderMock
+         */
+        $mockOrder = $this->getMock('Mage_Sales_Model_Order');
+
+        /**
+         *
+         * @var Mage_Sales_Model_Order_Payment $payment
+         */
+        $payment = new Mage_Sales_Model_Order_Payment;
+        $payment->setMethod('postnl_notcod');
+        $mockOrder->method('getPayment')->willReturn($payment);
+        
+        /**
+         * Set shipping address to overwrite the destination country code.
+         *
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId('NL');
+        $mockOrder->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $mockPostNLOrder->setOrder($mockOrder);
+
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
 
         $mockService->expects($this->any())
             ->method('getPostnlOrder')
-            ->willReturn($mockOrder);
+            ->willReturn($mockPostNLOrder);
 
         $this->registerMockSessions(array('checkout', 'customer'));
         $mockQuote = $this->getMock('Mage_Sales_Model_Quote', array('setCustomerDob'));
@@ -282,15 +306,15 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
                 ->method('setCustomerDob')
                 ->with($value);
         } elseif ($shipmentType == 'IDCheck') {
-            $mockOrder->expects($this->once())
+            $mockPostNLOrder->expects($this->once())
                 ->method('setIdcheckType')
                 ->with($postData['billing_postnl_idcheck']['type']);
 
-            $mockOrder->expects($this->once())
+            $mockPostNLOrder->expects($this->once())
                 ->method('setIdcheckNumber')
                 ->with($postData['billing_postnl_idcheck']['number']);
 
-            $mockOrder->expects($this->once())
+            $mockPostNLOrder->expects($this->once())
                 ->method('setIdcheckExpirationDate')
                 ->with($postData['billing_postnl_idcheck']['expiration_date_full']);
         }
