@@ -104,7 +104,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       " WHEN 'agecheck' THEN 5" .
                                       " WHEN 'birthdaycheck' THEN 6" .
                                       " WHEN 'idcheck' THEN 7" .
-                                      " WHEN 'extraathome' THEN 8" .
+                                      " WHEN 'extra_at_home' THEN 8" .
                                       " WHEN '*' THEN 9" .
                                       " ELSE 100" .
                                       " END) ASC"
@@ -157,7 +157,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $parcelTypeWhereClause .= " OR (parcel_type = 'regular')";
         }
 
-        if ($parcelType != 'food' && $parcelType != 'extra_at_home') {
+        if ($parcelType != 'food') {
             $parcelTypeWhereClause .= " OR (parcel_type = '*')";
         }
 
