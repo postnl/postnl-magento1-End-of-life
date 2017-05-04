@@ -104,7 +104,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       " WHEN 'agecheck' THEN 5" .
                                       " WHEN 'birthdaycheck' THEN 6" .
                                       " WHEN 'idcheck' THEN 7" .
-                                      " WHEN '*' THEN 8" .
+                                      " WHEN 'extraathome' THEN 8" .
+                                      " WHEN '*' THEN 9" .
                                       " ELSE 100" .
                                       " END) ASC"
                                   ),
@@ -156,7 +157,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $parcelTypeWhereClause .= " OR (parcel_type = 'regular')";
         }
 
-        if ($parcelType != 'food') {
+        if ($parcelType != 'food' && $parcelType != 'extra_at_home') {
             $parcelTypeWhereClause .= " OR (parcel_type = '*')";
         }
 
@@ -474,6 +475,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 'agecheck',
                 'birthdaycheck',
                 'idcheck',
+                'extra_at_home',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -649,6 +651,16 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'birth-day check':   //no break
             case 'birth-day-check':   //no break
                 $formattedType = 'birthdaycheck';
+                break;
+            case 'extra@home':        //no break
+            case 'extra @ home':      //no break
+            case 'extraathome':       //no break
+            case 'extra_at_home':     //no break
+            case 'extra at home':     //no break
+            case 'extra-at-home':     //no break
+            case 'extra-at home':     //no break
+            case 'extra at-home':     //no break
+                $formattedType = 'extra_at_home';
                 break;
             //no default
         }

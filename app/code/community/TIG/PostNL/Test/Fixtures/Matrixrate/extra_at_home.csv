@@ -1,0 +1,9 @@
+Land,Provincie/staat,Postcode,Gewicht (en hoger),Bedrag (en hoger),Hoeveelheid (en hoger),pakkettype,prijs,Instructies
+NLD,*,*,0,0,1,extra@home,10,*
+NLD,*,*,0,0,2,extra @ home,20,*
+NLD,*,*,0,0,3,extraathome,30,*
+NLD,*,*,0,0,4,extra_at_home,40,*
+NLD,*,*,0,0,5,extra at home,50,*
+NLD,*,*,0,0,6,extra-at-home,60,*
+NLD,*,*,0,0,7,extra-at home,70,*
+NLD,*,*,0,0,8,extra at-home,80,*
