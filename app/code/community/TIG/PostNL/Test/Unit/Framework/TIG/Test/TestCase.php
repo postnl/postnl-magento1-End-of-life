@@ -328,20 +328,52 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
     }
 
     /**
-     * Call public/private method of a class.
+
+     * @param $method
+     * @param $instance
      *
-     * @param object &$object    Instantiated object that we will run method on.
-     * @param string $methodName Method name to call
-     * @param array  $parameters Array of parameters to pass into method.
-     *
-     * @return mixed Method return.
+     * @return \ReflectionMethod
      */
-    public function invokeMethod(&$object, $methodName, array $parameters = array())
+    protected function getMethod($method, $instance)
     {
-        $reflection = new \ReflectionClass(get_class($object));
-        $method = $reflection->getMethod($methodName);
+        $method = new \ReflectionMethod($instance, $method);
         $method->setAccessible(true);
 
-        return $method->invokeArgs($object, $parameters);
+        return $method;
+    }
+
+    /**
+     * @param      $method
+     * @param null $instance
+     *
+     * @return mixed
+     */
+    protected function invoke($method, $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $method = $this->getMethod($method, $instance);
+
+        return $method->invoke($instance);
+    }
+
+    /**
+     * @param       $method
+     * @param array $args
+     * @param null  $instance
+     *
+     * @return mixed
+     */
+    protected function invokeArgs($method, $args = array(), $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $method = $this->getMethod($method, $instance);
+
+        return $method->invokeArgs($instance, $args);
     }
 }

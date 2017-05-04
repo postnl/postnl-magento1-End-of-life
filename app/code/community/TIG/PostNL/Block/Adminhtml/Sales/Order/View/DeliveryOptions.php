@@ -165,6 +165,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'IDCheck':
                 $shipmentType = $this->__('ID Check');
                 break;
+            case 'ExtraAtHome':
+                $shipmentType = $this->__('Extra@Home');
+                break;
         }
 
         if ($shipmentType) {
