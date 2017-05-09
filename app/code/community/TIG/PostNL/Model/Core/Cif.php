@@ -611,17 +611,38 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $message     = $this->_getMessage($barcode);
         $customer    = $this->_getCustomer($shipment);
+        $helper      = Mage::helper('postnl');
+
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
+            $postnlShipment->getStoreId()
+        );
+
+        $returnBarcode = $postnlShipment->getReturnBarcode();
 
         /**
          * Create a single shipment object
          */
         if ($mainBarcode === false || $shipmentNumber === false) {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $barcode)
+                'Shipment' => $this->_getShipment(
+                    $postnlShipment,
+                    $barcode,
+                    false,
+                    false,
+                    $printReturnLabels,
+                    $returnBarcode
+                )
             );
         } else {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber)
+                'Shipment' => $this->_getShipment(
+                    $postnlShipment,
+                    $barcode,
+                    $mainBarcode,
+                    $shipmentNumber,
+                    $printReturnLabels,
+                    $returnBarcode
+                )
             );
         }
 
