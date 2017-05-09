@@ -3574,7 +3574,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Generate a return barcode for each parcel and save it.
          */
         for ($i = 0; $i < $parcelCount; $i++) {
-            $barcode = $this->_generateBarcode();
+            $barcode = $this->_generateBarcode(true);
             $this->_addReturnBarcode($barcode, $i);
         }
 
@@ -3586,12 +3586,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Generates a single barcode for this postnl shipment.
      *
+     * @param bool $useReturnCustomerCode
+     *
      * @return string
-     *
      * @throws TIG_PostNL_Exception
-     *
      */
-    protected function _generateBarcode()
+    protected function _generateBarcode($useReturnCustomerCode = false)
     {
         $shipment = $this->getShipment();
 
@@ -3604,7 +3604,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $helper = $this->getHelper('cif');
         $barcodeType = $helper->getBarcodeTypeForShipment($this);
 
-        $barcode = $cif->generateBarcode($shipment, $barcodeType);
+        $barcode = $cif->generateBarcode($shipment, $barcodeType, $useReturnCustomerCode);
 
         if (!$barcode) {
             throw new TIG_PostNL_Exception(

@@ -1399,3 +1399,5 @@ TIG_PostNL::Please provide a expiration date,Please provide a expiration date
 TIG_PostNL::Please provide a valid birthday,Please provide a valid birthday
 TIG_PostNL::This data will be used to verify your age at delivery.,This data will be used to verify your age at delivery.
 TIG_PostNL::Regular,Regular
+TIG_PostNL::Return customer code,Return customer code
+TIG_PostNL::To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.
