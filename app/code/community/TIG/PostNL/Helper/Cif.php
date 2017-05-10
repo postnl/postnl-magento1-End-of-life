@@ -960,8 +960,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $orderClass = Mage::getConfig()->getModelClassName('sales/order');
 
-        if(!($shipment instanceof $orderClass))
-        {
+        if (!($shipment instanceof $orderClass)) {
             $shipment = $shipment->getOrder();
         }
         $tempPostnlShipment->setPayment($shipment->getPayment());
