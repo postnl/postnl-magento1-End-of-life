@@ -93,12 +93,12 @@ class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ProductType
                 )
             ),
             array(
-                'label' => $helper->__('Extra @ Home'),
+                'label' => $helper->__('Extra@Home'),
                 'value' => array
                 (
                     array(
                         'value' => $deliveryOptionsHelper::EXTRA_AT_HOME_TYPE_REGULAR,
-                        'label' => $helper->__('Extra @ Home'),
+                        'label' => $helper->__('Extra@Home'),
                     ),
                 )
             ),
