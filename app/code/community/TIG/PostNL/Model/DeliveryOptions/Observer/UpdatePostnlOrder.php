@@ -125,7 +125,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $type = $postnlOrder->getType();
         if (!$type) {
-            $type = $postnlOrder::TYPE_OVERDAG;
+            $type = $this->_getOrderType($postnlOrder, $order);
             $postnlOrder->setType($type);
         }
 

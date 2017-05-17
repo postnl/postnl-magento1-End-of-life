@@ -256,10 +256,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_SAMEDAY       = 'sameday';
     const SHIPMENT_TYPE_FOOD          = 'food';
     const SHIPMENT_TYPE_COOLED        = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
-    const SHIPMENT_TYPE_AGECHECK      = 'AgeCheck';
-    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
-    const SHIPMENT_TYPE_IDCHECK       = 'IDCheck';
-    const SHIPMENT_TYPE_EXTRAATHOME   = 'ExtraAtHome';
+    const SHIPMENT_TYPE_AGECHECK      = 'agecheck';
+    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
+    const SHIPMENT_TYPE_IDCHECK       = 'idcheck';
+    const SHIPMENT_TYPE_EXTRAATHOME   = 'extraathome';
 
     /**
      * Xpaths to default product options settings.
