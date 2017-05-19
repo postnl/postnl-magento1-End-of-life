@@ -939,7 +939,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Check if a given shipment is COD
      *
-     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment|Mage_Sales_Model_Order $shipment
      *
      * @return boolean
      *
@@ -958,8 +958,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
-        $tempPostnlShipment->setShipment($shipment);
-        $tempPostnlShipment->setPayment($shipment->getOrder()->getPayment());
+        $orderClass = Mage::getConfig()->getModelClassName('sales/order');
+
+        if (!($shipment instanceof $orderClass)) {
+            $shipment = $shipment->getOrder();
+        }
+        $tempPostnlShipment->setPayment($shipment->getPayment());
 
         return $tempPostnlShipment->isCod();
     }

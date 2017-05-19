@@ -82,4 +82,24 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_parcel_count'))
     );
 }
 
+/***********************************************************************************************************************
+ * POSTNL ORDER
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_core/order');
+
+if (!$conn->tableColumnExists($tableName, 'parcel_count')) {
+    $conn->addColumn(
+        $tableName,
+        'parcel_count',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+            'length'   => '10',
+            'nullable' => true,
+            'comment'  => 'Estimated parcel count',
+            'after'    => 'product_code',
+        )
+    );
+}
+
 $installer->endSetup();
