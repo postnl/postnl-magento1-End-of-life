@@ -1033,7 +1033,7 @@
                 <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
                 <wsdl_base_url>https://api.postnl.nl/shipment/</wsdl_base_url> <!-- Base URL of production api WSDL files -->
-                <test_wsdl_base_url>https://api-acc.postnl.nl/shipment/</test_wsdl_base_url> <!-- Base URL of staging api WSDL files -->
+                <test_wsdl_base_url>https://api-sandbox.postnl.nl/shipment/</test_wsdl_base_url> <!-- Base URL of staging api WSDL files -->
                 <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
                 <house_number_required_countries>NL</house_number_required_countries>
             </cif>

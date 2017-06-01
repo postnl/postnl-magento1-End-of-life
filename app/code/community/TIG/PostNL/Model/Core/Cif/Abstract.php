@@ -79,10 +79,14 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const WSDL_CONFIRMING_NAME     = 'confirm';
     const WSDL_LABELLING_NAME      = 'label';
     const WSDL_SHIPPINGSTATUS_NAME = 'status';
-    const WSDL_CHECKOUT_NAME       = 'WebshopCheckoutWebService';
     const WSDL_DELIVERYDATE_NAME   = 'calculate/date';
     const WSDL_TIMEFRAME_NAME      = 'calculate/timeframes';
     const WSDL_LOCATION_NAME       = 'locations';
+
+    /**
+     * @deprecated
+     */
+    const WSDL_CHECKOUT_NAME       = 'WebshopCheckoutWebService';
 
     /**
      * Header security namespace. Used for constructing the SOAP headers array.
@@ -357,9 +361,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         if ($this->hasSoapClient()) {
             return $this->_getData('soap_client');
         }
-        // TODO: Switch to api wsdl when it is available.
-        $wsdlFile = $this->_getCifWsdl($wsdlType);
-//        $wsdlFile = $this->_getWsdl($wsdlType);
+
+        $wsdlFile = $this->_getWsdl($wsdlType);
 
         /**
          * Unable to find an alternative, so ignore the coding standards.
@@ -382,8 +385,6 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             'cache_wsdl'     => WSDL_CACHE_BOTH,
             'trace'        => true,
             'stream_context' => $stream_context,
-            // TODO: Remove the location line when api wsdl is available.
-            'location'       => $this->_getWsdl($wsdlType),
         );
 
         /**
@@ -554,98 +555,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             . $wsdlversion
             . '/'
             . $wsdlFileName
-            . '/?wsdl';
-
-        return $wsdlUrl;
-    }
-    /**
-     * Returns the URL of the chosen wsdl file based on a wsdl type.
-     *
-     * Available types are:
-     * - barcode
-     * - confirming
-     * - labelling
-     * - shippingstatus
-     * - checkout
-     * - deliverydate
-     * - timeframe
-     * - location
-     *
-     * @param string $wsdlType
-     *
-     * @return string
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _getCifWsdl($wsdlType)
-    {
-        // TODO: Remove this function when api wsdl is available.
-        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
-
-        /**
-         * Check which wsdl file we need for each wsdl type and get the configured WSDl version to use.
-         */
-        $wsdlType = strtolower($wsdlType);
-        switch ($wsdlType) {
-            case 'barcode':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_BARCODE, $adminStoreId);
-                break;
-            case 'confirming':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_CONFIRMING, $adminStoreId);
-                break;
-            case 'labelling':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_LABELLING, $adminStoreId);
-                break;
-            case 'shippingstatus':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
-                break;
-            case 'checkout':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_CHECKOUT, $adminStoreId);
-                break;
-            case 'deliverydate':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_DELIVERYDATE, $adminStoreId);
-                break;
-            case 'timeframe':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_TIMEFRAME, $adminStoreId);
-                break;
-            case 'location':
-                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_LOCATION, $adminStoreId);
-                break;
-            default:
-                throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('Chosen wsdl type is not supported: %s', $wsdlType),
-                    'POSTNL-0053'
-                );
-        }
-
-        $webservices = array(
-            'labelling'=>'LabellingWebService',
-            'barcode'=>'BarcodeWebService',
-            'confirming'=>'ConfirmingWebService',
-            'shippingstatus'=>'ShippingStatusWebService',
-            'deliverydate'=>'DeliveryDateWebService',
-            'timeframe'=>'TimeframeWebService',
-            'location'=>'LocationWebService',
-        );
-
-
-        /**
-         * Check if we need the live or the sandbox wsdl.
-         */
-        if ($this->isTestMode()) {
-            $wsdlUrl = 'https://testservice.postnl.com/CIF_SB/';
-        } else {
-            $wsdlUrl = 'https://service.postnl.com/CIF/';
-        }
-
-        /**
-         * Format the final wsdl URL.
-         */
-        $wsdlUrl .=
-            $webservices[$wsdlType]
-            . '/'
-            . $wsdlversion
-            . '/?wsdl';
+            . '/soap.wsdl';
 
         return $wsdlUrl;
     }
