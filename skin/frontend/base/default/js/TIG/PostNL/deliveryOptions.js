@@ -3728,7 +3728,9 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Update the frontend
          */
-        deliveryOptions.saveOscOptions();
+        if (this.getOptions().isOsc) {
+            deliveryOptions.saveOscOptions();
+        }
 
         /**
          * Close the google maps interface window.
