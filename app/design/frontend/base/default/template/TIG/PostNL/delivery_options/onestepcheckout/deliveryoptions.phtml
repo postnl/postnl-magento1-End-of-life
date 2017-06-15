@@ -337,8 +337,8 @@
             postcode           : postcode,
             housenumber        : housenumber,
             street             : street,
-            country            : '<?php echo $this->escapeHtml($_country); ?>',
-            city               : '<?php echo $this->escapeHtml($_city); ?>',
+            country            : '<?php echo $this->escapeJavascriptHtml($_country); ?>',
+            city               : '<?php echo $this->escapeJavascriptHtml($_city); ?>',
             deliveryDate       : '<?php echo $this->escapeJavascriptHtml($_deliveryDate); ?>',
             pickupDate         : '<?php echo $this->escapeJavascriptHtml($_pickupDate); ?>',
             imageBaseUrl       : baseUrl,
@@ -463,7 +463,7 @@
      * @returns {string}
      */
     function getPostnlPostcode(billingOrShipping) {
-        var postcode = '<?php echo $_postcode; ?>';
+        var postcode = '<?php echo $this->escapeJavascriptHtml($_postcode); ?>';
         var addressSelectField;
 
         if (billingOrShipping == 'billing') {
@@ -498,7 +498,7 @@
      * @returns {string|int}
      */
     function getPostnlHousenumber(billingOrShipping) {
-        var housenumber = '<?php echo $_housenumber; ?>';
+        var housenumber = '<?php echo $this->escapeJavascriptHtml($_housenumber); ?>';
         var addressSelectField;
 
         if (billingOrShipping == 'billing') {
@@ -548,7 +548,7 @@
      * @returns {string|int}
      */
     function getPostnlStreet(billingOrShipping) {
-        var street = '<?php echo $_street; ?>';
+        var street = '<?php echo $this->escapeJavascriptHtml($_street); ?>';
         var addressSelectField;
 
         if (billingOrShipping == 'billing') {
