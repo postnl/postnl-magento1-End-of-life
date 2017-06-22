@@ -70,6 +70,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     const PARCEL_TYPE_AGECHECK      = 'agecheck';
     const PARCEL_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
     const PARCEL_TYPE_IDCHECK       = 'idcheck';
+    const PARCEL_TYPE_EXTRAATHOME   = 'extra_at_home';
 
     /**
      * String values for different rate types.
@@ -325,7 +326,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $postnlOrder = Mage::getModel('postnl_core/order');
             $postnlOrder = $postnlOrder->loadByQuote($quote);
 
-            if ($this->getHelper()->quoteIsAgeCheck()) {
+            if ($this->getHelper()->quoteIsExtraAtHome()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_EXTRAATHOME);
+            } elseif ($this->getHelper()->quoteIsAgeCheck()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
             } elseif ($this->getHelper()->quoteIsBirthdayCheck()) {

@@ -118,4 +118,34 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
         $this->assertEquals($available, $hasOption);
         $helper->setCache($cache);
     }
+
+    /**
+     * @return array
+     */
+    public function hasExtraAtHomeProductCodesProvider()
+    {
+        return array(
+            array('3628'),
+            array('3629'),
+            array('3653'),
+            array('3783'),
+            array('3790'),
+            array('3791'),
+            array('3792'),
+            array('3793'),
+        );
+    }
+
+    /**
+     * @param $productCode
+     *
+     * @dataProvider hasExtraAtHomeProductCodesProvider
+     */
+    public function testHasExtraAtHomeProductCodes($productCode)
+    {
+        $instance = $this->_getInstance();
+        $options = $instance->getOptions(array(), true);
+
+        $this->assertArrayHasKey($productCode, $options);
+    }
 }

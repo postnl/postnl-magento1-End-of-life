@@ -43,6 +43,7 @@
  * @method string                      getToken()
  * @method string                      getShipmentCosts()
  * @method string                      getProductCode()
+ * @method int                         getParcelCount()
  * @method int                         getIsPakjeGemak()
  * @method int                         getIsCanceled()
  * @method string                      getDeliveryDate()
@@ -73,6 +74,7 @@
  * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
  * @method TIG_PostNL_Model_Core_Order setIsPakjeGemak(int $value)
  * @method TIG_PostNL_Model_Core_Order setProductCode(string $value)
+ * @method TIG_PostNL_Model_Core_Order setParcelCount(int $value)
  * @method TIG_PostNL_Model_Core_Order setShipmentCosts(string $value)
  * @method TIG_PostNL_Model_Core_Order setToken(string $value)
  * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
@@ -129,6 +131,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const TYPE_AGECHECK      = 'AgeCheck';
     const TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
     const TYPE_IDCHECK       = 'IDCheck';
+    const TYPE_EXTRA_AT_HOME = 'ExtraAtHome';
 
     /**
      * Prefix of model events names.
@@ -578,6 +581,31 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             $this->setIsActive(1);
         }
 
+        $this->calculateProductCode();
+        $this->calculateParcelCount();
+
         return parent::_beforeSave();
+    }
+
+    /**
+     * Calculates the product code that is likely to going be used. The merchant will be able to override this when
+     * manually creating a shipment. For the mass of the shipments this is the correct product code.
+     */
+    protected function calculateProductCode()
+    {
+        $type        = strtolower($this->getType());
+        $productCode = Mage::helper('postnl/productCode')->getDefault($this, $this->getStoreId(), $type);
+        $this->setProductCode($productCode);
+    }
+
+    /**
+     *
+     */
+    protected function calculateParcelCount()
+    {
+        /** @var TIG_PostNL_Helper_Parcel $parcelHelper */
+        $parcelHelper = Mage::helper('postnl/parcel');
+        $parcelCount = $parcelHelper->calculateParcelCount($this->getOrder());
+        $this->setParcelCount($parcelCount);
     }
 }

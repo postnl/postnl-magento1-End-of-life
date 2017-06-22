@@ -21,7 +21,7 @@ In this method you will find a switch statement. Add the option code you used in
 comment you wish to show the merchant.
 
 Finally you need to make sure the proper product option is selected when creating the shipment. To do this go to the
-TIG_PostNL_Model_Core_Shipment class and look for the _getDefaultProductCodeXpathByOptions() method. Again this method
+TIG_PostNL_Helper_ProductOption class and look for the _getDefaultProductCodeXpathByOptions() method. Again this method
 contains a switch statement that allows you to add your option code. This method should return a valid xpath to the
 product code to use for this option. If you do not wish to make this configurable, just add it as a default value to the
 extension's config.xml file.

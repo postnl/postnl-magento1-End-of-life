@@ -106,6 +106,7 @@
  * @method boolean                        getIsAgeCheckShipment()
  * @method boolean                        getIsBirthdayCheckShipment()
  * @method boolean                        getIsIDCheckShipment()
+ * @method boolean                        getIsExtraAtHomeShipment()
  * @method boolean                        getIdcheckExpirationDate()
  * @method boolean                        getIdcheckNumber()
  * @method boolean                        getIdcheckType()
@@ -156,6 +157,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsAgeCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBirthdayCheckShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsIDCheckShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsExtraAtHomeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
@@ -198,6 +200,7 @@
  * @method boolean                        hasIsAgeCheckShipment()
  * @method boolean                        hasIsBirthdayCheckShipment()
  * @method boolean                        hasIsIDCheckShipment()
+ * @method boolean                        hasIsExtraAtHomeShipment()
  * @method boolean                        hasDefaultProductCode()
  * @method boolean                        hasProductOption()
  * @method boolean                        hasPayment()
@@ -253,9 +256,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPMENT_TYPE_SAMEDAY       = 'sameday';
     const SHIPMENT_TYPE_FOOD          = 'food';
     const SHIPMENT_TYPE_COOLED        = 'cooledfood'; /** @todo rename to 'cooled_food' for consistency */
-    const SHIPMENT_TYPE_AGECHECK      = 'AgeCheck';
-    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'BirthdayCheck';
-    const SHIPMENT_TYPE_IDCHECK       = 'IDCheck';
+    const SHIPMENT_TYPE_AGECHECK      = 'agecheck';
+    const SHIPMENT_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
+    const SHIPMENT_TYPE_IDCHECK       = 'idcheck';
+    const SHIPMENT_TYPE_EXTRAATHOME   = 'extraathome';
 
     /**
      * Xpaths to default product options settings.
@@ -281,6 +285,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
     const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
     const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
+    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION            = 'postnl/grid/default_extra_at_home_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
@@ -291,11 +296,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION               = 'postnl/grid/default_stated_address_only_product_option';
     const XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION                    = 'postnl/grid/default_sunday_product_option';
     const XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION                   = 'postnl/grid/default_sameday_product_option';
-
-    /**
-     * Xpath to weight per parcel config setting.
-     */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * Xpath to setting that determines whether or not to send track and trace emails.
@@ -882,6 +882,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_FOOD;
         }
 
+        if ($this->isExtraAtHomeShipment()) {
+            return self::SHIPMENT_TYPE_EXTRAATHOME;
+        }
+
         if ($this->isDomesticShipment()) {
             return self::SHIPMENT_TYPE_DOMESTIC;
         }
@@ -1241,148 +1245,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $postnlOrder = $this->getPostnlOrder();
 
-        $xpath = false;
-        switch ($shipmentType) {
-            case self::SHIPMENT_TYPE_DOMESTIC_COD:
-                $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_AVOND:
-                if ($postnlOrder && $postnlOrder->hasOptions()) {
-                    $xpath = $this->_getDefaultProductCodeXpathByOptions();
-                }
-
-                if (!$xpath) {
-                    $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_AVOND_COD:
-                $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PG:
-                if ($this->isBelgiumShipment()) {
-                    if ($this->getHelper()->getDomesticCountry() == 'BE') {
-                        $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION;
-                    } else {
-                        if ($this->getHelper()->canUsePakjegemakBeNotInsured($this->getStoreId())) {
-                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
-                        } else {
-                            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
-                        }
-                    }
-                } else {
-                    $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_PG_COD:
-                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PGE:
-                $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PGE_COD:
-                $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_PA:
-                $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_EPS:
-                if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
-                    && $this->isBelgiumShipment()
-                ) {
-                    $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
-                } else {
-                    $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_GLOBALPACK:
-                $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_BUSPAKJE:
-                $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_SUNDAY:
-                $xpath = self::XPATH_DEFAULT_SUNDAY_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_SAMEDAY:
-                $xpath = self::XPATH_DEFAULT_SAMEDAY_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_FOOD:
-                $xpath = self::XPATH_DEFAULT_FOOD_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_COOLED:
-                $xpath = self::XPATH_DEFAULT_COOLED_PRODUCT_OPTION;
-                break;
-            case self::SHIPMENT_TYPE_AGECHECK:
-                if ($this->isPakjeGemakShipment()) {
-                    $xpath = self::XPATH_DEFAULT_AGECHECK_PICKUP_PRODUCT_OPTION;
-                } else {
-                    $xpath = self::XPATH_DEFAULT_AGECHECK_DELIVERY_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_BIRTHDAYCHECK:
-                if ($this->isPakjeGemakShipment()) {
-                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION;
-                } else {
-                    $xpath = self::XPATH_DEFAULT_BIRTHDAYCHECK_DELIVERY_PRODUCT_OPTION;
-                }
-                break;
-            case self::SHIPMENT_TYPE_IDCHECK:
-                if ($this->isPakjeGemakShipment()) {
-                    $xpath = self::XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION;
-                } else {
-                    $xpath = self::XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION;
-                }
-                break;
-
-
-            //no default
-        }
-
-        /**
-         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).
-         */
-        if (!$xpath && $postnlOrder && $postnlOrder->hasOptions()) {
-            $xpath = $this->_getDefaultProductCodeXpathByOptions();
-        }
-
-        /**
-         * Dutch shipments may use an alternative default option when the shipment's base grand total exceeds a
-         * specified amount.
-         */
-        $useAlternativeDefault = Mage::getStoreConfig(self::XPATH_USE_ALTERNATIVE_DEFAULT, $storeId);
-        if (!$xpath && $useAlternativeDefault) {
-            /**
-             * Alternative default option usage is enabled.
-             */
-            $maxShipmentAmount = Mage::getStoreConfig(self::XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT, $storeId);
-            if ($this->getShipmentBaseGrandTotal() > $maxShipmentAmount) {
-                /**
-                 * The shipment's base grand total exceeds the specified amount: use the alternative default.
-                 */
-                $xpath = self::XPATH_ALTERNATIVE_DEFAULT_OPTION;
-            }
-        }
-
-        /**
-         * If we still don't have an xpath, the shipment is a regular domestic shipment.
-         */
-        if (!$xpath) {
-            $helper = $this->getHelper('deliveryOptions');
-            $shippingAddress = $this->getShippingAddress();
-            if (
-                $shippingAddress->getCountryId() == 'NL' &&
-                $helper->canUseDutchProducts()
-            ) {
-                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS;
-            } else {
-                $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
-            }
-        }
-
-        /**
-         * Get the product code configured to the xpath.
-         */
-        $productCode = Mage::getStoreConfig($xpath, $storeId);
+        $productCode = $this->getHelper('productCode')->getDefault($postnlOrder, $storeId, $shipmentType);
 
         /**
          * Get a list of available product codes.
@@ -1432,54 +1295,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setDefaultProductCode($productCode);
         return $productCode;
-    }
-
-    /**
-     * Gets the xpath for the default product option by saved PostNL Order options. Currently only the
-     * 'only_stated_address' option is supported, but this may be expanded in future releases.
-     *
-     * If multiple options are applicable, the first applicable option is applied.
-     *
-     * @return bool|string
-     */
-    protected function _getDefaultProductCodeXpathByOptions()
-    {
-        $postnlOrder = $this->getPostnlOrder();
-
-        /**
-         * If this shipment has no PostNL order or that order doesn't have any options, do nothing.
-         */
-        if (!$postnlOrder || !$postnlOrder->hasOptions()) {
-            return false;
-        }
-
-        /**
-         * If the options are empty, do nothing.
-         */
-        $options = $postnlOrder->getOptions();
-        if (empty($options)) {
-            return false;
-        }
-
-        /**
-         * Unserialize the options and check loop through them.
-         */
-        foreach ($options as $option => $value) {
-            /**
-             * If the option has no true value, move on to the next option.
-             */
-            if (!$value) {
-                continue;
-            }
-
-            switch ($option) {
-                case 'only_stated_address':
-                    return self::XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION;
-                //no default
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -1800,6 +1615,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 } else {
                     $allowedProductCodes = $cifHelper->getIDCheckProductCodes($flat);
                 }
+                break;
+            case self::SHIPMENT_TYPE_EXTRAATHOME:
+                $allowedProductCodes = $cifHelper->getExtraAtHomeProductCodes($flat);
                 break;
             default:
                 $allowedProductCodes = array();
@@ -2755,6 +2573,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is an Extra@Home shipment.
+     *
+     * @return bool
+     */
+    public function isExtraAtHomeShipment()
+    {
+        if ($this->hasIsExtraAtHomeShipment()) {
+            return $this->getIsExtraAtHomeShipment();
+        }
+
+        $value = $this->isExtraAtHome();
+
+        $this->setIsExtraAtHomeShipment($value);
+        return $value;
+    }
+
+    /**
      * Checks if the order of this shipment is a Sunday order.
      *
      * @return bool
@@ -2876,6 +2711,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_IDCHECK) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the order of this shipment is an Extra@Home order.
+     *
+     * @return bool
+     */
+    public function isExtraAtHome()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getType() == $postnlOrder::TYPE_EXTRA_AT_HOME) {
             return true;
         }
 
@@ -5375,46 +5225,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the number of parcels in this shipment.
+     * Gets the number of parcels in this shipment
+     * based on it's weight and the configured parcel count of each product.
      *
      * @return int
      */
     protected function _calculateParcelCount()
     {
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments.
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
          */
-        if ($this->getShippingAddress()->getCountryId() != 'NL' || $this->isCod()) {
-            return 1;
-        }
-
-        /**
-         * Get this shipment's total weight.
-         */
-        $weight = $this->getTotalWeight(true);
-
-        /**
-         * Get the weight per parcel.
-         *
-         * @var TIG_PostNL_Helper_Cif $helper
-         */
-        $helper = $this->getHelper();
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
-        $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
-
-        /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
-         */
-        $parcelCount = ceil($weight / $weightPerParcel);
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        return $parcelCount;
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($this->getShipment());
     }
 
     /*******************************************************************************************************************

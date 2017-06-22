@@ -466,6 +466,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'agecheck'            => $helper->__('Age Check'),
                 'birthdaycheck'       => $helper->__('Birthday Check'),
                 'idcheck'             => $helper->__('ID Check'),
+                'extra_at_home'       => $helper->__('Extra@Home'),
             ),
         );
 
@@ -1605,6 +1606,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'agecheck' => 'AgeCheck',
             'birthdaycheck' => 'BirthdayCheck',
             'idcheck' => 'IDCheck',
+            'extra_at_home' => 'ExtraAtHome',
         );
 
         foreach ($filters as $filterName => $value) {

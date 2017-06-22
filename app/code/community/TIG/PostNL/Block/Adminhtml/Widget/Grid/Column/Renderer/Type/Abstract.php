@@ -145,6 +145,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             case $postnlShipmentClass::SHIPMENT_TYPE_IDCHECK:
                 $label = $helper->__('ID Check');
                 break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_EXTRAATHOME:
+                $label = $helper->__('Extra@Home');
+                break;
         }
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
@@ -234,6 +237,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getBirthdayCheckfoodRenderedValue($row);
         } elseif ($optionType == 'IDCheck') {
             return $this->_getIDCheckfoodRenderedValue($row);
+        } elseif ($optionType == 'ExtraAtHome') {
+            return $this->_getExtraAtHomeRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -519,6 +524,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         $label = $helper->__('ID Check');
         $type = 'idcheck';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for an Extra@Home shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getExtraAtHomeRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Extra@Home');
+        $type = 'extra_at_home';
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 

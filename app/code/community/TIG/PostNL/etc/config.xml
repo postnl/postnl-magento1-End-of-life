@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.12.2</version>
+            <version>1.14.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -1201,6 +1201,7 @@
                 <default_age_check_pickup_product_option>3571</default_age_check_pickup_product_option>
                 <default_birthday_check_delivery_product_option>3440</default_birthday_check_delivery_product_option>
                 <default_birthday_check_pickup_product_option>3572</default_birthday_check_pickup_product_option>
+                <default_extra_at_home_product_option>3628</default_extra_at_home_product_option>
                 <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>

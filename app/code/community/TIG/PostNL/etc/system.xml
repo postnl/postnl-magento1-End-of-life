@@ -2690,6 +2690,35 @@
                                 </country>
                             </depends>
                         </enable_food_delivery>
+                        <enable_extra_at_home translate="label comment tooltip" module="postnl">
+                            <label>Enable Extra@Home</label>
+                            <comment><![CDATA[Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.]]></comment>
+                            <tooltip>Activate Extra@Home for your customers.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>420</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </enable_extra_at_home>
                         <food_delivery_default_product_type>
                             <label>Default product type</label>
                             <comment>This value is used to determine the product type of newly created products.</comment>
@@ -2697,7 +2726,7 @@
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_productType</backend_model>
                             <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>420</sort_order>
+                            <sort_order>430</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -5603,6 +5632,32 @@
                                 </country>
                             </depends>
                         </default_birthday_check_pickup_product_option>
+                        <default_extra_at_home_product_option translate="label tooltip" module="postnl">
+                            <label>Default Extra@Home shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_extraAtHomeProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_extra_at_home>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_extra_at_home>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_extra_at_home_product_option>
                         <default_sameday_product_option translate="label tooltip" module="postnl">
                             <label>Default same day delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
@@ -5610,7 +5665,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableSameDayOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5640,7 +5695,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5666,7 +5721,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5696,7 +5751,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>260</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5718,7 +5773,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>270</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

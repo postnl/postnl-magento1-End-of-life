@@ -239,6 +239,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
             case $postnlShipment::SHIPMENT_TYPE_IDCHECK:
                 $shipmentType = $this->__('ID Check');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_EXTRAATHOME:
+                $shipmentType = $this->__('Extra@Home');
+                break;
         }
 
         return $shipmentType;
