@@ -1413,3 +1413,5 @@ TIG_PostNL::Extra@Home,Extra@Home
 TIG_PostNL::Enable Extra@Home,Enable Extra@Home
 TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.
 TIG_PostNL::Activate Extra@Home for your customers.,Activate Extra@Home for your customers.
+TIG_PostNL::Return customer code,Return customer code
+TIG_PostNL::To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.
