@@ -46,6 +46,8 @@ $installer->startSetup();
 
 $conn = $installer->getConnection();
 
+$installer->resetWebserviceVersions();
+
 if (!$installer->getAttribute('catalog_product', 'postnl_product_parcel_count')) {
     $installer->addAttribute(
         'catalog_product',
