@@ -914,8 +914,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!array_key_exists('address', $params)) {
             return $data;
         }
-
-        if ($type == 'PG') {
+        
+        if (in_array($type, array('PG', 'PGE'))) {
             if (empty($params['locationCode']) || empty($params['retailNetworkId'])) {
                 throw new TIG_PostNL_Exception(
                     $this->__('Location Code and Retail Network ID are required for post office locations.'),
