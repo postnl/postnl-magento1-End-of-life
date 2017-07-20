@@ -45,10 +45,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const LONGITUDE_REGEX = '#^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,6}#';
 
     /**
-     * Regular expressions to validate various address fields.
+     * Regular expressions to validate address fields.
      */
-    const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
-    const STREET_NAME_REGEX = "#^[\p{L}0-9\s,\'-.]*$#u";
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
@@ -916,8 +914,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!array_key_exists('address', $params)) {
             return $data;
         }
-
-        if ($type == 'PG') {
+        
+        if (in_array($type, array('PG', 'PGE'))) {
             if (empty($params['locationCode']) || empty($params['retailNetworkId'])) {
                 throw new TIG_PostNL_Exception(
                     $this->__('Location Code and Retail Network ID are required for post office locations.'),
@@ -974,9 +972,9 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
 
-        $cityValidator        = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
+        $cityValidator        = new Zend_Validate_Regex(array('pattern' => TIG_PostNL_Helper_DeliveryOptions_Validator::CITY_NAME_REGEX));
         $countryCodeValidator = new Zend_Validate_InArray(array('haystack' => $countryCodes));
-        $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
+        $streetValidator      = new Zend_Validate_Regex(array('pattern' => TIG_PostNL_Helper_DeliveryOptions_Validator::STREET_NAME_REGEX));
         $housenumberValidator = new Zend_Validate_Digits();
 
         if (!$cityValidator->isValid($city)) {
@@ -1284,55 +1282,20 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * If a postcode was supplied, validate it and return it as an array.
          */
         if (array_key_exists('postcode', $postData)) {
+            $validatorHelper = Mage::helper('postnl/deliveryOptions_validator');
+
             $postcode = $postData['postcode'];
             $postcode = strtoupper(str_replace(' ', '', $postcode));
-
-            $validator = new Zend_Validate_PostCode('nl_' . $country);
-            if (!$validator->isValid($postcode)) {
-                throw new TIG_PostNL_Exception(
-                    $this->__(
-                        'Invalid postcode supplied for getNearestLocations request: %s',
-                        $postcode
-                    ),
-                    'POSTNL-0118'
-                );
-            }
+            $validatorHelper->validatePostcode($country, $postcode);
 
             $street = $postData['street'];
-            $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
-            if (!$streetValidator->isValid($street)) {
-                throw new TIG_PostNL_Exception(
-                    $this->__(
-                        'Invalid street supplied for getNearestLocations request: %s',
-                        $street
-                    ),
-                    'POSTNL-0242'
-                );
-            }
+            $validatorHelper->validateStreet($street);
 
             $housenumber = $postData['housenumber'];
-            $housenumberValidator      = new Zend_Validate_Digits();
-            if (!$housenumberValidator->isValid($housenumber)) {
-                throw new TIG_PostNL_Exception(
-                    $this->__(
-                        'Invalid housenumber supplied for getNearestLocations request: %s',
-                        $housenumber
-                    ),
-                    'POSTNL-0242'
-                );
-            }
+            $validatorHelper->validateHousenumber($housenumber);
 
             $city = $postData['city'];
-            $cityValidator      = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
-            if (!$cityValidator->isValid($city)) {
-                throw new TIG_PostNL_Exception(
-                    $this->__(
-                        'Invalid city supplied for getNearestLocations request: %s',
-                        $city
-                    ),
-                    'POSTNL-0242'
-                );
-            }
+            $validatorHelper->validateCity($city);
 
             $data = array(
                 'postcode'     => $postcode,

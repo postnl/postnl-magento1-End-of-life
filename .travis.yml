@@ -7,7 +7,6 @@ php:
   - 5.6
   - 7.0
   - 7.1
-  - hhvm
 
 env:
   global:
@@ -39,7 +38,7 @@ matrix:
   - php: nightly
 
 before_script:
-  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${CODE_COVERAGE}" = "false" ]; then phpenv config-rm xdebug.ini; fi
+  - if [ "${CODE_COVERAGE}" = "false" ]; then phpenv config-rm xdebug.ini; fi
   - if [ "${CODE_COVERAGE}" = "true" ]; then TEST_RUNNER_OPTIONS="${TEST_RUNNER_OPTIONS} --coverage-clover build/logs/clover.xml"; fi
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
   - export PATH=$PATH:$HOME/.composer/vendor/bin
