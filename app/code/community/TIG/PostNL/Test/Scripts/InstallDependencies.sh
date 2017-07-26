@@ -29,3 +29,9 @@ if [ ! -z "${COMPOSER_REQUIRE}" ]; then
 else
     echo "All dependencies installed"
 fi
+
+# Imagick is only available on 5.4 and higher.
+if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.3" ]]; then
+    # Imagick is only used for testing purposes. It is not a dependency.
+    printf "\n" | pecl install imagick
+fi
