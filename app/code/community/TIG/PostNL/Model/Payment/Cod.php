@@ -196,15 +196,18 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      */
     public function isAvailable($quote = null)
     {
-        /** @var TIG_PostNL_Helper_Payment $helper */
-        $helper = $this->getHelper('postnl/payment');
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = $this->getHelper('postnl');
+
+        /** @var TIG_PostNL_Helper_Payment $paymentHelper */
+        $paymentHelper = $this->getHelper('postnl/payment');
 
         /**
          * Make sure the quote is available.
          */
         if (is_null($quote)) {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the quote is empty.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL COD is not available, because the quote is empty.')
             );
             return false;
         }
@@ -220,8 +223,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * COD is not available for virtual shipments.
          */
         if ($quote->isVirtual()) {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the order is virtual.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL COD is not available, because the order is virtual.')
             );
             return false;
         }
@@ -229,7 +232,14 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         /**
          * COD is not available for Food shipments.
          */
-        if ($helper->quoteIsFood($quote)) {
+        if ($paymentHelper->quoteIsFood($quote)) {
+            return false;
+        }
+
+        /**
+         * COD is not available for Extra@Home shipments.
+         */
+        if ($helper->quoteIsExtraAtHome($quote)) {
             return false;
         }
 
@@ -249,8 +259,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             /** @var TIG_PostNL_Helper_Carrier $carrierHelper */
             $carrierHelper = $this->getHelper('postnl/carrier');
             if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
-                $helper->log(
-                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                $paymentHelper->log(
+                    $paymentHelper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
                 );
                 return false;
             }
@@ -265,8 +275,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             || empty($codSettings['iban'])
             || empty($codSettings['bic'])
         ) {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because required fields are missing.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL COD is not available, because required fields are missing.')
             );
             return false;
         }
@@ -278,8 +288,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         $shippingAddress = $quote->getShippingAddress();
         $fullStreet = $shippingAddress->getStreetFull();
         if (stripos($fullStreet, 'postbus') !== false) {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the shipping address is a P.O. box.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL COD is not available, because the shipping address is a P.O. box.')
             );
             return false;
         }
@@ -288,8 +298,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check that the destination country is allowed.
          */
         if (!$this->canUseForCountry($shippingAddress->getCountry())) {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the shipping destination country is not allowed.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL COD is not available, because the shipping destination country is not allowed.')
             );
             return false;
         }
@@ -300,8 +310,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = $this->getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getType() == 'Sunday') {
-            $helper->log(
-                $helper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.')
             );
             return false;
         }
@@ -310,8 +320,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check if COD is available in combination with Buspakje.
          */
         if (!$this->canShowForBuspakje()) {
-            $helper->log(
-                $helper->__('PostNL Cod is not for Buspakje shipments.')
+            $paymentHelper->log(
+                $paymentHelper->__('PostNL Cod is not for Buspakje shipments.')
             );
             return false;
         }
@@ -321,8 +331,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          */
         $parentIsAvailable = parent::isAvailable($quote);
         if (!$parentIsAvailable) {
-            $helper->log(
-                $helper->__("PostNL COD is not available, because the base isAvailable() check returned 'false'")
+            $paymentHelper->log(
+                $paymentHelper->__("PostNL COD is not available, because the base isAvailable() check returned 'false'")
             );
         }
 

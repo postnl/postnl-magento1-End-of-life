@@ -39,6 +39,15 @@
 class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_GoMage_LightCheckout_AjaxTest
     extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+
+        if (!$this->isModuleAvailable('GoMage_Checkout')) {
+            $this->markTestSkipped('GoMage_Checkout is not available in this installation');
+        }
+    }
+
     protected function observerMock($action = 'save_payment_methods')
     {
         $observer = $this->getMock('Varien_Event_Observer', array('getControllerAction', 'getRequest', 'getParam'));

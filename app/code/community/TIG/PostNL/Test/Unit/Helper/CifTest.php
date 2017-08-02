@@ -72,42 +72,27 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
     public function getExtraAtHomeProductCodesProvider()
     {
         return array(
-            'no codes active' => array(
-                '',
-                0
-            ),
-            'no E@H codes active' => array(
-                '3571,4878',
-                0
-            ),
-            'single E@H codes active' => array(
-                '3573,3575,3629',
-                1
-            ),
-            'multiple E@H codes active' => array(
-                '3445,3446,3653,3783,3790,4880',
-                3
-            ),
+            array(3628),
+            array(3629),
+            array(3653),
+            array(3783),
+            array(3790),
+            array(3791),
+            array(3792),
+            array(3793),
         );
     }
 
     /**
-     * @param $productCodes
-     * @param $expected
+     * @param $productCode
      *
      * @dataProvider getExtraAtHomeProductCodesProvider
      */
-    public function testGetExtraAtHomeProductCodes($productCodes, $expected)
+    public function testGetExtraAtHomeProductCodes($productCode)
     {
-        Mage::app()->getStore()->setConfig(
-            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS,
-            $productCodes
-        );
-
         $instance = $this->_getInstance();
         $result = $instance->getExtraAtHomeProductCodes(true);
 
-        $this->assertInternalType('array', $result);
-        $this->assertCount($expected, $result);
+        $this->assertArrayHasKey($productCode, $result);
     }
 }

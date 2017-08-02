@@ -49,15 +49,160 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
     public function isAvailableDataProvider()
     {
         return array(
-            array(false, false, false, false, false, false, false, false, 'NL', false, 'PostNL COD is not available, because the quote is empty.'),
-            array(true, false, false, false, false, false, false, false, 'NL', false, false),
-            array(true, true, false, false, false, false, false, false, 'NL', false, false),
-            array(true, true, true, false, false, false, false, false, 'NL', false, 'PostNL COD is not available, because the order is virtual.'),
-            array(true, true, false, true, false, false, false, false, 'NL', false, false),
-            array(true, true, false, false, true, false, false, false, 'NL', false, 'PostNL COD is not available, because required fields are missing.'),
-            array(true, true, false, false, true, true, false, false, 'US', false, 'PostNL COD is not available, because the shipping destination country is not allowed.'),
-            array(true, true, false, false, true, true, true, false, 'NL', false, 'PostNL COD is not available, because the shipping address is a P.O. box.'),
-            array(true, true, false, false, true, true, false, true, 'NL', false, 'PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.'),
+            '1' => array(
+                false, // $useQuote
+                false, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                false, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                'PostNL COD is not available, because the quote is empty.' // $logMessage
+            ),
+            '2' => array(
+                true, // $useQuote
+                false, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                false, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                false // $logMessage
+            ),
+            '3' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                false, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                false // $logMessage
+            ),
+            '4' => array(
+                true, // $useQuote
+                true, // $isActive
+                true, // $isVirtual
+                false, // $isFood
+                false, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                'PostNL COD is not available, because the order is virtual.' // $logMessage
+            ),
+            '5' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                true, // $isFood
+                false, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                false // $logMessage
+            ),
+            '6' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                false, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL',  // $country
+                false, // $expected
+                'PostNL COD is not available, because required fields are missing.' // $logMessage
+            ),
+            '7' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                true, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'US', // $country
+                false, // $expected
+                'PostNL COD is not available, because the shipping destination country is not allowed.' // $logMessage
+            ),
+            '8' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                true, // $codSettings
+                true, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                'PostNL COD is not available, because the shipping address is a P.O. box.' // $logMessage
+            ),
+            '9' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                true, // $codSettings
+                false, // $isPostbus
+                true, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                'PostNL Cod is not available, because COD is not allowed in combination with Sunday Delivery.' // $logMessage
+            ),
+            'contains Extra@Home product' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                true, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                true, // $quoteIsExtraAtHome
+                'NL', // $country
+                false, // $expected
+                '' // $logMessage
+            ),
+            'all tests are ok' => array(
+                true, // $useQuote
+                true, // $isActive
+                false, // $isVirtual
+                false, // $isFood
+                true, // $allowForNonPostNL
+                true, // $codSettings
+                false, // $isPostbus
+                false, // $isSunday
+                false, // $quoteIsExtraAtHome
+                'NL', // $country
+                true, // $expected
+                '' // $logMessage
+            ),
         );
     }
 
@@ -70,6 +215,7 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
      * @param $codSettings
      * @param $isPostbus
      * @param $isSunday
+     * @param $quoteIsExtraAtHome
      * @param $country
      * @param $expected
      * @param $logMessage
@@ -87,6 +233,7 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
         $codSettings,
         $isPostbus,
         $isSunday,
+        $quoteIsExtraAtHome,
         $country,
         $expected,
         $logMessage
@@ -128,8 +275,14 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
                 ->willReturn($shippingAddress);
         }
 
+        $dataHelper = $this->getMock('TIG_PostNL_Helper_Data');
         $paymentHelper = $this->getMock('TIG_PostNL_Helper_Payment');
+        $helpers['postnl'] = $dataHelper;
         $helpers['postnl/payment'] = $paymentHelper;
+
+        $dataHelper->expects($this->any())
+            ->method('quoteIsExtraAtHome')
+            ->willReturn($quoteIsExtraAtHome);
 
         $paymentHelper->expects($this->any())
             ->method('quoteIsFood')
@@ -159,17 +312,22 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
         Mage::app()->getStore()->setConfig('payment/postnl_cod/allow_for_non_postnl', $allowForNonPostNL);
         Mage::app()->getStore()->setConfig('payment/postnl_cod/specificcountry', 'NL,BE');
 
+        $bicnumber = $ibannumber = $accountnumber = '';
         if ($codSettings) {
-            Mage::app()->getStore()->setConfig('postnl/cod/bic', 'bicnumber');
-            Mage::app()->getStore()->setConfig('postnl/cod/iban', 'ibannumber');
-            Mage::app()->getStore()->setConfig('postnl/cod/account_name', 'accountnumber');
-
-            Mage::app()->getStore()->setConfig('postnl/cod', array(
-                'bic' => 'bicnumber',
-                'iban' => 'ibannumber',
-                'account_name' => 'accountnumber',
-            ));
+            $bicnumber = 'bicnumber';
+            $ibannumber = 'ibannumber';
+            $accountnumber = 'accountnumber';
         }
+
+        Mage::app()->getStore()->setConfig('postnl/cod/bic', $bicnumber);
+        Mage::app()->getStore()->setConfig('postnl/cod/iban', $ibannumber);
+        Mage::app()->getStore()->setConfig('postnl/cod/account_name', $accountnumber);
+
+        Mage::app()->getStore()->setConfig('postnl/cod', array(
+            'bic' => $bicnumber,
+            'iban' => $ibannumber,
+            'account_name' => $accountnumber,
+        ));
 
         $instance = $this->_getInstance();
         $this->setProperty('_models', $models, $instance);

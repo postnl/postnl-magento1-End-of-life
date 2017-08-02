@@ -376,4 +376,16 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
 
         return $method->invokeArgs($instance, $args);
     }
+
+    /**
+     * @param $module
+     *
+     * @return bool
+     */
+    public function isModuleAvailable($module)
+    {
+        $modules = Mage::getConfig()->getNode('modules')->children();
+
+        return array_key_exists($module, array_keys($modules));
+    }
 }
