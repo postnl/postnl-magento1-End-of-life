@@ -71,7 +71,7 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
         $cifHelper = Mage::helper('postnl/cif');
 
         /**
-         * Only Dutch shipments that are not COD support multi-colli shipments.
+         * Shipments that are not COD, support multi-colli shipments.
          */
         if (!$cifHelper->isMultiColliAllowed($shipment) || $cifHelper->isCodShipment($shipment)) {
             return 1;
