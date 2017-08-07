@@ -59,7 +59,8 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_parcel_count'))
             'frontend_class'             => 'validate-digits',
             'default'                    => '1',
             'label'                      => 'PostNL product parcel count',
-            'note'                       => 'This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.',
+            'note'                       => 'Dit product moet over dit aantal colli verspreid worden. ' .
+                                            'Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.',
             'input'                      => 'text',
             'type'                       => 'varchar',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
