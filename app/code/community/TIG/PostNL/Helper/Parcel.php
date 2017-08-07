@@ -54,6 +54,19 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
     const PRODUCT_TYPE_EXTRA_AT_HOME  = '6';
 
     /**
+     * @var bool
+     */
+    protected $isExtraAtHomeEnabled;
+
+    /**
+     * TIG_PostNL_Helper_Parcel constructor.
+     */
+    public function __construct()
+    {
+        $this->isExtraAtHomeEnabled = Mage::helper('postnl/deliveryOptions')->canUseExtraAtHomeDelivery(false);
+    }
+
+    /**
      * Gets the number of parcels in this shipment
      * based on it's weight and the configured parcel count of each product.
      *
@@ -63,7 +76,7 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
      *
      * @return int
      */
-    public function calculateParcelCount($shipment,$productList = false)
+    public function calculateParcelCount($shipment, $productList = false)
     {
         /**
          * @var TIG_PostNL_Helper_Cif $cifHelper
@@ -82,9 +95,7 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
-        $weightPerParcel = Mage::getStoreConfig(
-            self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId()
-        );
+        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
 
         /**
          * Get all items in the shipment.
@@ -98,12 +109,16 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
         $remainingWeight             = 0;
         $hasProductsWithoutOwnParcel = false;
 
-        if(!$productList) {
+        if (!$productList) {
             $productList = $this->getProductDictionary(
-                $items, array(self::ATTRIBUTE_CODE_PRODUCT_TYPE,
-                              self::ATTRIBUTE_PARCEL_COUNT)
+                $items,
+                array(
+                    self::ATTRIBUTE_CODE_PRODUCT_TYPE,
+                    self::ATTRIBUTE_PARCEL_COUNT,
+                )
             );
         }
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -114,6 +129,7 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
             if (!array_key_exists($item->getSku(), $productList)) {
                 continue;
             }
+
             $product = $productList[$item->getSku()];
             unset($productList[$item->getSku()]);
 
@@ -122,10 +138,10 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
             $productParcelCount = $product->getData(self::ATTRIBUTE_PARCEL_COUNT);
             $qty = $item->getQty() ? $item->getQty() : $item->getQtyOrdered();
 
-            if ($isAtHomeProduct) {
-                $parcelCount += ($productParcelCount * $qty);
+            if ($this->isExtraAtHomeEnabled && $isAtHomeProduct) {
+                $parcelCount += $productParcelCount * $qty;
             } else {
-                $remainingWeight += ($item->getWeight() * $qty);
+                $remainingWeight += $item->getWeight() * $qty;
                 $hasProductsWithoutOwnParcel = true;
             }
         }
@@ -150,25 +166,27 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    protected function getProductDictionary($items,$attributesToSelect){
-        $productSkus = array_map(
-            function ($item) {
-                return $item->getSku();
-            }, $items
-        );
-        $products   = Mage::getModel('catalog/product')->getCollection()
+    protected function getProductDictionary($items, $attributesToSelect)
+    {
+        $productSkus = array_map(function ($item) {
+            return $item->getSku();
+        }, $items);
+
+        $products = Mage::getModel('catalog/product')->getCollection()
             ->addAttributeToSelect(
                 $attributesToSelect
             )
             ->addFieldToFilter('sku', array('in' => $productSkus))
             ->addAttributeToFilter(
-                'type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
+                'type_id',
+                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
             );
 
         $productList = array();
         foreach ($products as $product) {
             $productList[$product->getSku()] = $product;
         }
+
         return $productList;
     }
 }
