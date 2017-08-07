@@ -60,6 +60,7 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
     {
         $foodErrorMessage = 'Food shipments can only be delivered within the Netherlands.';
         $idCheckErrorMessage = 'ID Check shipments can only be delivered within the Netherlands.';
+        $extraAtHomeErrorMessage = 'This product(s) can only be delivered within the Netherlands.';
 
         return array(
             /** Is Active */
@@ -77,6 +78,8 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
             array(true, null, 'BE', true, 'idcheck', $idCheckErrorMessage),
 
             array(true, null, null, false, 'idcheck', true),
+            array(true, null, 'BE', true, 'extra_at_home', $extraAtHomeErrorMessage),
+            array(true, null, 'NL', false, 'extra_at_home', true),
         );
     }
 
