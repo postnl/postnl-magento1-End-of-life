@@ -98,14 +98,14 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
 
     public function isMultiColliAllowedProvider()
     {
-        return [
-            ['NL', 'NL', true],
-            ['NL', 'BE', true],
-            ['BE', 'NL', true],
-            ['BE', 'BE', true],
-            ['NL', 'DE', false],
-            ['BE', 'DE', false],
-        ];
+        return array(
+            array('NL', 'NL', true),
+            array('NL', 'BE', true),
+            array('BE', 'NL', true),
+            array('BE', 'BE', true),
+            array('NL', 'DE', false),
+            array('BE', 'DE', false),
+        );
     }
 
     /**

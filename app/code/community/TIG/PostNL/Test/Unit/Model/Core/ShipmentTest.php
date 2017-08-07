@@ -294,11 +294,11 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
 
     public function isMultiColliAllowedProvider()
     {
-        return [
-            'NL' => ['NL', true],
-            'BE' => ['BE', true],
-            'DE' => ['DE', false],
-        ];
+        return array(
+            'NL' => array('NL', true),
+            'BE' => array('BE', true),
+            'DE' => array('DE', false),
+        );
     }
 
     /**
