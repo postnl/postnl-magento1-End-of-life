@@ -99,22 +99,17 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
     public function isMultiColliAllowedProvider()
     {
         return array(
-            array('NL', 'NL', true),
-            array('NL', 'BE', true),
-            array('BE', 'NL', true),
-            array('BE', 'BE', true),
-            array('NL', 'DE', false),
-            array('BE', 'DE', false),
+            'NL' => array('NL', true),
+            'BE' => array('BE', true),
+            'DE' => array('DE', false),
         );
     }
 
     /**
      * @dataProvider isMultiColliAllowedProvider
      */
-    public function testIsMultiColliAllowed($originCountry, $destinationCountry, $expected)
+    public function testIsMultiColliAllowed($destinationCountry, $expected)
     {
-        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Cif::XPATH_POSTNL_CIF_ADDRESS_COUNTRY, $originCountry);
-
         $shipmentMock = $this->getMock('Mage_Sales_Model_Order_Shipment');
 
         /**
