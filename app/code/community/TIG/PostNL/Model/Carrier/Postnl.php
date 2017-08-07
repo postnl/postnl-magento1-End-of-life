@@ -211,6 +211,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             return $this->_addShippingRateNotFoundError();
         }
 
+        if ($parcelType == self::PARCEL_TYPE_EXTRAATHOME && $countryId != 'NL') {
+            return $this->_addShippingRateNotFoundError();
+        }
+
         /**
          * Which types of shipments are only allow to the Netherlands?
          */
@@ -820,6 +824,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         switch ($parcelType) {
             case self::PARCEL_TYPE_FOOD:
                 return $this->getConfigData('foodspecificerrmsg');
+            case self::PARCEL_TYPE_EXTRAATHOME :
+                return $this->getConfigData('extraathomespecificerrmsg');
             case self::PARCEL_TYPE_AGECHECK:
             case self::PARCEL_TYPE_BIRTHDAYCHECK:
             case self::PARCEL_TYPE_IDCHECK:
