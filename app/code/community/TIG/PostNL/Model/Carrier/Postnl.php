@@ -205,23 +205,14 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $parcelType = $this->_request->getParcelType();
 
         /**
-         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
-         */
-        if ($parcelType == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
-            return $this->_addShippingRateNotFoundError();
-        }
-
-        if ($parcelType == self::PARCEL_TYPE_EXTRAATHOME && $countryId != 'NL') {
-            return $this->_addShippingRateNotFoundError();
-        }
-
-        /**
          * Which types of shipments are only allow to the Netherlands?
          */
         $idCheckTypes = array(
             self::PARCEL_TYPE_AGECHECK,
             self::PARCEL_TYPE_BIRTHDAYCHECK,
             self::PARCEL_TYPE_IDCHECK,
+            self::PARCEL_TYPE_FOOD,
+            self::PARCEL_TYPE_EXTRAATHOME
         );
 
         /**
