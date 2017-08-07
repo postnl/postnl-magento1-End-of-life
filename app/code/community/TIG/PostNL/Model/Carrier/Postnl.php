@@ -205,7 +205,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $parcelType = $this->_request->getParcelType();
 
         /**
-         * Types that ar only available for addresses in the Netherlands
+         * Types that are only available for addresses in the Netherlands
          */
         $checkTypes = array(
             self::PARCEL_TYPE_AGECHECK,
