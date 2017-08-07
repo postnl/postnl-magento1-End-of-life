@@ -1018,6 +1018,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $tempPostnlShipment->isMonday();
     }
 
+    /**
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return bool
+     */
+    public function isMultiColliAllowed(Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        /** @noinspection PhpParamsInspection */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isMultiColliAllowed();
+        }
+
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isMultiColliAllowed();
+    }
 
     /**
      * Gets the default product option for a shipment
