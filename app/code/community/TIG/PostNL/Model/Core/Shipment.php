@@ -2845,7 +2845,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->getShippingAddress()->getCountryId() != 'NL' ||
             !$this->isDomesticShipment() ||
             $this->isBuspakjeShipment() ||
-            $this->isFoodShipment()
+            $this->isFoodShipment() ||
+            $this->isExtraAtHome()
         ) {
             return false;
         }
@@ -3244,6 +3245,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->hasReturnLabels()) {
             return true;
+        }
+
+        if ($this->isExtraAtHome()) {
+            return false;
         }
 
         /**
