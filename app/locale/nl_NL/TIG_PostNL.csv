@@ -1485,4 +1485,4 @@ TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please cons
 TIG_PostNL::Activate Extra@Home for your customers.,Activeer Exra@Home voor uw klanten.
 TIG_PostNL::Return customer code,Retouren klant code
 TIG_PostNL::"To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.","Om retouren aan te bieden aan uw klanten, heeft een uw afwijkende klantcode nodig. U kunt deze klantcode bij uw accountmanager opvragen."
-TIG_PostNL::This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,Dit product moet over dit aantal colli verspreid worden. Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.
+This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,Dit product moet over dit aantal colli verspreid worden. Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.
