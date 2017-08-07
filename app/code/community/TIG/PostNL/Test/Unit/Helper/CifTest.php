@@ -95,4 +95,37 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
 
         $this->assertArrayHasKey($productCode, $result);
     }
+
+    public function isMultiColliAllowedProvider()
+    {
+        return [
+            ['NL', 'NL', true],
+            ['NL', 'BE', true],
+            ['BE', 'NL', true],
+            ['BE', 'BE', true],
+            ['NL', 'DE', false],
+            ['BE', 'DE', false],
+        ];
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowed($originCountry, $destinationCountry, $expected)
+    {
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Cif::XPATH_POSTNL_CIF_ADDRESS_COUNTRY, $originCountry);
+
+        $shipmentMock = $this->getMock('Mage_Sales_Model_Order_Shipment');
+
+        /**
+         * Set shipping address to overwrite the destination country code.
+         *
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+        $shipmentMock->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $this->assertSame($expected, $this->_getInstance()->isMultiColliAllowed($shipmentMock));
+    }
 }

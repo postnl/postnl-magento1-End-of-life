@@ -291,4 +291,29 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
 
         $this->assertEquals($expected, $result);
     }
+
+    public function isMultiColliAllowedProvider()
+    {
+        return [
+            'NL' => ['NL', true],
+            'BE' => ['BE', true],
+            'DE' => ['DE', false],
+        ];
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowed($destinationCountry, $expected)
+    {
+        $instance = $this->_getInstance();
+
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+
+        $instance->setData('shipping_address', $shippingAddress);
+
+        $result   = $instance->isMultiColliAllowed();
+        $this->assertSame($expected, $result);
+    }
 }
