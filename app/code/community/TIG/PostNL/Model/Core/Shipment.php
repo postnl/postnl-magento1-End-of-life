@@ -384,6 +384,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected $_barcodeCollections = array();
 
     /**
+     * @var array
+     */
+    protected $_multiColliCountries = array('NL', 'BE');
+
+    /**
      * Initialize the shipment
      */
     public function _construct()
@@ -2845,7 +2850,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->getShippingAddress()->getCountryId() != 'NL' ||
             !$this->isDomesticShipment() ||
             $this->isBuspakjeShipment() ||
-            $this->isFoodShipment()
+            $this->isFoodShipment() ||
+            $this->isExtraAtHomeShipment()
         ) {
             return false;
         }
@@ -3238,7 +3244,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canPrintReturnLabels()
     {
-        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment() || $this->isFoodShipment()) {
+        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment()
+            || $this->isFoodShipment() || $this->isExtraAtHomeShipment()) {
             return false;
         }
 
@@ -5624,6 +5631,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return parent::_beforeSave();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiColliAllowed()
+    {
+        $address = $this->getShippingAddress();
+
+        return in_array($address->getCountryId(), $this->_multiColliCountries);
     }
 
     /**

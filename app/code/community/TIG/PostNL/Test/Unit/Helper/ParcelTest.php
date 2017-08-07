@@ -41,105 +41,147 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
 
     public function calculateParcelCountDataProvider(){
         return array(
-            'domestic_cod_2ConfiguredParcels'=>
-                array('NL',true,array(
+            'domestic_cod_2ConfiguredParcels' => array(
+                'NL',
+                true,
+                true,
+                array(
                     array(
-                        'sku'=>'test1',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test1',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_EXTRA_AT_HOME,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 1,
                     ),
                     array(
-                        'sku'=>'test2',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test2',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_EXTRA_AT_HOME,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 1,
                     ),
-                ),1),
+                ),
+                1
+            ),
 
-            'domestic_notCod_2ConfiguredParcels'=>
-                array('NL',false,array(
+            'domestic_notCod_2ConfiguredParcels' => array(
+                'NL',
+                false,
+                true,
+                array(
                     array(
-                        'sku'=>'test1',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test1',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_EXTRA_AT_HOME,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 1,
                     ),
                     array(
-                        'sku'=>'test2',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test2',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_EXTRA_AT_HOME,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 1,
                     ),
-                ),2),
+                ),
+                2
+            ),
 
-            'domestic_notCod_2ConfiguredParcels_notExtraAtHome'=>
-                array('NL',false,array(
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome' => array(
+                'NL',
+                false,
+                true,
+                array(
                     array(
-                        'sku'=>'test1',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test1',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>0,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 0,
                     ),
                     array(
-                        'sku'=>'test2',
-                        'weight'=>1,
-                        'qty'=>1,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test2',
+                        'weight' => 1,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>12,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 12,
                     ),
-                ),1),
+                ),
+                1
+            ),
 
-            'domestic_notCod_2ConfiguredParcels_notExtraAtHome'=>
-                array('NL',false,array(
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome_etc' => array(
+                'NL',
+                false,
+                true,
+                array(
                     array(
-                        'sku'=>'test1',
-                        'weight'=>10,
-                        'qty'=>50,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test1',
+                        'weight' => 10,
+                        'qty' => 50,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>0,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 0,
                     ),
                     array(
-                        'sku'=>'test2',
-                        'weight'=>11,
-                        'qty'=>50,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test2',
+                        'weight' => 11,
+                        'qty' => 50,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>12,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 12,
                     ),
-                ),1),
+                ),
+                1
+            ),
 
-            'domestic_notCod_2ConfiguredParcels_notExtraAtHome_heighWeight'=>
-                array('NL',false,array(
+            'domestic_notCod_2ConfiguredParcels_notExtraAtHome_heighWeight' => array(
+                'NL',
+                false,
+                true,
+                array(
                     array(
-                        'sku'=>'test1',
-                        'weight'=>200,
-                        'qty'=>50,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test1',
+                        'weight' => 200,
+                        'qty' => 50,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>0,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 0,
                     ),
                     array(
-                        'sku'=>'test2',
-                        'weight'=>210,
-                        'qty'=>50,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE=>
+                        'sku' => 'test2',
+                        'weight' => 210,
+                        'qty' => 50,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
                             TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_ID_CHECK,
-                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT=>12,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 12,
                     ),
-                ),2),
+                ),
+                2
+            ),
+
+            'extra_at_home disabled, but the product has extra_at_home as product type' => array(
+                'NL',
+                false,
+                false,
+                array(
+                    array(
+                        'sku' => 'test1',
+                        'weight' => 50000,
+                        'qty' => 1,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_CODE_PRODUCT_TYPE =>
+                            TIG_PostNL_Helper_Parcel::PRODUCT_TYPE_EXTRA_AT_HOME,
+                        TIG_PostNL_Helper_Parcel::ATTRIBUTE_PARCEL_COUNT => 1,
+                    ),
+                ),
+                3
+            ),
         );
     }
 
@@ -148,12 +190,17 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
      * @dataProvider calculateParcelCountDataProvider
      *
      * @param string $countryCode
-     * @param bool $isCod
-     * @param array $orderItems
-     * @param int $expectedParcelCount
+     * @param bool   $isCod
+     * @param        $isExtraAtHomeActive
+     * @param array  $orderItems
+     * @param int    $expectedParcelCount
      */
     public function testCalculateParcelCount(
-        $countryCode, $isCod, $orderItems, $expectedParcelCount
+        $countryCode,
+        $isCod,
+        $isExtraAtHomeActive,
+        $orderItems,
+        $expectedParcelCount
     ) {
         /**
          * Mock the Magento shipment to overwrite the products.
@@ -184,7 +231,7 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
          * @var Mage_Sales_Model_Order_Payment $payment
          */
         $payment = new Mage_Sales_Model_Order_Payment;
-        $payment->setMethod($isCod?'postnl_cod':'postnl_notcod');
+        $payment->setMethod($isCod ? 'postnl_cod' : 'postnl_notcod');
         $shipmentMock->setPayment($payment);
         $shipmentMock->method('getPayment')->willReturn($payment);
 
@@ -195,8 +242,11 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
         $orderMock->method('getPayment')->willReturn($payment);
         $shipmentMock->method('getOrder')->willReturn($orderMock);
 
-        $result = $this->_getInstance()->calculateParcelCount(
-            $shipmentMock, $products
+        $instance = $this->_getInstance();
+        $this->setProperty('isExtraAtHomeEnabled', $isExtraAtHomeActive, $instance);
+        $result   = $instance->calculateParcelCount(
+            $shipmentMock,
+            $products
         );
 
         $this->assertequals($expectedParcelCount, $result);

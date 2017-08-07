@@ -1117,6 +1117,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_extra_at_home_options'])) {
+                $config['postnl_extra_at_home_options'] = array(
+                    'name'   => 'product_options[extra_at_home_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_extra_at_home_options']
+                );
+            }
+
             /**
              * @var TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions $block
              */
@@ -1268,6 +1277,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 false,
                 true
             ),
+            'postnl_extra_at_home_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'extra_at_home_options'
+                )
+            )
         );
 
         return $options;
