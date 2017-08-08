@@ -428,7 +428,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        /**
+         * PostNL type is already set after selecting delivery options in
+         * \TIG_PostNL_Model_DeliveryOptions_Service::saveDeliveryOption
+         * So for example Type Evening would be overwritten by Overdag which should not happen.
+         */
         $orderType = $postnlOrder::TYPE_OVERDAG;
+        if ($postnlOrder->getType()) {
+            $orderType = $postnlOrder->getType();
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
