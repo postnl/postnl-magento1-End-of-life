@@ -34,19 +34,6 @@ class TIG_PostNL_Helper_ContentDescription extends Mage_Core_Helper_Abstract
     const MAX_STRING_LENGTH = 35;
 
     /**
-     * @var TIG_PostNL_Helper_ProductDictionary
-     */
-    protected $productDictionary;
-
-    /**
-     * TIG_PostNL_Helper_ContentDescription constructor.
-     */
-    public function __construct()
-    {
-        $this->productDictionary = Mage::helper('postnl/productDictionary');
-    }
-
-    /**
      * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return string
