@@ -141,7 +141,7 @@ class TIG_PostNL_Test_Unit_Helper_VolumeTest extends TIG_PostNL_Test_Unit_Framew
         $this->setProperty('extraAtHomeEnabled', $extraAtHomeActive, $instance);
         $this->setProperty('productDictonary', $productDictonaryMock, $instance);
 
-        $this->setExpectedException(TIG_PostNL_Exception::class, $message);
+        $this->setExpectedException('TIG_PostNL_Exception', $message);
 
         $instance->get($this->getProducts($items));
     }
