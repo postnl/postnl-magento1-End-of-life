@@ -1417,3 +1417,4 @@ TIG_PostNL::Return customer code,Return customer code
 TIG_PostNL::To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.
 This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.
 TIG_PostNL::PostNL product parcel count,PostNL product parcel count
+"TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume."

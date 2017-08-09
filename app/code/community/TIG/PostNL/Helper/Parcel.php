@@ -109,8 +109,11 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
         $remainingWeight             = 0;
         $hasProductsWithoutOwnParcel = false;
 
+        /** @var TIG_PostNL_Helper_ProductDictionary $productDictionary */
+        $productDictionary = Mage::helper('postnl/productDictionary');
+
         if (!$productList) {
-            $productList = $this->getProductDictionary(
+            $productList = $productDictionary->get(
                 $items,
                 array(
                     self::ATTRIBUTE_CODE_PRODUCT_TYPE,
@@ -156,37 +159,5 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
         $parcelCount += $remainingParcelCount;
 
         return $parcelCount;
-    }
-
-    /**
-     * Creates a dictionary of all simple products in the list based on SKU.
-     *
-     * @param array $items
-     * @param array $attributesToSelect Additional custom attributes to add to the select.
-     *
-     * @return array
-     */
-    protected function getProductDictionary($items, $attributesToSelect)
-    {
-        $productSkus = array_map(function ($item) {
-            return $item->getSku();
-        }, $items);
-
-        $products = Mage::getModel('catalog/product')->getCollection()
-            ->addAttributeToSelect(
-                $attributesToSelect
-            )
-            ->addFieldToFilter('sku', array('in' => $productSkus))
-            ->addAttributeToFilter(
-                'type_id',
-                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
-            );
-
-        $productList = array();
-        foreach ($products as $product) {
-            $productList[$product->getSku()] = $product;
-        }
-
-        return $productList;
     }
 }

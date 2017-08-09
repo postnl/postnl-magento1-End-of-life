@@ -85,6 +85,43 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_parcel_count'))
     );
 }
 
+if (!$installer->getAttribute('catalog_product', 'postnl_product_volume')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_product_volume',
+        array(
+            'group'                      => 'PostNL',
+            'sort_order'                 => 190,
+            'frontend'                   => '',
+            'frontend_class'             => 'validate-digits',
+            'default'                    => '1',
+            'label'                      => 'PostNL product volume',
+            'note'                       => 'When sending Extra@Home types, this field is mandatory. ' .
+                                            'Enter as cubic centimeters like 30000.',
+            'input'                      => 'text',
+            'type'                       => 'varchar',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
+
 /***********************************************************************************************************************
  * POSTNL ORDER
  **********************************************************************************************************************/
