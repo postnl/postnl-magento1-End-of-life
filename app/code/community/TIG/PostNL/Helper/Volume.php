@@ -35,9 +35,9 @@ class TIG_PostNL_Helper_Volume extends Mage_Core_Helper_Abstract
     const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
 
     /**
-     * @var TIG_PostNL_Helper_DeliveryOptions
+     * @var bool
      */
-    protected $deliveryOptions;
+    protected $extraAtHomeEnabled;
 
     /**
      * @var TIG_PostNL_Helper_ProductDictionary
@@ -49,7 +49,9 @@ class TIG_PostNL_Helper_Volume extends Mage_Core_Helper_Abstract
      */
     public function __construct()
     {
-        $this->deliveryOptions  = Mage::helper('postnl/deliveryOptions');
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptions */
+        $deliveryOptions  = Mage::helper('postnl/deliveryOptions');
+        $this->extraAtHomeEnabled = $deliveryOptions->canUseExtraAtHomeDelivery(false);
         $this->productDictonary = Mage::helper('postnl/productDictionary');
     }
 
@@ -65,7 +67,7 @@ class TIG_PostNL_Helper_Volume extends Mage_Core_Helper_Abstract
             self::ATTRIBUTE_CODE_PRODUCT_TYPE, self::ATTRIBUTE_VOLUME
         ));
 
-        if (empty($productList) || !$this->deliveryOptions->canUseExtraAtHomeDelivery(false)) {
+        if (empty($productList) || !$this->extraAtHomeEnabled) {
             return 0;
         }
 
