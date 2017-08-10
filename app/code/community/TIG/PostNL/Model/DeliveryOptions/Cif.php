@@ -603,7 +603,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
-        if ($country == 'NL' && $helper->canUseEveningTimeframes() && !$helper->canUseSameDayDelivery()) {
+        $allowEvening = array('NL', 'BE');
+        if (in_array($country, $allowEvening) && $helper->canUseEveningTimeframes() && !$helper->canUseSameDayDelivery()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
@@ -681,7 +682,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $options[] = self::DOMESTIC_DELIVERY_OPTION;
         }
 
-        if ($country == 'NL' && $helper->canUseEveningTimeframes()) {
+        $allowedEvening = array('NL', 'BE');
+        if (in_array($country, $allowedEvening) && $helper->canUseEveningTimeframes()) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 

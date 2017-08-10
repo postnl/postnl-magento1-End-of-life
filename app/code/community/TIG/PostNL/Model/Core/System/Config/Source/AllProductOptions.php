@@ -320,6 +320,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => false,
             'group'             => 'eu_options',
         ),
+        '4938' => array(
+            'value'             => '4938',
+            'label'             => 'EU Pack Special Evening (incl. signature)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
+        ),
         /**
          * This option has been removed since v1.1.4.
          */

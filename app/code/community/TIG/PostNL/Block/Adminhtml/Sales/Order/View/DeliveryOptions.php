@@ -134,6 +134,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'Avond':
                 $this->setSubType($this->__('Evening Delivery'));
                 $shipmentType  = $this->__('Domestic');
+                if ($countryId == 'BE') {
+                    $shipmentType  = $this->__('EPS');
+                }
                 break;
             case 'Sunday':
                 $shipmentType = $this->__('Sunday Delivery');

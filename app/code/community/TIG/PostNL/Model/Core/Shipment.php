@@ -264,6 +264,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS      = 'postnl/grid/default_product_option_netherlands';
     const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION              = 'postnl/cod/default_cod_product_option';
     const XPATH_DEFAULT_EVENING_PRODUCT_OPTION                   = 'postnl/grid/default_evening_product_option';
+    const XPATH_DEFAULT_EVENING_BE_PRODUCT_OPTION                = 'postnl/grid/default_evening_be_product_option';
     const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION               = 'postnl/cod/default_evening_cod_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION                = 'postnl/grid/default_pakjegemak_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION          = 'postnl/grid/default_pakjegemak_nl_be_product_option';
@@ -1253,6 +1254,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
                 if (!$xpath) {
                     $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+                }
+
+                if ($this->isBelgiumShipment()) {
+                    $xpath = self::XPATH_DEFAULT_EVENING_BE_PRODUCT_OPTION;
                 }
                 break;
             case self::SHIPMENT_TYPE_AVOND_COD:
