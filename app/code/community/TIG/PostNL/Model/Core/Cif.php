@@ -1066,6 +1066,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment, $shipment);
         }
 
+        if ($postnlShipment->isExtraAtHome()) {
+            /** @var TIG_PostNL_Helper_Volume $volume */
+            $volume = Mage::helper('postnl/volume');
+            $shipmentData['Dimension']['Volume'] = $volume->get($shipment->getAllItems());
+            /** @var TIG_PostNL_Helper_ContentDescription $description */
+            $description = Mage::helper('postnl/contentDescription');
+            $shipmentData['Content'] = $description->get($shipment);
+        }
+
         /**
          * Add customs data.
          */
