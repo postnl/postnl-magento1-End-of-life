@@ -38,7 +38,7 @@ class TIG_PostNL_Helper_ContentDescription extends Mage_Core_Helper_Abstract
      *
      * @return string
      */
-    public function get(Mage_Sales_Model_Order_Shipment $shipment)
+    public function get($shipment)
     {
         return $this->formatDescription($shipment->getAllItems());
     }
