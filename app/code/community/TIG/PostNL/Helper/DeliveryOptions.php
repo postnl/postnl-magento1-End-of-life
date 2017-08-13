@@ -650,7 +650,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 break;
             case 'avond':
             case 'Avond':
-                $deliveryOptionsInfo['formatted_type'] = 'Avond';
+                $formattedType = 'Avond';
+                if ($shippingAddress->getCountryId() == 'BE') {
+                    $formattedType .= ' (België)';
+                }
+                $deliveryOptionsInfo['formatted_type'] = $formattedType;
                 break;
             case 'avond_cod':
                 $deliveryOptionsInfo['formatted_type'] = 'Avond rembours';

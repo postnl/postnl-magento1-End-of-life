@@ -1729,6 +1729,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_AVOND:
                 $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
+                if ($this->isBelgiumShipment()) {
+                    $allowedProductCodes = $cifHelper->getAvondEuProductCodes($flat);
+                }
                 break;
             case self::SHIPMENT_TYPE_AVOND_COD:
                 $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
