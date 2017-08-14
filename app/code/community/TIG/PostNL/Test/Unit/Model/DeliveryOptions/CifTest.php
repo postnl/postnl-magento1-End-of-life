@@ -263,12 +263,12 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             /**
              * BE Pickup
              */
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup')),
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Pickup', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Pickup', 'Evening')),
 
             /**
              * NL Pickup
