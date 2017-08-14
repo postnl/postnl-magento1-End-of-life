@@ -579,8 +579,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getDeliveryTimeframesOptionsArray($country)
     {
-        $storeId = $this->getStoreId();
-
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = $this->_getHelper('deliveryOptions');
 
@@ -604,7 +602,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         $allowEvening = array('NL', 'BE');
-        if (in_array($country, $allowEvening) && $helper->canUseEveningTimeframes() && !$helper->canUseSameDayDelivery()) {
+        if (in_array($country, $allowEvening) && $helper->canUseEveningTimeframes()
+            && !in_array(self::EVENING_DELIVERY_OPTION, $options)) {
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
 
