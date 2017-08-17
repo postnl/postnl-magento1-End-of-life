@@ -1,0 +1,20 @@
+{
+    "name": "tig/postnl-magento1",
+    "description": "TIG Magento 1 PostNL extension",
+    "type": "magento-module",
+    "license": "CC-BY-NC-ND-3.0",
+    "require": {},
+    "authors": [
+        {
+            "name": "TIG",
+            "email": "servicedesk@tig.nl",
+            "homepage": "http://tig.nl"
+        }
+    ],
+    "support": {
+        "email": "servicedesk@tig.nl",
+        "issues": "http://servicedesk.tig.nl/hc/nl/requests/new"
+    },
+    "homepage": "https://tig.nl/postnl",
+    "minimum-stability": "stable"
+}
