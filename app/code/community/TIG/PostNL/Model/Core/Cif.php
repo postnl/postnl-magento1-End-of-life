@@ -1123,7 +1123,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($printReturnLabel) {
-            $addresses['Address'][] = $this->_getAddress('Return');
+            $addresses['Address'][] = $this->_getAddress('Return', $shippingAddress);
         }
 
         return $addresses;
@@ -1181,7 +1181,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Gets an array containing required address data.
      *
      * @param             $addressType
-     * @param bool|string $shippingAddress
+     * @param bool|Mage_Sales_Model_Order_Address $shippingAddress
      *
      * @throws TIG_PostNL_Exception
      * @return array
@@ -1220,25 +1220,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($senderAddress);
                 break;
             case 'Return':
-                $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
+                $returnAddress = $this->_getReturnAddress($shippingAddress);
+                $streetData    = $this->getReturnStreetData($shippingAddress, $returnAddress);
 
-                $streetData = array(
-                    'streetname'           => 'Antwoordnummer:',
-                    'housenumber'          => $returnAddress['return_freepost_number'],
-                    'housenumberExtension' => '',
-                    'fullStreet'           => '',
-                );
-
-                $returnAddressData = array();
-                foreach($returnAddress as $field => $value) {
-                    if (strpos($field, 'return_') === false) {
-                        continue;
-                    }
-
-                    $returnAddressData[substr($field, 7)] = $value;
-                }
-
-                $address = new Varien_Object($returnAddressData);
+                $address = new Varien_Object($returnAddress);
                 break;
             case 'Alternative':
                 /**
@@ -1323,6 +1308,44 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * @param Mage_Sales_Model_Order_Address $shippingAddress
+     *
+     * @return array|mixed
+     */
+    protected function _getReturnAddress($shippingAddress)
+    {
+        $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
+
+        $returnAddressData = array();
+        foreach($returnAddress as $field => $value) {
+            if (strpos($field, 'return_') === false) {
+                continue;
+            }
+
+            $returnAddressData[substr($field, 7)] = $value;
+        }
+
+        if ($shippingAddress->getCountryId() == 'BE') {
+            $returnAddress = array_filter($returnAddressData, function ($value) {
+                return strpos($value, '_be' !== false);
+            }, 2);
+
+            foreach ($returnAddress as $key => $value) {
+                $returnAddress[substr($key, 0, -3)] = $value;
+                unset($returnAddress[$key]);
+            }
+        }
+
+        if ($shippingAddress->getCountryId() !== 'BE') {
+            $returnAddress = array_filter($returnAddressData, function ($value) {
+                return strpos($value, '_be' === false);
+            }, 2);
+        }
+
+        return $returnAddress;
+    }
+
+    /**
      * Forms an array of address data compatible with CIF.
 
      * @param Mage_Sales_Model_Order_Address|Varien_Object $address
@@ -1364,6 +1387,34 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         return $addressArray;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Address $shippingAddress
+     * @param $returnAddress
+     *
+     * @return array
+     */
+    protected function getReturnStreetData($shippingAddress, $returnAddress)
+    {
+        $senderAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+        $sendersCountry = $senderAddress['country'];
+
+        $streetData = array(
+            'streetname'           => 'Antwoordnummer:',
+            'housenumber'          => $returnAddress['freepost_number'],
+            'housenumberExtension' => '',
+            'fullStreet'           => '',
+        );
+
+        if ($shippingAddress->getCountryId() == 'BE' && $sendersCountry == 'BE') {
+            //Replace freepost with the actual streetname and housenumber.
+            $streetData['streetname']           = $returnAddress['streetname'];
+            $streetData['housenumber']          = $returnAddress['housenumber'];
+            $streetData['housenumberExtension'] = $returnAddress['housenumber_extension'];
+        }
+
+        return $streetData;
     }
 
     /**
