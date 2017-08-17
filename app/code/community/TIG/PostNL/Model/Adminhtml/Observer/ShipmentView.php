@@ -203,10 +203,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Add a button to print this shipment's return labels.
          */
+        $isBe = $postnlShipment->getShippingAddress()->getCountryId() == 'BE';
         if ($printReturnLabelAllowed
             && $postnlShipment->canPrintReturnLabels()
-            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
+
             $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
 
             $block->addButton(
@@ -247,7 +249,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         if ($sendReturnLabelAllowed
             && $postnlShipment->canSendReturnLabelEmail()
-            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
             $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
 

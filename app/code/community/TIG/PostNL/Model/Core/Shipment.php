@@ -323,7 +323,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Xpath to the email template used to email the customer a return label.
      */
-    const XPATH_RETURN_LABEL_EMAIL_TEMPLATE = 'postnl/returns/email_template';
+    const XPATH_RETURN_LABEL_EMAIL_TEMPLATE    = 'postnl/returns/email_template';
+    const XPATH_RETURN_LABEL_EMAIL_TEMPLATE_BE = 'postnl/returns/email_template_be';
 
     /**
      * CIF warning code returned when an EPS combi label is not available.
@@ -4858,8 +4859,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $storeId = $this->getStoreId();
 
-        $template = Mage::getStoreConfig(self::XPATH_RETURN_LABEL_EMAIL_TEMPLATE, $storeId);
-
         /**
          * @var Mage_Sales_Model_Order $order
          */
@@ -4874,6 +4873,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
+        $xpath = self::XPATH_RETURN_LABEL_EMAIL_TEMPLATE;
+        if ($shippingAddress->getCountryId() == 'BE') {
+            $xpath = self::XPATH_RETURN_LABEL_EMAIL_TEMPLATE_BE;
+        }
+
+        $template = Mage::getStoreConfig($xpath, $storeId);
         $payment          = $order->getPayment();
         $paymentBlockHtml = '';
         if ($payment) {
