@@ -257,8 +257,8 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
 
             $address = $this->getQuote()->getShippingAddress();
-            if ($address->getCountryId() == 'BE' && $feeType == 'Evening') {
-                $feeType = $feeType.'_BE';
+            if ($address->getCountryId() == 'BE' && $feeType == self::FEE_TYPE_EVENING) {
+                $feeType = self::FEE_TYPE_EVENING_BE;
             }
 
             $xpath = $this->_getFeeConfigXpath($feeType);

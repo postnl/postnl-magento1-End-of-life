@@ -637,9 +637,29 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
+        $deliveryOptionsInfo = $this->getFormattedType($type, $deliveryOptionsInfo, $shippingAddress->getCountryId());
+
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
+        }
+
         /**
-         * Determine the formatted order type.
+         * Return the data.
          */
+        return $deliveryOptionsInfo;
+    }
+
+    /**
+     * Determine the formatted order type.
+     *
+     * @param $type
+     * @param $deliveryOptionsInfo
+     * @param $countryId
+     *
+     * @return mixed
+     */
+    public function getFormattedType($type, $deliveryOptionsInfo, $countryId)
+    {
         switch ($type) {
             case 'domestic':
             case 'Overdag':
@@ -651,7 +671,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             case 'avond':
             case 'Avond':
                 $formattedType = 'Avond';
-                if ($shippingAddress->getCountryId() == 'BE') {
+                if ($countryId == 'BE') {
                     $formattedType .= ' (België)';
                 }
                 $deliveryOptionsInfo['formatted_type'] = $formattedType;
@@ -663,7 +683,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             case 'PG':
                 $formattedType = 'PakjeGemak';
 
-                if ($shippingAddress->getCountryId() == 'BE') {
+                if ($countryId == 'BE') {
                     $formattedType .= ' (België)';
                 }
 
@@ -695,13 +715,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
-        if ($asVarienObject) {
-            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
-        }
-
-        /**
-         * Return the data.
-         */
         return $deliveryOptionsInfo;
     }
 
