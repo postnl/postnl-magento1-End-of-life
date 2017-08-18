@@ -44,13 +44,28 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     protected $_options = array(
         array(
-            'value' => '4952',
-            'label' => 'EU Pack Special Consumer (incl. signature)',
+            'value'   => '4952',
+            'label'   => 'EU Pack Special Consumer (incl. signature)',
+            'isAvond' => false,
         ),
         array(
             'value'   => '4938',
             'label'   => 'EU Pack Special Evening (incl. signature)',
             'isAvond' => true,
+        ),
+        array(
+            'value'         => '4955',
+            'label'         => 'EU Pack Standard (Belgium only, no signature)',
+            'isAvond'       => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+        ),
+        array(
+            'value'         => '4941',
+            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'isAvond'       => true,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
         )
     );
 
@@ -67,30 +82,43 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     {
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        if ($helper->canUseEpsBEOnlyOption()) {
-            if (!$asFlatArray) {
-                $options[] = array(
-                    'value'         => '4955',
-                    'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                    'isBelgiumOnly' => true,
-                    'isExtraCover'  => false,
-                );
-                $options[] = array(
-                    'value'         => '4941',
-                    'label'         => $helper->__('EU Pack Standard Evening (Belgium only, no signature)'),
-                    'isExtraCover'  => false,
-                    'isAvond'       => true,
-                    'isBelgiumOnly' => true,
-                );
-            } else {
-                $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
-                $options['4941'] = $helper->__('EU Pack Standard Evening (Belgium only, no signature)');
-            }
+        if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
+            $options = $this->removeOptions(array('4955', '4941'), $options);
+        }
+
+        if ($asFlatArray) {
+            return $this->getFlatArray($options);
         }
 
         return $options;
+    }
+
+    /**
+     * @param $options
+     *
+     * @return array
+     */
+    public function getFlatArray($options)
+    {
+        $flat = array();
+        foreach ($options as $option) {
+            $flat[$option['value']] = $option['label'];
+        }
+
+        return $flat;
+    }
+
+    /**
+     * @param $optionsToRemove
+     * @param $options
+     *
+     * @return array
+     */
+    public function removeOptions($optionsToRemove, $options)
+    {
+        return array_filter($options, function ($option) use ($optionsToRemove) {
+            return !in_array($option['value'], $optionsToRemove);
+        }, 1);
     }
 
     /**

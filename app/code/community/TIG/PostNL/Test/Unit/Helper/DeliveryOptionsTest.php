@@ -380,6 +380,8 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     }
 
     /**
+     * @param        $deliveryDays
+     * @param        $now
      * @param        $enableSundayDelivery
      * @param        $enableSundaySorting
      * @param        $timeframes
