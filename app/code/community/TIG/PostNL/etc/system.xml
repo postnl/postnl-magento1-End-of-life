@@ -4022,10 +4022,58 @@
                             </depends>
                             <validate>postnl-validate-empty</validate>
                         </return_freepost_number_be>
+
+                        <return_streetname_be translate="label comment tooltip" module="postnl">
+                            <label>Street</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>270</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_streetname_be>
+                        <return_housenumber_be translate="label comment tooltip" module="postnl">
+                            <label>Housenumber</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_housenumber_be>
+                        <return_housenumber_extension_be translate="label comment tooltip" module="postnl">
+                            <label>Housenumber Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>290</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                        </return_housenumber_extension_be>
                         <return_postcode_be translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>270</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -4037,7 +4085,7 @@
                         <return_city_be translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>280</sort_order>
+                            <sort_order>310</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -4049,7 +4097,7 @@
                         <return_region_be translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>290</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -4060,7 +4108,7 @@
                         <only_global_header_be translate="label" module="postnl">
                             <label>These settings are only available on the 'global' scope.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
