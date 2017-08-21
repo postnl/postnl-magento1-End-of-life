@@ -572,7 +572,7 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     public function testGetFormattedType($type, $country, $expected)
     {
         $instance = $this->_getInstance();
-        $result = $instance->getFormattedType($type, [], $country);
+        $result = $instance->getFormattedType($type, array(), $country);
 
         $this->assertEquals($expected, $result['formatted_type']);
     }
