@@ -87,25 +87,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         }
 
         if ($asFlatArray) {
-            return $this->getFlatArray($options);
+            return $this->_flattenOptionArray($options);
         }
 
         return $options;
-    }
-
-    /**
-     * @param $options
-     *
-     * @return array
-     */
-    public function getFlatArray($options)
-    {
-        $flat = array();
-        foreach ($options as $option) {
-            $flat[$option['value']] = $option['label'];
-        }
-
-        return $flat;
     }
 
     /**
