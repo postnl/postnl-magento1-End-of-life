@@ -1326,20 +1326,52 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($shippingAddress->getCountryId() == 'BE') {
-            $returnAddress = array_filter($returnAddressData, function ($value) {
-                return strpos($value, '_be' !== false);
-            }, 2);
-
-            foreach ($returnAddress as $key => $value) {
-                $returnAddress[substr($key, 0, -3)] = $value;
-                unset($returnAddress[$key]);
-            }
+            $returnAddress = $this->_getBeReturnAddress($returnAddressData);
         }
 
         if ($shippingAddress->getCountryId() !== 'BE') {
-            $returnAddress = array_filter($returnAddressData, function ($value) {
-                return strpos($value, '_be' === false);
-            }, 2);
+            $returnAddress = $this->_getNlReturnAddress($returnAddressData);
+        }
+
+        return $returnAddress;
+    }
+
+    /**
+     * @param $addressData
+     *
+     * @return array
+     */
+    protected function _getNlReturnAddress($addressData)
+    {
+        $returnAddress = array();
+        foreach ($addressData as $field => $value) {
+            if (strpos($value, '_be') !== false) {
+                continue;
+            }
+            $returnAddress[$field] = $value;
+        }
+
+        return $returnAddress;
+    }
+
+    /**
+     * @param $addressData
+     *
+     * @return array
+     */
+    protected function _getBeReturnAddress($addressData)
+    {
+        $returnAddress = array();
+        foreach ($addressData as $field => $value) {
+            if (strpos($field, '_be') === false) {
+                continue;
+            }
+            $returnAddress[$field] = $value;
+        }
+
+        foreach ($returnAddress as $key => $value) {
+            $returnAddress[substr($key, 0, -3)] = $value;
+            unset($returnAddress[$key]);
         }
 
         return $returnAddress;
