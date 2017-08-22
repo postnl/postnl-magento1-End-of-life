@@ -660,6 +660,57 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string $returnBarcode
+     * @param string $printerType
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return bool|object
+     */
+    public function generateSingleReturnLabel($postnlShipment, $returnBarcode, $printerType = 'GraphicFile|PDF')
+    {
+        $shipment = $postnlShipment->getShipment();
+
+        $message  = $this->_getMessage($returnBarcode, array('Printertype' => $printerType));
+        $customer = $this->_getCustomer($shipment, 'Receiver');
+
+        $cifShipment = $this->_getReturnShipmentData(
+            $postnlShipment,
+            $returnBarcode
+        );
+
+        $soapParams =  array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Shipments' => array('Shipment' => $cifShipment),
+        );
+
+        $response = $this->call(
+            'Labelling',
+            'GenerateLabel',
+            $soapParams
+        );
+
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $response->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels)
+            || !is_object($shipment->Labels)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
+                'POSTNL-0057'
+            );
+        }
+
+        return $response;
+    }
+
+    /**
      * Generates shipping labels for the chosen shipment.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
@@ -886,10 +937,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Gets the customer parameter.
      *
      * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
+     * @param string $addressType
      *
      * @return array
      */
-    protected function _getCustomer($shipment = false)
+    protected function _getCustomer($shipment = false, $addressType = 'Sender')
     {
         $customer = array(
             'CustomerCode'       => $this->_getCustomerCode(),
@@ -898,7 +950,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if ($shipment) {
             $additionalCustomerData = array(
-                'Address'            => $this->_getAddress('Sender'),
+                'Address'            => $this->_getAddress($addressType, $shipment->getShippingAddress()),
                 'CollectionLocation' => $this->_getCollectionLocation(),
             );
 
@@ -917,6 +969,44 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         return $customer;
+    }
+
+    /**
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string $barcode
+     *
+     * @return array
+     */
+    protected function _getReturnShipmentData($postnlShipment, $barcode)
+    {
+        $shipment = $postnlShipment->getShipment();
+        $order    = $shipment->getOrder();
+        $address  = $postnlShipment->getShippingAddress();
+
+        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnOptions */
+        $returnOptions = Mage::helper('postnl/returnOptionsBe');
+
+        $returnAddress = $this->_getAddress('Return', $address);
+        $returnAddress['AddressType'] = '01';
+
+        return array(
+            'Barcode'                  => $barcode,
+            'CollectionTimeStampEnd'   => '',
+            'CollectionTimeStampStart' => '',
+            'DownPartnerBarcode'       => $postnlShipment->getDownPartnerBarcode(),
+            'DownPartnerID'            => $postnlShipment->getDownPartnerId(),
+            'ProductCodeDelivery'      => $returnOptions->get($address->getCountryId()),
+            'Contacts'                 => array(
+                'Contact' => $this->_getContact($address, $postnlShipment, $order),
+            ),
+            'Dimension'                => array(
+                'Weight'  => round($postnlShipment->getTotalWeight(true, true)),
+            ),
+            'Reference'                => $this->_getReference($shipment),
+            'Addresses'                => array(
+                'Address' => $returnAddress
+            )
+        );
     }
 
     /**
@@ -1325,6 +1415,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $returnAddressData[substr($field, 7)] = $value;
         }
 
+        /**
+         * @todo Also check senders Address in config data.
+         */
         if ($shippingAddress->getCountryId() == 'BE') {
             $returnAddress = $this->_getBeReturnAddress($returnAddressData);
         }
