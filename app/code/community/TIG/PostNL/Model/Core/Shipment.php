@@ -2392,6 +2392,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
+        if ($domesticCountry == 'BE' && $this->getHelper()->isReturnsEnabled(false, true)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -2989,19 +2993,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canGenerateReturnBarcode()
     {
-        /**
-         * Return barcodes are only available for Dutch parcel shipments.
-         */
+        if (!$this->getShipmentId() && !$this->getShipment(false)) {
+            return false;
+        }
+
+        /** @var TIG_PostNL_Helper_ReturnCountries $returnCountryHelper */
+        $returnCountryHelper = $this->getHelper('returnCountries');
         if (
-            $this->getShippingAddress()->getCountryId() != 'NL' ||
+            !$returnCountryHelper->isAllowed($this->getShippingAddress()->getCountryId()) ||
             !$this->isDomesticShipment() ||
             $this->isBuspakjeShipment() ||
             $this->isFoodShipment()
         ) {
-            return false;
-        }
-
-        if (!$this->getShipmentId() && !$this->getShipment(false)) {
             return false;
         }
 
@@ -3250,10 +3253,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function canSendReturnLabelEmail()
     {
         if ($this->isLocked()) {
-            return false;
-        }
-
-        if (!$this->hasReturnLabels()) {
             return false;
         }
 
@@ -3698,7 +3697,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $returnBarcode    = false;
-        $printReturnLabel = $this->getHelper('cif')->isReturnsEnabled($storeId);
+        $printReturnLabel = $this->getHelper()->isReturnsEnabled($storeId, $this->isBelgiumShipment());
 
         /**
          * If we should print a return label, get the return barcode.
