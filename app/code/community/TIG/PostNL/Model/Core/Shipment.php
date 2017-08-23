@@ -3411,6 +3411,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        if ($this->hasReturnBarcode()) {
+            return true;
+        }
+
         if ($this->canGenerateReturnBarcode()) {
             return true;
         }
@@ -4808,8 +4812,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     public function sendSingleReturnLabelEmail()
     {
-        $returnBarcode = $this->getReturnBarcode();
-        if (!$returnBarcode && !$this->hasReturnLabels()) {
+        if (!$this->hasReturnLabels()) {
             $this->_getSingleReturnLabel();
         }
 
@@ -5015,7 +5018,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getSingleReturnLabel()
     {
-        $returnBarcode = $this->generateReturnBarcode();
+        $returnBarcode = $this->getReturnBarcode();
+        if (!$this->hasReturnBarcode()) {
+            $returnBarcode = $this->generateReturnBarcode();
+        }
 
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
