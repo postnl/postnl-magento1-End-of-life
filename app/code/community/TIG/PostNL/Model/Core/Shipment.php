@@ -3000,10 +3000,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /** @var TIG_PostNL_Helper_ReturnCountries $returnCountryHelper */
         $returnCountryHelper = $this->getHelper('returnCountries');
         $countryId = $this->getShippingAddress()->getCountryId();
-        if (
-            !($returnCountryHelper->isAllowed($countryId) || $this->isDomesticShipment()) ||
-            $this->isBuspakjeShipment() ||
-            $this->isFoodShipment()
+        $isAllowed = ($returnCountryHelper->isAllowed($countryId) || $this->isDomesticShipment());
+
+        if (!$isAllowed || $this->isBuspakjeShipment() || $this->isFoodShipment()
         ) {
             return false;
         }
@@ -5051,7 +5050,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         // As its a Single Label we do not want is as a combilabel.
         $this->addLabels($label, true);
         $this->_saveLabels();
-        
+
         $this->unlock();
     }
 

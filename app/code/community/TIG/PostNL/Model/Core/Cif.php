@@ -1415,9 +1415,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $returnAddressData[substr($field, 7)] = $value;
         }
 
-        /**
-         * @todo Also check senders Address in config data.
-         */
         if ($shippingAddress->getCountryId() == 'BE') {
             $returnAddress = $this->_getBeReturnAddress($returnAddressData);
         }
