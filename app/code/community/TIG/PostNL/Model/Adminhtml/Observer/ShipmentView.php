@@ -203,7 +203,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Add a button to print this shipment's return labels.
          */
-        $isBe = $postnlShipment->getShippingAddress()->getCountryId() == 'BE';
+        $isBe = $shipment->getShippingAddress()->getCountryId() == 'BE';
         if ($printReturnLabelAllowed
             && $postnlShipment->canPrintReturnLabels()
             && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
@@ -244,14 +244,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             }
         }
 
+        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnHelper */
+        $returnHelper = Mage::helper('postnl/returnOptionsBe');
+        $country = $shipment->getShippingAddress()->getCountryId();
+
         /**
          * Add the send return label button.
          */
         if ($sendReturnLabelAllowed
-            && $postnlShipment->canSendReturnLabelEmail()
+            && ($postnlShipment->canSendReturnLabelEmail() || $returnHelper->get($country))
             && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
             $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
+            if ($returnHelper->get($country) && !$postnlShipment->canSendReturnLabelEmail()) {
+                $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
+            }
 
             $block->addButton(
                 'send_return_label_email',
@@ -579,6 +586,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $helper = Mage::helper('adminhtml');
         $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/sendReturnLabelEmail',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
+        );
+
+        return $url;
+    }
+
+    public function getSendSingleReturnLabelEmailUrl($shipmentId)
+    {
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
+            'adminhtml/postnlAdminhtml_shipment/sendSingleReturnLabelEmail',
             array(
                 'shipment_id'    => $shipmentId,
                 'return_to_view' => true,

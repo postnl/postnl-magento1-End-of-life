@@ -1604,6 +1604,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'send_return_labels_email':
                 $aclPath = 'postnl/shipment/actions/print_label/print_return_labels/send_return_label_email';
                 break;
+            case 'send_single_return_label_email':
+                $aclPath = 'postnl/shipment/actions/print_label/print_return_labels/send_single_return_label_email';
+                break;
             case 'convert_to_buspakje':
                 $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
                 break;

@@ -2193,7 +2193,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function hasReturnLabels($checkCollection = true)
     {
         $labels = $this->_getData('return_labels');
-        if ($labels && $labels->getSize() > 0) {
+        if ($labels) {
             return true;
         }
 
@@ -2389,6 +2389,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         if ($domesticCountry == 'BE' && $this->getHelper('deliveryOptions')->canUseDutchProducts(false)) {
+            return true;
+        }
+
+        if ($domesticCountry == 'BE' && $this->getHelper()->isReturnsEnabled(false, true)) {
             return true;
         }
 
@@ -2989,19 +2993,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canGenerateReturnBarcode()
     {
-        /**
-         * Return barcodes are only available for Dutch parcel shipments.
-         */
-        if (
-            $this->getShippingAddress()->getCountryId() != 'NL' ||
-            !$this->isDomesticShipment() ||
-            $this->isBuspakjeShipment() ||
-            $this->isFoodShipment()
-        ) {
+        if (!$this->getShipmentId() && !$this->getShipment(false)) {
             return false;
         }
 
-        if (!$this->getShipmentId() && !$this->getShipment(false)) {
+        /** @var TIG_PostNL_Helper_ReturnCountries $returnCountryHelper */
+        $returnCountryHelper = $this->getHelper('returnCountries');
+        $countryId = $this->getShippingAddress()->getCountryId();
+        $isAllowed = ($returnCountryHelper->isAllowed($countryId) || $this->isDomesticShipment());
+
+        if (!$isAllowed || $this->isBuspakjeShipment() || $this->isFoodShipment()
+        ) {
             return false;
         }
 
@@ -3250,10 +3252,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function canSendReturnLabelEmail()
     {
         if ($this->isLocked()) {
-            return false;
-        }
-
-        if (!$this->hasReturnLabels()) {
             return false;
         }
 
@@ -3698,7 +3696,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $returnBarcode    = false;
-        $printReturnLabel = $this->getHelper('cif')->isReturnsEnabled($storeId);
+        $printReturnLabel = $this->getHelper()->canPrintReturnLabelsWithShippingLabels(
+            $storeId, $this->isBelgiumShipment()
+        );
 
         /**
          * If we should print a return label, get the return barcode.
@@ -4631,16 +4631,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Add labels to this shipment
      *
      * @param mixed $labels An array of labels or a single label object
+     * @param bool $noCombiLabel
      *
      * @return $this
      */
-    public function addLabels($labels)
+    public function addLabels($labels, $noCombiLabel = false)
     {
         if (is_object($labels)) {
             /**
              * Add a single label
              */
-            $this->_addLabel($labels);
+            $this->_addLabel($labels, $noCombiLabel);
             return $this;
         }
 
@@ -4648,7 +4649,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Add multiple labels
          */
         foreach ($labels as $label) {
-            $this->_addLabel($label);
+            $this->_addLabel($label, $noCombiLabel);
         }
 
         return $this;
@@ -4658,14 +4659,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Add a label to this shipment
      *
      * @param stdClass $label
+     * @param $noCombiLabel
      *
      * @return $this
      */
-    protected function _addLabel($label)
+    protected function _addLabel($label, $noCombiLabel = false)
     {
         $labelType = $label->Labeltype;
 
-        if ($this->_isCombiLabelShipment()) {
+        if ($this->_isCombiLabelShipment() && !$noCombiLabel) {
             $labelType = 'Label-combi';
         }
 
@@ -4802,6 +4804,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return $labels;
+    }
+
+    public function sendSingleReturnLabelEmail()
+    {
+        $returnBarcode = $this->getReturnBarcode();
+        if (!$returnBarcode && !$this->hasReturnLabels()) {
+            $this->_getSingleReturnLabel();
+        }
+
+        try {
+            $this->_sendReturnLabelEmail();
+        } catch (Exception $e) {
+            $this->getHelper()->logException($e);
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__(
+                    'Unable to send return email for shipment #%s.',
+                    $this->getShipmentId()
+                ),
+                'POSTNL-0208'
+            );
+        }
     }
 
     /**
@@ -4985,6 +5008,50 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                  ->save();
 
         return $this;
+    }
+
+    /**
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getSingleReturnLabel()
+    {
+        $returnBarcode = $this->generateReturnBarcode();
+
+        /**
+         * @var TIG_PostNL_Model_Core_Cif $cif
+         */
+        $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
+
+        $result = $cif->generateSingleReturnLabel($this, $returnBarcode);
+
+        /**
+         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
+         * to reach for the label object.
+         */
+        $shipment = $result->ResponseShipments->ResponseShipment[0];
+
+        if (!isset($shipment->Labels, $shipment->Labels->Label)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'The confirmAndPrintLabel action returned an invalid response: %s',
+                    var_export($result, true)
+                ),
+                'POSTNL-0071'
+            );
+        }
+
+        $this->lock();
+
+        // CIF will returns it as a normal type 'Label' but we should register it as a Return Label
+        $shipment->Labels->Label[0]->Labeltype = TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL;
+        $label = $shipment->Labels->Label[0];
+
+        // As its a Single Label we do not want is as a combilabel.
+        $this->addLabels($label, true);
+        $this->_saveLabels();
+
+        $this->unlock();
     }
 
     /*******************************************************************************************************************
