@@ -259,6 +259,11 @@
                     <file>TIG/PostNL/return_label.html</file>
                     <type>html</type>
                 </postnl_returns_email_template>
+                <postnl_returns_email_template_be translate="label" module="postnl">
+                    <label>PostNL Return Label Email</label>
+                    <file>TIG/PostNL/return_label_be.html</file>
+                    <type>html</type>
+                </postnl_returns_email_template_be>
             </email>
         </template>
         <payment>
