@@ -1019,24 +1019,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment|TIG_PostNL_Model_Core_Order|Mage_Sales_Model_Order_Shipment|Mage_Sales_Model_Order $shipment
      *
      * @return bool
      */
-    public function isMultiColliAllowed(Mage_Sales_Model_Order_Shipment $shipment)
+    public function isMultiColliAllowed($shipment)
     {
         /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
-        if ($shipment instanceof $postnlShipmentClass) {
+
+        /** @noinspection PhpParamsInspection */
+        $postnlOrderClass = Mage::getConfig()->getModelClassName('postnl_core/order');
+
+        if ($shipment instanceof $postnlShipmentClass || $shipment instanceof $postnlOrderClass) {
             /**
-             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             * @var TIG_PostNL_Model_Core_Shipment|TIG_PostNL_Model_Core_Order $shipment
              */
             return $shipment->isMultiColliAllowed();
         }
 
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
-        $tempPostnlShipment->setShipment($shipment);
+        $tempPostnlShipment->setShippingAddress($shipment->getShippingAddress());
 
         return $tempPostnlShipment->isMultiColliAllowed();
     }

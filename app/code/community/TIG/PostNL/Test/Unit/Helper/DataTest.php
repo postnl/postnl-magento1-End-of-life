@@ -377,4 +377,28 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @return array
+     */
+    public function isMultiColliAllowedProvider()
+    {
+        return array(
+            'NL',
+            'BE',
+        );
+    }
+
+    /**
+     * @param $country
+     *
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function isMultiColliAllowed($country)
+    {
+        $instance = $this->_getInstance();
+        $result = $instance->isMultiColliAllowed();
+
+        $this->assertContains($country, $result);
+    }
 }

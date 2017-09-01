@@ -384,11 +384,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected $_barcodeCollections = array();
 
     /**
-     * @var array
-     */
-    protected $_multiColliCountries = array('NL', 'BE');
-
-    /**
      * Initialize the shipment
      */
     public function _construct()
@@ -5639,8 +5634,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function isMultiColliAllowed()
     {
         $address = $this->getShippingAddress();
+        $helper = $this->getHelper();
 
-        return in_array($address->getCountryId(), $this->_multiColliCountries);
+        return in_array($address->getCountryId(), $helper->getMultiColliCountries());
     }
 
     /**

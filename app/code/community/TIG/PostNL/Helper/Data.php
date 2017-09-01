@@ -280,6 +280,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_domesticCountry;
 
     /**
+     * @var array
+     */
+    protected $_multiColliCountries = array('NL', 'BE');
+
+    /**
      * Get required fields array.
      *
      * @return array
@@ -528,6 +533,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $this->_domesticCountry = $domesticCountries;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMultiColliCountries()
+    {
+        return $this->_multiColliCountries;
     }
 
     /**

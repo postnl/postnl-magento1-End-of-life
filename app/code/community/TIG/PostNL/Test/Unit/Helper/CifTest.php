@@ -108,7 +108,7 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
     /**
      * @dataProvider isMultiColliAllowedProvider
      */
-    public function testIsMultiColliAllowed($destinationCountry, $expected)
+    public function testIsMultiColliAllowedByShipment($destinationCountry, $expected)
     {
         $shipmentMock = $this->getMock('Mage_Sales_Model_Order_Shipment');
 
@@ -122,5 +122,61 @@ class TIG_PostNL_Test_Unit_Helper_CifTest extends TIG_PostNL_Test_Unit_Framework
         $shipmentMock->method('getShippingAddress')->willReturn($shippingAddress);
 
         $this->assertSame($expected, $this->_getInstance()->isMultiColliAllowed($shipmentMock));
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowedByOrder($destinationCountry, $expected)
+    {
+        $orderMock = $this->getMock('Mage_Sales_Model_Order');
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+        $orderMock->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $this->assertSame($expected, $this->_getInstance()->isMultiColliAllowed($orderMock));
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowedByPostNLShipment($destinationCountry, $expected)
+    {
+        $postnlShipmentMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Shipment')
+            ->setMethods(array('getShippingAddress'))
+            ->getMock();
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+        $postnlShipmentMock->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $this->assertSame($expected, $this->_getInstance()->isMultiColliAllowed($postnlShipmentMock));
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowedByPostNLOrder($destinationCountry, $expected)
+    {
+        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')
+            ->setMethods(array('getOrder', 'getShippingAddress'))
+            ->getMock();
+        $postnlOrderMock->expects($this->once())->method('getOrder')->willReturnSelf();
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $shippingAddress
+         */
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+        $postnlOrderMock->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $this->assertSame($expected, $this->_getInstance()->isMultiColliAllowed($postnlOrderMock));
     }
 }
