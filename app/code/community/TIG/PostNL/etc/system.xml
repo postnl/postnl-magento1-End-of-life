@@ -3668,6 +3668,10 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <return_labels_active>1</return_labels_active>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
                         </return_customer_code>
                         <print_return_and_shipping_label translate="label tooltip" module="postnl">
                             <label>Print the return label along with regular shipping labels</label>
