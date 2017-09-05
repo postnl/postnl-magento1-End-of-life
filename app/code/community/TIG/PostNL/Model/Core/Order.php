@@ -477,6 +477,18 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @return bool
+     */
+    public function isMultiColliAllowed()
+    {
+        /** @var TIG_PostNL_Helper_Data $helper */
+        $helper = Mage::helper('postnl');
+        $address = $this->getOrder()->getShippingAddress();
+
+        return in_array($address->getCountryId(), $helper->getMultiColliCountries());
+    }
+
+    /**
      * Validate the chosen extra options. If an option is invalid, it will be unset.
      *
      * @return $this
