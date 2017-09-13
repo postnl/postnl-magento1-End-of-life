@@ -1489,4 +1489,4 @@ TIG_PostNL::This product must be divided over this colli amount. This functional
 TIG_PostNL::This product(s) can only be delivered within the Netherlands.,Deze bestelling kan alleen verzonden worden naar bestemmingen in Nederland.
 TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
 "TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Let op: Om succesvol orders met Extra@Home te versturen moet u de productattributen naam, gewicht en volume ingevuld hebben."
-
+"TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","Wanneer het product type Extra@Home is, dan is dit veld verplicht. Vul hier het aantal kubieke centimeters in, bijvoorbeeld 30000"

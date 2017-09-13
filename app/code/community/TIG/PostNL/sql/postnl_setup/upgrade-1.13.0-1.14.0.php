@@ -96,8 +96,8 @@ if (!$installer->getAttribute('catalog_product', 'postnl_product_volume')) {
             'frontend_class'             => 'validate-digits',
             'default'                    => '1',
             'label'                      => 'PostNL product volume',
-            'note'                       => 'When sending Extra@Home types, this field is mandatory. ' .
-                                            'Enter as cubic centimeters like 30000.',
+            'note'                       => 'Wanneer het product type Extra@Home is, dan is dit veld verplicht. ' .
+                                            'Vul hier het aantal kubieke centimeters in, bijvoorbeeld 30000',
             'input'                      => 'text',
             'type'                       => 'varchar',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
