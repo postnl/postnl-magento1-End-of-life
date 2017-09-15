@@ -39,7 +39,8 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
         return Mage::helper('postnl/parcel');
     }
 
-    public function calculateParcelCountDataProvider(){
+    public function calculateParcelCountDataProvider()
+    {
         return array(
             'domestic_cod_2ConfiguredParcels' => array(
                 'NL',
@@ -250,5 +251,12 @@ class TIG_PostNL_Test_Unit_Helper_ParcelTest extends TIG_PostNL_Test_Unit_Framew
         );
 
         $this->assertequals($expectedParcelCount, $result);
+    }
+
+    public function testCallingCalculateParcelCountWithNullDoesNotProductAnError()
+    {
+        $instance = $this->_getInstance();
+
+        $this->assertEquals(0, $instance->calculateParcelCount(null));
     }
 }

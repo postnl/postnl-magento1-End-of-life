@@ -78,6 +78,10 @@ class TIG_PostNL_Helper_Parcel extends Mage_Core_Helper_Abstract
      */
     public function calculateParcelCount($shipment, $productList = false)
     {
+        if ($shipment === null) {
+            return 0;
+        }
+
         /**
          * @var TIG_PostNL_Helper_Cif $cifHelper
          */
