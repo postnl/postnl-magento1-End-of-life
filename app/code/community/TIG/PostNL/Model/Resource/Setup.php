@@ -79,7 +79,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      * Test data.
      */
     const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
-    const DEFAULT_TEST_APIKEY = 'qLNy5m86BYYjD67CPrGZ1BaYU2A6OFrl';
+    const DEFAULT_TEST_APIKEY = 'wrKwVQG9xpFM4uJVBVwyBzRrV7J3abWO';
     const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
 
     /**
