@@ -665,7 +665,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             }
         }
 
-        $sundayCutoffGapOptions = $this->_getSundayCutoffGapOptions();
+        $sundayCutoffGapOptions = $this->_getSundayCutoffGapOptions($country);
         if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7 && $sundayCutoffGapOptions) {
             return $sundayCutoffGapOptions;
         }
@@ -710,7 +710,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         return $cutoff;
     }
 
-    protected function _getSundayCutoffGapOptions()
+    protected function _getSundayCutoffGapOptions($country)
     {
         $storeId = $this->getStoreId();
 
@@ -723,7 +723,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp() ||
             $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp()
         ) {
-            return false;
+            return $this->_getMondaySameDayOptions($country);
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
@@ -740,5 +740,39 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             self::SAMEDAY_DELIVERY_OPTION,
             self::EVENING_DELIVERY_OPTION,
         );
+    }
+
+    /**
+     * @param $country
+     *
+     * @return array|bool
+     */
+    protected function _getMondaySameDayOptions($country)
+    {
+        $storeId = $this->getStoreId();
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+        if ($this->_checkIsSunday() && $sameDayDelivery && $this->_getSundaySortingAllowed($country)) {
+            // Its allowed to ask for sameday and evening for monday on a sunday
+            return array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function _checkIsSunday()
+    {
+        $helper    = $this->_getHelper('deliveryOptions');
+        $date      = $helper->getDateTime('now');
+        $dayOfWeek = $date->format('N');
+
+        return $dayOfWeek == 7;
     }
 }
