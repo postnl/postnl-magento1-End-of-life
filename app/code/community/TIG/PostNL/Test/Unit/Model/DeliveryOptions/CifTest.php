@@ -286,7 +286,10 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
             array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
 
-            'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
+            'after_sunday_cutoff_before regular_cutoff_pickup'
+                => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
+            'after_sunday_cutoff_before regular_cutoff_delivery'
+                => array('next sunday 15:00', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening'), '20:00'),
         );
     }
 
@@ -303,6 +306,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
      * @param $enableSundayDelivery
      * @param $canUseEveningTimeframes
      * @param $expectedResult
+     * @param $sundayDeliveryCutoff
      *
      * @dataProvider getDeliveryDateOptionsArrayProvider
      */
@@ -318,7 +322,8 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $shippingDurationConfig,
         $enableSundayDelivery,
         $canUseEveningTimeframes,
-        $expectedResult
+        $expectedResult,
+        $sundayDeliveryCutoff = null
     )
     {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
@@ -329,6 +334,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SHIPPING_DURATION, $shippingDurationConfig);
         Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayDeliveryCutoff);
 
         $helperMock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
 
