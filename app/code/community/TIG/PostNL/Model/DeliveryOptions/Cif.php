@@ -723,6 +723,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp() ||
             $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp()
         ) {
+            /** When the sunday cutoff time is reached the sameday options for monday should checked.  */
             return $this->_getMondaySameDayOptions($country);
         }
 
@@ -743,6 +744,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
+     * Checks if sameday is avaible when order is place at a sunday and after the sunday cutoff time.
+     *
      * @param $country
      *
      * @return array|bool
