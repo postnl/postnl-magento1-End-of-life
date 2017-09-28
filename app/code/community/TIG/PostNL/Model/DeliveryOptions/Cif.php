@@ -665,9 +665,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             }
         }
 
-        $sundayCutoffGapOptions = $this->_getSundayCutoffGapOptions($country);
-        if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7 && $sundayCutoffGapOptions) {
-            return $sundayCutoffGapOptions;
+        if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7) {
+            return $this->_getSundayCutoffGapOptions($country);
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
@@ -710,19 +709,20 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         return $cutoff;
     }
 
+    /**
+     * @param $country
+     *
+     * @return array|bool
+     */
     protected function _getSundayCutoffGapOptions($country)
     {
         $storeId = $this->getStoreId();
 
         $helper = $this->_getHelper('deliveryOptions');
         $date = $helper->getDateTime('now');
-        $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
         $sundayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
 
-        if (
-            $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp() ||
-            $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp()
-        ) {
+        if ($date->getTimestamp() > $sundayDeliveryCutoff->getTimestamp()) {
             /** When the sunday cutoff time is reached the sameday options for monday should checked.  */
             return $this->_getMondaySameDayOptions($country);
         }
@@ -744,7 +744,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Checks if sameday is avaible when order is place at a sunday and after the sunday cutoff time.
+     * Checks if sameday is available when order is place at a sunday and after the sunday cutoff time.
      *
      * @param $country
      *
@@ -752,11 +752,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getMondaySameDayOptions($country)
     {
-        $storeId = $this->getStoreId();
-
-        $helper = $this->_getHelper('deliveryOptions');
-        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
-        if ($this->_checkIsSunday() && $sameDayDelivery && $this->_getSundaySortingAllowed($country)) {
+        if ($this->_getSundaySortingAllowed($country)) {
             // Its allowed to ask for sameday and evening for monday on a sunday
             return array(
                 self::SAMEDAY_DELIVERY_OPTION,
@@ -765,17 +761,5 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function _checkIsSunday()
-    {
-        $helper    = $this->_getHelper('deliveryOptions');
-        $date      = $helper->getDateTime('now');
-        $dayOfWeek = $date->format('N');
-
-        return $dayOfWeek == 7;
     }
 }
