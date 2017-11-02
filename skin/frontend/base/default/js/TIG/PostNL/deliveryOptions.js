@@ -3714,7 +3714,9 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Update the frontend
          */
-        deliveryOptions.saveOscOptions();
+        if (this.getOptions().isOsc) {
+            deliveryOptions.saveOscOptions();
+        }
 
         /**
          * Close the google maps interface window.
@@ -5240,9 +5242,11 @@ PostnlDeliveryOptions.Location = new Class.create({
     renderAsOsc : function(type) {
         var html = this.render(false, type, true);
 
-        $$('#postnl_add_moment .option-list')[0].insert({
-            bottom : html
-        });
+        if ($$('#postnl_add_moment .option-list')[0]) {
+            $$('#postnl_add_moment .option-list')[0].insert({
+                bottom : html
+            });
+        }
 
         /**
          * Add observers to display the tooltip on mouse over
