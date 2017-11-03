@@ -106,6 +106,10 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 $fee = 0;
         }
 
+        if ($this->isFreeShippingRuleActive()) {
+            return 0;
+        }
+
         return $fee;
     }
 
@@ -383,6 +387,10 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
+        if ($this->isFreeShippingRuleActive()) {
+            $price = 0;
+        }
+
         return $price;
     }
 
@@ -400,6 +408,10 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         $convert = true)
     {
         if (!$postnlOrder->hasOptions()) {
+            return 0;
+        }
+
+        if ($this->isFreeShippingRuleActive()) {
             return 0;
         }
 
@@ -456,6 +468,10 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
         $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->isFreeShippingRuleActive()) {
+            return 0;
+        }
 
         /**
          * For upgradability reasons this is a switch, rather than an if statement.
@@ -516,4 +532,39 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         return $shippingPrice;
     }
 
+    /**
+     * @return bool
+     */
+    protected function isFreeShippingRuleActive()
+    {
+        $appliedRuleIds = $this->getQuote()->getAppliedRuleIds();
+        if (empty($appliedRuleIds)) {
+            $appliedRuleIds = $this->getQuoteDbRuleIds();
+        }
+
+        $rules = Mage::getModel('salesrule/rule')
+            ->getCollection()
+            ->addFieldToFilter('rule_id', array('in' => explode(',', $appliedRuleIds)))
+            ->load()
+        ;
+
+        $freeShipping = false;
+
+        /** @var Mage_SalesRule_Model_Rule $rule */
+        foreach ($rules as $rule) {
+            $freeShipping = $rule->getSimpleFreeShipping() ? $rule->getSimpleFreeShipping() : $freeShipping;
+        }
+
+        return (bool) $freeShipping;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getQuoteDbRuleIds()
+    {
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::getModel('sales/quote')->load($this->getQuote()->getId());
+        return $quote->getAppliedRuleIds();
+    }
 }
