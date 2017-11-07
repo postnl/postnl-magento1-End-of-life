@@ -86,6 +86,11 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     const SAMEDAY_FEE_MAX = 25;
 
     /**
+     * Free shipping by coupon or other sales rules.
+     */
+    protected $freeShipping = false;
+
+    /**
      * Get the fee limit, min or max, for the supplied fee type
      *
      * @param string $feeType
@@ -537,6 +542,10 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      */
     protected function isFreeShippingRuleActive()
     {
+        if ($this->freeShipping) {
+            return true;
+        }
+
         $appliedRuleIds = $this->getQuote()->getAppliedRuleIds();
         if (empty($appliedRuleIds)) {
             $appliedRuleIds = $this->getQuoteDbRuleIds();
@@ -548,14 +557,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             ->load()
         ;
 
-        $freeShipping = false;
-
         /** @var Mage_SalesRule_Model_Rule $rule */
         foreach ($rules as $rule) {
-            $freeShipping = $rule->getSimpleFreeShipping() ? $rule->getSimpleFreeShipping() : $freeShipping;
+            $this->freeShipping = (bool) $rule->getSimpleFreeShipping() ?: $this->freeShipping;
         }
 
-        return (bool) $freeShipping;
+        return $this->freeShipping;
     }
 
     /**

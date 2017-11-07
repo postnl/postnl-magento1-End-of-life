@@ -5240,10 +5240,11 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {PostnlDeliveryOptions.Location}
      */
     renderAsOsc : function(type) {
-        var html = this.render(false, type, true);
+        var html   = this.render(false, type, true);
+        var option = $$('#postnl_add_moment .option-list')[0];
 
-        if ($$('#postnl_add_moment .option-list')[0]) {
-            $$('#postnl_add_moment .option-list')[0].insert({
+        if (option) {
+            option.insert({
                 bottom : html
             });
         }
