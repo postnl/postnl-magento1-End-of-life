@@ -326,4 +326,59 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
 
         return $this;
     }
+
+    /**
+     * @param $filename
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getLabel($filename)
+    {
+        $path = Mage::getModuleDir('', 'TIG_PostNL') . '/Test/Fixtures/Labels/';
+        $path = realpath($path . $filename);
+
+        if ($path === false) {
+            throw new Exception('The file ' . $filename . ' cannot be found in '. $path);
+        }
+
+        $contents = file_get_contents($path);
+
+        return base64_encode($contents);
+    }
+
+    /**
+     * Make sure that the Imagick extension is loaded. If not, skip this test. It is not required for the extension
+     * to do it's work. It is only required for testing purposes.
+     */
+    public function requireImagick()
+    {
+        if (!extension_loaded('imagick')) {
+            $this->markTestSkipped('Extension imagick not loaded');
+        }
+    }
+
+    /**
+     * @param       $source1
+     * @param       $source2
+     * @param float $margin
+     */
+    public function compareImageOrPdf($source1, $source2, $margin = 0.000001)
+    {
+        $image1 = new \Imagick;
+        $image1->readImageBlob($source1);
+        $height = $image1->getImageLength();
+        $width = $image1->getImageWidth();
+        $image2 = new \Imagick;
+        $image2->readImageBlob($source2);
+
+        /**
+         * Force the same dimensions, as Imagick sometimes fails with an cryptic error.
+         */
+        $image1->resizeImage($width, $height,Imagick::FILTER_LANCZOS, 1);
+        $image2->resizeImage($width, $height,Imagick::FILTER_LANCZOS, 1);
+
+        $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
+        $this->assertLessThanOrEqual($margin, $result[1]);
+    }
 }

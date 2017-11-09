@@ -665,9 +665,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             }
         }
 
-        $sundayCutoffGapOptions = $this->_getSundayCutoffGapOptions();
-        if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7 && $sundayCutoffGapOptions) {
-            return $sundayCutoffGapOptions;
+        if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7) {
+            return $this->_getSundayCutoffGapOptions($country);
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
@@ -710,20 +709,22 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         return $cutoff;
     }
 
-    protected function _getSundayCutoffGapOptions()
+    /**
+     * @param $country
+     *
+     * @return array|bool
+     */
+    protected function _getSundayCutoffGapOptions($country)
     {
         $storeId = $this->getStoreId();
 
         $helper = $this->_getHelper('deliveryOptions');
         $date = $helper->getDateTime('now');
-        $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
         $sundayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
 
-        if (
-            $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp() ||
-            $date->getTimestamp() > $regularDeliveryCutoff->getTimestamp()
-        ) {
-            return false;
+        if ($date->getTimestamp() > $sundayDeliveryCutoff->getTimestamp()) {
+            /** When the sunday cutoff time is reached the sameday options for monday should checked.  */
+            return $this->_getMondaySameDayOptions($country);
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
@@ -740,5 +741,25 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             self::SAMEDAY_DELIVERY_OPTION,
             self::EVENING_DELIVERY_OPTION,
         );
+    }
+
+    /**
+     * Checks if sameday is available when order is place at a sunday and after the sunday cutoff time.
+     *
+     * @param $country
+     *
+     * @return array|bool
+     */
+    protected function _getMondaySameDayOptions($country)
+    {
+        if ($this->_getSundaySortingAllowed($country)) {
+            // Its allowed to ask for sameday and evening for monday on a sunday
+            return array(
+                self::SAMEDAY_DELIVERY_OPTION,
+                self::EVENING_DELIVERY_OPTION,
+            );
+        }
+
+        return false;
     }
 }

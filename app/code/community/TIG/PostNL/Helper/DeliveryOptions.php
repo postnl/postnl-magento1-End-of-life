@@ -601,7 +601,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         if ($deliveryDate
             && $shippingAddress
-            && $shippingAddress->getCountryId() == $this->getDomesticCountry()
+            &&
+                ($shippingAddress->getCountryId() == $this->getDomesticCountry() ||
+                    $this->canUseDeliveryDays(false))
         ) {
             $deliveryDate = new DateTime($deliveryDate, $utcTimeZone);
 
