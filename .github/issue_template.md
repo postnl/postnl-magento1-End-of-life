@@ -27,6 +27,6 @@ Issues with outdated version will be rejected.
 Explanation of your *issue* in arbitrary form goes here. Please make sure the [description is worded well enough to be understood]. Provide as much context and examples as possible.
 If work on your *issue* requires account credentials please provide them or explain how one can obtain them.
 
-### TIG supportdesk
+### TIG servicedesk team
 
 On Github we will respond in English even when the question was asked in Dutch.
