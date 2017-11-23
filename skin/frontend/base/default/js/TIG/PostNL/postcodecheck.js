@@ -244,6 +244,7 @@ PostnlPostcodecheck = new Class.create({
                 }
 
                 if (response.responseText == 'missing_data') {
+                    postcodeCheck.removeDisabledClasses();
                     $('postnl_address_missing_' + addressType).show();
 
                     postcodeCheck.inProgressRequest = false;
@@ -253,6 +254,7 @@ PostnlPostcodecheck = new Class.create({
                 }
 
                 if (response.responseText == 'invalid_data') {
+                    postcodeCheck.removeDisabledClasses();
                     postcodeCheck.errorCounter = postcodeCheck.errorCounter + 1;
 
                     if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
@@ -341,7 +343,7 @@ PostnlPostcodecheck = new Class.create({
         if (this.failed) {
             return;
         }
-        
+
         /**
          * Only the billing and shipping address types are currently supported
          */
