@@ -100,8 +100,10 @@ PostnlPostcodecheck = new Class.create({
         if($(countryField) === null || $(countryField).hasClassName('country_hidden') == false) {
 
             $(countryField).observe('change', function() {
+                // When useing the billing as shipping the country value of shipping is not updated and always stays
+                // on the default country selected in the configuration.
                 countryId = this.getValue();
-
+                $('shipping:country_id').setValue(countryId);
                 $('postnl_address_error_' + addressType).hide();
                 $('postnl_address_missing_' + addressType).hide();
                 $('postnl_address_invalid_' + addressType).hide();
