@@ -232,6 +232,7 @@ PostnlPostcodecheck = new Class.create({
                 var spinner = $('postnl_postcodecheck_spinner_' + addressType);
 
                 if (response.responseText == 'error') {
+                    postcodeCheck.failed = true;
                     $('postnl_address_error_' + addressType).show();
                     postcodeCheck.changePostcodeCheckDisabledFields(false);
 
@@ -247,6 +248,8 @@ PostnlPostcodecheck = new Class.create({
 
                 if (response.responseText == 'missing_data') {
                     postcodeCheck.removeDisabledClasses();
+                    postcodeCheck.failed = true;
+
                     $('postnl_address_missing_' + addressType).show();
 
                     postcodeCheck.inProgressRequest = false;
@@ -257,6 +260,8 @@ PostnlPostcodecheck = new Class.create({
 
                 if (response.responseText == 'invalid_data') {
                     postcodeCheck.removeDisabledClasses();
+                    postcodeCheck.failed = true;
+
                     postcodeCheck.errorCounter = postcodeCheck.errorCounter + 1;
 
                     if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
