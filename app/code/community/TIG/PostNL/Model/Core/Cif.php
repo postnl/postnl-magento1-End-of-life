@@ -688,11 +688,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @return bool|object
      * @throws TIG_PostNL_Exception
+     * @api
      */
     public function confirmAllShipments(TIG_PostNL_Model_Core_Shipment $postnlShipment, $parcelCount)
     {
         $shipment = $postnlShipment->getShipment();
         $mainBarcode = $postnlShipment->getMainBarcode() ?: false;
+
         $helper = Mage::helper('postnl');
 
         $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
@@ -752,6 +754,123 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param int                            $parcelCount
+     * @param string                         $printerType
+     *
+     * @return null|object
+     * @throws TIG_PostNL_Exception
+     * @api
+     */
+    public function generateAllLabelsWithoutConfirm(
+        TIG_PostNL_Model_Core_Shipment $postnlShipment,
+        $parcelCount,
+        $printerType = 'GraphicFile|PDF'
+    ) {
+        return $this->generateAllLabels($postnlShipment, 'GenerateLabel', $parcelCount, $printerType);
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param int                            $parcelCount
+     * @param string                         $printerType
+     *
+     * @return null|object
+     * @throws TIG_PostNL_Exception
+     * @api
+     */
+    public function generateAllLabelsWithConfirm(
+        TIG_PostNL_Model_Core_Shipment $postnlShipment,
+        $parcelCount,
+        $printerType = 'GraphicFile|PDF'
+    ) {
+        return $this->generateAllLabels($postnlShipment, 'GenerateLabelWithoutConfirm', $parcelCount, $printerType);
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param string                         $type
+     * @param int                            $parcelCount
+     * @param string                         $printerType
+     *
+     * @return null|object
+     * @throws TIG_PostNL_Exception
+     */
+    protected function generateAllLabels(
+        TIG_PostNL_Model_Core_Shipment $postnlShipment,
+        $type,
+        $parcelCount,
+        $printerType = 'GraphicFile|PDF'
+    ) {
+        $allowedTypes = array('GenerateLabel', 'GenerateLabelWithoutConfirm');
+        if (!in_array($type, $allowedTypes)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('%s is not allowed. Allowed types: %s',
+                    $type,
+                    implode(', ', $allowedTypes)
+                )
+            );
+        }
+
+        $shipment = $postnlShipment->getShipment();
+        $mainBarcode = $postnlShipment->getMainBarcode() ?: false;
+
+        $availablePrinterTypes = $this->_printerTypes;
+        if (!in_array($printerType, $availablePrinterTypes)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid printer type requested: %s', $printerType),
+                'POSTNL-0062'
+            );
+        }
+
+        $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
+            $postnlShipment->getStoreId()
+        );
+
+        $returnBarcode = $postnlShipment->getReturnBarcode();
+
+        for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
+            $barcode = $postnlShipment->getBarcode($parcelNumber);
+
+            $shipments[] = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                $mainBarcode,
+                $parcelNumber + 1,
+                $printReturnLabels,
+                $returnBarcode
+            );
+        }
+
+        $message  = $this->_getMessage($barcode, array('Printertype' => $printerType));
+        $customer = $this->_getCustomer($shipment);
+
+        $soapParams =  array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Shipments' => array('Shipment' => $shipments),
+        );
+
+        $response = $this->call(
+            'Labelling',
+            $type,
+            $soapParams
+        );
+
+        if (empty($response->ResponseShipments->ResponseShipment)) {
+            throw TIG_PostNL_Exception::invalidGenerateLabelsResponse($response);
+        }
+
+        foreach ($response->ResponseShipments->ResponseShipment as $shipment) {
+            if (!isset($shipment->Labels) || !is_object($shipment->Labels)) {
+                throw TIG_PostNL_Exception::invalidGenerateLabelsResponse($response);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * Generates shipping labels for the chosen shipment.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
@@ -766,7 +885,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @throws TIG_PostNL_Exception
      *
      * @return array
-     *
+     * @deprecated since v1.14.0. Use generateAllLabels instead.
      */
     public function generateLabels(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode,
                                    $mainBarcode = false, $shipmentNumber = false,
@@ -856,7 +975,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @throws TIG_PostNL_Exception
      *
      * @return array
-     *
+     * @deprecated since v1.14.0. Use generateAllLabels instead.
      */
     public function generateLabelsWithoutConfirm(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode,
                                                  $mainBarcode = false, $shipmentNumber = false,

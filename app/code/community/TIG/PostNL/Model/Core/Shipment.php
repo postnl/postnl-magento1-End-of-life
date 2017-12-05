@@ -3497,7 +3497,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Generate labels purely for the main shipment
          */
         if ($parcelCount < 2) {
-            $labels = $this->_generateLabel();
+            $labels = $this->_generateLabels(false, 1);
             $this->addLabels($labels);
 
             $this->_saveLabels();
@@ -3511,10 +3511,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Generate labels for each parcel in the shipment
          */
-        for ($i = 0; $i < $parcelCount; $i++) {
-            $labels = $this->_generateLabel(false, $i);
-            $this->addLabels($labels);
-        }
+        $labels = $this->_generateLabels(false, $parcelCount);
+        $this->addLabels($labels);
 
         $this->_saveLabels();
 
@@ -3527,43 +3525,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get a shipping label from PostNL for a single parcel or a whole shipment.
      *
-     * @param boolean       $confirm       Whether or not to also confirm the shipment.
-     * @param bool|int|null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will
-     *                                     be used.
+     * @param boolean $confirm Whether or not to also confirm the shipment.
+     * @param int     $parcelCount
      *
-     * @throws TIG_PostNL_Exception
      * @return array
+     * @throws TIG_PostNL_Exception
      */
-    protected function _generateLabel($confirm = false, $barcodeNumber = false)
+    protected function _generateLabels($confirm, $parcelCount)
     {
         $storeId = $this->getStoreId();
-        $mainBarcode = $this->getMainBarcode();
-
-        /**
-         * if $barcodeNumber is false, this is a single parcel shipment
-         */
-        if ($barcodeNumber === false) {
-            $barcode = $mainBarcode;
-        } else {
-            $barcode = $this->getBarcode($barcodeNumber);
-        }
-
-        $returnBarcode    = false;
-        $printReturnLabel = $this->getHelper('cif')->isReturnsEnabled($storeId);
-
-        /**
-         * If we should print a return label, get the return barcode.
-         */
-        if ($printReturnLabel) {
-            $returnBarcode = $this->getReturnBarcode($barcodeNumber);
-
-            /**
-             * If no return barcode is available, we can only print the regular shipping labels.
-             */
-            if (empty($returnBarcode)) {
-                $printReturnLabel = false;
-            }
-        }
 
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
@@ -3571,56 +3541,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($storeId);
 
-        $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
-
-        /**
-         * @var StdClass $result
-         */
-        if ($confirm === false) {
-            $result = $cif->generateLabelsWithoutConfirm(
-                $this,
-                $barcode,
-                $mainBarcode,
-                $barcodeNumber,
-                $printReturnLabel,
-                $returnBarcode
-            );
+        if ($confirm) {
+            $result = $cif->generateAllLabelsWithConfirm($this, $parcelCount);
         } else {
-            $result = $cif->generateLabels(
-                $this,
-                $barcode,
-                $mainBarcode,
-                $barcodeNumber,
-                $printReturnLabel,
-                $returnBarcode
-            );
+            $result = $cif->generateAllLabelsWithoutConfirm($this, $parcelCount);
         }
 
         /**
-         * Since Cif structure has been changed as of version 2.0, $shipment is used as a pointer to the shipment data
-         * to reach for the label object.
+         * Save the down partner data for the first shipment.
          */
         $shipment = $result->ResponseShipments->ResponseShipment[0];
-
-        if (!isset($shipment->Labels, $shipment->Labels->Label)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'The confirmAndPrintLabel action returned an invalid response: %s',
-                    var_export($result, true)
-                ),
-                'POSTNL-0071'
-            );
-        }
-
         $this->_saveDownPartnerData($shipment);
-
-        $labels = $shipment->Labels->Label;
 
         /**
          * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
         if ($this->isEuShipment()) {
             $this->setProductCode($shipment->ProductCodeDelivery);
+        }
+
+        $labels = array();
+        foreach ($result->ResponseShipments->ResponseShipment as $shipment) {
+            foreach ($shipment->Labels->Label as $label) {
+                $labels[] = $label;
+            }
         }
 
         return $labels;
@@ -3773,7 +3717,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Confirm and generate labels purely for the main shipment
          */
         if ($parcelCount < 2) {
-            $labels = $this->_generateLabel(true);
+            $labels = $this->_generateLabels(true, 1);
             $this->addLabels($labels);
 
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
@@ -3791,10 +3735,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Confirm and generate labels for each parcel in the shipment
          */
-        for ($i = 0; $i < $parcelCount; $i++) {
-            $labels = $this->_generateLabel(true, $i);
-            $this->addLabels($labels);
-        }
+        $labels = $this->_generateLabels(false, $parcelCount);
+        $this->addLabels($labels);
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
              ->setConfirmedAt($dateModel->gmtTimestamp());
