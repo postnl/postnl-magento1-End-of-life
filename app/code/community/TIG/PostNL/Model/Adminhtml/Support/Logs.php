@@ -162,7 +162,7 @@ class TIG_PostNL_Model_Adminhtml_Support_Logs
          * Open the zip file. Overwriting the previous file if it exists.
          */
         $zip = new ZipArchive();
-        $zip->open($zipPath, ZipArchive::OVERWRITE);
+        $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         /**
          * Add all the log files.
