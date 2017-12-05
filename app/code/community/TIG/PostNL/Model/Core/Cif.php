@@ -605,6 +605,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @throws TIG_PostNL_Exception
      *
      * @return array
+     * @deprecated since v1.14.0. Use confirmAllShipments instead.
      */
     public function confirmShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
                                     $shipmentNumber = false)
@@ -652,6 +653,75 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Message'   => $message,
             'Customer'  => $customer,
             'Shipments' => $cifShipment,
+        );
+
+        $response = $this->call(
+            'Confirming',
+            'Confirming',
+            $soapParams
+        );
+
+        if (!is_object($response)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid confirmShipment response: %s', var_export($response, true)),
+                'POSTNL-0056'
+            );
+        }
+
+        if (isset($response->ConfirmingResponseShipment)
+            && (is_object($response->ConfirmingResponseShipment)
+                || is_array($response->ConfirmingResponseShipment)
+            )
+        ) {
+            return $response;
+        }
+
+        throw new TIG_PostNL_Exception(
+            Mage::helper('postnl')->__('Invalid confirmShipment response: %s', var_export($response, true)),
+            'POSTNL-0056'
+        );
+    }
+
+    /**
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param int                            $parcelCount
+     *
+     * @return bool|object
+     * @throws TIG_PostNL_Exception
+     */
+    public function confirmAllShipments(TIG_PostNL_Model_Core_Shipment $postnlShipment, $parcelCount)
+    {
+        $shipment = $postnlShipment->getShipment();
+        $mainBarcode = $postnlShipment->getMainBarcode() ?: false;
+        $helper = Mage::helper('postnl');
+
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
+            $postnlShipment->getStoreId()
+        );
+
+        $returnBarcode = $postnlShipment->getReturnBarcode();
+
+        $shipments = array();
+        for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
+            $barcode = $postnlShipment->getBarcode($parcelNumber);
+
+            $shipments[] = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                $mainBarcode,
+                $parcelNumber + 1,
+                $printReturnLabels,
+                $returnBarcode
+            );
+        }
+
+        $message  = $this->_getMessage($barcode);
+        $customer = $this->_getCustomer($shipment);
+
+        $soapParams =  array(
+            'Message'   => $message,
+            'Customer'  => $customer,
+            'Shipments' => array('Shipment' => $shipments),
         );
 
         $response = $this->call(

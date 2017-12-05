@@ -3675,13 +3675,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $parcelCount = $this->_calculateParcelCount();
         }
 
-        /**
-         * Confirm each parcel in the shipment separately
-         */
-        for ($i = 0; $i < $parcelCount; $i++) {
-            $this->_confirm($i);
-        }
-
+        $this->_confirm($parcelCount);
         $this->registerConfirmation();
 
         Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
@@ -3693,33 +3687,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Confirms the shipment using CIF.
      *
-     * @param bool|int|null $barcodeNumber
+     * @param int $parcelCount
      *
      * @throws TIG_PostNL_Exception
      *
      * @return $this
      */
-    protected function _confirm($barcodeNumber = false)
+    protected function _confirm($parcelCount)
     {
-        $mainBarcode = $this->getMainBarcode();
-
-        /**
-         * if $barcodeNumber is false, this is a single parcel shipment
-         */
-        if ($barcodeNumber === false) {
-            $barcode = $mainBarcode;
-        } else {
-            $barcode = $this->getBarcode($barcodeNumber);
-            $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
-        }
-
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
          * @var StdClass                  $result
          */
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($this->getStoreId());
-        $result = $cif->confirmShipment($this, $barcode, $mainBarcode, $barcodeNumber);
+        $result = $cif->confirmAllShipments($this, $parcelCount);
 
         $responseShipment = $result->ConfirmingResponseShipment;
 
@@ -3729,7 +3711,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (is_object($responseShipment)
             && isset($responseShipment->Barcode)
-            && $responseShipment->Barcode == $barcode
         ) {
             return $this;
         }
@@ -3743,7 +3724,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
             if (is_object($mainResponseShipment)
                 && isset($mainResponseShipment->Barcode)
-                && $mainResponseShipment->Barcode == $barcode
             ) {
                 return $this;
             }
