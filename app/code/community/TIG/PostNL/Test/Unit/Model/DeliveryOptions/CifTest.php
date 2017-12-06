@@ -273,21 +273,21 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             /**
              * NL Pickup
              */
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', true, array('Daytime', 'Evening')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', false, array('Daytime')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Daytime', 'Evening', 'Sunday')),
-            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', false, array('Daytime', 'Sunday')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', false, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 10:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 13:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening', 'Sunday')),
+            array('next thursday 23:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', false, array('Daytime', 'Sunday')),
 
-            'after_sunday_cutoff_before regular_cutoff_pickup' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', true, array('Sunday', 'Sameday', 'Evening')),
-            'after_sunday_cutoff_before regular_cutoff_delivery' => array('next sunday 21:30', 'Regular', 0, 'NL', 'delivery', true, '10:30', '22:00', 0, '1', true, array('Sameday', 'Evening'), '20:00'),
+            'before_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '16:00', true, array('Evening', 'Sameday', 'Sunday')),
+            'after_sunday_cutoff_before regular_cutoff' => array('next sunday 15:00', 'Regular', 0, 'NL', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening', 'Sameday')),
         );
     }
 
@@ -305,7 +305,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
      * @param $sundayCutoffTime
      * @param $canUseEveningTimeframes
      * @param $expectedResult
-     * @param $sundayDeliveryCutoff
      *
      * @dataProvider getDeliveryDateOptionsArrayProvider
      */
@@ -322,8 +321,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         $enableSundayDelivery,
         $sundayCutoffTime,
         $canUseEveningTimeframes,
-        $expectedResult,
-        $sundayDeliveryCutoff = null
+        $expectedResult
     )
     {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
@@ -334,7 +332,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
         Mage::app()->getStore()->setConfig($helper::XPATH_CUTOFF_TIME, $regularCutoff);
         Mage::app()->getStore()->setConfig($helper::XPATH_SHIPPING_DURATION, $shippingDurationConfig);
         Mage::app()->getStore()->setConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $enableSundayDelivery);
-        Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayDeliveryCutoff);
+        Mage::app()->getStore()->setConfig($helper::XPATH_SUNDAY_CUTOFF_TIME, $sundayCutoffTime);
 
         $helperMock = $this->getMock('TIG_PostNL_Helper_DeliveryOptions');
 
@@ -352,7 +350,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
 
         $helperMock->expects($this->any())
             ->method('getDateTime')
-            ->with('now')
             ->willReturn(new DateTime($timeStamp));
 
         $instance = $this->_getInstance();

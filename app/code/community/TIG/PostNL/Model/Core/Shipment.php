@@ -2844,10 +2844,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function canGenerateReturnBarcode()
     {
         /**
-         * Return barcodes are only available for Dutch parcel shipments.
+         * Return barcodes are only available for Domestic parcel shipments.
          */
         if (
-            !$this->isDomesticShipment() ||
             $this->isBuspakjeShipment() ||
             $this->isFoodShipment() ||
             $this->isExtraAtHomeShipment()
@@ -2859,14 +2858,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-
         /** @var TIG_PostNL_Helper_ReturnCountries $returnCountryHelper */
         $returnCountryHelper = $this->getHelper('returnCountries');
         $countryId = $this->getShippingAddress()->getCountryId();
         $isAllowed = ($returnCountryHelper->isAllowed($countryId) || $this->isDomesticShipment());
 
-        if (!$isAllowed || $this->isBuspakjeShipment() || $this->isFoodShipment()
-        ) {
+        if (!$isAllowed) {
             return false;
         }
 
