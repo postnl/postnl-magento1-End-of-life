@@ -259,6 +259,11 @@
                     <file>TIG/PostNL/return_label.html</file>
                     <type>html</type>
                 </postnl_returns_email_template>
+                <postnl_returns_email_template_be translate="label" module="postnl">
+                    <label>PostNL Return Label Email</label>
+                    <file>TIG/PostNL/return_label_be.html</file>
+                    <type>html</type>
+                </postnl_returns_email_template_be>
             </email>
         </template>
         <payment>
@@ -1083,7 +1088,20 @@
                 <return_postcode/>
                 <return_city/>
                 <return_region/>
-                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
+                <return_country>NL</return_country>
+                <return_labels_active_be>0</return_labels_active_be> <!-- Do not use return labels -->
+                <print_return_and_shipping_label_be>0</print_return_and_shipping_label_be> <!-- Do not print the return label along with the shipping labels -->
+                <customer_print_label_be>0</customer_print_label_be> <!-- Do not allow logged in customers to print return labels -->
+                <guest_print_label_be>0</guest_print_label_be> <!-- Do not allow guests to print return labels -->
+                <email_template_be>postnl_returns_email_template</email_template_be> <!-- Default template from locale -->
+                <return_label_instructions_block_be/>
+                <return_company_be/>
+                <return_department_be/>
+                <return_freepost_number_be/>
+                <return_postcode_be/>
+                <return_city_be/>
+                <return_region_be/>
+                <return_country_be>BE</return_country_be>
             </returns>
             <cod>
                 <account_name/>

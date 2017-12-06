@@ -1160,6 +1160,8 @@ TIG_PostNL::Technical settings,Technische instellingen
 TIG_PostNL::Track & trace email,Track & trace e-mail
 TIG_PostNL::Sender address,Afzenderadres
 TIG_PostNL::Return address,Retouradres
+TIG_PostNL::Return address NL,Retouradres NL
+TIG_PostNL::Return address BE,Retouradres BE
 TIG_PostNL::PostNL account credentials,PostNL accountgegevens
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">hier</a> meer lezen over de wijze waarop de extensie bepaalt of een bestelling een brievenbuspakje is."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">hier</a> meer lezen over het instellen van gesplitste adresregels in Magento."
@@ -1178,6 +1180,8 @@ TIG_PostNL::Freepost number,Antwoordnummer
 TIG_PostNL::These settings are only available on the 'global' scope.,Deze instellingen zijn enkel beschikbaar op het 'globaal' niveau.
 TIG_PostNL::Return Settings,Retouren Instellingen
 TIG_PostNL::Returns,Retouren
+TIG_PostNL::Returns NL,Retouren NL
+TIG_PostNL::Returns BE,Retouren BE
 TIG_PostNL::Return labels instructions block,Retourlabels instructieblok
 TIG_PostNL::Please select a static block that contains instructions for customers on how to use the return labels.,Selecteer s.v.p. een static block dat instructies bevat voor de klant om een zending retour te sturen.
 TIG_PostNL::Alternative sender address,Alternatief afzenderadres

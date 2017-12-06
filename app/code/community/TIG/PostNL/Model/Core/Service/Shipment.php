@@ -469,12 +469,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
      * @param boolean                                                        $confirm Optional parameter to also
      *                                                                                confirm the shipment
      * @param boolean|null                                                   $includeReturnLabels
+     * @param boolean                                                        $isBe
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getLabels($shipment, $confirm = false, $includeReturnLabels = null)
+    public function getLabels($shipment, $confirm = false, $includeReturnLabels = null, $isBe = false)
     {
         if (is_null($includeReturnLabels)) {
             $includeReturnLabels = Mage::getStoreConfigFlag(
@@ -495,7 +496,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
          */
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
-        if (!$helper->isReturnsEnabled($shipment->getStoreId())) {
+        if (!$helper->isReturnsEnabled($shipment->getStoreId(), $isBe)) {
             $includeReturnLabels = false;
         }
 

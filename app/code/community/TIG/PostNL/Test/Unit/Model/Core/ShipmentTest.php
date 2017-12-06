@@ -121,7 +121,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
     {
         return array(
             array('NL', true),
-            array('BE', false),
+            array('BE', true),
             array('DE', false),
             array('US', false),
         );
@@ -134,7 +134,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
     {
         $this->setShippingAddress($country);
 
-        $this->_getInstance()->setIsDomesticShipment(true);
+        $this->_getInstance()->setIsDomesticShipment($result);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(false);
 
