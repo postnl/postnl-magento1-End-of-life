@@ -1,10 +1,6 @@
 language: php
 
 php:
-<<<<<<< HEAD
-#  - 5.3 - Not supported by Travis
-=======
->>>>>>> origin/extra_at_home
   - 5.4
   - 5.5
   - 5.6
