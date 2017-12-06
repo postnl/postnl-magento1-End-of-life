@@ -157,13 +157,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @var array
      */
     protected $_addressTypes = array(
-        'Receiver'    => '01',
-        'Sender'      => '02',
-        'Alternative' => '03', // Alternative sender. Parcels that cannot be delivered will be returned here.
-        'Collection'  => '04',
-        'Return'      => '08',
-        'Delivery'    => '09', // Post office address. For use with PakjeGemak.
-        'Dutch'       => '02',
+        'Receiver'     => '01',
+        'Sender'       => '02',
+        'Alternative'  => '03', // Alternative sender. Parcels that cannot be delivered will be returned here.
+        'Collection'   => '04',
+        'Return'       => '08',
+        'Delivery'     => '09', // Post office address. For use with PakjeGemak.
+        'Dutch'        => '02',
+        'SingleReturn' => '02', // Single Return label => Receiver becomes Sender.
     );
 
     /**
@@ -973,7 +974,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $shipment = $postnlShipment->getShipment();
 
         $message  = $this->_getMessage($returnBarcode, array('Printertype' => $printerType));
-        $customer = $this->_getCustomer($shipment, 'Receiver');
+        $customer = $this->_getCustomer($shipment, 'SingleReturn');
 
         $cifShipment = $this->_getReturnShipmentData(
             $postnlShipment,
@@ -1532,7 +1533,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($senderAddress);
                 break;
             case 'Return':
-                $returnAddress = $this->_getReturnAddress($shippingAddress);
+                $returnAddress = $this->getReturnAddress($shippingAddress->getCountryId());
                 $streetData    = $this->getReturnStreetData($shippingAddress, $returnAddress);
 
                 $address = new Varien_Object($returnAddress);
@@ -1608,6 +1609,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 break;
             case 'PakjeGemak': //no break
             case 'Receiver': //no break
+            case 'SingleReturn': //no break
             default:
                 $address = $shippingAddress;
                 break;
@@ -1620,11 +1622,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * @param Mage_Sales_Model_Order_Address $shippingAddress
+     * @param string $country
      *
      * @return array|mixed
      */
-    protected function _getReturnAddress($shippingAddress)
+    public function getReturnAddress($country)
     {
         $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
 
@@ -1637,11 +1639,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $returnAddressData[substr($field, 7)] = $value;
         }
 
-        if ($shippingAddress->getCountryId() == 'BE') {
+        if ($country == 'BE') {
             $returnAddress = $this->_getBeReturnAddress($returnAddressData);
         }
 
-        if ($shippingAddress->getCountryId() !== 'BE') {
+        if ($country !== 'BE') {
             $returnAddress = $this->_getNlReturnAddress($returnAddressData);
         }
 

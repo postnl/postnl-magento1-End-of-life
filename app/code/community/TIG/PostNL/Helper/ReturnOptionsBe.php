@@ -51,11 +51,11 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
      */
     public function get($shippingCountry)
     {
-        if ($this->getDomesticCountry() == 'BE' && $shippingCountry == 'BE') {
+        if ($this->getCountryOfRetrunAddress($shippingCountry) == 'BE' && $shippingCountry == 'BE') {
             return $this->getReturnCodeByRoute('be_be');
         }
 
-        if ($this->getDomesticCountry() == 'NL' && $shippingCountry == 'BE') {
+        if ($this->getCountryOfRetrunAddress($shippingCountry) == 'NL' && $shippingCountry == 'BE') {
             return $this->getReturnCodeByRoute('nl_be');
         }
 
@@ -74,10 +74,26 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
             return $code['route'] == $route && $code['default'] == true;
         });
 
+        $code = array_values($code);
+
         if ($asArray && count($code) == 1){
             return $code[0];
         }
 
         return $code[0]['value'];
+    }
+
+    /**
+     * @param $shippingCountry
+     *
+     * @return mixed
+     */
+    public function getCountryOfRetrunAddress($shippingCountry)
+    {
+        /** @var TIG_PostNL_Model_Core_Cif $cifModel */
+        $cifModel = Mage::getModel('postnl/core_cif');
+        $returnAddress = $cifModel->getReturnAddress($shippingCountry);
+
+        return isset($returnAddress['country']) ? $returnAddress['country'] : 'NL' ;
     }
 }
