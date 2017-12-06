@@ -55,6 +55,7 @@
 <?php $_city                = $this->getCity(); ?>
 <?php $_weekdayCutOffTime   = $this->getCutOff('weekday'); ?>
 <?php $_sundayCutOffTime    = $this->getCutOff('sunday'); ?>
+<?php $_saturdayCutOffTime    = $this->getCutOff('saturday'); ?>
 <?php $_sameDayCutOffTime   = $this->getCutOff('sameday'); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
@@ -335,6 +336,7 @@
             fullAddress        : fullAddress,
             cutOffTimes        : {
                 weekday: '<?php echo $_weekdayCutOffTime; ?>',
+                saturday: '<?php echo $_saturdayCutOffTime; ?>',
                 sunday: '<?php echo $_sundayCutOffTime; ?>',
                 sameday: '<?php echo $_sameDayCutOffTime; ?>'
             }

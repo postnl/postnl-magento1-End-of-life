@@ -136,4 +136,34 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
 
         $this->assertEquals($response, $model->isIDCheck());
     }
+
+    /**
+     * @return array
+     */
+    public function isMultiColliAllowedProvider()
+    {
+        return array(
+            'NL' => array('NL', true),
+            'BE' => array('BE', true),
+            'DE' => array('DE', false),
+        );
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowed($destinationCountry, $expected)
+    {
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+
+        $orderMock = $this->getMock('Mage_Sales_Model_Order');
+        $orderMock->expects($this->once())->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $instance = $this->_getInstance();
+        $instance->setData('order', $orderMock);
+
+        $result = $instance->isMultiColliAllowed();
+        $this->assertSame($expected, $result);
+    }
 }

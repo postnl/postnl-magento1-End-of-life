@@ -199,8 +199,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_liveModeRequiredFields = array(
-        'postnl/cif/live_username',
-        'postnl/cif/live_password',
+        'postnl/cif/live_apikey',
     );
 
     /**
@@ -209,8 +208,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_testModeRequiredFields = array(
-        'postnl/cif/test_username',
-        'postnl/cif/test_password',
+        'postnl/cif/test_apikey',
     );
 
     /**
@@ -289,6 +287,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var string
      */
     protected $_domesticCountry;
+
+    /**
+     * @var array
+     */
+    protected $_multiColliCountries = array('NL', 'BE');
 
     /**
      * Get required fields array.
@@ -539,6 +542,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $this->_domesticCountry = $domesticCountries;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMultiColliCountries()
+    {
+        return $this->_multiColliCountries;
     }
 
     /**
@@ -1296,6 +1307,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
         $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::IDCHECK_TYPE_BIRTHDAY, $quote);
+
+        Mage::register($registryKey, $result);
+        return $result;
+    }
+
+    /**
+     * Check if the quote has an Extra@Home product
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|mixed
+     */
+    public function quoteIsExtraAtHome(Mage_Sales_Model_Quote $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->getQuote();
+        }
+
+        $registryKey = 'postnl_quote_is_extra_at_home_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
+        $deliveryOptionsHelper = Mage::app()->getConfig()->getHelperClassName('postnl/deliveryOptions');
+        $result = $this->_hasQuotePostnlProductType($deliveryOptionsHelper::EXTRA_AT_HOME_TYPE_REGULAR, $quote);
 
         Mage::register($registryKey, $result);
         return $result;

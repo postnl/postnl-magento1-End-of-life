@@ -64,40 +64,17 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_U
 
     /**
      * @test
-     *
-     * @dataProvider testModeProvider
-     */
-    public function usernameShouldbeRetrieved($testMode)
-    {
-        $instance = $this->_getInstance();
-        $instance->setTestMode($testMode);
-
-        $storeCode = Mage::app()->getStore()->getCode();
-
-        if ($testMode) {
-            $xPath = $instance::XPATH_TEST_USERNAME;
-        } else {
-            $xPath = $instance::XPATH_LIVE_USERNAME;
-        }
-
-        Mage::getConfig()->setNode("stores/{$storeCode}/{$xPath}", 'testUser');
-
-        $username = $instance->getUsername();
-        $this->assertEquals('testUser', $username);
-    }
-
-    /**
      * @test
      *
      * @dataProvider testModeProvider
      */
-    public function passwordShouldbeRetrieved($testMode)
+    public function apikeyShouldbeRetrieved($testMode)
     {
         $helperMock = $this->getMock('Mage_Core_Helper_Data');
         $helperMock->expects($this->once())
                    ->method('decrypt')
-                   ->with('testPass')
-                   ->will($this->returnValue('testPass2'));
+                   ->with('testApikey')
+                   ->will($this->returnValue('testApikey2'));
 
         $this->setHelperMock('core', $helperMock);
 
@@ -107,16 +84,16 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_U
         $storeCode = Mage::app()->getStore()->getCode();
 
         if ($testMode) {
-            $xPath = $instance::XPATH_TEST_PASSWORD;
+            $xPath = $instance::XPATH_TEST_APIKEY;
         } else {
-            $xPath = $instance::XPATH_LIVE_PASSWORD;
+            $xPath = $instance::XPATH_LIVE_APIKEY;
         }
 
-        Mage::getConfig()->setNode("stores/{$storeCode}/{$xPath}", 'testPass');
+        Mage::getConfig()->setNode("stores/{$storeCode}/{$xPath}", 'testApikey');
 
-        $password = $instance->getPassword();
-        $expected = sha1('testPass2');
-        $this->assertEquals($expected, $password);
+        $apikey = $instance->getApikey();
+        $expected = 'testApikey2';
+        $this->assertEquals($expected, $apikey);
     }
 
     public function testModeProvider()

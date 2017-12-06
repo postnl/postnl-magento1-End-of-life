@@ -1043,6 +1043,9 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     renderTimeframes : function(selectTimeframe) {
+        var selectedDeliveryOption = PostnlDeliveryOptions.PersistentStorage.getSelectedDeliveryOption();
+        selectTimeframe = selectTimeframe && selectedDeliveryOption === null;
+
         $$('#' + this.getOptions().timeframesContainer + ' li.option').each(function(element) {
             element.remove();
         });
@@ -1052,7 +1055,9 @@ PostnlDeliveryOptions.prototype = {
         }.bind(this));
 
         if (selectTimeframe) {
-            if (this.timeframes[0].type != 'Sameday') {
+            if (PostnlDeliveryOptions.PersistentStorage.getSelectedTimeframe()) {
+                this.selectTimeframe(PostnlDeliveryOptions.PersistentStorage.getSelectedTimeframe().element);
+            } else if (this.timeframes[0].type != 'Sameday') {
                 this.selectTimeframe(this.timeframes[0].getElement());
             } else {
                 this.selectTimeframe(this.timeframes[1].getElement());
@@ -1060,7 +1065,9 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (this.getOptions().isOsc) {
-            if (this.timeframes[0].type != 'Sameday') {
+            if (PostnlDeliveryOptions.PersistentStorage.getSelectedTimeframe()) {
+                PostnlDeliveryOptions.PersistentStorage.getSelectedTimeframe().renderAsOsc();
+            } else if (this.timeframes[0].type != 'Sameday') {
                 this.timeframes[0].renderAsOsc();
             } else {
                 this.timeframes[1].renderAsOsc();
@@ -1436,6 +1443,11 @@ PostnlDeliveryOptions.prototype = {
             this.getPaLocation().render(this.getOptions().paLocationContainer);
         }
 
+        if (PostnlDeliveryOptions.PersistentStorage.getSelectedDeliveryOption()) {
+            this.selectLocation(PostnlDeliveryOptions.PersistentStorage.getSelectedDeliveryOption());
+            this.saveOscOptions();
+        }
+
         if (this.debug) {
             console.info('Delivery locations rendered.');
         }
@@ -1477,6 +1489,7 @@ PostnlDeliveryOptions.prototype = {
                 this.setSelectedOption(timeframe);
                 this.setLastSelectedType(timeframe.getType());
                 this.setSelectedType(timeframe.getType());
+                PostnlDeliveryOptions.PersistentStorage.setSelectedTimeframe(timeframe);
 
                 if (this.debug) {
                     console.log('Timeframe selected:', timeframe);
@@ -1543,6 +1556,7 @@ PostnlDeliveryOptions.prototype = {
                     this.setLastSelectedType(index);
                     this.setSelectedType(index);
                     location.select(index);
+                    PostnlDeliveryOptions.PersistentStorage.setSelectedDeliveryOption(element);
 
                     var selectedMarker = this.getDeliveryOptionsMap().getSelectedMarker();
                     if (location.getMarker() != selectedMarker) {
@@ -5491,8 +5505,9 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
             ("0" + now.getMinutes()).slice(-2) + ":" +
             ("0" + now.getSeconds()).slice(-2);
         var isPastWeekdayCutoff = cutOffTimes.weekday < currentTime;
+        var isPastSaturdayCutoff = cutOffTimes.saturday < currentTime;
         var isPastSundayCutoff = cutOffTimes.sunday < currentTime;
-        var isPastCutoff = isPastWeekdayCutoff || isPastSundayCutoff;
+        var isPastCutoff = isPastWeekdayCutoff || isPastSundayCutoff || isPastSaturdayCutoff;
 
         var type = '';
         timeframe.Options.string.each(function(value) {
@@ -5861,3 +5876,54 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         return this;
     }
 });
+
+/**
+ * Data saved in this object will be stored, even if the delivery options are reloaded. This is to remember the
+ * selected option if there is a refresh, ie when entering a coupon.
+ */
+PostnlDeliveryOptions.PersistentStorage = {
+    selectedTimeframe      : null,
+    selectedDeliveryOption : null,
+
+    /**
+     * @param timeframe
+     * @returns {PostnlDeliveryOptions.PersistentStorage}
+     */
+    setSelectedTimeframe : function (timeframe) {
+        this.selectedTimeframe = timeframe;
+
+        if (timeframe !== null) {
+            this.setSelectedDeliveryOption(null);
+        }
+
+        return this;
+    },
+
+    /**
+     * @returns {null|object}
+     */
+    getSelectedTimeframe : function () {
+        return this.selectedTimeframe;
+    },
+
+    /**
+     * @param deliveryOption
+     * @returns {PostnlDeliveryOptions.PersistentStorage}
+     */
+    setSelectedDeliveryOption : function (deliveryOption) {
+        this.selectedDeliveryOption = deliveryOption;
+
+        if (deliveryOption !== null) {
+            this.setSelectedTimeframe(null);
+        }
+
+        return this;
+    },
+
+    /**
+     * @returns {null|object}
+     */
+    getSelectedDeliveryOption : function () {
+        return this.selectedDeliveryOption;
+    }
+};

@@ -466,6 +466,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'agecheck'            => $helper->__('Age Check'),
                 'birthdaycheck'       => $helper->__('Birthday Check'),
                 'idcheck'             => $helper->__('ID Check'),
+                'extra_at_home'       => $helper->__('Extra@Home'),
             ),
         );
 
@@ -1116,6 +1117,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_extra_at_home_options'])) {
+                $config['postnl_extra_at_home_options'] = array(
+                    'name'   => 'product_options[extra_at_home_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_extra_at_home_options']
+                );
+            }
+
             /**
              * @var TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions $block
              */
@@ -1267,6 +1277,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 false,
                 true
             ),
+            'postnl_extra_at_home_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'extra_at_home_options'
+                )
+            )
         );
 
         return $options;
@@ -1605,6 +1620,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'agecheck' => 'AgeCheck',
             'birthdaycheck' => 'BirthdayCheck',
             'idcheck' => 'IDCheck',
+            'extra_at_home' => 'ExtraAtHome',
         );
 
         foreach ($filters as $filterName => $value) {

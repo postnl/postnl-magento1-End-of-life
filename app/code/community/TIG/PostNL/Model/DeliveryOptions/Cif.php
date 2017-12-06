@@ -61,9 +61,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_ALLOW_SUNDAY_SORTING    = 'postnl/delivery_options/allow_sunday_sorting';
     const XPATH_ALLOW_SUNDAY_SORTING_BE = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SUNDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SATURDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/saturday_cutoff_time';
     const XPATH_DELIVERY_DAYS_NUMBER    = 'postnl/delivery_options/delivery_days_number';
     const XPATH_DELIVERY_DAYS_NUMBER_BE = 'postnl/delivery_options_int/delivery_days_number_be';
     const XPATH_ENABLE_SUNDAY_DELIVERY  = 'postnl/delivery_options/enable_sunday_delivery';
+    const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
+
 
     /**
      * Check if the module is set to test mode
@@ -111,11 +114,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $date = new DateTime('now', $helper->getStoreTimeZone($quote->getStoreId(), true));
         $date->setTimezone(new DateTimeZone('Europe/Berlin'));
 
-        /**
-         * Build CutOffTimes array
-         *
-         * Day 00 indicates weekdays and saturday, while day 07 indicates sunday
-         */
         $CutOffTimes = $this->_getCutOffTimes($quote->getStoreId());
 
         $options = $this->_getDeliveryDateOptionsArray($shippingDuration, $country, $for);
@@ -360,7 +358,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getCutOffTimes($storeId)
     {
-        $monSatCutoff = $this->_getCutOffTime();
+        $weekdayCutoff = $this->_getCutOffTime();
 
         $helper = $this->_getHelper('deliveryOptions');
         $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
@@ -370,26 +368,51 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
 
             if ($date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp()) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
+                $weekdayCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif ($date->getTimestamp() > $regularDeliveryCutoff->getTimestamp() && $date->format('N') != 5) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
+                $weekdayCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             } elseif (
                 $helper->quoteIsFood()
                 && $helper->getQuoteFoodType() == $helper::FOOD_TYPE_COOL_PRODUCTS
                 && $date->format('N') == 5
             ) {
-                $monSatCutoff = $sameDayDeliveryCutoff->format('H:i:00');
+                $weekdayCutoff = $sameDayDeliveryCutoff->format('H:i:00');
             }
         }
 
+        $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
+        $shippingDaysArray = explode(',', $shippingDays);
+
         $CutOffTimes = array(
             array(
-                'Day'   => '00',
-                'Time'  => $monSatCutoff,
+                'Day'   => '01',
+                'Time'  => $weekdayCutoff,
+                'Available' => in_array(1,$shippingDaysArray)?1:0,
+            ),array(
+                'Day'   => '02',
+                'Time'  => $weekdayCutoff,
+                'Available' => in_array(2,$shippingDaysArray)?1:0,
+            ),array(
+                'Day'   => '03',
+                'Time'  => $weekdayCutoff,
+                'Available' => in_array(3,$shippingDaysArray)?1:0,
+            ),array(
+                'Day'   => '04',
+                'Time'  => $weekdayCutoff,
+                'Available' => in_array(4,$shippingDaysArray)?1:0,
+            ),array(
+                'Day'   => '05',
+                'Time'  => $weekdayCutoff,
+                'Available' => in_array(5,$shippingDaysArray)?1:0,
+            ),array(
+                'Day'   => '06',
+                'Time'  => $this->_getSaterdaySortingCutOffTime(),
+                'Available' => in_array(6,$shippingDaysArray)?1:0,
             ),
             array(
                 'Day'   => '07',
                 'Time'  => $this->_getSundaySortingCutOffTime(),
+                'Available' => in_array(7,$shippingDaysArray)?1:0,
             )
         );
 
@@ -429,6 +452,23 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $storeId = $this->getStoreId();
 
         $cutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+        if (!$cutOffTime) {
+            $cutOffTime = '23:59:59';
+        }
+
+        return $cutOffTime;
+    }
+
+    /**
+     * Gets the saturday cut-off time for this storeview.
+     *
+     * @return string
+     */
+    protected function _getSaterdaySortingCutOffTime()
+    {
+        $storeId = $this->getStoreId();
+
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_SATURDAY_CUTOFF_TIME, $storeId);
         if (!$cutOffTime) {
             $cutOffTime = '23:59:59';
         }

@@ -456,6 +456,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
              */
             if ($field) {
                 $paymentData[$field] = $optionValue;
+                // @codingStandardsIgnoreLine
                 $_POST[$field] = $optionValue;
             }
         }

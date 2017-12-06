@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.12.4</version>
+            <version>1.15.0</version>
         </TIG_PostNL>
     </modules>
 
@@ -890,6 +890,7 @@
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
                 <foodspecificerrmsg>Food shipments can only be delivered within the Netherlands.</foodspecificerrmsg> <!-- Food method not available message -->
                 <idcheckspecificerrmsg>ID Check shipments can only be delivered within the Netherlands.</idcheckspecificerrmsg> <!-- ID Check method not available message -->
+                <extraathomespecificerrmsg>This product(s) can only be delivered within the Netherlands.</extraathomespecificerrmsg> <!-- ID Check method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE,MT</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <showmethod>1</showmethod> <!-- Show the shipping method if unavailable -->
@@ -1032,15 +1033,13 @@
                 <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
                 <customer_code>TOTA</customer_code> <!-- Demo customer code -->
-                <live_username/>
-                <live_password/>
-                <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
-                <test_password/> <!-- The demo password will be generated on install as it needs to be encrypted -->
+                <live_apikey/>
+                <test_apikey/> <!-- Demo apikey -->
                 <collection_location>103861</collection_location> <!-- Demo collection location -->
                 <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
-                <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
-                <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
+                <wsdl_base_url>https://api.postnl.nl/shipment/</wsdl_base_url> <!-- Base URL of production api WSDL files -->
+                <test_wsdl_base_url>https://api-sandbox.postnl.nl/shipment/</test_wsdl_base_url> <!-- Base URL of staging api WSDL files -->
                 <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
                 <house_number_required_countries>NL</house_number_required_countries>
             </cif>
@@ -1221,6 +1220,7 @@
                 <default_age_check_pickup_product_option>3571</default_age_check_pickup_product_option>
                 <default_birthday_check_delivery_product_option>3440</default_birthday_check_delivery_product_option>
                 <default_birthday_check_pickup_product_option>3572</default_birthday_check_pickup_product_option>
+                <default_extra_at_home_product_option>3628</default_extra_at_home_product_option>
                 <valid_shipping_duration_days>1,2,3,4,5,6,7</valid_shipping_duration_days> <!-- all days of the week -->
             </grid>
             <cif_product_options>
@@ -1239,14 +1239,14 @@
                 <feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
                 <show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
                 <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
-                <cif_version_shippingstatus>1_4</cif_version_shippingstatus> <!-- v1.4 -->
+                <cif_version_shippingstatus>1_6</cif_version_shippingstatus> <!-- v1.6 -->
                 <cif_version_confirming>1_9</cif_version_confirming> <!-- v1.9 -->
                 <cif_version_labelling>2_0</cif_version_labelling> <!-- v2.0 -->
                 <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
-                <cif_version_deliverydate>2_1</cif_version_deliverydate> <!-- v2.0 -->
+                <cif_version_deliverydate>2_2</cif_version_deliverydate> <!-- v2.2 -->
                 <cif_version_timeframe>2_0</cif_version_timeframe> <!-- v2.0 -->
-                <cif_version_location>2_0</cif_version_location> <!-- v2.0 -->
+                <cif_version_location>2_1</cif_version_location> <!-- v2.1 -->
             </advanced>
 
             <!-- Login data for the postcode check functionality. -->
@@ -1355,7 +1355,7 @@
         <errors>
             <!-- These are errors, warnings and notices that are generated by this extension -->
             <POSTNL-0001>
-                <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
+                <message>You have configured the extension for test mode only. You still must enter a live apikey before you may use the extension for real shipments.</message>
                 <url>http://kb.tig.nl/topic/31114923</url>
                 <type>warning</type>
             </POSTNL-0001>
@@ -1610,7 +1610,7 @@
                 <type>error</type>
             </POSTNL-0051>
             <POSTNL-0052>
-                <message>No username or password set.</message>
+                <message>No apikey set.</message>
                 <url>http://kb.tig.nl/topic/31216113</url>
                 <type>error</type>
             </POSTNL-0052>
@@ -2254,7 +2254,7 @@
                 <type>error</type>
             </POSTNL-0180>
             <POSTNL-0181>
-                <message>It appears the PostNL username and/or password you have entered is incorrect.</message>
+                <message>It appears the PostNL apikey you have entered is incorrect.</message>
                 <url>http://kb.tig.nl/topic/95142216</url>
                 <type>error</type>
             </POSTNL-0181>
@@ -2572,6 +2572,11 @@
                 <url>http://servicedesk.tig.nl/hc/nl/articles/219822368</url>
                 <type>error</type>
             </POSTNL-0244>
+            <POSTNL-0245>
+                <message>Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0245>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

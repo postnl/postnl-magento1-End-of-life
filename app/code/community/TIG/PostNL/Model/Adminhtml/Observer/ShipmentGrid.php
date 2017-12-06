@@ -430,6 +430,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AGECHECK      => $helper->__('Age Check'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_BIRTHDAYCHECK => $helper->__('Birthday Check'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_IDCHECK       => $helper->__('ID Check'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EXTRAATHOME   => $helper->__('Extra@Home'),
                     ),
                 ),
                 $after

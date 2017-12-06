@@ -75,14 +75,18 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Available wsdl filenames.
      */
-    const WSDL_BARCODE_NAME        = 'BarcodeWebService';
-    const WSDL_CONFIRMING_NAME     = 'ConfirmingWebService';
-    const WSDL_LABELLING_NAME      = 'LabellingWebService';
-    const WSDL_SHIPPINGSTATUS_NAME = 'ShippingStatusWebService';
+    const WSDL_BARCODE_NAME        = 'barcode';
+    const WSDL_CONFIRMING_NAME     = 'confirm';
+    const WSDL_LABELLING_NAME      = 'label';
+    const WSDL_SHIPPINGSTATUS_NAME = 'status';
+    const WSDL_DELIVERYDATE_NAME   = 'calculate/date';
+    const WSDL_TIMEFRAME_NAME      = 'calculate/timeframes';
+    const WSDL_LOCATION_NAME       = 'locations';
+
+    /**
+     * @deprecated
+     */
     const WSDL_CHECKOUT_NAME       = 'WebshopCheckoutWebService';
-    const WSDL_DELIVERYDATE_NAME   = 'DeliveryDateWebService';
-    const WSDL_TIMEFRAME_NAME      = 'TimeframeWebService';
-    const WSDL_LOCATION_NAME       = 'LocationWebService';
 
     /**
      * Header security namespace. Used for constructing the SOAP headers array.
@@ -99,10 +103,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * XML paths for config options
      */
-    const XPATH_LIVE_USERNAME              = 'postnl/cif/live_username';
-    const XPATH_LIVE_PASSWORD              = 'postnl/cif/live_password';
-    const XPATH_TEST_USERNAME              = 'postnl/cif/test_username';
-    const XPATH_TEST_PASSWORD              = 'postnl/cif/test_password';
+    const XPATH_LIVE_APIKEY                = 'postnl/cif/live_apikey';
+    const XPATH_TEST_APIKEY                = 'postnl/cif/test_apikey';
     const XPATH_CIF_VERSION_BARCODE        = 'postnl/advanced/cif_version_barcode';
     const XPATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
     const XPATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
@@ -111,6 +113,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XPATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
     const XPATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
     const XPATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
+
+
 
     /**
      * The error number CIF uses for the 'shipment not found' error.
@@ -281,6 +285,40 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
         return $password;
     }
+    /**
+     * Gets the api key from system/config. Test mode determines if live or test api key is used.
+     *
+     * @param boolean|int $storeId
+     *
+     * @return string|boolean
+     */
+    public function getApiKey($storeId = false)
+    {
+        if ($this->hasApikey()) {
+            return $this->_getData('apikey');
+        }
+
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
+        }
+
+        if ($this->isTestMode()) {
+            $configApikey = Mage::getStoreConfig(self::XPATH_TEST_APIKEY, $storeId);
+        } else {
+            $configApikey = Mage::getStoreConfig(self::XPATH_LIVE_APIKEY, $storeId);
+        }
+
+        if (!$configApikey) {
+            return false;
+        }
+
+        $configApikey = trim($configApikey);
+        /** @var Mage_Core_Helper_Data $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $decryptedApikey = $coreHelper->decrypt($configApikey);
+
+        return $decryptedApikey;
+    }
 
     /**
      * Check if the module is set to test mode
@@ -327,17 +365,31 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $wsdlFile = $this->_getWsdl($wsdlType);
 
         /**
-         * Array of soap options used when connecting to CIF
+         * Unable to find an alternative, so ignore the coding standards.
          */
-        $soapOptions = array(
-            'soap_version' => SOAP_1_1,
-            'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
-            'trace'        => true
+        // @codingStandardsIgnoreLine
+        $stream_context = stream_context_create(
+            array(
+                'http' => array(
+                    'header' => 'apikey:' . $this->getApiKey()
+                ),
+            )
         );
 
         /**
-         * try to create a new SoapClient instance based on the supplied wsdl. if it fails, try again without
-         * using the wsdl cache.
+         * Array of soap options used when connecting to CIF
+         */
+        $soapOptions = array(
+            'soap_version' => SOAP_1_2,
+            'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
+            'cache_wsdl'     => WSDL_CACHE_BOTH,
+            'trace'        => true,
+            'stream_context' => $stream_context,
+        );
+
+        /**
+         * Try to create a new SoapClient instance based on the supplied wsdl.
+         * If it fails, try again without using the wsdl cache.
          */
         try {
             $client  = new SoapClient(
@@ -394,13 +446,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                     $cifHelper->__('The specified method "%s" is not callable.', $method),
                     'POSTNL-0136'
                 );
-            }
-
-            /**
-             * Add SOAP header.
-             */
-            $header = $this->_getSoapHeader();
-            $client->__setSoapHeaders($header);
+            };
 
             /**
              * Call the SOAP method.
@@ -505,10 +551,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         /**
          * Format the final wsdl URL.
          */
-        $wsdlUrl .= $wsdlFileName
-                  . '/'
-                  . $wsdlversion
-                  . '/?wsdl';
+        $wsdlUrl .= 'v'
+            . $wsdlversion
+            . '/'
+            . $wsdlFileName
+            . '/soap.wsdl';
 
         return $wsdlUrl;
     }
@@ -517,6 +564,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * Builds soap headers array for CIF authentication.
      *
      * @return SOAPHeader
+     *
+     * @deprecated This method of authentication is replaced by an api key in de the
+     *             HTTP header of the SOAP request.
+     *
      */
     protected function _getSoapHeader()
     {

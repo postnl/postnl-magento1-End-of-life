@@ -22,10 +22,8 @@ TIG_PostNL::During registration 2 secure keys will be sent to this email address
 TIG_PostNL::Unique key,Unique key
 TIG_PostNL::Private key,Private key
 TIG_PostNL::Account Settings,Account Settings
-TIG_PostNL::Live Username,Live Username
-TIG_PostNL::Live Password,Live Password
-TIG_PostNL::Test Username,Test Username
-TIG_PostNL::Test Password,Test Password
+TIG_PostNL::Live Apikey,Live Apikey
+TIG_PostNL::Test Apikey,Test Apikey
 TIG_PostNL::Customer Number,Customer Number
 TIG_PostNL::Customer Code,Customer Code
 "TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343."
@@ -332,7 +330,7 @@ TIG_PostNL::Live,Live
 TIG_PostNL::Your shipment has been shipped on %s. Click %s to track your shipment.,Your shipment has been shipped on %s. Click %s to track your shipment.
 TIG_PostNL::You currently do not use split street lines.,You currently do not use split street lines.
 "TIG_PostNL::Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support."
-TIG_PostNL::You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.
+TIG_PostNL::You have configured the extension for test mode only. You still must enter a live apikey before you may use the extension for real shipments.,You have configured the extension for test mode only. You still must enter a live apikey before you may use the extension for real shipments.
 TIG_PostNL::You have not yet fully configured the extension. You must complete this process before you can use it.,You have not yet fully configured the extension. You must complete this process before you can use it.
 TIG_PostNL::Are you planning to ship outside of the EU? Activate GlobalPack with the details you have received from PostNL. You can ignore the GlobalPack settings for domestic shipping and shipping within the EU.,Are you planning to ship outside of the EU? Activate GlobalPack with the details you have received from PostNL. You can ignore the GlobalPack settings for domestic shipping and shipping within the EU.
 TIG_PostNL::You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.,You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.
@@ -425,7 +423,7 @@ TIG_PostNL::An error occurred while processing your request: ,An error occurred 
 TIG_PostNL::OrderToken missing for quote #%s,OrderToken missing for quote #%s
 TIG_PostNL::Unable to create an order for quote #%s,Unable to create an order for quote #%s
 TIG_PostNL::Invalid quote supplied.,Invalid quote supplied.
-TIG_PostNL::No username or password set.,No username or password set.
+TIG_PostNL::No apikey set.,No apikey set.
 TIG_PostNL::Invalid barcode response: %s,Invalid barcode response: %s
 TIG_PostNL::Chosen delivery date:,Chosen delivery date:
 TIG_PostNL::Invalid confirmShipment response: %s,Invalid confirmShipment response: %s
@@ -702,9 +700,9 @@ TIG_PostNL::The quote's total weight is below the miniumum required to use PostN
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.
 TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.,Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.
 TIG_PostNL::The PostNL Extension is currently configured in test mode.,The PostNL Extension is currently configured in test mode.
-"TIG_PostNL::You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."
+"TIG_PostNL::You can enter your live apikey in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","You can enter your live apikey in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."
 "TIG_PostNL::You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.","You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension."
-"TIG_PostNL::You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."
+"TIG_PostNL::You can enter your live apikey in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","You can enter your live apikey in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."
 TIG_PostNL::PostNL - Remove Shipping Label,PostNL - Remove Shipping Label
 TIG_PostNL::Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new shipping label before you can send this shipment.,Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new shipping label before you can send this shipment.
 TIG_PostNL::PostNL - Change Confirmation,PostNL - Change Confirmation
@@ -968,7 +966,7 @@ TIG_PostNL::Default 'deliver at the Post Office' COD option,Default 'deliver at 
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.
 TIG_PostNL::Default early post office pickup COD option,Default early post office pickup COD option
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.
-TIG_PostNL::It appears the PostNL username and/or password you have entered is incorrect.,It appears the PostNL username and/or password you have entered is incorrect.
+TIG_PostNL::It appears the PostNL apikey you have entered is incorrect.,It appears the PostNL apikey you have entered is incorrect.
 TIG_PostNL::Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.,Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.
 "TIG_PostNL::Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL.","Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL."
 TIG_PostNL::This PostNL service is currently disabled. Please contact PostNL.,This PostNL service is currently disabled. Please contact PostNL.
@@ -1402,3 +1400,23 @@ TIG_PostNL::Please provide a expiration date,Please provide a expiration date
 TIG_PostNL::Please provide a valid birthday,Please provide a valid birthday
 TIG_PostNL::This data will be used to verify your age at delivery.,This data will be used to verify your age at delivery.
 TIG_PostNL::Regular,Regular
+TIG_PostNL::Extra@Home Top service 2 person delivery NL,Extra@Home Top service 2 person delivery NL
+TIG_PostNL::Extra@Home Top service Btl 2 person delivery,Extra@Home Top service Btl 2 person delivery
+TIG_PostNL::Extra@Home Top service 1 person delivery NL,Extra@Home Top service 1 person delivery NL
+TIG_PostNL::Extra@Home Top service Btl 1 person delivery,Extra@Home Top service Btl 1 person delivery
+TIG_PostNL::Extra@Home Drempelservice 1 person delivery NL,Extra@Home Drempelservice 1 person delivery NL
+TIG_PostNL::Extra@Home Drempelservice 2 person delivery NL,Extra@Home Drempelservice 2 person delivery NL
+TIG_PostNL::Extra@Home Drempelservice Btl 1 person delivery,Extra@Home Drempelservice Btl 1 person delivery
+TIG_PostNL::Extra@Home Drempelservice Btl 2 person delivery,Extra@Home Drempelservice Btl 2 person delivery
+TIG_PostNL::Extra@Home Options,Extra@Home Options
+TIG_PostNL::Default Extra@Home shipping option,Default Extra@Home shipping option
+TIG_PostNL::Extra@Home,Extra@Home
+TIG_PostNL::Enable Extra@Home,Enable Extra@Home
+TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.
+TIG_PostNL::Activate Extra@Home for your customers.,Activate Extra@Home for your customers.
+TIG_PostNL::Return customer code,Return customer code
+TIG_PostNL::To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.
+This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.
+TIG_PostNL::PostNL product parcel count,PostNL product parcel count
+"TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume."
+"TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000."

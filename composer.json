@@ -3,7 +3,6 @@
     "description": "TIG Magento 1 PostNL extension",
     "type": "magento-module",
     "license": "CC-BY-NC-ND-3.0",
-    "require": {},
     "authors": [
         {
             "name": "TIG",
@@ -16,5 +15,18 @@
         "issues": "http://servicedesk.tig.nl/hc/nl/requests/new"
     },
     "homepage": "https://tig.nl/postnl",
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "repositories": {
+        "magento": {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    },
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "magento/marketplace-eqp": "^1.0",
+        "satooshi/php-coveralls": "^1.0"
+    }
 }

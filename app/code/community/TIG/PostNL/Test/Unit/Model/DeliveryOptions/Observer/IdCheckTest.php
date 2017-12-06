@@ -265,10 +265,14 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_IdCheckTest
             'setIdcheckExpirationDate',
         ));
 
+        $mockParcelHelper = $this->getMock('TIG_PostNL_Helper_Parcel');
+        $mockParcelHelper->method('calculateParcelCount')
+            ->willReturn(0);
+        $this->setHelperMock('postnl/parcel',$mockParcelHelper);
+
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
 
-        $mockService->expects($this->any())
-            ->method('getPostnlOrder')
+        $mockService->method('getPostnlOrder')
             ->willReturn($mockOrder);
 
         $this->registerMockSessions(array('checkout', 'customer'));

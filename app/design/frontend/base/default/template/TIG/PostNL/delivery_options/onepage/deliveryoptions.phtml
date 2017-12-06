@@ -53,6 +53,7 @@
 <?php $_street                         = $_streetData['streetname']; ?>
 <?php $_city                           = $this->getCity(); ?>
 <?php $_weekdayCutOffTime              = $this->getCutOff('weekday'); ?>
+<?php $_saturdayCutOffTime               = $this->getCutOff('saturday'); ?>
 <?php $_sundayCutOffTime               = $this->getCutOff('sunday'); ?>
 <?php $_sameDayCutOffTime              = $this->getCutOff('sameday'); ?>
 
@@ -209,6 +210,7 @@
         fullAddress        : "<?php echo $this->escapeJavascriptHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>",
         cutOffTimes        : {
             weekday: '<?php echo $_weekdayCutOffTime; ?>',
+            saturday: '<?php echo $_saturdayCutOffTime; ?>',
             sunday: '<?php echo $_sundayCutOffTime; ?>',
             sameday: '<?php echo $_sameDayCutOffTime; ?>'
         }

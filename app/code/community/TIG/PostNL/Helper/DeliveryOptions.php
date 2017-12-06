@@ -78,6 +78,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY     = 'postnl/delivery_options/enable_birthday_check_delivery';
     const XPATH_ENABLE_ID_CHECK_DELIVERY           = 'postnl/delivery_options/enable_id_check_delivery';
     const XPATH_ENABLE_AGE_CHECK_DELIVERY          = 'postnl/delivery_options/enable_age_check_delivery';
+    const XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY      = 'postnl/delivery_options/enable_extra_at_home';
     const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
@@ -104,6 +105,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION   = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME         = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_SUNDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SATURDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/saturday_cutoff_time';
     const XPATH_SAMEDAY_CUTOFF_TIME = 'postnl/delivery_options/sameday_delivery_cutoff_time';
     const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
 
@@ -147,6 +149,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const IDCHECK_TYPE_ID = 5;
 
     /**
+     * Extra@Home
+     */
+    const EXTRA_AT_HOME_TYPE_REGULAR = 6;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -187,6 +194,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         '3444',
         '3447',
         '3450',
+    );
+
+    protected $_extraAtHomeProductCodes = array(
+        '3628',
+        '3629',
+        '3653',
+        '3783',
+        '3790',
+        '3791',
+        '3792',
+        '3793',
     );
 
     /**
@@ -2554,6 +2572,56 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Determines if Extra@Home delivery is allowed, by checking the current quote and configuration.
+     *
+     * @param bool $checkQuote
+     *
+     * @return bool
+     */
+    public function canUseExtraAtHomeDelivery($checkQuote = true)
+    {
+        $allowed = $this->_canUseExtraAtHomeDelivery();
+
+        if ($allowed && $checkQuote) {
+            $allowed = $this->quoteIsExtraAtHome();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check the configured (and possibly cached) options to determine if Extra@Home is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUseExtraAtHomeDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseExtraAtHomeDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseExtraAtHomeDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $extraAtHomeDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY, $storeId);
+        $productOptionsAvailable = $this->_getCheckProductOptionsAvailable($this->_extraAtHomeProductCodes, $storeId);
+
+        if ($extraAtHomeDeliveryEnabled && $productOptionsAvailable) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            /** Save the result in the PostNL cache.*/
+            $cache->setPostnlDeliveryOptionsCanUseExtraAtHomeDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
      * Check if at least one Check product code is available in the config.
      *
      * @param null $storeId
@@ -2790,6 +2858,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0190',
                     'message' => $this->__('Delivery options are not allowed for letter box parcel orders.'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        /**
+         * Check if the quote contains an Extra@Home product. If so, disable the delivery options.
+         */
+        if ($this->canUseExtraAtHomeDelivery()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0253',
+                    'message' => $this->__('Delivery options are not allowed for Extra@Home orders'),
                 )
             );
             Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);

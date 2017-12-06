@@ -1,7 +1,10 @@
 language: php
 
 php:
+<<<<<<< HEAD
 #  - 5.3 - Not supported by Travis
+=======
+>>>>>>> origin/extra_at_home
   - 5.4
   - 5.5
   - 5.6
@@ -20,17 +23,15 @@ env:
 matrix:
   include:
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.3.1 ENABLE_FLAT_CATALOG=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.2 ENABLE_FLAT_CATALOG=true
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.3.1 CODE_COVERAGE=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.2 CODE_COVERAGE=true
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.2.4
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.8.1.0
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.8.0.0
-#  - php: 7.0
-#    env: MAGENTO_VERSION=magento-mirror-1.7.0.2 - fails because innoDB engine is not supported by Travis
 
   fast_finish: true
 
@@ -38,6 +39,7 @@ matrix:
   - php: nightly
 
 before_script:
+  - composer config -a -g http-basic.repo.magento.com $COMPOSER_MAGENTO_USERNAME $COMPOSER_MAGENTO_PASSWORD
   - if [ "${CODE_COVERAGE}" = "false" ]; then phpenv config-rm xdebug.ini; fi
   - if [ "${CODE_COVERAGE}" = "true" ]; then TEST_RUNNER_OPTIONS="${TEST_RUNNER_OPTIONS} --coverage-clover build/logs/clover.xml"; fi
   - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
@@ -45,7 +47,9 @@ before_script:
   - bash app/code/community/TIG/PostNL/Test/Scripts/InstallDependencies.sh
   - bash app/code/community/TIG/PostNL/Test/Scripts/Setup.sh
 
-script: $HOME/.composer/vendor/bin/phpunit -c "/tmp/magento/public/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE ${TEST_RUNNER_OPTIONS}
+script:
+  - vendor/bin/phpcs --runtime-set installed_paths vendor/magento/marketplace-eqp -p --standard=MEQP1 --severity=10 --ignore=*/vendor/*,*/app/code/community/TIG/PostNL/Test/*,*/app/code/community/TIG/PostNL/docs/*,*/app/code/community/TIG/PostNL/Model/ExtensionControl/Webservices.php .
+  - $HOME/.composer/vendor/bin/phpunit -c "/tmp/magento/public/app/code/community/TIG/PostNL/Test/phpunit.xml" --testsuite=$TESTSUITE ${TEST_RUNNER_OPTIONS}
 
 cache:
   directories:
