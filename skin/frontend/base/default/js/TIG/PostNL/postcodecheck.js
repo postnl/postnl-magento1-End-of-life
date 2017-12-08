@@ -234,7 +234,7 @@ PostnlPostcodecheck = new Class.create({
                 if (response.responseText == 'error') {
                     postcodeCheck.failed = true;
                     $('postnl_address_error_' + addressType).show();
-                    postcodeCheck.changePostcodeCheckDisabledFields(false);
+                    postcodeCheck.removeDisabledClasses();
 
                     $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
                     $(postcodeCheck.streetnameField).setValue('');
