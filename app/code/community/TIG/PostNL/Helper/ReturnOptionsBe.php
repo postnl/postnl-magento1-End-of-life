@@ -31,10 +31,15 @@
  */
 class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
 {
+    /**
+     * Product code: dependent on the origin country.
+     * If your company is located in the Netherlands, you must use product code 3250.
+     * If your company is located in Belgium you must use product code 4882
+     */
     protected $_returnCodes = array(
         array(
             'value'   => '3250',
-            'route'   => 'nl_be',
+            'route'   => 'nl_be', // Heenstroom
             'default' => true,
         ),
         array(
@@ -46,17 +51,18 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
 
     /**
      * @param $shippingCountry
+     * @param $asArray
      *
      * @return array|bool|string
      */
-    public function get($shippingCountry)
+    public function get($shippingCountry, $asArray = false)
     {
-        if ($this->getCountryOfRetrunAddress($shippingCountry) == 'BE' && $shippingCountry == 'BE') {
-            return $this->getReturnCodeByRoute('be_be');
+        if ($this->_domesticCountry() == 'BE' && $shippingCountry == 'BE') {
+            return $this->getReturnCodeByRoute('be_be', $asArray);
         }
 
-        if ($this->getCountryOfRetrunAddress($shippingCountry) == 'NL' && $shippingCountry == 'BE') {
-            return $this->getReturnCodeByRoute('nl_be');
+        if ($this->_domesticCountry() == 'NL' && $shippingCountry == 'BE') {
+            return $this->getReturnCodeByRoute('nl_be', $asArray);
         }
 
         return false;
@@ -68,14 +74,13 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
      *
      * @return array|string
      */
-    public function getReturnCodeByRoute($route = 'nl_be', $asArray = false)
+    public function getReturnCodeByRoute($route = 'nl_be', $asArray)
     {
         $code = array_filter($this->_returnCodes, function ($code) use ($route) {
             return $code['route'] == $route && $code['default'] == true;
         });
 
         $code = array_values($code);
-
         if ($asArray && count($code) == 1){
             return $code[0];
         }
@@ -84,16 +89,10 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * @param $shippingCountry
-     *
      * @return mixed
      */
-    public function getCountryOfRetrunAddress($shippingCountry)
+    protected function _domesticCountry()
     {
-        /** @var TIG_PostNL_Model_Core_Cif $cifModel */
-        $cifModel = Mage::getModel('postnl/core_cif');
-        $returnAddress = $cifModel->getReturnAddress($shippingCountry);
-
-        return isset($returnAddress['country']) ? $returnAddress['country'] : 'NL' ;
+        return Mage::getStoreConfig(self::XPATH_SENDER_COUNTRY, Mage_Core_Model_App::ADMIN_STORE_ID);
     }
 }
