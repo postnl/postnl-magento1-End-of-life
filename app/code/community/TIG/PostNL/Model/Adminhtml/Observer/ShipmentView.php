@@ -200,12 +200,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
+        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnHelper */
+        $returnHelper = Mage::helper('postnl/returnOptionsBe');
+        $country = $shipment->getShippingAddress()->getCountryId();
+        $isBe = $shipment->getShippingAddress()->getCountryId() == 'BE';
+
         /**
          * Add a button to print this shipment's return labels.
          */
-        $isBe = $shipment->getShippingAddress()->getCountryId() == 'BE';
         if ($printReturnLabelAllowed
-            && $postnlShipment->canPrintReturnLabels()
+            && ($postnlShipment->canPrintReturnLabels() || $returnHelper->get($country))
             && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
 
@@ -219,6 +223,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                     'class'   => 'download',
                 ),
                 40
+            );
+        }
+
+        /**
+         * Add the send (single) return label email button.
+         */
+        if ($sendReturnLabelAllowed
+            && ($postnlShipment->canSendReturnLabelEmail() || $returnHelper->get($country))
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
+        ) {
+            $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
+            if ($returnHelper->get($country) && !$postnlShipment->canSendReturnLabelEmail()) {
+                $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
+            }
+
+            $block->addButton(
+                'send_return_label_email',
+                array(
+                    'label'   => $helper->__('PostNL - Send Return Label Email'),
+                    'onclick' => "setLocation('{$sendReturnLabelEmailUrl}')",
+                    'class'   => 'save',
+                ),
+                60
             );
         }
 
@@ -242,33 +269,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             } else {
                 $block->updateButton('save', 'level', 50);
             }
-        }
-
-        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnHelper */
-        $returnHelper = Mage::helper('postnl/returnOptionsBe');
-        $country = $shipment->getShippingAddress()->getCountryId();
-
-        /**
-         * Add the send return label button.
-         */
-        if ($sendReturnLabelAllowed
-            && ($postnlShipment->canSendReturnLabelEmail() || $returnHelper->get($country))
-            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
-        ) {
-            $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
-            if ($returnHelper->get($country) && !$postnlShipment->canSendReturnLabelEmail()) {
-                $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
-            }
-
-            $block->addButton(
-                'send_return_label_email',
-                array(
-                    'label'   => $helper->__('PostNL - Send Return Label Email'),
-                    'onclick' => "setLocation('{$sendReturnLabelEmailUrl}')",
-                    'class'   => 'save',
-                ),
-                60
-            );
         }
 
         /**

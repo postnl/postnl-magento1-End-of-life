@@ -541,6 +541,18 @@ class TIG_PostNL_Model_Core_Service_Shipment
         return $labels;
     }
 
+    public function getSingleReturnLabels($shipment)
+    {
+        /**
+         * Load the PostNL shipment.
+         */
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $postnlShipment = $this->getPostnlShipment($shipment->getId());
+        } else {
+            $postnlShipment = $shipment;
+        }
+    }
+
     /**
      * Get all return labels for a shipment.
      *

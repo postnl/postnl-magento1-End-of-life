@@ -2401,11 +2401,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * Check if printing return labels is allowed for the order's store ID and if it's allowed for logged-in
          * customers or guests depending on who placed the order.
          */
+        $isBe = $this->isBe($order);
         if ($order->getCustomerIsGuest()
-            && !$this->canPrintReturnLabelForGuest($order->getStoreId())
+            && !$this->canPrintReturnLabelForGuest($order->getStoreId(), $isBe)
         ) {
             return false;
-        } elseif (!$this->canPrintReturnLabelForCustomer($order->getStoreId())) {
+        } elseif (!$this->canPrintReturnLabelForCustomer($order->getStoreId(), $isBe)) {
             return false;
         }
 
@@ -2441,6 +2442,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         if ($this->isFoodOrder($order)) {
             return false;
+        }
+
+        if ($this->isReturnsEnabled(false, $isBe)) {
+            return true;
         }
 
         /**

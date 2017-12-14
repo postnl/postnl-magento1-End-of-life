@@ -2026,7 +2026,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
                         ->addFieldToFilter('label_type', array('in' => $returnLabelTypes));
 
-        $this->setReturnLabels($labelCollection);
+        $labels = $labelCollection->getItems();
+        $this->setReturnLabels($labels);
 
         if ($labelCollection->getSize() > 0) {
             return true;
@@ -3247,8 +3248,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canPrintReturnLabels()
     {
-        if (!$this->isDomesticShipment() || $this->isBuspakjeShipment()
-            || $this->isFoodShipment() || $this->isExtraAtHomeShipment()) {
+        /** @var TIG_PostNL_Helper_ReturnCountries $returnCountryHelper */
+        $returnCountryHelper = $this->getHelper('returnCountries');
+        $countryId = $this->getShippingAddress()->getCountryId();
+        $isAllowed = ($returnCountryHelper->isAllowed($countryId) || $this->isDomesticShipment());
+
+        if (!$isAllowed || $this->isBuspakjeShipment() || $this->isFoodShipment() || $this->isExtraAtHomeShipment()) {
             return false;
         }
 
@@ -3260,7 +3265,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If the shipment has labels, but no return labels it cannot print a return label. Instead the existing labels
          * need to be deleted first.
          */
-        if ($this->hasLabels()) {
+        if ($this->hasLabels() && !$this->isBelgiumShipment()) {
             return false;
         }
 
@@ -4594,7 +4599,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function sendSingleReturnLabelEmail()
     {
         if (!$this->hasReturnLabels()) {
-            $this->_getSingleReturnLabel();
+            $this->getSingleReturnLabel();
         }
 
         try {
@@ -4797,7 +4802,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * @throws TIG_PostNL_Exception
      */
-    protected function _getSingleReturnLabel()
+    public function getSingleReturnLabel()
     {
         $returnBarcode = $this->getReturnBarcode();
         if (!$this->hasReturnBarcode()) {
