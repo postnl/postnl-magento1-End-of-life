@@ -126,9 +126,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
              */
             /** @var TIG_PostNL_Model_Core_Label $labelModel */
             $labelModel = Mage::getModel('postnl_core/label');
-            $labelSize  = Mage::getStoreConfig(self::XPATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
-
-            $output = $labelModel->setLabelSize($labelSize)->createPdf($labels);
+            $output = $labelModel->setLabelSize('A4')->createPdf($labels);
 
             $filename = 'PostNL Return Labels-' . date('YmdHis') . '.pdf';
 

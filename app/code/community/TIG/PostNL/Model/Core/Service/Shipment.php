@@ -541,26 +541,15 @@ class TIG_PostNL_Model_Core_Service_Shipment
         return $labels;
     }
 
-    public function getSingleReturnLabels($shipment)
-    {
-        /**
-         * Load the PostNL shipment.
-         */
-        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
-            $postnlShipment = $this->getPostnlShipment($shipment->getId());
-        } else {
-            $postnlShipment = $shipment;
-        }
-    }
-
     /**
      * Get all return labels for a shipment.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
+     * @param $singleLabel
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]|false
      */
-    public function getReturnLabels($shipment)
+    public function getReturnLabels($shipment, $singleLabel = true)
     {
         /**
          * Load the PostNL shipment.
@@ -579,7 +568,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
             return $postnlShipment->getReturnLabels();
         }
 
-        $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+        if (!$postnlShipment->hasLabels() && !$singleLabel) {
+            $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+        }
+
+        if (!$postnlShipment->hasLabels() && $singleLabel) {
+            $postnlShipment->getSingleReturnLabel();
+        }
 
         $labels = $postnlShipment->getReturnLabels();
 
