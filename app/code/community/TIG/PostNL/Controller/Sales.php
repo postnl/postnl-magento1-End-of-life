@@ -304,7 +304,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             return false;
         }
 
-        if (!$postnlShipment->hasLabels()) {
+        if (!$postnlShipment->hasReturnLabels()) {
             $postnlShipment->getSingleReturnLabel();
         }
 

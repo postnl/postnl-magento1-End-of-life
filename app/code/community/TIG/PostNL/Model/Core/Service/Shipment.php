@@ -568,11 +568,11 @@ class TIG_PostNL_Model_Core_Service_Shipment
             return $postnlShipment->getReturnLabels();
         }
 
-        if (!$postnlShipment->hasLabels() && !$singleLabel) {
+        if (!$postnlShipment->hasReturnLabels() && !$singleLabel) {
             $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
         }
 
-        if (!$postnlShipment->hasLabels() && $singleLabel) {
+        if (!$postnlShipment->hasReturnLabels() && $singleLabel) {
             $postnlShipment->getSingleReturnLabel();
         }
 
