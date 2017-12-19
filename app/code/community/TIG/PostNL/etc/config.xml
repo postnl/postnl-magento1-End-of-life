@@ -1245,7 +1245,7 @@
                 <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
                 <cif_version_deliverydate>2_2</cif_version_deliverydate> <!-- v2.2 -->
-                <cif_version_timeframe>2_0</cif_version_timeframe> <!-- v2.0 -->cd
+                <cif_version_timeframe>2_0</cif_version_timeframe> <!-- v2.0 -->
                 <cif_version_location>2_1</cif_version_location> <!-- v2.1 -->
             </advanced>
 
