@@ -1000,6 +1000,7 @@
                 <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->
                 <enable_delivery_days_be>1</enable_delivery_days_be> <!-- Delivery days are allowed for Belgium -->
                 <allow_sunday_sorting_be>0</allow_sunday_sorting_be> <!-- Sunday sorting is disabled for Belgium -->
+                <allow_avond_be>0</allow_avond_be><!-- Evening delivery is disable for belgium -->
                 <delivery_days_number_be>7</delivery_days_number_be> <!-- Show up to 7 delivery days for Belgium -->
                 <enable_pakjegemak_be>0</enable_pakjegemak_be> <!-- PakjeGemak locations are not allowed for Belgium -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
@@ -1019,7 +1020,7 @@
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
                 <default_food_product_option>3083</default_food_product_option> <!-- Food Delivery -->
                 <default_cooled_product_option>3084</default_cooled_product_option> <!-- Cooled Food delivery -->
-                <ajax_timeout>5</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
+                <ajax_timeout>10</ajax_timeout> <!-- Delivery options AJAX calls will timeout after 5 seconds -->
             </delivery_options>
             <delivery_options_int>
                 <delivery_options_be_active>0</delivery_options_be_active> <!-- Delivery options are disabled for Belgium -->

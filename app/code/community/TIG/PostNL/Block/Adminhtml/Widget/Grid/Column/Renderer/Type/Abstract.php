@@ -78,8 +78,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $comment = $helper->__('COD');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_AVOND:
-                $label   = $helper->__('Domestic');
+                $label = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery');
+                if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
+                    $label = $helper->__('EPS');
+                    $type .= '_be';
+                }
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_AVOND_COD:
                 $label   = $helper->__('Domestic');

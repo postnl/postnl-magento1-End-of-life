@@ -253,22 +253,23 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_CifTest extends TIG_PostNL_Test
             /**
              * BE
              */
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime')),
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '1', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'delivery', true, '10:30', '22:00', 0, '0', '14:00', true, array('Daytime', 'Evening')),
+
 
             /**
              * BE Pickup
              */
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Pickup')),
-            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
-            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
-            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Pickup')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening', 'Pickup')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening', 'Pickup')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '0', '14:00', true, array('Evening', 'Pickup')),
+            array('next thursday 10:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening', 'Pickup')),
+            array('next thursday 13:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening', 'Pickup')),
+            array('next thursday 23:00', 'Regular', 0, 'BE', 'pickup', true, '10:30', '22:00', 0, '1', '14:00', true, array('Evening', 'Pickup')),
 
             /**
              * NL Pickup
