@@ -5828,10 +5828,10 @@
                                     <fieldset>delivery_options_int</fieldset>
                                     <value>1</value>
                                 </allow_avond_be>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
+                                <!--<country>-->
+                                    <!--<fieldset>cif_address</fieldset>-->
+                                    <!--<value>NL</value>-->
+                                <!--</country>-->
                             </depends>
                         </default_evening_be_product_option>
                         <default_sunday_product_option translate="label tooltip" module="postnl">

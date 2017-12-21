@@ -270,15 +270,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
 
         $storeId = Mage::app()->getStore()->getId();
 
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        if ($this->getHelper()->getDomesticCountry() == 'BE') {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE, $storeId);
-        } else {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        }
-
+        $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
         if ($canUseEpsBEOnly) {
             $supportedOptionsArray[] = '4955';
