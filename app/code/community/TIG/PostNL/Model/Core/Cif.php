@@ -1533,7 +1533,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($senderAddress);
                 break;
             case 'Return':
-                $returnAddress = $this->getReturnAddress($shippingAddress->getCountryId());
+                $domesticCountry = Mage::getStoreConfig('postnl/cif_address/country', Mage_Core_Model_App::ADMIN_STORE_ID);
+                $returnAddress = $this->getReturnAddress($domesticCountry);
                 $streetData    = $this->getReturnStreetData($shippingAddress, $returnAddress);
 
                 $address = new Varien_Object($returnAddress);
