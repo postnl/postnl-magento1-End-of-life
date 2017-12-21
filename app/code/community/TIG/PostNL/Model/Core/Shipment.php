@@ -4680,8 +4680,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shippingAddress = $this->getShippingAddress();
         $shipment        = $this->getShipment();
         $order           = $this->getOrder();
+
+        if (!$this->hasReturnLabels()) {
+            $this->getSingleReturnLabel();
+        }
+
         $returnLabels    = $this->getReturnLabels();
+
         if (!$order || !$shipment || !$shippingAddress || empty($returnLabels)) {
+            var_dump(!$order); var_dump(!$shipment); var_dump(!$shippingAddress); var_dump(empty($returnLabels));
             throw new TIG_PostNL_Exception(
                 $helper->__('Unable to send return label email due to missing shipment parameters.'),
                 'POSTNL-0209'

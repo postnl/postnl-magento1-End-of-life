@@ -107,6 +107,20 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     }
 
     /**
+     * @param $code
+     *
+     * @return bool|mixed
+     */
+    public function getOptionsByCode($code)
+    {
+        if (!isset($this->_options[$code])) {
+            return false;
+        }
+
+        return $this->_options[$code];
+    }
+
+    /**
      * Gets product options grouped by their 'group' key.
      *
      * @param array   $flags

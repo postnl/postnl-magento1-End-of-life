@@ -160,7 +160,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
     public function testEveningWithStatedAddress()
     {
         $this->markTestIncomplete('Fixing this test is in progress');
-        
+
         $postnlOrderMock = $this->prepareMocks(array('hasOptions', 'getOptions'));
         $postnlOrderMock->method('hasOptions')->willReturn(true);
         $postnlOrderMock->method('getOptions')->willReturn(array('only_stated_address' => true));
