@@ -2488,13 +2488,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the provided quote or order is being shipped to Belgium.
      *
-     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote $object
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote|Idev_OneStepCheckout_Model_Sales_Quote $object
      *
      * @return bool
      */
     public function isBe($object)
     {
-        if (!($object instanceof Mage_Sales_Model_Order) && !($object instanceof Mage_Sales_Model_Quote)) {
+        return $this->getCountry($object) == 'BE';
+    }
+
+    public function isNl($object)
+    {
+        return $this->getCountry($object) == 'NL';
+    }
+
+    public function getCountry($object)
+    {
+        if (
+            !($object instanceof Mage_Sales_Model_Order) &&
+            !($object instanceof Mage_Sales_Model_Quote) &&
+            !($object instanceof Idev_OneStepCheckout_Model_Sales_Quote)
+        ) {
             throw new InvalidArgumentException("The object parameter must be an instance of an order or a quote.");
         }
 
@@ -2503,11 +2517,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        if ($shippingAddress->getCountryId() == 'BE') {
-            return true;
-        }
-
-        return false;
+        return $shippingAddress->getCountryId();
     }
 
     /**
@@ -3095,6 +3105,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getQuoteIdCheckType($quote = null)
     {
+        if ($this->getDomesticCountry() != 'NL') {
+            return false;
+        }
+
         if ($quote === null) {
             $quote = $this->getQuote();
         }
