@@ -233,10 +233,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             && ($postnlShipment->canSendReturnLabelEmail() || $returnHelper->get($country))
             && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
-            $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
-            if ($returnHelper->get($country) && !$postnlShipment->canSendReturnLabelEmail()) {
-                $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
-            }
+            $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
 
             $block->addButton(
                 'send_return_label_email',

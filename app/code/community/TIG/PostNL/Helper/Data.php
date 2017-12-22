@@ -3105,12 +3105,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getQuoteIdCheckType($quote = null)
     {
-        if ($this->getDomesticCountry() != 'NL') {
-            return false;
-        }
-
         if ($quote === null) {
             $quote = $this->getQuote();
+        }
+
+        if (!$this->isNl($quote)) {
+            return false;
         }
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */

@@ -98,7 +98,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     public function removeOptions($optionsToRemove, $options)
     {
         return array_filter($options, function ($option) use ($optionsToRemove) {
-            return !in_array($option['value'], $optionsToRemove);
+            $option = isset($option['value']) ? $option['value'] : $option;
+            return !in_array($option, $optionsToRemove);
         });
     }
 
