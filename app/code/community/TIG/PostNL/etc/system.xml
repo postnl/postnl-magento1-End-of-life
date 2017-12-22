@@ -3120,6 +3120,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </allow_avond_be>
                         <evening_be_timeframe_fee translate="label tooltip" module="postnl">
@@ -3140,6 +3144,10 @@
                                     <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </evening_be_timeframe_fee>
                         <save_and_continue translate="label" module="postnl">
@@ -5828,10 +5836,10 @@
                                     <fieldset>delivery_options_int</fieldset>
                                     <value>1</value>
                                 </allow_avond_be>
-                                <!--<country>-->
-                                    <!--<fieldset>cif_address</fieldset>-->
-                                    <!--<value>NL</value>-->
-                                <!--</country>-->
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
                             </depends>
                         </default_evening_be_product_option>
                         <default_sunday_product_option translate="label tooltip" module="postnl">

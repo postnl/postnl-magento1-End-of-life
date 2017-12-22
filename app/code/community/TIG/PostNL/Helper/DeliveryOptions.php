@@ -2316,8 +2316,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
+        $domesticCountry = Mage::getStoreConfig('postnl/cif_address/country', Mage_Core_Model_App::ADMIN_STORE_ID);
         $address = $quote->getShippingAddress();
-        if ($address->getCountryId() == 'BE' && !$enabledBe) {
+        // Evenening is not enabled for merchants located in BE.
+        if ($address->getCountryId() == 'BE' && !$enabledBe || $domesticCountry == 'BE') {
             return false;
         }
 
