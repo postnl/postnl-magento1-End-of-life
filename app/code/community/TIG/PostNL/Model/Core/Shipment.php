@@ -4475,8 +4475,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          *BE (special) labels are slightly bigger than the rest, so resize them back so they fix everywhere.
          */
-        if (($this->getShipmentType() == self::SHIPMENT_TYPE_PG || $labelType == 'Return Label')
-            && $this->getShippingAddress()->getCountryId() == 'BE') {
+        if ($this->getShipmentType() == self::SHIPMENT_TYPE_PG && $this->getShippingAddress()->getCountryId() == 'BE') {
             $postnlLabel->setResize(true);
         }
 
