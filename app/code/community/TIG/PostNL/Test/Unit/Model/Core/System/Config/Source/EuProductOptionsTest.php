@@ -91,7 +91,7 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_EuProductOptionsTest
     public function testGetAvailableAvondOptions($productCodes, $epsScriptEnabled)
     {
         Mage::app()->getStore()->setConfig(
-            'postnl/grid/supported_product_options_be',
+            'postnl/grid/supported_product_options',
             '4952,4938,4955,4941'
         );
 

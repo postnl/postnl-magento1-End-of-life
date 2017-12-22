@@ -85,7 +85,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
             $options = $this->removeOptions(array('4955', '4941'), $options);
         }
-        
+
         return $options;
     }
 
