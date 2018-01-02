@@ -159,11 +159,12 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
 
     public function testEveningWithStatedAddress()
     {
-        $this->markTestIncomplete('Fixing this test is in progress');
+        $this->markTestIncomplete('Creating test is in progress');
 
         $postnlOrderMock = $this->prepareMocks(array('hasOptions', 'getOptions'));
         $postnlOrderMock->method('hasOptions')->willReturn(true);
         $postnlOrderMock->method('getOptions')->willReturn(array('only_stated_address' => true));
+
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AVOND;
         $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
@@ -186,10 +187,14 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
      */
     private function prepareMocks($methods = array())
     {
-        $orderMock          = $this->getMock('Mage_Sales_Model_Order');
-        $addressMock        = $this->getMock('Mage_Sales_Model_Order_Address');
+        $orderMock = $this->getMock('Mage_Sales_Model_Order');
+        $shippingAddressMock = $this->getMockBuilder('Mage_Sales_Model_Order_Address')
+            ->setMethods(array('getCountryId'))
+            ->getMock();
+        $shippingAddressMock->expects($this->any())->method('getCountryId')->willReturn('NL');
+
         $getShippingAddress = $orderMock->method('getShippingAddress');
-        $getShippingAddress->willReturn($addressMock);
+        $getShippingAddress->willReturn($shippingAddressMock);
 
         $postnlOrderMock = $this->getMock('TIG_PostNL_Model_Core_Order', $methods);
         $getOrder        = $postnlOrderMock->method('getOrder');

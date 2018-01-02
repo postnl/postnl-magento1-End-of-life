@@ -221,12 +221,12 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
     public function getQuoteIdCheckTypeProvider()
     {
         return array(
-            array(true, false, false, 'AgeCheck', 'NL'),
-            array(false, true, false, 'IDCheck', 'NL'),
-            array(false, false, true, 'BirthdayCheck', 'NL'),
-            array(false, false, true, false, 'BE'), //BirthdayCheck
-            array(true, false, false, false, 'BE'), //AgeCheck
-            array(false, true, false, false, 'BE'), //IDCheck
+            'AgeCheck NL'      => array(true, false, false, 'AgeCheck', 'NL'),
+            'IDCheck NL'       => array(false, true, false, 'IDCheck', 'NL'),
+            'BirthdayCheck NL' => array(false, false, true, 'BirthdayCheck', 'NL'),
+            'BirthdayCheck BE' => array(false, false, true, false, 'BE'),
+            'AgeCheck BE'      => array(true, false, false, false, 'BE'),
+            'IDCheck BE'       => array(false, true, false, false, 'BE'),
         );
     }
 

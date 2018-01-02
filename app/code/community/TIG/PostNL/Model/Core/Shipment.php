@@ -1253,11 +1253,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $availableProductCodes = $this->getAllowedProductCodes();
 
+        $cifHelper = $this->getHelper('cif');
+        $combiLabelProductCodes = $cifHelper->getCombiLabelProductCodes();
+
         /**
          * If no default product code was found or the product code is not available, try to use another product code
          * that is available.
          */
-        if (!$productCode || !in_array($productCode, $availableProductCodes)) {
+        if (!$productCode || !in_array($productCode, $availableProductCodes) || !in_array($productCode, $combiLabelProductCodes)) {
             /**
              * If no other product codes are available for this shipment type, throw an error.
              */
