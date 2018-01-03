@@ -221,9 +221,12 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
     public function getQuoteIdCheckTypeProvider()
     {
         return array(
-            array(true, false, false, 'AgeCheck'),
-            array(false, true, false, 'IDCheck'),
-            array(false, false, true, 'BirthdayCheck'),
+            'AgeCheck NL'      => array(true, false, false, 'AgeCheck', 'NL'),
+            'IDCheck NL'       => array(false, true, false, 'IDCheck', 'NL'),
+            'BirthdayCheck NL' => array(false, false, true, 'BirthdayCheck', 'NL'),
+            'BirthdayCheck BE' => array(false, false, true, false, 'BE'),
+            'AgeCheck BE'      => array(true, false, false, false, 'BE'),
+            'IDCheck BE'       => array(false, true, false, false, 'BE'),
         );
     }
 
@@ -232,16 +235,25 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
      * @param $idCheck
      * @param $birthdayCheck
      * @param $oldResult
+     * @param $countryId
      *
      * @dataProvider getQuoteIdCheckTypeProvider
      */
-    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $oldResult)
+    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $oldResult, $countryId)
     {
+        $shippingAddressMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Address')
+            ->setMethods(array('getCountryId'))
+            ->getMock();
+        $shippingAddressMock->expects($this->once())->method('getCountryId')->willReturn($countryId);
+
         $quote = $this->getMock('Mage_Sales_Model_Quote');
 
         $quote->expects($this->any())
             ->method('getId')
             ->willReturn(1);
+
+        $getShippingAddress = $quote->method('getShippingAddress');
+        $getShippingAddress->willReturn($shippingAddressMock);
 
         $this->setRegistryKey('postnl_quote_is_age_check_1', $ageCheck);
         $this->setRegistryKey('postnl_quote_is_birthday_check_1', $birthdayCheck);

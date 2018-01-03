@@ -407,6 +407,8 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     }
 
     /**
+     * @param        $deliveryDays
+     * @param        $now
      * @param        $enableSundayDelivery
      * @param        $enableSundaySorting
      * @param        $timeframes
@@ -614,7 +616,21 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
                 true,
                 false,
                 false
-            ),
+            )
+        );
+    }
+
+    public function dataProviderFormattedTypes()
+    {
+        return array (
+            'Avond België'                 => array('Avond', 'BE', 'Avond (België)'),
+            'Avond België LowerCase'       => array('avond', 'BE', 'Avond (België)'),
+            'Avond Nederland'              => array('Avond', 'NL', 'Avond'),
+            'Domestic COD'                 => array('domestic_cod', 'NL', 'Overdag rembours'),
+            'Avond COD'                    => array('avond_cod', 'NL', 'Avond rembours'),
+            'Pakjegemak België'            => array('PG', 'BE', 'PakjeGemak (België)'),
+            'Pakjegemak België LowerCase'  => array('pg', 'BE', 'PakjeGemak (België)'),
+
         );
     }
 
@@ -651,5 +667,20 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $result = $instance->canUseExtraAtHomeDelivery($checkQuote);
 
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @param $type
+     * @param $country
+     * @param $expected
+     *
+     * @dataProvider dataProviderFormattedTypes
+     */
+    public function testGetFormattedType($type, $country, $expected)
+    {
+        $instance = $this->_getInstance();
+        $result = $instance->getFormattedType($type, array(), $country);
+
+        $this->assertEquals($expected, $result['formatted_type']);
     }
 }

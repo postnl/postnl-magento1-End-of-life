@@ -65,6 +65,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_EVENING_BE                   = 'postnl/delivery_options_int/allow_avond_be';
     const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
@@ -656,9 +657,29 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
+        $deliveryOptionsInfo = $this->getFormattedType($type, $deliveryOptionsInfo, $shippingAddress->getCountryId());
+
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
+        }
+
         /**
-         * Determine the formatted order type.
+         * Return the data.
          */
+        return $deliveryOptionsInfo;
+    }
+
+    /**
+     * Determine the formatted order type.
+     *
+     * @param $type
+     * @param $deliveryOptionsInfo
+     * @param $countryId
+     *
+     * @return mixed
+     */
+    public function getFormattedType($type, $deliveryOptionsInfo, $countryId)
+    {
         switch ($type) {
             case 'domestic':
             case 'Overdag':
@@ -669,7 +690,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 break;
             case 'avond':
             case 'Avond':
-                $deliveryOptionsInfo['formatted_type'] = 'Avond';
+                $formattedType = 'Avond';
+                if ($countryId == 'BE') {
+                    $formattedType .= ' (België)';
+                }
+                $deliveryOptionsInfo['formatted_type'] = $formattedType;
                 break;
             case 'avond_cod':
                 $deliveryOptionsInfo['formatted_type'] = 'Avond rembours';
@@ -678,7 +703,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             case 'PG':
                 $formattedType = 'PakjeGemak';
 
-                if ($shippingAddress->getCountryId() == 'BE') {
+                if ($countryId == 'BE') {
                     $formattedType .= ' (België)';
                 }
 
@@ -710,13 +735,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
-        if ($asVarienObject) {
-            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
-        }
-
-        /**
-         * Return the data.
-         */
         return $deliveryOptionsInfo;
     }
 
@@ -2269,7 +2287,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        $allowed = $this->_canUseEveningTimeframes();
+        $allowed = $this->_canUseEveningTimeframes($quote);
 
         if ($cache) {
             /**
@@ -2288,21 +2306,33 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    protected function _canUseEveningTimeframes()
+    protected function _canUseEveningTimeframes(Mage_Sales_Model_Quote $quote)
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
-        if (!$enabled) {
+        $enabledNL = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
+        $enabledBe = Mage::getStoreConfigFlag(self::XPATH_ALLOW_EVENING_BE, $storeId);
+        if (!$enabledNL) {
+            return false;
+        }
+
+        $domesticCountry = Mage::getStoreConfig('postnl/cif_address/country', Mage_Core_Model_App::ADMIN_STORE_ID);
+        $address = $quote->getShippingAddress();
+        // Evenening is not enabled for merchants located in BE.
+        if ($address->getCountryId() == 'BE' && !$enabledBe || $domesticCountry == 'BE') {
             return false;
         }
 
         /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $eveningOptionsModel */
         $eveningOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
-        $eveningOptions = $eveningOptionsModel->getAvailableAvondOptions($storeId);
+        $eveningOptions = $eveningOptionsModel->getAvailableAvondOptions();
+
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $eveningOptionsModelEu */
+        $eveningOptionsModelEu = Mage::getModel('postnl_core/system_config_source_euProductOptions');
+        $eveningOptionsBe = $eveningOptionsModelEu->getAvailableAvondOptions();
 
         $allowed = false;
-        if (!empty($eveningOptions)) {
+        if (!empty($eveningOptions) || !empty($eveningOptionsBe)) {
             $allowed = true;
         }
 

@@ -146,13 +146,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const BUSPAKJE_CALCULATION_MODE_MANUAL    = 'manual';
 
     /**
-     * Xpaths to return label settings.
+     * Xpaths to return label NL settings.
      */
     const XPATH_RETURN_LABELS_ACTIVE                     = 'postnl/returns/return_labels_active';
     const XPATH_FREEPOST_NUMBER                          = 'postnl/returns/return_freepost_number';
     const XPATH_CUSTOMER_PRINT_LABEL                     = 'postnl/returns/customer_print_label';
     const XPATH_GUEST_PRINT_LABEL                        = 'postnl/returns/guest_print_label';
     const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS = 'postnl/returns/print_return_and_shipping_label';
+
+    /**
+     * Xpaths to return label BE settings.
+     */
+    const XPATH_RETURN_LABELS_ACTIVE_BE                     = 'postnl/returns/return_labels_active_be';
+    const XPATH_FREEPOST_NUMBER_BE                          = 'postnl/returns/return_freepost_number_be';
+    const XPATH_CUSTOMER_PRINT_LABEL_BE                     = 'postnl/returns/customer_print_label_be';
+    const XPATH_GUEST_PRINT_LABEL_BE                        = 'postnl/returns/guest_print_label_be';
+    const XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS_BE = 'postnl/returns/print_return_and_shipping_label_be';
 
     /**
      * Xpath to the sender country setting.
@@ -1632,6 +1641,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'send_return_labels_email':
                 $aclPath = 'postnl/shipment/actions/print_label/print_return_labels/send_return_label_email';
                 break;
+            case 'send_single_return_label_email':
+                $aclPath = 'postnl/shipment/actions/print_label/print_return_labels/send_single_return_label_email';
+                break;
             case 'convert_to_buspakje':
                 $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
                 break;
@@ -2255,10 +2267,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if return labels may be printed.
      *
      * @param boolean|int $storeId
+     * @param boolean $isBe
      *
      * @return boolean
      */
-    public function isReturnsEnabled($storeId = false)
+    public function isReturnsEnabled($storeId = false, $isBe = false)
     {
         if (false === $storeId) {
             $storeId = Mage::app()->getStore()->getId();
@@ -2268,13 +2281,20 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
+        $printLabelsXpath = self::XPATH_RETURN_LABELS_ACTIVE;
+        $freePostXpath    = self::XPATH_FREEPOST_NUMBER;
+        if ($isBe) {
+            $printLabelsXpath = self::XPATH_RETURN_LABELS_ACTIVE_BE;
+            $freePostXpath    = self::XPATH_FREEPOST_NUMBER_BE;
+        }
+
+        $canPrintLabels = Mage::getStoreConfigFlag($printLabelsXpath, $storeId);
 
         if (!$canPrintLabels) {
             return false;
         }
 
-        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
+        $freePostNumber = Mage::getStoreConfig($freePostXpath, $storeId);
         $freePostNumber = trim($freePostNumber);
 
         if (empty($freePostNumber)) {
@@ -2288,20 +2308,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if return labels can be printed along with shipping labels for the specified store view.
      *
      * @param boolean|int $storeId
+     * @param boolean $isBe
      *
      * @return boolean
      */
-    public function canPrintReturnLabelsWithShippingLabels($storeId = false)
+    public function canPrintReturnLabelsWithShippingLabels($storeId = false, $isBe = false)
     {
         if (false === $storeId) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        if (!$this->isReturnsEnabled($storeId)) {
+        if (!$this->isReturnsEnabled($storeId, $isBe)) {
             return false;
         }
 
-        $printReturnLabels = Mage::getStoreConfigFlag(self::XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS, $storeId);
+        $xpath = self::XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS;
+        if ($isBe) {
+            $xpath = self::XPATH_PRINT_RETURN_LABELS_WITH_SHIPPING_LABELS_BE;
+        }
+
+        $printReturnLabels = Mage::getStoreConfigFlag($xpath, $storeId);
         return $printReturnLabels;
     }
 
@@ -2309,20 +2335,25 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if return label printing is available for logged-in customers.
      *
      * @param boolean|int $storeId
-     *
+     * @param boolean $isBE
      * @return boolean
      */
-    public function canPrintReturnLabelForCustomer($storeId = false)
+    public function canPrintReturnLabelForCustomer($storeId = false, $isBE = false)
     {
         if (false === $storeId) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        if (!$this->isReturnsEnabled($storeId)) {
+        if (!$this->isReturnsEnabled($storeId, $isBE)) {
             return false;
         }
 
-        $canPrintReturnLabelForCustomer = Mage::getStoreConfigFlag(self::XPATH_CUSTOMER_PRINT_LABEL, $storeId);
+        $xpath = self::XPATH_CUSTOMER_PRINT_LABEL;
+        if ($isBE) {
+            $xpath = self::XPATH_CUSTOMER_PRINT_LABEL_BE;
+        }
+
+        $canPrintReturnLabelForCustomer = Mage::getStoreConfigFlag($xpath, $storeId);
         return $canPrintReturnLabelForCustomer;
     }
 
@@ -2330,20 +2361,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if return label printing is available for guests.
      *
      * @param boolean|int $storeId
+     * @param boolean $isBE
      *
      * @return boolean
      */
-    public function canPrintReturnLabelForGuest($storeId = false)
+    public function canPrintReturnLabelForGuest($storeId = false, $isBE = false)
     {
         if (false === $storeId) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        if (!$this->canPrintReturnLabelForCustomer($storeId)) {
+        if (!$this->canPrintReturnLabelForCustomer($storeId, $isBE)) {
             return false;
         }
 
-        $canPrintReturnLabelForGuest = Mage::getStoreConfigFlag(self::XPATH_GUEST_PRINT_LABEL, $storeId);
+        $xpath = self::XPATH_GUEST_PRINT_LABEL;
+        if ($isBE) {
+            $xpath = self::XPATH_GUEST_PRINT_LABEL_BE;
+        }
+
+        $canPrintReturnLabelForGuest = Mage::getStoreConfigFlag($xpath, $storeId);
         return $canPrintReturnLabelForGuest;
     }
 
@@ -2364,11 +2401,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * Check if printing return labels is allowed for the order's store ID and if it's allowed for logged-in
          * customers or guests depending on who placed the order.
          */
+        $isBe = $this->isBe($order);
         if ($order->getCustomerIsGuest()
-            && !$this->canPrintReturnLabelForGuest($order->getStoreId())
+            && !$this->canPrintReturnLabelForGuest($order->getStoreId(), $isBe)
         ) {
             return false;
-        } elseif (!$this->canPrintReturnLabelForCustomer($order->getStoreId())) {
+        } elseif (!$this->canPrintReturnLabelForCustomer($order->getStoreId(), $isBe)) {
             return false;
         }
 
@@ -2404,6 +2442,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         if ($this->isFoodOrder($order)) {
             return false;
+        }
+
+        if ($this->isReturnsEnabled(false, $isBe)) {
+            return true;
         }
 
         /**
@@ -2446,13 +2488,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the provided quote or order is being shipped to Belgium.
      *
-     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote $object
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Quote|Idev_OneStepCheckout_Model_Sales_Quote $object
      *
      * @return bool
      */
     public function isBe($object)
     {
-        if (!($object instanceof Mage_Sales_Model_Order) && !($object instanceof Mage_Sales_Model_Quote)) {
+        return $this->getCountry($object) == 'BE';
+    }
+
+    public function isNl($object)
+    {
+        return $this->getCountry($object) == 'NL';
+    }
+
+    public function getCountry($object)
+    {
+        if (
+            !($object instanceof Mage_Sales_Model_Order) &&
+            !($object instanceof Mage_Sales_Model_Quote) &&
+            !($object instanceof Idev_OneStepCheckout_Model_Sales_Quote)
+        ) {
             throw new InvalidArgumentException("The object parameter must be an instance of an order or a quote.");
         }
 
@@ -2461,11 +2517,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        if ($shippingAddress->getCountryId() == 'BE') {
-            return true;
-        }
-
-        return false;
+        return $shippingAddress->getCountryId();
     }
 
     /**
@@ -3055,6 +3107,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if ($quote === null) {
             $quote = $this->getQuote();
+        }
+
+        if (!$this->isNl($quote)) {
+            return false;
         }
 
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */

@@ -53,6 +53,7 @@ PostnlPostcodecheck = new Class.create({
         this.housenumberExtensionField = housenumberExtensionField;
         this.cityField                 = cityField;
         this.virtualPrefix             = virtualPrefix;
+        this.failed                    = false;
     },
 
     init: function() {
@@ -99,8 +100,10 @@ PostnlPostcodecheck = new Class.create({
         if($(countryField) === null || $(countryField).hasClassName('country_hidden') == false) {
 
             $(countryField).observe('change', function() {
+                // When using the billing as shipping the country value of shipping is not updated and always stays
+                // on the default country selected in the configuration.
                 countryId = this.getValue();
-
+                $('shipping:country_id').setValue(countryId);
                 $('postnl_address_error_' + addressType).hide();
                 $('postnl_address_missing_' + addressType).hide();
                 $('postnl_address_invalid_' + addressType).hide();
@@ -229,8 +232,9 @@ PostnlPostcodecheck = new Class.create({
                 var spinner = $('postnl_postcodecheck_spinner_' + addressType);
 
                 if (response.responseText == 'error') {
+                    postcodeCheck.failed = true;
                     $('postnl_address_error_' + addressType).show();
-                    postcodeCheck.changePostcodeCheckDisabledFields(false);
+                    postcodeCheck.removeDisabledClasses();
 
                     $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
                     $(postcodeCheck.streetnameField).setValue('');
@@ -243,6 +247,9 @@ PostnlPostcodecheck = new Class.create({
                 }
 
                 if (response.responseText == 'missing_data') {
+                    postcodeCheck.removeDisabledClasses();
+                    postcodeCheck.failed = true;
+
                     $('postnl_address_missing_' + addressType).show();
 
                     postcodeCheck.inProgressRequest = false;
@@ -252,6 +259,9 @@ PostnlPostcodecheck = new Class.create({
                 }
 
                 if (response.responseText == 'invalid_data') {
+                    postcodeCheck.removeDisabledClasses();
+                    postcodeCheck.failed = true;
+
                     postcodeCheck.errorCounter = postcodeCheck.errorCounter + 1;
 
                     if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
@@ -282,15 +292,16 @@ PostnlPostcodecheck = new Class.create({
                 postcodeCheck.inProgressRequest = false;
                 spinner.hide();
 
+                postcodeCheck.failed = false;
+
                 document.fire('postnl:postcodeCheckSuccess');
             },
             onFailure    : function () {
+                postcodeCheck.removeDisabledClasses();
                 if (postcodeCheck.inProgressAborted) {
                     return;
                 }
-
                 $('postnl_address_error_' + addressType).show();
-                postcodeCheck.changePostcodeCheckDisabledFields(false);
 
                 $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
                 $(postcodeCheck.streetnameField).setValue('');
@@ -298,13 +309,14 @@ PostnlPostcodecheck = new Class.create({
 
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
+                postcodeCheck.failed = true;
             },
             onTimeout    : function () {
+                postcodeCheck.removeDisabledClasses();
                 $('postnl_address_error_' + addressType).show();
-                postcodeCheck.changePostcodeCheckDisabledFields(false);
-
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
+                postcodeCheck.failed = true;
             },
             timeoutDelay : postcodeCheck.timeoutDelay
         });
@@ -312,8 +324,32 @@ PostnlPostcodecheck = new Class.create({
         return true;
     },
 
+    removeDisabledClasses: function () {
+
+        var streetLine = $(this.virtualPrefix + this.streetnameField);
+        var city = $(this.cityField);
+
+        streetLine.readOnly = false;
+        streetLine.removeClassName('postnl-readonly');
+
+        city.readOnly = false;
+        city.removeClassName('postnl-readonly');
+
+        if ($(this.postcodeField).hasClassName('postnl-validate-postcode')) {
+            $(this.postcodeField).removeClassName('postnl-validate-postcode');
+        }
+
+        if ($(this.virtualPrefix + this.housenumberField).hasClassName('postnl-validate-housenumber')) {
+            $(this.virtualPrefix + this.housenumberField).removeClassName('postnl-validate-housenumber');
+        }
+    },
+
     changePostcodeCheckDisabledFields: function(countryId) {
         var addressType = this.addressType;
+
+        if (this.failed) {
+            return;
+        }
 
         /**
          * Only the billing and shipping address types are currently supported
@@ -336,31 +372,16 @@ PostnlPostcodecheck = new Class.create({
             city.addClassName('postnl-readonly');
 
             if (!$(this.postcodeField).hasClassName('postnl-validate-postcode')) {
-                $(this.postcodeField).addClassName('postnl-validate-postcode')
+                $(this.postcodeField).addClassName('postnl-validate-postcode');
             }
 
             if (!$(this.virtualPrefix + this.housenumberField).hasClassName('postnl-validate-housenumber')) {
-                $(this.virtualPrefix + this.housenumberField).addClassName('postnl-validate-housenumber')
+                $(this.virtualPrefix + this.housenumberField).addClassName('postnl-validate-housenumber');
             }
 
             return;
         }
 
-        /**
-         * For all other countries we need to make sure they're enabled instead.
-         */
-        streetLine.readOnly = false;
-        streetLine.removeClassName('postnl-readonly');
-
-        city.readOnly = false;
-        city.removeClassName('postnl-readonly');
-
-        if ($(this.postcodeField).hasClassName('postnl-validate-postcode')) {
-            $(this.postcodeField).removeClassName('postnl-validate-postcode')
-        }
-
-        if ($(this.virtualPrefix + this.housenumberField).hasClassName('postnl-validate-housenumber')) {
-            $(this.virtualPrefix + this.housenumberField).removeClassName('postnl-validate-housenumber')
-        }
+        this.removeDisabledClasses();
     }
 });

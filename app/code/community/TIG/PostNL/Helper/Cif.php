@@ -361,6 +361,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param bool $flat
+     *
+     * @return array
+     */
+    public function getAvondEuProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euProductCodes */
+        $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
+        return $euProductCodes->getAvailableAvondOptions($flat);
+    }
+
+
+    /**
      * Get an array of evening delivery COD product codes.
      *
      * @param boolean $flat
@@ -1117,10 +1130,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * Check if return labels may be printed.
      *
      * @param bool|int $storeId
+     * @param bool $isBe
      *
      * @return bool
      */
-    public function isReturnsEnabled($storeId = false)
+    public function isReturnsEnabled($storeId = false, $isBe = false)
     {
         if (false === $storeId) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;

@@ -61,6 +61,10 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                     $xpath = $this->_getDefaultProductCodeXpathByOptions($postnlOrder);
                 }
 
+                if ($this->isBelgiumShipment($orderInfo)) {
+                    $xpath = PostNLShipment::XPATH_DEFAULT_EVENING_BE_PRODUCT_OPTION;
+                }
+
                 if (!$xpath) {
                     $xpath = PostNLShipment::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
                 }

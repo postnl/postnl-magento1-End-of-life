@@ -107,6 +107,20 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     }
 
     /**
+     * @param $code
+     *
+     * @return bool|mixed
+     */
+    public function getOptionsByCode($code)
+    {
+        if (!isset($this->_options[$code])) {
+            return false;
+        }
+
+        return $this->_options[$code];
+    }
+
+    /**
      * Gets product options grouped by their 'group' key.
      *
      * @param array   $flags
@@ -251,25 +265,16 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _filterAvailable(&$options)
     {
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
-        $canUsePakjegemakBeNotInsured = $helper->canUsePakjegemakBeNotInsured();
+        $canUseEpsBEOnly = $this->getHelper()->canUseEpsBEOnlyOption();
+        $canUsePakjegemakBeNotInsured = $this->getHelper()->canUsePakjegemakBeNotInsured();
 
         $storeId = Mage::app()->getStore()->getId();
 
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        if ($helper->getDomesticCountry() == 'BE') {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE, $storeId);
-        } else {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        }
-
+        $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
         if ($canUseEpsBEOnly) {
             $supportedOptionsArray[] = '4955';
+            $supportedOptionsArray[] = '4941';
         }
 
         if ($canUsePakjegemakBeNotInsured) {

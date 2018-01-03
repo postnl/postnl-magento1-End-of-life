@@ -1158,6 +1158,8 @@ TIG_PostNL::Technical settings,Technische instellingen
 TIG_PostNL::Track & trace email,Track & trace e-mail
 TIG_PostNL::Sender address,Afzenderadres
 TIG_PostNL::Return address,Retouradres
+TIG_PostNL::Return address NL,Retouradres NL
+TIG_PostNL::Return address BE,Retouradres BE
 TIG_PostNL::PostNL account credentials,PostNL accountgegevens
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">hier</a> meer lezen over de wijze waarop de extensie bepaalt of een bestelling een brievenbuspakje is."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">hier</a> meer lezen over het instellen van gesplitste adresregels in Magento."
@@ -1176,6 +1178,8 @@ TIG_PostNL::Freepost number,Antwoordnummer
 TIG_PostNL::These settings are only available on the 'global' scope.,Deze instellingen zijn enkel beschikbaar op het 'globaal' niveau.
 TIG_PostNL::Return Settings,Retouren Instellingen
 TIG_PostNL::Returns,Retouren
+TIG_PostNL::Returns NL,Retouren NL
+TIG_PostNL::Returns BE,Retouren BE
 TIG_PostNL::Return labels instructions block,Retourlabels instructieblok
 TIG_PostNL::Please select a static block that contains instructions for customers on how to use the return labels.,Selecteer s.v.p. een static block dat instructies bevat voor de klant om een zending retour te sturen.
 TIG_PostNL::Alternative sender address,Alternatief afzenderadres
@@ -1316,6 +1320,7 @@ TIG_PostNL::Delivery options are only available when shipping from the Netherlan
 TIG_PostNL::Delivery options based on contractual agreements,Bezorgopties op basis van contractafspraken
 "TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use monday, sunday or same day delivery.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van Maandagbezorging, Zondagbezorging en/of Dezelfde dag bezorgd."
 "TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use Monday.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wil maken van Maandagbezorging."
+"TIG_PostNL::Please note: these delivery options require specific contractual agreements with PostNL. Please contact your PostNL account manager if you wish to use these options for Belgium.","Let op: voor deze bezorgopties moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager als u gebruik wilt maken van deze opties voor België."
 TIG_PostNL::Enable monday delivery,Activeer maandagbezorging
 TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers.,Activeer maandagbezorging (ook bekend als zondagsortering) voor uw klanten.
 "TIG_PostNL::You can read more about monday delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""monday delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/maandagbezorging/"" target=""_blank"" title=""maandagbezorging"">hier</a> meer lezen over maandagbezorging."
@@ -1490,3 +1495,8 @@ TIG_PostNL::This product(s) can only be delivered within the Netherlands.,Deze b
 TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
 "TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Let op: Om succesvol orders met Extra@Home te versturen moet u de productattributen naam, gewicht en volume ingevuld hebben."
 "TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","Wanneer het product type Extra@Home is, dan is dit veld verplicht. Vul hier het aantal kubieke centimeters in, bijvoorbeeld 30000"
+"TIG_PostNL::Enable evening delivery for Belgium","Activeer avondbezorging voor België"
+"TIG_PostNL::You can read more about evening delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/"" target=""_blank"" title=""evening delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/"" target=""_blank"" title=""evening delivery"">hier</a> meer lezen over avondbezorging."
+"TIG_PostNL::Activate evening delivery for your customers. Note: this only applies to home deliveries.","Activeer avondbezorging voor uw klanten. Dit geld alleen voor bestellingen die thuis afgeleverd worden."
+"TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.","Activeer maandagbezorigin voor (ook bekend als zondag sortering) voor uw klanten. Dit geld alleen voor bestellingen die thuis afgeleverd worden. Postkantoor leveringen worden niet gedaan op maandag."
+"TIG_PostNL::Evening BE timeframe fee","Avondbezorging BE toeslag"

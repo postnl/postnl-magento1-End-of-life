@@ -590,6 +590,10 @@
             street = streetnameArray[0];
         }
 
+        if (street === '-') {
+            street = false;
+        }
+
         return street;
     }
 

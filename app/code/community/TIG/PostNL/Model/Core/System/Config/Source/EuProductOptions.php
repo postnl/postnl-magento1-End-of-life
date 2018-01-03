@@ -44,9 +44,29 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     protected $_options = array(
         array(
-            'value' => '4952',
-            'label' => 'EU Pack Special Consumer (incl. signature)',
+            'value'   => '4952',
+            'label'   => 'EU Pack Special Consumer (incl. signature)',
+            'isAvond' => false,
         ),
+        array(
+            'value'   => '4938',
+            'label'   => 'EU Pack Special Evening (incl. signature)',
+            'isAvond' => true,
+        ),
+        array(
+            'value'         => '4955',
+            'label'         => 'EU Pack Standard (Belgium only, no signature)',
+            'isAvond'       => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+        ),
+        array(
+            'value'         => '4941',
+            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'isAvond'       => true,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+        )
     );
 
     /**
@@ -62,21 +82,36 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     {
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        if ($helper->canUseEpsBEOnlyOption()) {
-            if (!$asFlatArray) {
-                $options[] = array(
-                    'value'         => '4955',
-                    'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                    'isBelgiumOnly' => true,
-                    'isExtraCover'  => false,
-                );
-            } else {
-                $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
-            }
+        if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
+            $options = $this->removeOptions(array('4955', '4941'), $options);
         }
 
         return $options;
+    }
+
+    /**
+     * @param $optionsToRemove
+     * @param $options
+     *
+     * @return array
+     */
+    public function removeOptions($optionsToRemove, $options)
+    {
+        return array_filter($options, function ($option) use ($optionsToRemove) {
+            $option = isset($option['value']) ? $option['value'] : $option;
+            return !in_array($option, $optionsToRemove);
+        });
+    }
+
+    /**
+     * Get available avond options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableAvondOptions($flat = false)
+    {
+        return $this->getOptions(array('isAvond' => true), $flat, true);
     }
 }
