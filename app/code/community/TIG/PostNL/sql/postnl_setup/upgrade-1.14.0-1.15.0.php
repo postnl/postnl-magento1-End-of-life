@@ -35,7 +35,7 @@
 $installer = $this;
 $installer->startSetup();
 
-// Reset cif_version_labelling
-$installer->resetWebserviceVersions(array('cif_version_labelling'));
+// Reset cif_versions
+$installer->resetWebserviceVersions();
 
 $installer->endSetup();

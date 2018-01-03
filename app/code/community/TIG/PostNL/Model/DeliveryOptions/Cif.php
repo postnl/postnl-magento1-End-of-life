@@ -354,7 +354,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @param $storeId
      *
-     * @return string
+     * @return array
      */
     protected function _getCutOffTimes($storeId)
     {
@@ -380,43 +380,37 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             }
         }
 
-        $shippingDays  = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
+        $shippingDays      = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
 
-        $CutOffTimes = array(
-            array(
-                'Day'   => '01',
-                'Time'  => $weekdayCutoff,
-                'Available' => in_array(1,$shippingDaysArray)?1:0,
-            ),array(
-                'Day'   => '02',
-                'Time'  => $weekdayCutoff,
-                'Available' => in_array(2,$shippingDaysArray)?1:0,
-            ),array(
-                'Day'   => '03',
-                'Time'  => $weekdayCutoff,
-                'Available' => in_array(3,$shippingDaysArray)?1:0,
-            ),array(
-                'Day'   => '04',
-                'Time'  => $weekdayCutoff,
-                'Available' => in_array(4,$shippingDaysArray)?1:0,
-            ),array(
-                'Day'   => '05',
-                'Time'  => $weekdayCutoff,
-                'Available' => in_array(5,$shippingDaysArray)?1:0,
-            ),array(
-                'Day'   => '06',
-                'Time'  => $this->_getSaterdaySortingCutOffTime(),
-                'Available' => in_array(6,$shippingDaysArray)?1:0,
-            ),
-            array(
-                'Day'   => '07',
-                'Time'  => $this->_getSundaySortingCutOffTime(),
-                'Available' => in_array(7,$shippingDaysArray)?1:0,
-            )
-        );
+        $cutOffTimes = array();
+        foreach ($shippingDaysArray as $dayNumber) {
+            $cutOffTimes[] = array(
+                'Day'  => '0'.$dayNumber,
+                'Time' => $this->_getCutOffTimeForDayNumber($dayNumber, $weekdayCutoff)
+            );
+        }
 
-        return $CutOffTimes;
+        return $cutOffTimes;
+    }
+
+    /**
+     * @param $day
+     * @param $reqularCutOff
+     *
+     * @return string
+     */
+    protected function _getCutOffTimeForDayNumber($day, $reqularCutOff)
+    {
+        if ($day == '6') {
+            return $this->_getSaterdaySortingCutOffTime();
+        }
+
+        if ($day == '7') {
+            return $this->_getSundaySortingCutOffTime();
+        }
+
+        return $reqularCutOff;
     }
 
     /**
