@@ -39,7 +39,7 @@
 /**
  * @var TIG_PostNL_Model_Resource_Setup $installer
  */
-const XPATH_CUTOFF_TIME             = 'postnl/cif_labels_and_confirming/cutoff_time';
+const XPATH_CUTOFF_TIME               = 'postnl/cif_labels_and_confirming/cutoff_time';
 const XPATH_SATURDAY_CUTOFF_TIME      = 'postnl/cif_labels_and_confirming/saturday_cutoff_time';
 
 $installer = $this;
