@@ -35,7 +35,7 @@
  *
  * @category    TIG
  * @package     TIG_PostNL
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * @link        http://store.tig.nl/tig/postnl.html
  */
