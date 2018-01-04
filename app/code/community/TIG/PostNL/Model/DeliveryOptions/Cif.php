@@ -382,13 +382,22 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $shippingDays      = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, $storeId);
         $shippingDaysArray = explode(',', $shippingDays);
+        $allShippingDays   = array('1','2','3','4','5','6','7');
 
         $cutOffTimes = array();
-        foreach ($shippingDaysArray as $dayNumber) {
-            $cutOffTimes[] = array(
-                'Day'  => '0'.$dayNumber,
-                'Time' => $this->_getCutOffTimeForDayNumber($dayNumber, $weekdayCutoff)
+        foreach ($allShippingDays as $dayNumber) {
+            $available = in_array((int)$dayNumber, $shippingDaysArray) ? 'true' : 'false';
+            $time = array(
+                'Day'       => '0'.$dayNumber,
+                'Time'      => $this->_getCutOffTimeForDayNumber($dayNumber, $weekdayCutoff),
+                'Available' => $available
             );
+
+            if (!$available) {
+                unset($time['Time']);
+            }
+
+            $cutOffTimes[] = $time;
         }
 
         return $cutOffTimes;
@@ -396,11 +405,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
     /**
      * @param $day
-     * @param $reqularCutOff
+     * @param $weekdayCutoff
      *
      * @return string
      */
-    protected function _getCutOffTimeForDayNumber($day, $reqularCutOff)
+    protected function _getCutOffTimeForDayNumber($day, $weekdayCutoff)
     {
         if ($day == '6') {
             return $this->_getSaterdaySortingCutOffTime();
@@ -410,7 +419,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             return $this->_getSundaySortingCutOffTime();
         }
 
-        return $reqularCutOff;
+        return $weekdayCutoff;
     }
 
     /**

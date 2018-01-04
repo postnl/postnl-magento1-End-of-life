@@ -1261,10 +1261,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
              */
-            if ($shipmentNumber < $parcelCount) {
+            if ($shipmentNumber < $parcelCount && !$postnlShipment->isExtraAtHome()) {
                 $shipmentWeight = $parcelWeight;
             } else {
                 $shipmentWeight = $shipmentWeight % $parcelWeight;
+            }
+
+            if ($postnlShipment->isExtraAtHome()) {
+                $shipmentWeight = $this->_getWeightByParcelCount(
+                    $postnlShipment->getTotalWeight(true, true),
+                    $parcelCount
+                );
             }
         }
 
@@ -1346,10 +1353,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment, $shipment);
         }
 
+
         if ($postnlShipment->isExtraAtHome()) {
-            /** @var TIG_PostNL_Helper_Volume $volume */
-            $volume = Mage::helper('postnl/volume');
-            $shipmentData['Dimension']['Volume'] = $volume->get($shipment->getAllItems());
+            $shipmentData['Dimension']['Volume'] = $this->_getVolumeByParcelCount(
+                $shipment->getAllItems(), $postnlShipment->getParcelCount()
+            );
             /** @var TIG_PostNL_Helper_ContentDescription $description */
             $description = Mage::helper('postnl/contentDescription');
             $shipmentData['Content'] = $description->get($shipment);
@@ -2735,5 +2743,34 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customerNumber = (string) Mage::getStoreConfig(self::XPATH_COD_IBAN, $storeId);
 
         return $customerNumber;
+    }
+
+    /**
+     * @param $weight
+     * @param $count
+     *
+     * @return float|int
+     */
+    protected function _getWeightByParcelCount($weight, $count)
+    {
+        // Devision by zero not allowed.
+        $weight = round(($weight ?: 1) / ($count ?: 1));
+        return $weight <= 0 ? 1 : $weight;
+    }
+
+    /**
+     * @param $items
+     * @param $count
+     *
+     * @return float
+     */
+    protected function _getVolumeByParcelCount($items, $count)
+    {
+        /** @var TIG_PostNL_Helper_Volume $volume */
+        $volume = Mage::helper('postnl/volume');
+        $volume = $volume->get($items);
+
+        // Devision by zero not allowed.
+        return round(($volume ?: 1) / ($count ?: 1));
     }
 }
