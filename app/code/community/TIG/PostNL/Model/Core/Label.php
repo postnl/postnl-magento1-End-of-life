@@ -549,12 +549,20 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /** @noinspection PhpUndefinedMethodInspection */
         $pdf->SetCreator('PostNL');
 
-        $pdf->addOrientedPage('P', 'A4');
+        $packingSlipPdf = Zend_Pdf::parse($packingSlip);
 
-        $tempPackingslip = $this->_saveTempPackingslip($label, $packingSlip);
-        $tempLabel       = $this->_saveTempLabel($label);
+        /** @var Zend_Pdf_Page $page */
+        foreach ($packingSlipPdf->pages as $page) {
+            $packingSlipPdfPage = new Zend_Pdf();
+            $packingSlipPdfPage->pages[] = clone $page;
 
-        $pdf->insertTemplate($tempPackingslip, 0, 0);
+            $packingSlipFile = $this->_saveTempPackingslip($label, $packingSlipPdfPage->render());
+
+            $pdf->addOrientedPage('P', 'A4');
+            $pdf->insertTemplate($packingSlipFile, 0, 0);
+        }
+
+        $tempLabel = $this->_saveTempLabel($label);
 
         if ($label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL
             || $label->getLabelType() == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
