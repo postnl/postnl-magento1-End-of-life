@@ -951,10 +951,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!isset($shipment->Labels)
             || !is_object($shipment->Labels)
         ) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
-                'POSTNL-0057'
-            );
+            throw TIG_PostNL_Exception::invalidGenerateLabelsResponse($response);
         }
 
         return $response;
@@ -1002,10 +999,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!isset($shipment->Labels)
             || !is_object($shipment->Labels)
         ) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
-                'POSTNL-0057'
-            );
+            throw TIG_PostNL_Exception::invalidGenerateLabelsResponse($response);
         }
 
         return $response;

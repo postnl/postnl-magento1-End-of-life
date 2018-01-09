@@ -73,10 +73,31 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
      */
     public static function invalidGenerateLabelsResponse($response)
     {
+        $message = self::getInvalidResponseMessage($response);
+
         return new static(
-            Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
+            $message,
             'POSTNL-0057'
         );
+    }
+
+    /**
+     * Prevent an empty response from being shown as an error
+     *
+     * @param $response
+     *
+     * @return string
+     */
+    private static function getInvalidResponseMessage($response)
+    {
+        $helper = Mage::helper('postnl');
+        $message = $helper->__('Invalid generateLabels response.');
+
+        if (count($response) > 0) {
+            $message = $helper->__('Invalid generateLabels response: %s', var_export($response, true));
+        }
+
+        return $message;
     }
 
     /**
