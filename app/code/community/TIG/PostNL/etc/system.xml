@@ -6225,7 +6225,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </debug_mode>
-                        <pdf_font_compatibility_mode>
+                        <pdf_font_compatibility_mode translate="label comment tooltip" module="postnl">
                             <label>PDF font compatibility mode</label>
                             <comment><![CDATA[Only use this if you have problems with special characters on your PostNL packing slip.]]></comment>
                             <tooltip>This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.</tooltip>
@@ -6237,6 +6237,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </pdf_font_compatibility_mode>
+                        <imagick_label translate="label comment tooltip" module="postnl">
+                            <label>PDF (Combi-label) Imagick</label>
+                            <comment><![CDATA[Only use this if you have problems printing combi-labels in batch.]]></comment>
+                            <tooltip>This function makes sure when printing multiple combi-label orders with packingslip, all the labels are printed. Before using this function, please make sure your server has the Imagick PHP extension.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </imagick_label>
                         <infinite_label_printing translate="label tooltip" module="postnl">
                             <label>Allow infinite label printing</label>
                             <tooltip>By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.</tooltip>

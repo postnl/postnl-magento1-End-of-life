@@ -577,12 +577,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
             if (isset($matches[1]) && isset($matches[2]) && $matches[1] < $matches[2]) {
                 // combilabel detected
-                $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(560), $this->pix2pt(400));
+                $pdf->insertTemplate($this->labelToImage($tempLabel), $this->pix2pt(400), $this->pix2pt(560), $this->pix2pt(400));
             } else {
                 $pdf->Rotate(90);
-                $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
+                $pdf->insertTemplate($this->labelToImage($tempLabel), $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
                 $pdf->Rotate(0);
             }
+            $this->removeLabelToImageData();
         } else {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
@@ -789,10 +790,16 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 );
         }
 
+        if ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_LABEL_COMBI) {
+            $tempFilename = $this->labelToImage($tempFilename);
+        }
+
         /**
          * Add the next label to the pdf.
          */
         $pdf->insertTemplate($tempFilename, $position['x'], $position['y'], $position['w']);
+
+        $this->removeLabelToImageData();
 
         /**
          * If a rotated pdf was added, rotate the main pdf back to it's previous orientation.
@@ -1003,6 +1010,36 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         return 0;
     }
+
+    /**
+     * @param $labelToFormat
+     * @param $type
+     *
+     * @return null|string|Zend_Pdf
+     */
+    public function labelToImage($labelToFormat, $type = 'file')
+    {
+        /** @var TIG_PostNL_Helper_LabelToImage $labelToImage */
+        $labelToImage = Mage::helper('postnl/labelToImage');
+
+        if (!$labelToImage->isActive()) {
+            return $labelToFormat;
+        }
+
+        $labelToImage->set($labelToFormat);
+        return $labelToImage->get($type);
+    }
+
+    /**
+     * Remove data thats created by the imagick extension
+     */
+    public function removeLabelToImageData()
+    {
+        /** @var TIG_PostNL_Helper_LabelToImage $labelToImage */
+        $labelToImage = Mage::helper('postnl/labelToImage');
+        $labelToImage->remove();
+    }
+
 
     /**
      * @param TIG_PostNL_Model_Core_Shipment_Label $label

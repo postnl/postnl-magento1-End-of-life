@@ -1419,4 +1419,7 @@ TIG_PostNL::To offer returns to your customer, you need to use a different custo
 This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.
 TIG_PostNL::PostNL product parcel count,PostNL product parcel count
 "TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume."
-"TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000."
+"TIG_PostNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000."
+"TIG_PostNL::PDF (Combi-label) Imagick","PDF (Combi-label) Imagick"
+"TIG_PostNL::Only use this if you have problems printing combi-labels in batch.","Only use this if you have problems printing combi-labels in batch."
+"TIG_PostNL::This function makes sure when printing multiple combi-label orders with packingslip, all the labels are printed. Before using this function, please make sure your server has the Imagick PHP extension.","This function makes sure when printing multiple combi-label orders with packingslip, all the labels are printed. Before using this function, please make sure your server has the Imagick PHP extension."
