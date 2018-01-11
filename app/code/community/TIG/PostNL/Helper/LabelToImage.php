@@ -96,7 +96,7 @@ class TIG_PostNL_Helper_LabelToImage extends Mage_Core_Helper_Abstract
      */
     public function set($labelToFormat, $x1 = 0, $y1 = 0, $x2 = 298, $y2 = 420)
     {
-        $this->validateSet();
+        $this->validateSet($labelToFormat);
 
         $this->varDir     = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label');
         $this->tmpPdfName = $labelToFormat;
@@ -169,7 +169,7 @@ class TIG_PostNL_Helper_LabelToImage extends Mage_Core_Helper_Abstract
     protected function validateGet($type)
     {
         if (!in_array($type, $this->types)) {
-            throw new Exception('This type is not supported in '. get_class($this));
+            throw new Exception('The type : ' . $type .' is not supported in '. get_class($this));
         }
 
         if ($this->label == null) {
@@ -179,10 +179,19 @@ class TIG_PostNL_Helper_LabelToImage extends Mage_Core_Helper_Abstract
         }
     }
 
-    protected function validateSet()
+    /**
+     * @param $labelToFormat
+     *
+     * @throws Exception
+     */
+    protected function validateSet($labelToFormat)
     {
         if (!extension_loaded('imagick')) {
             throw new Exception('Imagick extension is not loaded');
+        }
+
+        if ($labelToFormat instanceof TIG_PostNL_Fpdi) {
+            throw new Exception('Current version of ' . get_class($this) . ' does not support Fpdi');
         }
     }
 
