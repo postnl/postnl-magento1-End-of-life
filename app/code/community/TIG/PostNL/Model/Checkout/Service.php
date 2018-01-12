@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Checkout_Service setQuote(Mage_Sales_Model_Quote $value)
@@ -456,6 +456,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
              */
             if ($field) {
                 $paymentData[$field] = $optionValue;
+                // @codingStandardsIgnoreLine
                 $_POST[$field] = $optionValue;
             }
         }

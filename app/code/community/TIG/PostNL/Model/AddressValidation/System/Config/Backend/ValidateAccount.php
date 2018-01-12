@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasStoreId()
@@ -52,10 +52,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
      * Xpaths used to get PostNL account credentials.
      */
     const XPATH_MODE                = 'postnl/cif/mode';
-    const XPATH_LIVE_USERNAME       = 'postnl/cif/live_username';
-    const XPATH_LIVE_PASSWORD       = 'postnl/cif/live_password';
-    const XPATH_TEST_USERNAME       = 'postnl/cif/test_username';
-    const XPATH_TEST_PASSWORD       = 'postnl/cif/test_password';
+    const XPATH_TEST_APIKEY         = 'postnl/cif/test_apikey';
+    const XPATH_LIVE_APIKEY         = 'postnl/cif/live_apikey';
     const XPATH_CUSTOMER_NUMBER     = 'postnl/cif/customer_number';
     const XPATH_CUSTOMER_CODE       = 'postnl/cif/customer_code';
     const XPATH_COLLECTION_LOCATION = 'postnl/cif/collection_location';
@@ -123,15 +121,13 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         }
 
         /**
-         * Check whether the extension is set to test mode and get the username and password for that mode.
+         * Check whether the extension is set to test mode and get the apikey for that mode.
          */
         $testMode = $this->_getIsTestMode();
         if ($testMode) {
-            $username = $this->_getConfigValue(self::XPATH_TEST_USERNAME);
-            $password = $this->_getConfigValue(self::XPATH_TEST_PASSWORD);
+            $apikey =  $this->_getConfigValue(self::XPATH_TEST_APIKEY);
         } else {
-            $username = $this->_getConfigValue(self::XPATH_LIVE_USERNAME);
-            $password = $this->_getConfigValue(self::XPATH_LIVE_PASSWORD);
+            $apikey =  $this->_getConfigValue(self::XPATH_LIVE_APIKEY);
         }
 
         /**
@@ -142,19 +138,18 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         $locationCode = $this->_getConfigValue(self::XPATH_COLLECTION_LOCATION);
 
         /**
-         * Decrypt and then hash the password.
+         * Decrypt the apikey.
          */
-        $password = trim($password);
+        $apikey = trim($apikey);
         /** @var Mage_Core_Helper_Data $helper */
         $helper = Mage::helper('core');
-        $password = sha1($helper->decrypt($password));
+        $apikey = $helper->decrypt($apikey);
 
         /**
          * Put all credentials into an array.
          */
         $data = array(
-            'password'       => $password,
-            'username'       => $username,
+            'apikey'       => $apikey,
             'customerNumber' => $customerNumber,
             'customerCode'   => $customerCode,
             'locationCode'   => $locationCode,

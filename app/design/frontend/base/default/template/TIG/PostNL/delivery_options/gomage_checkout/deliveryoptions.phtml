@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -55,6 +55,7 @@
 <?php $_city                = $this->getCity(); ?>
 <?php $_weekdayCutOffTime   = $this->getCutOff('weekday'); ?>
 <?php $_sundayCutOffTime    = $this->getCutOff('sunday'); ?>
+<?php $_saturdayCutOffTime    = $this->getCutOff('saturday'); ?>
 <?php $_sameDayCutOffTime   = $this->getCutOff('sameday'); ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
@@ -335,6 +336,7 @@
             fullAddress        : fullAddress,
             cutOffTimes        : {
                 weekday: '<?php echo $_weekdayCutOffTime; ?>',
+                saturday: '<?php echo $_saturdayCutOffTime; ?>',
                 sunday: '<?php echo $_sundayCutOffTime; ?>',
                 sameday: '<?php echo $_sameDayCutOffTime; ?>'
             }

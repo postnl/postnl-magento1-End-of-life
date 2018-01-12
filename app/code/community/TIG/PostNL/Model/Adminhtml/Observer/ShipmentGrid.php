@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > shipments grid
@@ -430,6 +430,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AGECHECK      => $helper->__('Age Check'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_BIRTHDAYCHECK => $helper->__('Birthday Check'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_IDCHECK       => $helper->__('ID Check'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EXTRAATHOME   => $helper->__('Extra@Home'),
                     ),
                 ),
                 $after

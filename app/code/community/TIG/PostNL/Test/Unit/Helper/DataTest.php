@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
@@ -221,9 +221,12 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
     public function getQuoteIdCheckTypeProvider()
     {
         return array(
-            array(true, false, false, 'AgeCheck'),
-            array(false, true, false, 'IDCheck'),
-            array(false, false, true, 'BirthdayCheck'),
+            'AgeCheck NL'      => array(true, false, false, 'AgeCheck', 'NL'),
+            'IDCheck NL'       => array(false, true, false, 'IDCheck', 'NL'),
+            'BirthdayCheck NL' => array(false, false, true, 'BirthdayCheck', 'NL'),
+            'BirthdayCheck BE' => array(false, false, true, false, 'BE'),
+            'AgeCheck BE'      => array(true, false, false, false, 'BE'),
+            'IDCheck BE'       => array(false, true, false, false, 'BE'),
         );
     }
 
@@ -232,16 +235,25 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
      * @param $idCheck
      * @param $birthdayCheck
      * @param $oldResult
+     * @param $countryId
      *
      * @dataProvider getQuoteIdCheckTypeProvider
      */
-    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $oldResult)
+    public function testGetQuoteIdCheckType($ageCheck, $idCheck, $birthdayCheck, $oldResult, $countryId)
     {
+        $shippingAddressMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Address')
+            ->setMethods(array('getCountryId'))
+            ->getMock();
+        $shippingAddressMock->expects($this->once())->method('getCountryId')->willReturn($countryId);
+
         $quote = $this->getMock('Mage_Sales_Model_Quote');
 
         $quote->expects($this->any())
             ->method('getId')
             ->willReturn(1);
+
+        $getShippingAddress = $quote->method('getShippingAddress');
+        $getShippingAddress->willReturn($shippingAddressMock);
 
         $this->setRegistryKey('postnl_quote_is_age_check_1', $ageCheck);
         $this->setRegistryKey('postnl_quote_is_birthday_check_1', $birthdayCheck);
@@ -316,5 +328,89 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         $result = $instance->quoteHasIDCheckProducts($quoteMock);
 
         $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function quoteIsExtraAtHomeProvider()
+    {
+        return array(
+            'succes from registry' => array(
+                true,
+                4,
+                true
+            ),
+            'failure from registry' => array(
+                false,
+                6,
+                false
+            ),
+            'success from products' => array(
+                null,
+                6,
+                true
+            ),
+            'failure from products' => array(
+                null,
+                5,
+                false
+            ),
+        );
+    }
+
+    /**
+     * @param $registryValue
+     * @param $productType
+     * @param $expected
+     *
+     * @dataProvider quoteIsExtraAtHomeProvider
+     */
+    public function testQuoteIsExtraAtHome($registryValue, $productType, $expected)
+    {
+        $quoteId = rand(0, 1000);
+
+        $quoteItemMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Item')
+            ->setMethods(array('getProduct', 'getPostnlProductType'))
+            ->getMock();
+        $quoteItemMock->method('getProduct')->willReturnSelf();
+        $quoteItemMock->method('getPostnlProductType')->willReturn($productType);
+
+        $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')
+            ->setMethods(array('getId', 'getAllItems'))
+            ->getMock();
+        $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
+        $quoteMock->method('getAllItems')->willReturn(array($quoteItemMock));
+
+        $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
+
+        $instance = $this->_getInstance();
+        $result = $instance->quoteIsExtraAtHome($quoteMock);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function isMultiColliAllowedProvider()
+    {
+        return array(
+            'NL',
+            'BE',
+        );
+    }
+
+    /**
+     * @param $country
+     *
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function isMultiColliAllowed($country)
+    {
+        $instance = $this->_getInstance();
+        $result = $instance->isMultiColliAllowed();
+
+        $this->assertContains($country, $result);
     }
 }

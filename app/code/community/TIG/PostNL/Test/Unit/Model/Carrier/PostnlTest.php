@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
@@ -60,6 +60,7 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
     {
         $foodErrorMessage = 'Food shipments can only be delivered within the Netherlands.';
         $idCheckErrorMessage = 'ID Check shipments can only be delivered within the Netherlands.';
+        $extraAtHomeErrorMessage = 'This product(s) can only be delivered within the Netherlands.';
 
         return array(
             /** Is Active */
@@ -77,6 +78,8 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
             array(true, null, 'BE', true, 'idcheck', $idCheckErrorMessage),
 
             array(true, null, null, false, 'idcheck', true),
+            array(true, null, 'BE', true, 'extra_at_home', $extraAtHomeErrorMessage),
+            array(true, null, 'NL', false, 'extra_at_home', true),
         );
     }
 

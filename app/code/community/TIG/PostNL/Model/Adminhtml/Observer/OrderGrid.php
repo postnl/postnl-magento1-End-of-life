@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -466,6 +466,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'agecheck'            => $helper->__('Age Check'),
                 'birthdaycheck'       => $helper->__('Birthday Check'),
                 'idcheck'             => $helper->__('ID Check'),
+                'extra_at_home'       => $helper->__('Extra@Home'),
             ),
         );
 
@@ -990,6 +991,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_avond_be_options'])) {
+                $config['postnl_avond_be_options'] = array(
+                    'name'   => 'product_options[avond_be_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_avond_be_options'],
+                );
+            }
+
             if (!empty($options['postnl_sunday_options'])) {
                 $config['postnl_sunday_options'] = array(
                     'name'   => 'product_options[sunday_options]',
@@ -1116,6 +1126,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 );
             }
 
+            if (!empty($options['postnl_extra_at_home_options'])) {
+                $config['postnl_extra_at_home_options'] = array(
+                    'name'   => 'product_options[extra_at_home_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_extra_at_home_options']
+                );
+            }
+
             /**
              * @var TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions $block
              */
@@ -1149,6 +1168,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group' => 'standard_options',
                     'isCod' => false,
+                    'isAvond' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_avond_be_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'eu_options',
                     'isAvond' => true,
                 ),
                 false,
@@ -1267,6 +1294,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 false,
                 true
             ),
+            'postnl_extra_at_home_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'extra_at_home_options'
+                )
+            )
         );
 
         return $options;
@@ -1605,6 +1637,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'agecheck' => 'AgeCheck',
             'birthdaycheck' => 'BirthdayCheck',
             'idcheck' => 'IDCheck',
+            'extra_at_home' => 'ExtraAtHome',
         );
 
         foreach ($filters as $filterName => $value) {

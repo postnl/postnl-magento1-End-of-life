@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
@@ -79,12 +79,14 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      * Test data.
      */
     const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
+    const DEFAULT_TEST_APIKEY = 'wrKwVQG9xpFM4uJVBVwyBzRrV7J3abWO';
     const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
 
     /**
      * Xpaths for test data.
      */
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_TEST_APIKEY   = 'postnl/cif/test_apikey';
     const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
 
     /**
@@ -845,6 +847,29 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $config->setValue($encryptedPassword)
                ->setPath(self::XPATH_TEST_PASSWORD)
                ->save();
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test apikey in the database as an encrypted string.
+     *
+     * @return $this
+     */
+    public function installTestApikey()
+    {
+        $testApikey = self::DEFAULT_TEST_APIKEY;
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $encryptedApikey = $helper->encrypt($testApikey);
+
+        /** @var Mage_Core_Model_Config_Data $config */
+        $config = Mage::getModel('core/config_data')
+            ->load(self::XPATH_TEST_APIKEY, 'path');
+
+        $config->setValue($encryptedApikey)
+            ->setPath(self::XPATH_TEST_APIKEY)
+            ->save();
 
         return $this;
     }

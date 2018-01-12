@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
@@ -78,8 +78,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $comment = $helper->__('COD');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_AVOND:
-                $label   = $helper->__('Domestic');
+                $label = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery');
+                if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
+                    $label = $helper->__('EPS');
+                    $type .= '_be';
+                }
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_AVOND_COD:
                 $label   = $helper->__('Domestic');
@@ -144,6 +148,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_IDCHECK:
                 $label = $helper->__('ID Check');
+                break;
+            case $postnlShipmentClass::SHIPMENT_TYPE_EXTRAATHOME:
+                $label = $helper->__('Extra@Home');
                 break;
         }
 
@@ -234,6 +241,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             return $this->_getBirthdayCheckfoodRenderedValue($row);
         } elseif ($optionType == 'IDCheck') {
             return $this->_getIDCheckfoodRenderedValue($row);
+        } elseif ($optionType == 'ExtraAtHome') {
+            return $this->_getExtraAtHomeRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             return $this->_getPaRenderedValue($row);
         } elseif ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
@@ -283,6 +292,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         $label   = $helper->__('Domestic');
         $comment = $helper->__('Evening Delivery');
         $type    = 'avond';
+
+        if ($this->_isBe($row)) {
+            $type = 'avond_be';
+            $label = $helper->__('EPS');
+        }
 
         if ($this->_isCod($row)) {
             $comment .= ' + ' . $helper->__('COD');
@@ -526,6 +540,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     }
 
     /**
+     * Render this column for an Extra@Home shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getExtraAtHomeRenderedValue(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+
+        $label = $helper->__('Extra@Home');
+        $type = 'extra_at_home';
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
+
+        return $renderedValue;
+    }
+
+    /**
      * Render this column for a domestic shipment.
      *
      * @param Varien_Object $row
@@ -642,6 +675,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         }
 
         return $isCod;
+    }
+
+    /**
+     * @param Varien_Object $row
+     *
+     * @return bool
+     */
+    protected function _isBe(Varien_Object $row)
+    {
+        return $row->getData(self::COUNTRY_ID_COLUMN) == 'BE';
     }
 
     /**

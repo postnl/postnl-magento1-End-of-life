@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -109,6 +109,10 @@
                                                                 <title>Send Return Label Email</title>
                                                                 <sort_order>10</sort_order>
                                                             </send_return_label_email>
+                                                            <send_single_return_label_email translate="title" module="postnl">
+                                                                <title>Send Single Return Label Email</title>
+                                                                <sort_order>20</sort_order>
+                                                            </send_single_return_label_email>
                                                         </children>
                                                     </print_return_labels>
                                                 </children>

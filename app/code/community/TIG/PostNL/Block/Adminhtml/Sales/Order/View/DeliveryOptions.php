@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasOrder()
@@ -134,6 +134,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
             case 'Avond':
                 $this->setSubType($this->__('Evening Delivery'));
                 $shipmentType  = $this->__('Domestic');
+                if ($countryId == 'BE') {
+                    $shipmentType  = $this->__('EPS');
+                }
                 break;
             case 'Sunday':
                 $shipmentType = $this->__('Sunday Delivery');
@@ -164,6 +167,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 break;
             case 'IDCheck':
                 $shipmentType = $this->__('ID Check');
+                break;
+            case 'ExtraAtHome':
+                $shipmentType = $this->__('Extra@Home');
                 break;
         }
 

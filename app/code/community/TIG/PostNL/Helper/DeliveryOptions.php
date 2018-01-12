@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @todo Cache the available delivery options in the checkout session. That way we only recalculate them if the quote
@@ -65,6 +65,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_STOCK_OPTIONS                      = 'postnl/delivery_options/stock_options';
     const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_EVENING_BE                   = 'postnl/delivery_options_int/allow_avond_be';
     const XPATH_ALLOW_SUNDAY_SORTING_BE            = 'postnl/delivery_options_int/allow_sunday_sorting_be';
     const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
     const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
@@ -78,6 +79,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_BIRTHDAY_CHECK_DELIVERY     = 'postnl/delivery_options/enable_birthday_check_delivery';
     const XPATH_ENABLE_ID_CHECK_DELIVERY           = 'postnl/delivery_options/enable_id_check_delivery';
     const XPATH_ENABLE_AGE_CHECK_DELIVERY          = 'postnl/delivery_options/enable_age_check_delivery';
+    const XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY      = 'postnl/delivery_options/enable_extra_at_home';
     const XPATH_AVAILABLE_PRODUCT_OPTIONS          = 'postnl/grid/supported_product_options';
 
     /**
@@ -104,6 +106,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION   = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME         = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_SUNDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SATURDAY_CUTOFF_TIME  = 'postnl/cif_labels_and_confirming/saturday_cutoff_time';
     const XPATH_SAMEDAY_CUTOFF_TIME = 'postnl/delivery_options/sameday_delivery_cutoff_time';
     const XPATH_SHIPPING_DAYS       = 'postnl/cif_labels_and_confirming/shipping_days';
 
@@ -147,6 +150,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const IDCHECK_TYPE_ID = 5;
 
     /**
+     * Extra@Home
+     */
+    const EXTRA_AT_HOME_TYPE_REGULAR = 6;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -187,6 +195,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         '3444',
         '3447',
         '3450',
+    );
+
+    protected $_extraAtHomeProductCodes = array(
+        '3628',
+        '3629',
+        '3653',
+        '3783',
+        '3790',
+        '3791',
+        '3792',
+        '3793',
     );
 
     /**
@@ -638,9 +657,29 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
+        $deliveryOptionsInfo = $this->getFormattedType($type, $deliveryOptionsInfo, $shippingAddress->getCountryId());
+
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
+        }
+
         /**
-         * Determine the formatted order type.
+         * Return the data.
          */
+        return $deliveryOptionsInfo;
+    }
+
+    /**
+     * Determine the formatted order type.
+     *
+     * @param $type
+     * @param $deliveryOptionsInfo
+     * @param $countryId
+     *
+     * @return mixed
+     */
+    public function getFormattedType($type, $deliveryOptionsInfo, $countryId)
+    {
         switch ($type) {
             case 'domestic':
             case 'Overdag':
@@ -651,7 +690,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 break;
             case 'avond':
             case 'Avond':
-                $deliveryOptionsInfo['formatted_type'] = 'Avond';
+                $formattedType = 'Avond';
+                if ($countryId == 'BE') {
+                    $formattedType .= ' (België)';
+                }
+                $deliveryOptionsInfo['formatted_type'] = $formattedType;
                 break;
             case 'avond_cod':
                 $deliveryOptionsInfo['formatted_type'] = 'Avond rembours';
@@ -660,7 +703,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             case 'PG':
                 $formattedType = 'PakjeGemak';
 
-                if ($shippingAddress->getCountryId() == 'BE') {
+                if ($countryId == 'BE') {
                     $formattedType .= ' (België)';
                 }
 
@@ -692,13 +735,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
-        if ($asVarienObject) {
-            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
-        }
-
-        /**
-         * Return the data.
-         */
         return $deliveryOptionsInfo;
     }
 
@@ -2251,7 +2287,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        $allowed = $this->_canUseEveningTimeframes();
+        $allowed = $this->_canUseEveningTimeframes($quote);
 
         if ($cache) {
             /**
@@ -2270,21 +2306,33 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    protected function _canUseEveningTimeframes()
+    protected function _canUseEveningTimeframes(Mage_Sales_Model_Quote $quote)
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
-        if (!$enabled) {
+        $enabledNL = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
+        $enabledBe = Mage::getStoreConfigFlag(self::XPATH_ALLOW_EVENING_BE, $storeId);
+        if (!$enabledNL) {
+            return false;
+        }
+
+        $domesticCountry = Mage::getStoreConfig('postnl/cif_address/country', Mage_Core_Model_App::ADMIN_STORE_ID);
+        $address = $quote->getShippingAddress();
+        // Evenening is not enabled for merchants located in BE.
+        if ($address->getCountryId() == 'BE' && !$enabledBe || $domesticCountry == 'BE') {
             return false;
         }
 
         /** @var TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions $eveningOptionsModel */
         $eveningOptionsModel = Mage::getModel('postnl_core/system_config_source_standardProductOptions');
-        $eveningOptions = $eveningOptionsModel->getAvailableAvondOptions($storeId);
+        $eveningOptions = $eveningOptionsModel->getAvailableAvondOptions();
+
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $eveningOptionsModelEu */
+        $eveningOptionsModelEu = Mage::getModel('postnl_core/system_config_source_euProductOptions');
+        $eveningOptionsBe = $eveningOptionsModelEu->getAvailableAvondOptions();
 
         $allowed = false;
-        if (!empty($eveningOptions)) {
+        if (!empty($eveningOptions) || !empty($eveningOptionsBe)) {
             $allowed = true;
         }
 
@@ -2554,6 +2602,56 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Determines if Extra@Home delivery is allowed, by checking the current quote and configuration.
+     *
+     * @param bool $checkQuote
+     *
+     * @return bool
+     */
+    public function canUseExtraAtHomeDelivery($checkQuote = true)
+    {
+        $allowed = $this->_canUseExtraAtHomeDelivery();
+
+        if ($allowed && $checkQuote) {
+            $allowed = $this->quoteIsExtraAtHome();
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check the configured (and possibly cached) options to determine if Extra@Home is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUseExtraAtHomeDelivery()
+    {
+        $allowed = false;
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseExtraAtHomeDelivery()) {
+            return $cache->getPostnlDeliveryOptionsCanUseExtraAtHomeDelivery();
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $extraAtHomeDeliveryEnabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY, $storeId);
+        $productOptionsAvailable = $this->_getCheckProductOptionsAvailable($this->_extraAtHomeProductCodes, $storeId);
+
+        if ($extraAtHomeDeliveryEnabled && $productOptionsAvailable) {
+            $allowed = true;
+        }
+
+        if ($cache) {
+            /** Save the result in the PostNL cache.*/
+            $cache->setPostnlDeliveryOptionsCanUseExtraAtHomeDelivery($allowed)
+                ->saveCache();
+        }
+
+        return $allowed;
+    }
+
+    /**
      * Check if at least one Check product code is available in the config.
      *
      * @param null $storeId
@@ -2790,6 +2888,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0190',
                     'message' => $this->__('Delivery options are not allowed for letter box parcel orders.'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        /**
+         * Check if the quote contains an Extra@Home product. If so, disable the delivery options.
+         */
+        if ($this->canUseExtraAtHomeDelivery()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0253',
+                    'message' => $this->__('Delivery options are not allowed for Extra@Home orders'),
                 )
             );
             Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);

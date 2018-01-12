@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_Adminhtml_Config
@@ -48,6 +48,12 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
      */
     const XPATH_LIVE_PASSWORD = 'postnl/cif/live_password';
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+
+    /**
+     * XML paths to apikey.
+     */
+    const XPATH_LIVE_APIKEY = 'postnl/cif/live_apikey';
+    const XPATH_TEST_APIKEY = 'postnl/cif/test_apikey';
 
     /**
      * XML path to the domestic country.
@@ -86,8 +92,7 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
          */
         if (!isset($data['customerNumber'])
             || !isset($data['customerCode'])
-            || !isset($data['username'])
-            || !isset($data['password'])
+            || !isset($data['apikey'])
             || !isset($data['locationCode'])
             || !isset($data['isTestMode'])
         ) {
@@ -109,19 +114,14 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
          */
         try {
             /**
-             * If the password field has not been edited since the last time it was saved, it will contain 6 asterisks
+             * If the apikey field has not been edited since the last time it was saved, it will contain 6 asterisks
              * for security reasons. In that case, we need to read and decrypt the password from the database.
              */
-            if ($data['password'] == '******') {
-                $data['password'] = $this->_getPassword(false);
-            } elseif ($data['password'] == 'inherit') {
-                $data['password'] = $this->_getPassword(true);
+            if ($data['apikey'] == '******') {
+                $data['apikey'] = $this->_getApikey(false);
+            } elseif ($data['apikey'] == 'inherit') {
+                $data['apikey'] = $this->_getApikey(true);
             }
-
-            /**
-             * Hash the password
-             */
-            $data['password'] = sha1($data['password']);
 
             /**
              * Load the CIF model and set to test mode to false.
@@ -168,11 +168,6 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
 
         $baseXpath = self::XML_BASE_PATH;
 
-        $usernameXpath = $baseXpath . '/live_username';
-        if ($this->_isTestMode) {
-            $usernameXpath = $baseXpath . '/test_username';
-        }
-
         foreach ($data as $key => &$value) {
             if ($value != 'inherit') {
                 continue;
@@ -185,14 +180,11 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
                 case 'customerCode':
                     $value = Mage::getStoreConfig($baseXpath . '/customer_code', $storeId);
                     break;
-                case 'username':
-                    $value = Mage::getStoreConfig($usernameXpath, $storeId);
-                    break;
                 case 'locationCode':
                     $value = Mage::getStoreConfig($baseXpath . '/collection_location', $storeId);
                     break;
                 //No default
-                //Note that the password field is not checked. That field has it's own check later on.
+                //Note that the apikey field is not checked. That field has it's own check later on.
             }
         }
 
@@ -230,6 +222,39 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
         $password = $helper->decrypt($password);
 
         return trim($password);
+    }
+
+    /**
+     * Gets the apikey from system/config.
+     * Apikeys will be decrypted using Magento's encryption key.
+     *
+     * @param boolean $inherit
+     *
+     * @return string
+     */
+    protected function _getApikey($inherit = false)
+    {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+
+        $xpath = self::XPATH_LIVE_APIKEY;
+        if ($this->_isTestMode) {
+            $xpath = self::XPATH_TEST_APIKEY;
+        }
+
+        $websiteCode = $this->getRequest()->getParam('website');
+        if (!$inherit && !empty($websiteCode)) {
+            /** @var Mage_Core_Model_Website $website */
+            $website = Mage::getModel('core/website')->load($websiteCode, 'code');
+            $apikey = $website->getConfig($xpath);
+        } else {
+            $apikey = Mage::getStoreConfig($xpath, $storeId);
+        }
+
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $apikey = $helper->decrypt($apikey);
+
+        return trim($apikey);
     }
 
     /**

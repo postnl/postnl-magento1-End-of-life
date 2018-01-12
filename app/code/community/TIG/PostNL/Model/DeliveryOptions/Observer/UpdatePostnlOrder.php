@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
@@ -125,7 +125,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $type = $postnlOrder->getType();
         if (!$type) {
-            $type = $postnlOrder::TYPE_OVERDAG;
+            $type = $this->_getOrderType($postnlOrder, $order);
             $postnlOrder->setType($type);
         }
 
@@ -428,18 +428,38 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
 
+        /**
+         * PostNL type is already set after selecting delivery options in
+         * \TIG_PostNL_Model_DeliveryOptions_Service::saveDeliveryOption
+         * So for example Type Evening would be overwritten by Overdag which should not happen.
+         */
+        $orderType = $postnlOrder::TYPE_OVERDAG;
+        if ($postnlOrder->getType()) {
+            $orderType = $postnlOrder->getType();
+        }
+
         /** @noinspection PhpUndefinedMethodInspection */
         if ($helper->canUseFoodDelivery(false) && $helper->quoteIsFood($order->getQuote())) {
             /** @noinspection PhpUndefinedMethodInspection */
             switch ($helper->getQuoteFoodType($order->getQuote())) {
                 case 1:
-                    return $postnlOrder::TYPE_FOOD;
+                    $orderType = $postnlOrder::TYPE_FOOD;
+                    break;
                 case 2:
-                    return $postnlOrder::TYPE_COOLED_FOOD;
+                    $orderType = $postnlOrder::TYPE_COOLED_FOOD;
+                    break;
             }
         }
 
-        return $postnlOrder::TYPE_OVERDAG;
+        /**
+         * Extra@Home always takes priority over other order types.
+         * Therefore overrule the ordertype when the quote has an Extra@Home item.
+         */
+        if ($helper->canUseExtraAtHomeDelivery(false) && $helper->quoteIsExtraAtHome($order->getQuote())) {
+            $orderType = $postnlOrder::TYPE_EXTRA_AT_HOME;
+        }
+
+        return $orderType;
     }
 
     /**

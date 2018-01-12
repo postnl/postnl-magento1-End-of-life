@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -70,6 +70,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     const PARCEL_TYPE_AGECHECK      = 'agecheck';
     const PARCEL_TYPE_BIRTHDAYCHECK = 'birthdaycheck';
     const PARCEL_TYPE_IDCHECK       = 'idcheck';
+    const PARCEL_TYPE_EXTRAATHOME   = 'extra_at_home';
 
     /**
      * String values for different rate types.
@@ -204,26 +205,21 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $parcelType = $this->_request->getParcelType();
 
         /**
-         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
+         * Types that are only available for addresses in the Netherlands
          */
-        if ($parcelType == self::PARCEL_TYPE_FOOD && $countryId != 'NL') {
-            return $this->_addShippingRateNotFoundError();
-        }
-
-        /**
-         * Which types of shipments are only allow to the Netherlands?
-         */
-        $idCheckTypes = array(
+        $checkTypes = array(
             self::PARCEL_TYPE_AGECHECK,
             self::PARCEL_TYPE_BIRTHDAYCHECK,
             self::PARCEL_TYPE_IDCHECK,
+            self::PARCEL_TYPE_FOOD,
+            self::PARCEL_TYPE_EXTRAATHOME
         );
 
         /**
-         * If parcel_type is food, there can be no rate shown for non-domestic shipments.
+         * If parcel_type is in array $checkTypes, there can be no rate shown for non-domestic shipments.
          */
         /** @noinspection PhpUndefinedMethodInspection */
-        if (in_array($parcelType, $idCheckTypes) && $countryId != 'NL') {
+        if (in_array($parcelType, $checkTypes) && $countryId != 'NL') {
             return $this->_addShippingRateNotFoundError();
         }
 
@@ -325,7 +321,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             $postnlOrder = Mage::getModel('postnl_core/order');
             $postnlOrder = $postnlOrder->loadByQuote($quote);
 
-            if ($this->getHelper()->quoteIsAgeCheck()) {
+            if ($this->getHelper()->quoteIsExtraAtHome()) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $this->_request->setParcelType(self::PARCEL_TYPE_EXTRAATHOME);
+            } elseif ($this->getHelper()->quoteIsAgeCheck()) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $this->_request->setParcelType(self::PARCEL_TYPE_AGECHECK);
             } elseif ($this->getHelper()->quoteIsBirthdayCheck()) {
@@ -816,6 +815,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         switch ($parcelType) {
             case self::PARCEL_TYPE_FOOD:
                 return $this->getConfigData('foodspecificerrmsg');
+            case self::PARCEL_TYPE_EXTRAATHOME :
+                return $this->getConfigData('extraathomespecificerrmsg');
             case self::PARCEL_TYPE_AGECHECK:
             case self::PARCEL_TYPE_BIRTHDAYCHECK:
             case self::PARCEL_TYPE_IDCHECK:

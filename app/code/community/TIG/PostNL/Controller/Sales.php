@@ -33,11 +33,16 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
 {
+    /**
+     * Xpath to label size setting.
+     */
+    const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
+
     /**
      * @var string
      */
@@ -121,7 +126,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
              */
             /** @var TIG_PostNL_Model_Core_Label $labelModel */
             $labelModel = Mage::getModel('postnl_core/label');
-            $output = $labelModel->setLabelSize('A6')->createPdf($labels);
+            $output = $labelModel->setLabelSize('A4')->createPdf($labels);
 
             $filename = 'PostNL Return Labels-' . date('YmdHis') . '.pdf';
 
@@ -299,11 +304,9 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             return false;
         }
 
-        if ($postnlShipment->hasLabels()) {
-            return $postnlShipment->getReturnLabels();
+        if (!$postnlShipment->hasReturnLabels()) {
+            $postnlShipment->getSingleReturnLabel();
         }
-
-        $postnlShipment = $this->_generateLabels($postnlShipment);
 
         $labels = $postnlShipment->getReturnLabels();
 

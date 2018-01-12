@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -361,6 +361,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param bool $flat
+     *
+     * @return array
+     */
+    public function getAvondEuProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euProductCodes */
+        $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
+        return $euProductCodes->getAvailableAvondOptions($flat);
+    }
+
+
+    /**
      * Get an array of evening delivery COD product codes.
      *
      * @param boolean $flat
@@ -617,6 +630,18 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_IdCheckProductOptions $productCode */
         $productCodes = Mage::getSingleton('postnl_core/system_config_source_idCheckPakjegemakProductOptions');
+        return $productCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * @param bool $flat
+     *
+     * @return mixed
+     */
+    public function getExtraAtHomeProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_ExtraAtHomeProductOptions $productCode */
+        $productCodes = Mage::getSingleton('postnl_core/system_config_source_extraAtHomeProductOptions');
         return $productCodes->getAvailableOptions($flat);
     }
 
@@ -927,7 +952,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Check if a given shipment is COD
      *
-     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment|Mage_Sales_Model_Order $shipment
      *
      * @return boolean
      *
@@ -946,7 +971,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
-        $tempPostnlShipment->setShipment($shipment);
+        $orderClass = Mage::getConfig()->getModelClassName('sales/order');
+
+        if (!($shipment instanceof $orderClass)) {
+            $shipment = $shipment->getOrder();
+        }
+        $tempPostnlShipment->setPayment($shipment->getPayment());
 
         return $tempPostnlShipment->isCod();
     }
@@ -1001,6 +1031,32 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $tempPostnlShipment->isMonday();
     }
 
+    /**
+     * @param TIG_PostNL_Model_Core_Shipment|TIG_PostNL_Model_Core_Order|Mage_Sales_Model_Order_Shipment|Mage_Sales_Model_Order $shipment
+     *
+     * @return bool
+     */
+    public function isMultiColliAllowed($shipment)
+    {
+        /** @noinspection PhpParamsInspection */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+
+        /** @noinspection PhpParamsInspection */
+        $postnlOrderClass = Mage::getConfig()->getModelClassName('postnl_core/order');
+
+        if ($shipment instanceof $postnlShipmentClass || $shipment instanceof $postnlOrderClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment|TIG_PostNL_Model_Core_Order $shipment
+             */
+            return $shipment->isMultiColliAllowed();
+        }
+
+        /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShippingAddress($shipment->getShippingAddress());
+
+        return $tempPostnlShipment->isMultiColliAllowed();
+    }
 
     /**
      * Gets the default product option for a shipment
@@ -1063,48 +1119,22 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getParcelCount($shipment)
     {
-        /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipment($shipment);
-
         /**
-         * Only NL shipments support multi-colli shipments.
+         * @var TIG_PostNL_Helper_Parcel $parcelHelper
          */
-        if ($postnlShipment->getShippingAddress()->getCountryId() != 'NL') {
-            return 1;
-        }
-
-        /**
-         * Get this shipment's total weight.
-         */
-        $weight = $postnlShipment->getTotalWeight(true);
-
-        /**
-         * Get the weight per parcel.
-         */
-        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
-        $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
-
-        /**
-         * Calculate the number of parcels needed to ship the total weight of this shipment.
-         */
-        $parcelCount = ceil($weight / $weightPerParcel);
-
-        if ($parcelCount < 1) {
-            $parcelCount = 1;
-        }
-
-        return $parcelCount;
+        $parcelHelper = Mage::helper('postnl/parcel');
+        return $parcelHelper->calculateParcelCount($shipment);
     }
 
     /**
      * Check if return labels may be printed.
      *
      * @param bool|int $storeId
+     * @param bool $isBe
      *
      * @return bool
      */
-    public function isReturnsEnabled($storeId = false)
+    public function isReturnsEnabled($storeId = false, $isBe = false)
     {
         if (false === $storeId) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;

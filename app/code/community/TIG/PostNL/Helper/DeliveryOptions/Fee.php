@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
@@ -41,11 +41,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     /**
      * Xpaths to extra fee config settings.
      */
-    const XPATH_EVENING_TIMEFRAME_FEE   = 'postnl/delivery_options/evening_timeframe_fee';
-    const XPATH_SUNDAY_DELIVERY_FEE     = 'postnl/delivery_options/sunday_delivery_fee';
-    const XPATH_SAMEDAY_DELIVERY_FEE    = 'postnl/delivery_options/sameday_delivery_fee';
-    const XPATH_PAKJEGEMAK_EXPRESS_FEE  = 'postnl/delivery_options/pakjegemak_express_fee';
-    const XPATH_ONLY_STATED_ADDRESS_FEE = 'postnl/delivery_options/stated_address_only_fee';
+    const XPATH_EVENING_TIMEFRAME_FEE    = 'postnl/delivery_options/evening_timeframe_fee';
+    const XPATH_EVENING_BE_TIMEFRAME_FEE = 'postnl/delivery_options_int/evening_be_timeframe_fee';
+    const XPATH_SUNDAY_DELIVERY_FEE      = 'postnl/delivery_options/sunday_delivery_fee';
+    const XPATH_SAMEDAY_DELIVERY_FEE     = 'postnl/delivery_options/sameday_delivery_fee';
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE   = 'postnl/delivery_options/pakjegemak_express_fee';
+    const XPATH_ONLY_STATED_ADDRESS_FEE  = 'postnl/delivery_options/stated_address_only_fee';
 
     /**
      * Fee limit types
@@ -56,10 +57,11 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     /**
      * Fee types
      */
-    const FEE_TYPE_EVENING  = 'Evening';
-    const FEE_TYPE_SUNDAY   = 'Sunday';
-    const FEE_TYPE_SAMEDAY  = 'Sameday';
-    const FEE_TYPE_EXPRESS  = 'Express';
+    const FEE_TYPE_EVENING    = 'Evening';
+    const FEE_TYPE_EVENING_BE = 'Evening_BE';
+    const FEE_TYPE_SUNDAY     = 'Sunday';
+    const FEE_TYPE_SAMEDAY    = 'Sameday';
+    const FEE_TYPE_EXPRESS    = 'Express';
 
     /**
      * Evening timeframes fee limits
@@ -262,12 +264,18 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $price = Mage::registry($registryKey);
         } else {
             $storeId = Mage::app()->getStore()->getId();
+
+            $address = $this->getQuote()->getShippingAddress();
+            if ($address->getCountryId() == 'BE' && $feeType == self::FEE_TYPE_EVENING) {
+                $feeType = self::FEE_TYPE_EVENING_BE;
+            }
+
             $xpath = $this->_getFeeConfigXpath($feeType);
             $fee = (float) Mage::getStoreConfig($xpath, $storeId);
 
             $price = $this->getPriceWithTax($fee, $includingTax, false, false);
 
-            if ($price > $this->getFeeLimit($feeType)) {
+            if ($price > $this->getFeeLimit($feeType) && $feeType !== self::FEE_TYPE_EVENING_BE) {
                 $price = 0;
             }
 
@@ -325,6 +333,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         switch ($feeType) {
             case self::FEE_TYPE_EVENING:
                 $xpath = self::XPATH_EVENING_TIMEFRAME_FEE;
+                break;
+            case self::FEE_TYPE_EVENING_BE:
+                $xpath = self::XPATH_EVENING_BE_TIMEFRAME_FEE;
                 break;
             case self::FEE_TYPE_SUNDAY:
                 $xpath = self::XPATH_SUNDAY_DELIVERY_FEE;

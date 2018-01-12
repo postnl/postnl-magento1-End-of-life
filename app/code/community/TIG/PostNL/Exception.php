@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * General exception class for TIG_PostNL extension
@@ -64,6 +64,40 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
             $code = (string) $code;
             $this->code = $code;
         }
+    }
+
+    /**
+     * @param $response
+     *
+     * @return static
+     */
+    public static function invalidGenerateLabelsResponse($response)
+    {
+        $message = self::getInvalidResponseMessage($response);
+
+        return new static(
+            $message,
+            'POSTNL-0057'
+        );
+    }
+
+    /**
+     * Prevent an empty response from being shown as an error
+     *
+     * @param $response
+     *
+     * @return string
+     */
+    private static function getInvalidResponseMessage($response)
+    {
+        $helper = Mage::helper('postnl');
+        $message = $helper->__('Invalid generateLabels response.');
+
+        if (count($response) > 0) {
+            $message = $helper->__('Invalid generateLabels response: %s', var_export($response, true));
+        }
+
+        return $message;
     }
 
     /**

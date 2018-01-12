@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
@@ -317,6 +317,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'label'             => 'EU Pack Special Consumer (incl. signature)',
             'isExtraCover'      => false,
             'isSunday'          => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
+        ),
+        '4938' => array(
+            'value'             => '4938',
+            'label'             => 'EU Pack Special Evening (incl. signature)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
             'countryLimitation' => false,
             'group'             => 'eu_options',
         ),
@@ -785,6 +796,103 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'pakjegemak_options'
         ),
+        /** Product codes for Extra@Home */
+        '3628' => array(
+            'value'             => '3628',
+            'label'             => 'Extra@Home Top service 2 person delivery NL',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3629' => array(
+            'value'             => '3629',
+            'label'             => 'Extra@Home Top service Btl 2 person delivery',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'BE',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3653' => array(
+            'value'             => '3653',
+            'label'             => 'Extra@Home Top service 1 person delivery NL',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3783' => array(
+            'value'             => '3783',
+            'label'             => 'Extra@Home Top service Btl 1 person delivery',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'BE',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3790' => array(
+            'value'             => '3790',
+            'label'             => 'Extra@Home Drempelservice 1 person delivery NL',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3791' => array(
+            'value'             => '3791',
+            'label'             => 'Extra@Home Drempelservice 2 person delivery NL',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'NL',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3792' => array(
+            'value'             => '3792',
+            'label'             => 'Extra@Home Drempelservice Btl 1 person delivery',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'BE',
+            'group'             => 'extra_at_home_options',
+        ),
+        '3793' => array(
+            'value'             => '3793',
+            'label'             => 'Extra@Home Drempelservice Btl 2 person delivery',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => 'BE',
+            'group'             => 'extra_at_home_options',
+        ),
     );
 
     /**
@@ -804,6 +912,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'agecheck_options'       => 'Parcel with Age check Options',
         'id_check_options'       => 'Parcel with ID check Options',
         'birthday_check_options' => 'Parcel with Birthday Check Options',
+        'extra_at_home_options'  => 'Extra@Home Options',
     );
 
     /**
