@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                                            hasIsIncludingTax()
@@ -77,6 +77,20 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
             return true;
         }
 
+        $domesticCountry = Mage::getStoreConfig('postnl/cif_address/country', Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        /** @var TIG_PostNL_Helper_ProductLimitation $optionLimitationHelper */
+        $optionLimitationHelper = Mage::helper('postnl/productLimitation');
+        if (!$optionLimitationHelper->check($value, 'countryLimitation', $domesticCountry)) {
+            /**
+             * These options can not be validate correctly because of the country limitation.
+             * If the domesticCountry is not equal to the countryLimitation it will not show within
+             * the supported_product_options and can never be selected.
+             */
+            $this->setValue(false);
+            return true;
+        }
+
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
 
@@ -105,10 +119,11 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
         /** @noinspection PhpUndefinedFieldInspection */
         $supportedOptionsLabel = (string) $sections->postnl
                                                    ->groups
-                                                   ->cif_product_options
+                                                   ->grid
                                                    ->fields
                                                    ->supported_product_options
                                                    ->label;
+
         $supportedOptionsLabel = $helper->__($supportedOptionsLabel);
 
         /**

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasShipment()
@@ -236,9 +236,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     {
         $shipment = $this->getShipment();
 
-        /** @var TIG_PostNL_Helper_Cif $helper */
-        $helper = Mage::helper('postnl/cif');
-        $parcelCount = (int) $helper->getParcelCount($shipment);
+        /** @var TIG_PostNL_Helper_Parcel $helper */
+        $helper = Mage::helper('postnl/parcel');
+        $parcelCount = (int) $helper->calculateParcelCount($shipment);
         if ($parcelCount < 1) {
             $parcelCount = 1;
         }

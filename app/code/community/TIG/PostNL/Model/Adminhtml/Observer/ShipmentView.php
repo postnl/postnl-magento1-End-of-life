@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the shipment view
@@ -200,13 +200,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
+        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnHelper */
+        $returnHelper = Mage::helper('postnl/returnOptionsBe');
+        $country = $shipment->getShippingAddress()->getCountryId();
+        $isBe = $shipment->getShippingAddress()->getCountryId() == 'BE';
+
         /**
          * Add a button to print this shipment's return labels.
          */
         if ($printReturnLabelAllowed
-            && $postnlShipment->canPrintReturnLabels()
-            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
+            && ($postnlShipment->canPrintReturnLabels() || $returnHelper->get($country))
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
         ) {
+
             $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
 
             $block->addButton(
@@ -217,6 +223,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                     'class'   => 'download',
                 ),
                 40
+            );
+        }
+
+        /**
+         * Add the send (single) return label email button.
+         */
+        if ($sendReturnLabelAllowed
+            && ($postnlShipment->canSendReturnLabelEmail() || $returnHelper->get($country))
+            && $helper->isReturnsEnabled($postnlShipment->getStoreId(), $isBe)
+        ) {
+            $sendReturnLabelEmailUrl = $this->getSendSingleReturnLabelEmailUrl($shipment->getId());
+
+            $block->addButton(
+                'send_return_label_email',
+                array(
+                    'label'   => $helper->__('PostNL - Send Return Label Email'),
+                    'onclick' => "setLocation('{$sendReturnLabelEmailUrl}')",
+                    'class'   => 'save',
+                ),
+                60
             );
         }
 
@@ -240,26 +266,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             } else {
                 $block->updateButton('save', 'level', 50);
             }
-        }
-
-        /**
-         * Add the send return label button.
-         */
-        if ($sendReturnLabelAllowed
-            && $postnlShipment->canSendReturnLabelEmail()
-            && $helper->isReturnsEnabled($postnlShipment->getStoreId())
-        ) {
-            $sendReturnLabelEmailUrl = $this->getSendReturnLabelEmailUrl($shipment->getId());
-
-            $block->addButton(
-                'send_return_label_email',
-                array(
-                    'label'   => $helper->__('PostNL - Send Return Label Email'),
-                    'onclick' => "setLocation('{$sendReturnLabelEmailUrl}')",
-                    'class'   => 'save',
-                ),
-                60
-            );
         }
 
         /**
@@ -577,6 +583,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $helper = Mage::helper('adminhtml');
         $url = $helper->getUrl(
             'adminhtml/postnlAdminhtml_shipment/sendReturnLabelEmail',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
+        );
+
+        return $url;
+    }
+
+    public function getSendSingleReturnLabelEmailUrl($shipmentId)
+    {
+        /** @var Mage_Adminhtml_Helper_Data $helper */
+        $helper = Mage::helper('adminhtml');
+        $url = $helper->getUrl(
+            'adminhtml/postnlAdminhtml_shipment/sendSingleReturnLabelEmail',
             array(
                 'shipment_id'    => $shipmentId,
                 'return_to_view' => true,

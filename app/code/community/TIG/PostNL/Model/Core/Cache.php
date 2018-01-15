@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                     hasPostnlCoreIsEnabled()
@@ -61,6 +61,7 @@
  * @method boolean                     hasPostnlDeliveryOptionsCanUseIdCheckDelivery()
  * @method boolean                     hasPostnlDeliveryOptionsCanUseAgeCheckDelivery
  * @method boolean                     hasPostnlDeliveryOptionsCanUseBirthdayCheckDelivery()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUseExtraAtHomeDelivery()
  * @method boolean                     hasPostnlMijnpakketIsActive()
  * @method boolean                     hasPostnlMijnpakketCanShowNotification()
  * @method boolean                     hasPostnlCoreCanUseBuspakje()
@@ -99,6 +100,7 @@
  * @method boolean                     getPostnlDeliveryOptionsCanUseIdCheckDelivery()
  * @method boolean                     getPostnlDeliveryOptionsCanUseBirthdayCheckDelivery()
  * @method boolean                     getPostnlDeliveryOptionsCanUseAgeCheckDelivery()
+ * @method boolean                     getPostnlDeliveryOptionsCanUseExtraAtHomeDelivery()
  * @method boolean                     getPostnlMijnpakketIsActive()
  * @method boolean                     getPostnlMijnpakketCanShowNotification()
  * @method boolean                     getPostnlCoreCanUseBuspakje()
@@ -137,6 +139,7 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseIdCheckDelivery(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseAgeCheckDelivery(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseBirthdayCheckDelivery(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseExtraAtHomeDelivery(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketIsActive(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketCanShowNotification(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseBuspakje(boolean $value)

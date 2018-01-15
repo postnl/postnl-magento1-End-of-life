@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
@@ -135,5 +135,35 @@ class TIG_PostNL_Test_Unit_Model_Core_OrderTest extends TIG_PostNL_Test_Unit_Fra
         $model->setType($type);
 
         $this->assertEquals($response, $model->isIDCheck());
+    }
+
+    /**
+     * @return array
+     */
+    public function isMultiColliAllowedProvider()
+    {
+        return array(
+            'NL' => array('NL', true),
+            'BE' => array('BE', true),
+            'DE' => array('DE', false),
+        );
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowed($destinationCountry, $expected)
+    {
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+
+        $orderMock = $this->getMock('Mage_Sales_Model_Order');
+        $orderMock->expects($this->once())->method('getShippingAddress')->willReturn($shippingAddress);
+
+        $instance = $this->_getInstance();
+        $instance->setData('order', $orderMock);
+
+        $result = $instance->isMultiColliAllowed();
+        $this->assertSame($expected, $result);
     }
 }

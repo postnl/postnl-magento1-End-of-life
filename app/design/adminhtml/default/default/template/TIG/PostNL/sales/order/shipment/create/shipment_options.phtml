@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -50,6 +50,7 @@
 <?php $_isBelgium             = $this->isBelgium(); ?>
 <?php $_isGlobalPackShipment  = (bool) $_cifHelper->isGlobalShipment($_shipment); ?>
 <?php $_isDomesticShipment    = (bool) $_cifHelper->isDomesticShipment($_shipment); ?>
+<?php $_isMultiColliAllowed   = (bool) $_cifHelper->isMultiColliAllowed($_shipment); ?>
 <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php $_isPakketautomaat      = (bool) $_cifHelper->isPakketautomaatShipment($_shipment);?>
@@ -145,7 +146,7 @@
             <input type="text" name="postnl[extra_cover_amount]" class="input-text validate-increment-500 validate-not-negative-number" id="postnl_extra_cover" value="500"/>
         </p>
     <?php endif; ?>
-    <?php if ($_isDomesticShipment && !$_isCod): ?>
+    <?php if ($_isMultiColliAllowed && !$_isCod): ?>
         <p id="postnl_parcel_count_container" style="display:none;">
             <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
             <input type="text" name="postnl[parcel_count]" class="input-text validate-digits validate-not-negative-number required-entry" id="postnl_parcel_count" value="<?php echo $_parcelCount; ?>"/>

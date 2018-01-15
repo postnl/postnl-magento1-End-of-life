@@ -22,10 +22,8 @@ TIG_PostNL::During registration 2 secure keys will be sent to this email address
 TIG_PostNL::Unique key,Unieke sleutel
 TIG_PostNL::Private key,Prive sleutel
 TIG_PostNL::Account Settings,Account Instellingen
-TIG_PostNL::Live Username,Live gebruikersnaam
-TIG_PostNL::Live Password,Live wachtwoord
-TIG_PostNL::Test Username,Test gebruikersnaam
-TIG_PostNL::Test Password,Test wachtwoord
+TIG_PostNL::Live Apikey,Live Apikey
+TIG_PostNL::Test Apikey,Test Apikey
 TIG_PostNL::Customer Number,Klantnummer
 TIG_PostNL::Customer Code,Klantcode
 "TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
@@ -330,7 +328,7 @@ TIG_PostNL::Live,Live
 TIG_PostNL::Your shipment has been shipped on %s. Click %s to track your shipment.,Uw verzending is verzonden op %s. Klik %s om uw zending te volgen.
 TIG_PostNL::You currently do not use split street lines.,U gebruikt momenteel geen gesplitste adresregels.
 "TIG_PostNL::Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in uw webshop. Neem voor meer informatie contact op met PostNL support."
-TIG_PostNL::You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live gebruikersnaam en wachtwoord in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
+TIG_PostNL::You have configured the extension for test mode only. You still must enter a live apikey before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live apikey in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
 TIG_PostNL::You have not yet fully configured the extension. You must complete this process before you can use it.,U heeft nog niet de volledige extensie geconfigureerd. U dient dit proces te voltooien voordat u de extensie kunt gebruiken.
 TIG_PostNL::Are you planning to ship outside of the EU? Activate GlobalPack with the details you have received from PostNL. You can ignore the GlobalPack settings for domestic shipping and shipping within the EU.,Gaat u buiten de EU verzenden? Activeer dan GlobalPack met de gegevens die u van PostNL gekregen heeft. Verstuurt u alleen binnen Nederland en de EU? Dan kunt u deze instellingen negeren.
 TIG_PostNL::You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.,U heeft PostNL Checkout nog niet geconfigureerd. Volgt u a.u.b. het configuratieproces als u PostNL Checkout wenst te gebruiken.
@@ -423,7 +421,7 @@ TIG_PostNL::An error occurred while processing your request: ,Er is een fout opg
 TIG_PostNL::OrderToken missing for quote #%s,OrderToken is niet aanwezig voor quote #%s
 TIG_PostNL::Unable to create an order for quote #%s,Kan geen order creëren voor quote #%s
 TIG_PostNL::Invalid quote supplied.,Ongeldige quote meegeleverd.
-TIG_PostNL::No username or password set.,Geen gebruikersnaam of wachtwoord opgegeven.
+TIG_PostNL::No apikey set.,Geen apikey opgegeven.
 TIG_PostNL::Invalid barcode response: %s,Ongeldige barcode : %s
 TIG_PostNL::Chosen delivery date:,Gekozen bezorgdatum:
 TIG_PostNL::Invalid confirmShipment response: %s,Ongeldige voormeldbevestigings antwoord: %s
@@ -703,9 +701,9 @@ TIG_PostNL::The quote's total weight is below the miniumum required to use PostN
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Ongeldige parameters opgegeven. De 'costs' parameter moet een bedrag incl. en excl. BTW bevatten.
 TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.,Invalid fee amount entered: %s incl. VAT. Please enter a value between %.2f and %.2f %s incl. VAT.
 TIG_PostNL::The PostNL Extension is currently configured in test mode.,De PostNL extensie is momenteel geconfigureerd in test modus.
-"TIG_PostNL::You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","U kunt uw live gebruikersnaam en wachtwoord invullen onder het 'Account Instellingen' tabje. Vergeet hier niet ook uw klantnummer, klantcode en BLS (locatie) code in te vullen. U kunt vervolgens de extensie op live modus zetten."
+"TIG_PostNL::You can enter your live apikey in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","U kunt uw live apikey invullen onder het 'Account Instellingen' tabje. Vergeet hier niet ook uw klantnummer, klantcode en BLS (locatie) code in te vullen. U kunt vervolgens de extensie op live modus zetten."
 "TIG_PostNL::You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.","U kunt de extensie testen, maar u kunt geen zendingen versturen in test modus. Als u een zending voormeldt of de labels print van een zending terwijl de extensie in test modus staat, zullen deze zendingen gemarkeerd worden als testzendingen. Deze testzendingen kunt u niet versturen. Indien u deze wel verzendt, zult u boetes oplopen bij PostNL. Om de extensie in livemodus te gebruiken, dient u eerst uw PostNL accountgegevens in te voeren en de configuratie op livemodus in te stellen. Vervolgens kunt u zendingen versturen met de PostNL extensie."
-"TIG_PostNL::You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","U kunt uw live gebruikersnaam en wachtwoord invullen onder het 'Account Instellingen' tabje. Vergeet hier niet ook uw klantnummer, klantcode en BLS (locatie) code in te vullen. U kunt vervolgens de extensie op live modus zetten."
+"TIG_PostNL::You can enter your live apikey in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode.","U kunt uw live apikey invullen onder het 'Account Instellingen' tabje. Vergeet hier niet ook uw klantnummer, klantcode en BLS (locatie) code in te vullen. U kunt vervolgens de extensie op live modus zetten."
 TIG_PostNL::PostNL - Remove Shipping Label,PostNL - Verwijder Verzendlabel
 TIG_PostNL::Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new shipping label before you can send this shipment.,Weet u zeker dat u het verzendlabel van deze zending wilt verwijderen? U zult een nieuw label moeten printen voor u de zending kunt versturen.
 TIG_PostNL::PostNL - Change Confirmation,PostNL - Voormelding Wijzigen
@@ -970,7 +968,7 @@ TIG_PostNL::Default 'deliver at the Post Office' COD option,Standaard 'afhalen o
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op postkantoor rembours zendingen.
 TIG_PostNL::Default early post office pickup COD option,Standaard extra vroeg ophalen rembours optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor rembours zendingen.
-TIG_PostNL::It appears the PostNL username and/or password you have entered is incorrect.,Uw PostNL gebruikersnaam en/of wachtwoord is niet correct.
+TIG_PostNL::It appears the PostNL apikey you have entered is incorrect.,Uw PostNL apikey is niet correct.
 TIG_PostNL::Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.,Uw PostNL account heeft helaas niet de benodigde rechten om deze actie uit te voeren. Neem s.v.p. contact op met PostNL.
 "TIG_PostNL::Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL.","U heeft helaas het maximale aantal PostNL acties per minuut overschreden. Wacht s.v.p. enkele minuten en probeer het dan opnieuw. Indien dit probleem zich blijft voordoen, neem dan contact op met PostNL."
 TIG_PostNL::This PostNL service is currently disabled. Please contact PostNL.,Deze PostNL dienst is momenteel uitgeschakeld. Neem s.v.p. contact op met PostNL.
@@ -1160,6 +1158,8 @@ TIG_PostNL::Technical settings,Technische instellingen
 TIG_PostNL::Track & trace email,Track & trace e-mail
 TIG_PostNL::Sender address,Afzenderadres
 TIG_PostNL::Return address,Retouradres
+TIG_PostNL::Return address NL,Retouradres NL
+TIG_PostNL::Return address BE,Retouradres BE
 TIG_PostNL::PostNL account credentials,PostNL accountgegevens
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">hier</a> meer lezen over de wijze waarop de extensie bepaalt of een bestelling een brievenbuspakje is."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">hier</a> meer lezen over het instellen van gesplitste adresregels in Magento."
@@ -1178,6 +1178,8 @@ TIG_PostNL::Freepost number,Antwoordnummer
 TIG_PostNL::These settings are only available on the 'global' scope.,Deze instellingen zijn enkel beschikbaar op het 'globaal' niveau.
 TIG_PostNL::Return Settings,Retouren Instellingen
 TIG_PostNL::Returns,Retouren
+TIG_PostNL::Returns NL,Retouren NL
+TIG_PostNL::Returns BE,Retouren BE
 TIG_PostNL::Return labels instructions block,Retourlabels instructieblok
 TIG_PostNL::Please select a static block that contains instructions for customers on how to use the return labels.,Selecteer s.v.p. een static block dat instructies bevat voor de klant om een zending retour te sturen.
 TIG_PostNL::Alternative sender address,Alternatief afzenderadres
@@ -1472,3 +1474,32 @@ TIG_PostNL::Please provide a expiration date,Geef een verval datum op
 TIG_PostNL::Please provide a valid birthday,Geef een valide geboortedatum op
 TIG_PostNL::This data will be used to verify your age at delivery.,De volgende gegevens worden gebruikt om uw leeftijd te verifiëren bij bezorging.
 TIG_PostNL::Regular,Regulier
+TIG_PostNL::Extra@Home Top service 2 person delivery NL,Extra@Home Topservice 2 persoons levering NL
+TIG_PostNL::Extra@Home Top service Btl 2 person delivery,Extra@Home Topservice Btl 2 persoons levering
+TIG_PostNL::Extra@Home Top service 1 person delivery NL,Extra@Home Topservice 1 persoons levering NL
+TIG_PostNL::Extra@Home Top service Btl 1 person delivery,Extra@Home Topservice Btl 1 persoons levering
+TIG_PostNL::Extra@Home Drempelservice 1 person delivery NL,Extra@Home Drempelservice 1 persoons levering NL
+TIG_PostNL::Extra@Home Drempelservice 2 person delivery NL,Extra@Home Drempelservice 2 persoons levering NL
+TIG_PostNL::Extra@Home Drempelservice Btl 1 person delivery,Extra@Home Drempelservice Btl 1 persoons levering
+TIG_PostNL::Extra@Home Drempelservice Btl 2 person delivery,Extra@Home Drempelservice Btl 2 persoons levering
+TIG_PostNL::Extra@Home Options,Extra@Home Opties
+TIG_PostNL::Default Extra@Home shipping option,Standaard Extra@Home verzendoptie
+TIG_PostNL::Extra@Home,Extra@Home
+TIG_PostNL::Enable Extra@Home,Activeer Extra@Home
+TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home kan gebruikt worden voor het verzenden van grote en zware producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
+TIG_PostNL::Activate Extra@Home for your customers.,Activeer Exra@Home voor uw klanten.
+TIG_PostNL::Return customer code,Retouren klant code
+TIG_PostNL::"To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.","Om retouren aan te bieden aan uw klanten, heeft een uw afwijkende klantcode nodig. U kunt deze klantcode bij uw accountmanager opvragen."
+TIG_PostNL::This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,Dit product moet over dit aantal colli verspreid worden. Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.
+TIG_PostNL::This product(s) can only be delivered within the Netherlands.,Deze bestelling kan alleen verzonden worden naar bestemmingen in Nederland.
+TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
+"TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Let op: Om succesvol orders met Extra@Home te versturen moet u de productattributen naam, gewicht en volume ingevuld hebben."
+"TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","Wanneer het product type Extra@Home is, dan is dit veld verplicht. Vul hier het aantal kubieke centimeters in, bijvoorbeeld 30000"
+"TIG_PostNL::Enable evening delivery for Belgium","Activeer avondbezorging voor België"
+"TIG_PostNL::You can read more about evening delivery <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/"" target=""_blank"" title=""evening delivery"">here</a>.","U kunt <a href=""http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/"" target=""_blank"" title=""evening delivery"">hier</a> meer lezen over avondbezorging."
+"TIG_PostNL::Activate evening delivery for your customers. Note: this only applies to home deliveries.","Activeer avondbezorging voor uw klanten. Dit geld alleen voor bestellingen die thuis afgeleverd worden."
+"TIG_PostNL::Activate monday delivery (also known as sunday sorting) for your customers. Note: this only applies to home deliveries. Postal office deliveries will not take place on Monday.","Activeer maandagbezorigin voor (ook bekend als zondag sortering) voor uw klanten. Dit geld alleen voor bestellingen die thuis afgeleverd worden. Postkantoor leveringen worden niet gedaan op maandag."
+"TIG_PostNL::Evening BE timeframe fee","Avondbezorging BE toeslag"
+"TIG_PostNL::PDF (Combi-label) Imagick","PDF (Combi-label) Imagick"
+"TIG_PostNL::Only use this if you have problems printing combi-labels in batch.","Gebruik dit alleen als u problemen ervaart met het batch printen van combi-labels."
+"TIG_PostNL::This function makes sure when printing multiple combi-label orders with packingslip, all the labels are printed. Before using this function, please make sure your server has the Imagick PHP extension.","Deze functie zorgt ervoor dat bij het afdrukken van meerdere combi-label orders inclusief pakbon, alle labels worden afgedrukt. Voordat u deze functie activeerd, moet u ervoor zorgen dat uw server de Imagick PHP extensie heeft."

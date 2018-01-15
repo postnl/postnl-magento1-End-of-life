@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
@@ -76,6 +76,17 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $this->_getInstance()->setIsDomesticShipment(true);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(true);
+        $this->_getInstance()->setIsExtraAtHomeShipment(false);
+
+        $this->assertFalse($this->_getInstance()->canGenerateReturnBarcode());
+    }
+
+    public function testCanGenerateReturnBarcodeWhenExtraAtHome()
+    {
+        $this->_getInstance()->setIsDomesticShipment(true);
+        $this->_getInstance()->setIsBuspakjeShipment(false);
+        $this->_getInstance()->setIsFoodShipment(false);
+        $this->_getInstance()->setIsExtraAtHomeShipment(true);
 
         $this->assertFalse($this->_getInstance()->canGenerateReturnBarcode());
     }
@@ -85,6 +96,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $this->_getInstance()->setIsDomesticShipment(true);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(false);
+        $this->_getInstance()->setIsExtraAtHomeShipment(false);
 
         $this->_getInstance()->setShipmentId(false);
         $this->_getInstance()->setShipment(false);
@@ -97,6 +109,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $this->_getInstance()->setIsDomesticShipment(true);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(false);
+        $this->_getInstance()->setIsExtraAtHomeShipment(false);
 
         $this->_getInstance()->setShipmentId(10);
 
@@ -108,6 +121,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         $this->_getInstance()->setIsDomesticShipment(true);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(false);
+        $this->_getInstance()->setIsExtraAtHomeShipment(false);
 
         $this->_getInstance()->setShipmentId(10);
         $this->_getInstance()->setShipment(array());
@@ -121,7 +135,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
     {
         return array(
             array('NL', true),
-            array('BE', false),
+            array('BE', true),
             array('DE', false),
             array('US', false),
         );
@@ -134,9 +148,10 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
     {
         $this->setShippingAddress($country);
 
-        $this->_getInstance()->setIsDomesticShipment(true);
+        $this->_getInstance()->setIsDomesticShipment($result);
         $this->_getInstance()->setIsBuspakjeShipment(false);
         $this->_getInstance()->setIsFoodShipment(false);
+        $this->_getInstance()->setIsExtraAtHomeShipment(false);
 
         $this->_getInstance()->setShipmentId(10);
         $this->_getInstance()->setShipment(array());
@@ -225,5 +240,80 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
 
         $result = $this->_getInstance()->isDomesticShipment();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function isExtraAtHomeShipmentProvider()
+    {
+        return array(
+            'valid by isShipment' => array(
+                true,
+                TIG_PostNL_Model_Core_Order::TYPE_OVERDAG,
+                true
+            ),
+            'valid by order' => array(
+                null,
+                TIG_PostNL_Model_Core_Order::TYPE_EXTRA_AT_HOME,
+                true
+            ),
+            'invalid by isShipment' => array(
+                false,
+                TIG_PostNL_Model_Core_Order::TYPE_EXTRA_AT_HOME,
+                false
+            ),
+            'invalid by order' => array(
+                null,
+                TIG_PostNL_Model_Core_Order::TYPE_AVOND,
+                false
+            ),
+        );
+    }
+
+    /**
+     * @param $isShipment
+     * @param $orderType
+     * @param $expected
+     *
+     * @dataProvider isExtraAtHomeShipmentProvider
+     */
+    public function testIsExtraAtHomeShipment($isShipment, $orderType, $expected)
+    {
+        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')->setMethods(array('getType'))->getMock();
+        $postnlOrderMock->method('getType')->willReturn($orderType);
+
+        $instance = $this->_getInstance();
+        $instance->setIsExtraAtHomeShipment($isShipment);
+        $instance->setPostnlOrder($postnlOrderMock);
+
+        $result = $instance->isExtraAtHomeShipment();
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function isMultiColliAllowedProvider()
+    {
+        return array(
+            'NL' => array('NL', true),
+            'BE' => array('BE', true),
+            'DE' => array('DE', false),
+        );
+    }
+
+    /**
+     * @dataProvider isMultiColliAllowedProvider
+     */
+    public function testIsMultiColliAllowed($destinationCountry, $expected)
+    {
+        $instance = $this->_getInstance();
+
+        $shippingAddress = new Mage_Sales_Model_Order_Address;
+        $shippingAddress->setCountryId($destinationCountry);
+
+        $instance->setData('shipping_address', $shippingAddress);
+
+        $result   = $instance->isMultiColliAllowed();
+        $this->assertSame($expected, $result);
     }
 }

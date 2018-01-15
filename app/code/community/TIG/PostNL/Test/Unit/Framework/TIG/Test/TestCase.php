@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework_TestCase
@@ -325,6 +325,67 @@ class TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase extends PHPUnit_Framework
         }
 
         return $this;
+    }
+
+    /**
+     * @param $method
+     * @param $instance
+     *
+     * @return \ReflectionMethod
+     */
+    protected function getMethod($method, $instance)
+    {
+        $method = new \ReflectionMethod($instance, $method);
+        $method->setAccessible(true);
+
+        return $method;
+    }
+
+    /**
+     * @param      $method
+     * @param null $instance
+     *
+     * @return mixed
+     */
+    protected function invoke($method, $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $method = $this->getMethod($method, $instance);
+
+        return $method->invoke($instance);
+    }
+
+    /**
+     * @param       $method
+     * @param array $args
+     * @param null  $instance
+     *
+     * @return mixed
+     */
+    protected function invokeArgs($method, $args = array(), $instance = null)
+    {
+        if ($instance === null) {
+            $instance = $this->_getInstance();
+        }
+
+        $method = $this->getMethod($method, $instance);
+
+        return $method->invokeArgs($instance, $args);
+    }
+
+    /**
+     * @param $module
+     *
+     * @return bool
+     */
+    public function isModuleAvailable($module)
+    {
+        $modules = Mage::getConfig()->getNode('modules')->children();
+
+        return array_key_exists($module, array_keys($modules));
     }
 
     /**

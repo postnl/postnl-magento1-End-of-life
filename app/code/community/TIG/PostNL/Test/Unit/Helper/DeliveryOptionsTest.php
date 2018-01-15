@@ -33,11 +33,38 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
+    private $defaultAvailableProductOptions;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp()
+    {
+        $this->defaultAvailableProductOptions = Mage::getStoreConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        /**
+         * Some unittests depend on the default config value of the product options.
+         * By resetting this config option those tests won't be broken.
+         */
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS,
+            $this->defaultAvailableProductOptions
+        );
+    }
+
     /**
      * @return TIG_PostNL_Helper_DeliveryOptions
      */
@@ -380,6 +407,8 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
     }
 
     /**
+     * @param        $deliveryDays
+     * @param        $now
      * @param        $enableSundayDelivery
      * @param        $enableSundaySorting
      * @param        $timeframes
@@ -545,5 +574,113 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
         $result = $instance->canUseSundayDelivery();
 
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function canUseExtraAtHomeDeliveryProvider()
+    {
+        return array(
+            'enabled, product options not available, checkQuote success' => array(
+                true,
+                '3083',
+                false,
+                true,
+                false
+            ),
+            'disabled, product options available, checkQuote success' => array(
+                false,
+                '3442,3628',
+                false,
+                true,
+                false
+            ),
+            'enabled, product options available, do not checkQuote' => array(
+                true,
+                '3437,3629',
+                false,
+                null,
+                true
+            ),
+            'enabled, product options available, checkQuote success' => array(
+                true,
+                '3653',
+                true,
+                true,
+                true
+            ),
+            'enabled, product options available, checkQuote failure' => array(
+                true,
+                '3440,3783',
+                true,
+                false,
+                false
+            )
+        );
+    }
+
+    public function dataProviderFormattedTypes()
+    {
+        return array (
+            'Avond België'                 => array('Avond', 'BE', 'Avond (België)'),
+            'Avond België LowerCase'       => array('avond', 'BE', 'Avond (België)'),
+            'Avond Nederland'              => array('Avond', 'NL', 'Avond'),
+            'Domestic COD'                 => array('domestic_cod', 'NL', 'Overdag rembours'),
+            'Avond COD'                    => array('avond_cod', 'NL', 'Avond rembours'),
+            'Pakjegemak België'            => array('PG', 'BE', 'PakjeGemak (België)'),
+            'Pakjegemak België LowerCase'  => array('pg', 'BE', 'PakjeGemak (België)'),
+
+        );
+    }
+
+    /**
+     * @param $enabled
+     * @param $productOptions
+     * @param $checkQuote
+     * @param $registryValue
+     * @param $expected
+     *
+     * @dataProvider canUseExtraAtHomeDeliveryProvider
+     */
+    public function testCanUseExtraAtHomeDelivery($enabled, $productOptions, $checkQuote, $registryValue, $expected)
+    {
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_ENABLE_EXTRA_AT_HOME_DELIVERY,
+            $enabled
+        );
+        Mage::app()->getStore()->setConfig(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_AVAILABLE_PRODUCT_OPTIONS,
+            $productOptions
+        );
+
+        $quoteId = rand(0, 1000);
+        $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')->setMethods(array('getId'))->getMock();
+        $quoteMock->method('getId')->willReturn($quoteId);
+
+        $this->setRegistryKey('postnl_quote_is_extra_at_home_' . $quoteId, $registryValue);
+
+        $instance = $this->_getInstance();
+        $instance->setCache(false);
+        $this->setProperty('_quote', $quoteMock, $instance);
+
+        $result = $instance->canUseExtraAtHomeDelivery($checkQuote);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @param $type
+     * @param $country
+     * @param $expected
+     *
+     * @dataProvider dataProviderFormattedTypes
+     */
+    public function testGetFormattedType($type, $country, $expected)
+    {
+        $instance = $this->_getInstance();
+        $result = $instance->getFormattedType($type, array(), $country);
+
+        $this->assertEquals($expected, $result['formatted_type']);
     }
 }

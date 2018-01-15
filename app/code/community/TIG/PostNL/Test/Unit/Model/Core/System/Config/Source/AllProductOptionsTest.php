@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
@@ -117,5 +117,35 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
 
         $this->assertEquals($available, $hasOption);
         $helper->setCache($cache);
+    }
+
+    /**
+     * @return array
+     */
+    public function hasExtraAtHomeProductCodesProvider()
+    {
+        return array(
+            array('3628'),
+            array('3629'),
+            array('3653'),
+            array('3783'),
+            array('3790'),
+            array('3791'),
+            array('3792'),
+            array('3793'),
+        );
+    }
+
+    /**
+     * @param $productCode
+     *
+     * @dataProvider hasExtraAtHomeProductCodesProvider
+     */
+    public function testHasExtraAtHomeProductCodes($productCode)
+    {
+        $instance = $this->_getInstance();
+        $options = $instance->getOptions(array(), true);
+
+        $this->assertArrayHasKey($productCode, $options);
     }
 }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_Resource_Carrier_Tablerate
@@ -104,7 +104,8 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                                       " WHEN 'agecheck' THEN 5" .
                                       " WHEN 'birthdaycheck' THEN 6" .
                                       " WHEN 'idcheck' THEN 7" .
-                                      " WHEN '*' THEN 8" .
+                                      " WHEN 'extra_at_home' THEN 8" .
+                                      " WHEN '*' THEN 9" .
                                       " ELSE 100" .
                                       " END) ASC"
                                   ),
@@ -474,6 +475,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 'agecheck',
                 'birthdaycheck',
                 'idcheck',
+                'extra_at_home',
             );
 
             $this->_importErrors[] = Mage::helper('postnl')->__(
@@ -649,6 +651,18 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             case 'birth-day check':   //no break
             case 'birth-day-check':   //no break
                 $formattedType = 'birthdaycheck';
+                break;
+            case 'extra@home':        //no break
+            case 'extra @ home':      //no break
+            case 'extraathome':       //no break
+            case 'extra_at_home':     //no break
+            case 'extra at_home':     //no break
+            case 'extra_at home':     //no break
+            case 'extra at home':     //no break
+            case 'extra-at-home':     //no break
+            case 'extra-at home':     //no break
+            case 'extra at-home':     //no break
+                $formattedType = 'extra_at_home';
                 break;
             //no default
         }

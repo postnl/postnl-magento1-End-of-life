@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -1159,6 +1159,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cutoff_time>
+                        <saturday_cutoff_time translate="label tooltip" module="postnl">
+                            <label>Saturday cut-off time</label>
+                            <tooltip><![CDATA[When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.]]></tooltip>
+                            <tooltip_block>postnl_adminhtml/system_config_form_field_tooltip_hourMinute</tooltip_block>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
+                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
+                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </saturday_cutoff_time>
                         <sunday_cutoff_time translate="label tooltip" module="postnl">
                             <label>Sunday cut-off time</label>
                             <tooltip><![CDATA[When an order is placed after this time, another day will be added to the shipping duration. Please enter this time in the %s time zone.]]></tooltip>
@@ -1166,7 +1178,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
                             <source_model>postnl_core/system_config_source_hourMinute</source_model>
                             <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1182,7 +1194,7 @@
                             <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
                             <source_model>postnl_core/system_config_source_shippingDays</source_model>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1190,7 +1202,7 @@
                         <checkout_settings_header translate="titel" module="postnl">
                             <label>Checkout settings (only active in the Netherlands)</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1200,7 +1212,7 @@
                             <tooltip>Postcode validation and delivery options are only available for supported checkouts.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_checkoutExtensions</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1208,7 +1220,7 @@
                         <checkout_extension_other translate="label" module="postnl">
                             <label>Specify checkout extension</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1219,7 +1231,7 @@
                         <postcode_nl_extension_active>
                             <frontend_type>hidden</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_postcodeNlExtensionActive</frontend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1227,7 +1239,7 @@
                         <postcode_nl_extension_conflict_info translate="comment" module="postnl">
                             <comment><![CDATA[You are currently using the Postcode.nl extension. This extension conflicts with the PostNL extension's built-in postcode validator. We recommend you disable the Postcode.nl extension if you wish to use the PostNL extensions' postcode validator.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2678,6 +2690,35 @@
                                 </country>
                             </depends>
                         </enable_food_delivery>
+                        <enable_extra_at_home translate="label comment tooltip" module="postnl">
+                            <label>Enable Extra@Home</label>
+                            <comment><![CDATA[Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.]]></comment>
+                            <tooltip>Activate Extra@Home for your customers.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>420</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <enable_delivery_days>1</enable_delivery_days>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </enable_extra_at_home>
                         <food_delivery_default_product_type>
                             <label>Default product type</label>
                             <comment>This value is used to determine the product type of newly created products.</comment>
@@ -2685,7 +2726,7 @@
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_productType</backend_model>
                             <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>420</sort_order>
+                            <sort_order>430</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -3060,6 +3101,55 @@
                                 </checkout_extension>
                             </depends>
                         </allow_sunday_sorting_be>
+                        <allow_avond_be translate="label comment tooltip" module="postnl">
+                            <label>Enable evening delivery for Belgium</label>
+                            <comment><![CDATA[You can read more about evening delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/" target="_blank" title="evening delivery">here</a>.]]></comment>
+                            <tooltip>Activate evening delivery for your customers. Note: this only applies to home deliveries.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </allow_avond_be>
+                        <evening_be_timeframe_fee translate="label tooltip" module="postnl">
+                            <label>Evening BE timeframe fee</label>
+                            <tooltip>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for BE evening timeframes.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number validate-not-negative-number</validate>
+                            <depends>
+                                <delivery_options_be_active>1</delivery_options_be_active>
+                                <enable_delivery_days_be>1</enable_delivery_days_be>
+                                <allow_avond_be>1</allow_avond_be>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </evening_be_timeframe_fee>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
@@ -3118,24 +3208,8 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
-                        <live_username translate="label tooltip" module="postnl">
-                            <label>Live Username</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>postnl-validate-empty</validate>
-                            <depends>
-                                <mode>
-                                    <value>0||2</value>
-                                    <separator>||</separator>
-                                </mode>
-                            </depends>
-                        </live_username>
-                        <live_password translate="label tooltip" module="postnl">
-                            <label>Live Password</label>
+                        <live_apikey translate="label tooltip" module="postnl">
+                            <label>Live Apikey</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
@@ -3152,21 +3226,9 @@
                                     <separator>||</separator>
                                 </mode>
                             </depends>
-                        </live_password>
-                        <test_username translate="label" module="postnl">
-                            <label>Test Username</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>postnl-validate-empty</validate>
-                            <depends>
-                                <mode>1</mode>
-                            </depends>
-                        </test_username>
-                        <test_password translate="label" module="postnl">
-                            <label>Test Password</label>
+                        </live_apikey>
+                        <test_apikey translate="label" module="postnl">
+                            <label>Test Apikey</label>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -3179,7 +3241,7 @@
                             <depends>
                                 <mode>1</mode>
                             </depends>
-                        </test_password>
+                        </test_apikey   >
                         <collection_location translate="label tooltip" module="postnl">
                             <label>BLS (location) Code</label>
                             <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
@@ -3621,6 +3683,9 @@
                         </copy_method>
                     </fields>
                 </track_and_trace>
+
+
+
                 <returns translate="label comment" module="postnl">
                     <label>Returns</label>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
@@ -3630,12 +3695,18 @@
                     <show_in_store>1</show_in_store>
                     <fields>
                         <returns_header translate="label" module="postnl">
-                            <label>Returns</label>
+                            <label>Returns NL</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                            </depends>
                         </returns_header>
                         <return_labels_active translate="label" module="postnl">
                             <label>Activate returns</label>
@@ -3646,13 +3717,17 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                            </depends>
                         </return_labels_active>
-                        <print_return_and_shipping_label translate="label tooltip" module="postnl">
-                            <label>Print the return label along with regular shipping labels</label>
-                            <tooltip>Activate this option to ship the order and returnlabel together.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
+                        <return_customer_code translate="label" module="postnl">
+                            <label>Return customer code</label>
+                            <tooltip>To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.</tooltip>
+                            <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -3660,24 +3735,29 @@
                             <depends>
                                 <return_labels_active>1</return_labels_active>
                             </depends>
-                        </print_return_and_shipping_label>
-                        <customer_print_label translate="label tooltip" module="postnl">
-                            <label>Allow customers to print the return label from the webshop</label>
-                            <tooltip>This will add a button to the customer's account to print the return label for this shipment.</tooltip>
+                            <validate>postnl-validate-empty</validate>
+                        </return_customer_code>
+                        <print_return_and_shipping_label translate="label tooltip" module="postnl">
+                            <label>Print the return label along with regular shipping labels</label>
+                            <tooltip>Activate this option to ship the order and returnlabel together.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
-                        </customer_print_label>
-                        <guest_print_label translate="label tooltip" module="postnl">
-                            <label>Allow guests to print the return labels</label>
-                            <tooltip>This will add a button to the sales/guest/shipment page so that guests can print a return label for this shipment.</tooltip>
+                        </print_return_and_shipping_label>
+                        <customer_print_label translate="label tooltip" module="postnl">
+                            <label>Allow customers to print the return label from the webshop</label>
+                            <tooltip>This will add a button to the customer's account to print the return label for this shipment.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -3687,14 +3767,18 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
-                                <customer_print_label>1</customer_print_label>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
-                        </guest_print_label>
-                        <return_label_instructions_block translate="label tooltip" module="postnl">
-                            <label>Return labels instructions block</label>
-                            <tooltip>Please select a static block that contains instructions for customers on how to use the return labels.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_staticBlocks</source_model>
+                        </customer_print_label>
+                        <guest_print_label translate="label tooltip" module="postnl">
+                            <label>Allow guests to print the return labels</label>
+                            <tooltip>This will add a button to the sales/guest/shipment page so that guests can print a return label for this shipment.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -3702,6 +3786,28 @@
                             <depends>
                                 <return_labels_active>1</return_labels_active>
                                 <customer_print_label>1</customer_print_label>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                            </depends>
+                        </guest_print_label>
+                        <return_label_instructions_block translate="label tooltip" module="postnl">
+                            <label>Return labels instructions block</label>
+                            <tooltip>Please select a static block that contains instructions for customers on how to use the return labels.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_staticBlocks</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active>1</return_labels_active>
+                                <customer_print_label>1</customer_print_label>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                         </return_label_instructions_block>
                         <email_template translate="label tooltip" module="postnl">
@@ -3709,40 +3815,36 @@
                             <tooltip>You can send the customer an email with the return label attached as a pdf. Please select which transactional email template you would like to use for this email.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                         </email_template>
                         <return_address_header translate="label" module="postnl">
-                            <label>Return address</label>
+                            <label>Return address NL</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <return_labels_active>1</return_labels_active>
-                            </depends>
-                        </return_address_header>
-                        <return_company translate="label" module="postnl">
-                            <label>Company</label>
-                            <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
-                            <validate>postnl-validate-empty</validate>
-                        </return_company>
-                        <return_department translate="label" module="postnl">
-                            <label>Department</label>
+                        </return_address_header>
+                        <return_company translate="label" module="postnl">
+                            <label>Company</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3750,6 +3852,26 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_company>
+                        <return_department translate="label" module="postnl">
+                            <label>Department</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty</validate>
                         </return_department>
@@ -3758,29 +3880,21 @@
                             <comment><![CDATA[You can apply for a freepost number on <a href="http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1" target="_blank" title="Request a freepost number.">this</a> page.]]></comment>
                             <tooltip>A freepost number is a requisite for using return labels.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <return_labels_active>1</return_labels_active>
-                            </depends>
-                            <validate>postnl-validate-empty</validate>
-                        </return_freepost_number>
-                        <return_postcode translate="label" module="postnl">
-                            <label>Postcode</label>
-                            <frontend_type>text</frontend_type>
                             <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </return_postcode>
-                        <return_city translate="label" module="postnl">
-                            <label>City</label>
+                        </return_freepost_number>
+                        <return_postcode translate="label" module="postnl">
+                            <label>Postcode</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3788,11 +3902,15 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </return_city>
-                        <return_region translate="label" module="postnl">
-                            <label>Region</label>
+                        </return_postcode>
+                        <return_city translate="label" module="postnl">
+                            <label>City</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3800,21 +3918,282 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_city>
+                        <return_region translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active>1</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                         </return_region>
                         <only_global_header translate="label" module="postnl">
                             <label>These settings are only available on the 'global' scope.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>0</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <return_labels_active>0</return_labels_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
                             </depends>
                         </only_global_header>
+                        <returns_header_be translate="label" module="postnl">
+                            <label>Returns BE</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </returns_header_be>
+                        <return_labels_active_be translate="label" module="postnl">
+                            <label>Activate returns</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </return_labels_active_be>
+                        <print_return_and_shipping_label_be translate="label tooltip" module="postnl">
+                            <label>Print the return label along with regular shipping labels</label>
+                            <tooltip>Activate this option to ship the order and returnlabel together.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                        </print_return_and_shipping_label_be>
+                        <customer_print_label_be translate="label tooltip" module="postnl">
+                            <label>Allow customers to print the return label from the webshop</label>
+                            <tooltip>This will add a button to the customer's account to print the return label for this shipment.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                        </customer_print_label_be>
+                        <guest_print_label_be translate="label tooltip" module="postnl">
+                            <label>Allow guests to print the return labels</label>
+                            <tooltip>This will add a button to the sales/guest/shipment page so that guests can print a return label for this shipment.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <customer_print_label_be>1</customer_print_label_be>
+                            </depends>
+                        </guest_print_label_be>
+                        <return_label_instructions_block_be translate="label tooltip" module="postnl">
+                            <label>Return labels instructions block</label>
+                            <tooltip>Please select a static block that contains instructions for customers on how to use the return labels.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_staticBlocks</source_model>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <customer_print_label_be>1</customer_print_label_be>
+                            </depends>
+                        </return_label_instructions_block_be>
+                        <email_template_be translate="label tooltip" module="postnl">
+                            <label>Return label email template</label>
+                            <tooltip>You can send the customer an email with the return label attached as a pdf. Please select which transactional email template you would like to use for this email.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                        </email_template_be>
+                        <return_address_header_be translate="label" module="postnl">
+                            <label>Return address BE</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                        </return_address_header_be>
+                        <return_company_be translate="label" module="postnl">
+                            <label>Company</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>240</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_company_be>
+                        <return_department_be translate="label" module="postnl">
+                            <label>Department</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_department_be>
+                        <return_freepost_number_be translate="label comment tooltip" module="postnl">
+                            <label>Freepost number</label>
+                            <comment><![CDATA[You can apply for a freepost number on <a href="http://www.postnl.nl/zakelijke-oplossingen/ontvangen/antwoordnummer/?searchResult=position1" target="_blank" title="Request a freepost number.">this</a> page.]]></comment>
+                            <tooltip>A freepost number is a requisite for using return labels.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>260</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_freepost_number_be>
+
+                        <return_streetname_be translate="label comment tooltip" module="postnl">
+                            <label>Street</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>270</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_streetname_be>
+                        <return_housenumber_be translate="label comment tooltip" module="postnl">
+                            <label>Housenumber</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_housenumber_be>
+                        <return_housenumber_extension_be translate="label comment tooltip" module="postnl">
+                            <label>Housenumber Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>290</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>BE</value>
+                                </country>
+                            </depends>
+                        </return_housenumber_extension_be>
+                        <return_postcode_be translate="label" module="postnl">
+                            <label>Postcode</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_postcode_be>
+                        <return_city_be translate="label" module="postnl">
+                            <label>City</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>310</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </return_city_be>
+                        <return_region_be translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>320</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>1</return_labels_active_be>
+                            </depends>
+                        </return_region_be>
+                        <only_global_header_be translate="label" module="postnl">
+                            <label>These settings are only available on the 'global' scope.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>330</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <return_labels_active_be>0</return_labels_active_be>
+                            </depends>
+                        </only_global_header_be>
                     </fields>
                 </returns>
+
                 <cod translate="label comment" module="postnl">
                     <label>PostNL COD</label>
                     <comment><![CDATA[Activate an extra payment method with COD shipments.<br/>Please note: In order to offer COD shipments to your customers you will need to complete the fields below and activate an extra payment method <a href="%s" target="_blank">here</a>.<br />PostNL COD is only available for Dutch orders.]]></comment>
@@ -5433,6 +5812,36 @@
                                 </country>
                             </depends>
                         </default_evening_product_option>
+                        <default_evening_be_product_option translate="label tooltip" module="postnl">
+                            <label>Default evening BE delivery shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to BE evening delivery shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_euProductOptions::getAvailableAvondOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>155</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_timeframes>
+                                <allow_avond_be>
+                                    <fieldset>delivery_options_int</fieldset>
+                                    <value>1</value>
+                                </allow_avond_be>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_evening_be_product_option>
                         <default_sunday_product_option translate="label tooltip" module="postnl">
                             <label>Default sunday delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
@@ -5619,6 +6028,32 @@
                                 </country>
                             </depends>
                         </default_birthday_check_pickup_product_option>
+                        <default_extra_at_home_product_option translate="label tooltip" module="postnl">
+                            <label>Default Extra@Home shipping option</label>
+                            <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_extraAtHomeProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_extra_at_home>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_extra_at_home>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_extra_at_home_product_option>
                         <default_sameday_product_option translate="label tooltip" module="postnl">
                             <label>Default same day delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
@@ -5626,7 +6061,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableSameDayOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5656,7 +6091,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5682,7 +6117,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5712,7 +6147,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>260</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5734,7 +6169,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>270</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -5790,7 +6225,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </debug_mode>
-                        <pdf_font_compatibility_mode>
+                        <pdf_font_compatibility_mode translate="label comment tooltip" module="postnl">
                             <label>PDF font compatibility mode</label>
                             <comment><![CDATA[Only use this if you have problems with special characters on your PostNL packing slip.]]></comment>
                             <tooltip>This makes the PostNL packing slip use the standard Magento packing slip font. While this is visually less appealing, it can resolve some issues with special characters.</tooltip>
@@ -5802,6 +6237,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </pdf_font_compatibility_mode>
+                        <imagick_label translate="label comment tooltip" module="postnl">
+                            <label>PDF (Combi-label) Imagick</label>
+                            <comment><![CDATA[Only use this if you have problems printing combi-labels in batch.]]></comment>
+                            <tooltip>This function makes sure when printing multiple combi-label orders with packingslip, all the labels are printed. Before using this function, please make sure your server has the Imagick PHP extension.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </imagick_label>
                         <infinite_label_printing translate="label tooltip" module="postnl">
                             <label>Allow infinite label printing</label>
                             <tooltip>By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.</tooltip>

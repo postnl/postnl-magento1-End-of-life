@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Service_Shipment
@@ -469,12 +469,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
      * @param boolean                                                        $confirm Optional parameter to also
      *                                                                                confirm the shipment
      * @param boolean|null                                                   $includeReturnLabels
+     * @param boolean                                                        $isBe
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getLabels($shipment, $confirm = false, $includeReturnLabels = null)
+    public function getLabels($shipment, $confirm = false, $includeReturnLabels = null, $isBe = false)
     {
         if (is_null($includeReturnLabels)) {
             $includeReturnLabels = Mage::getStoreConfigFlag(
@@ -495,7 +496,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
          */
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
-        if (!$helper->isReturnsEnabled($shipment->getStoreId())) {
+        if (!$helper->isReturnsEnabled($shipment->getStoreId(), $isBe)) {
             $includeReturnLabels = false;
         }
 
@@ -544,10 +545,11 @@ class TIG_PostNL_Model_Core_Service_Shipment
      * Get all return labels for a shipment.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
+     * @param $singleLabel
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]|false
      */
-    public function getReturnLabels($shipment)
+    public function getReturnLabels($shipment, $singleLabel = true)
     {
         /**
          * Load the PostNL shipment.
@@ -566,7 +568,13 @@ class TIG_PostNL_Model_Core_Service_Shipment
             return $postnlShipment->getReturnLabels();
         }
 
-        $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+        if (!$postnlShipment->hasReturnLabels() && !$singleLabel) {
+            $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+        }
+
+        if (!$postnlShipment->hasReturnLabels() && $singleLabel) {
+            $postnlShipment->getSingleReturnLabel();
+        }
 
         $labels = $postnlShipment->getReturnLabels();
 

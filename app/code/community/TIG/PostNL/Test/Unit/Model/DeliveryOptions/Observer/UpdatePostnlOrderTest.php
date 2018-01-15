@@ -33,9 +33,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+use TIG_PostNL_Model_Core_Order as PostNLOrder;
+
 class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest
     extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
@@ -114,5 +116,53 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest
              'TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder',
                  $observer->updatePostnlOrder($mockObserver)
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderTypeProvider()
+    {
+        return array(
+            'overdag'       => array(0, false, PostNLOrder::TYPE_OVERDAG),
+            'food'          => array(1, false, PostNLOrder::TYPE_FOOD),
+            'cooled food'   => array(2, false, PostNLOrder::TYPE_COOLED_FOOD),
+            'extra at home' => array(0, true, PostNLOrder::TYPE_EXTRA_AT_HOME),
+        );
+    }
+
+    /**
+     * @param $foodType
+     * @param $isExtraAtHome
+     * @param $expected
+     *
+     * @dataProvider getOrderTypeProvider
+     */
+    public function testGetOrderType($foodType, $isExtraAtHome, $expected)
+    {
+        $helperMock = $this->getMockBuilder('TIG_PostNL_Helper_DeliveryOptions')
+            ->setMethods(array(
+                'canUseFoodDelivery',
+                'quoteIsFood',
+                'getQuoteFoodType',
+                'canUseExtraAtHomeDelivery',
+                'quoteIsExtraAtHome'
+            ))->getMock();
+
+        $helperMock->expects($this->once())->method('canUseFoodDelivery')->willReturn($foodType);
+        $helperMock->expects($this->atMost(1))->method('quoteIsFood')->willReturn($foodType);
+        $helperMock->expects($this->atMost(1))->method('getQuoteFoodType')->willReturn($foodType);
+        $helperMock->expects($this->atMost(1))->method('canUseExtraAtHomeDelivery')->willReturn($isExtraAtHome);
+        $helperMock->expects($this->atMost(1))->method('quoteIsExtraAtHome')->willReturn($isExtraAtHome);
+
+        $this->setHelperMock('postnl/deliveryOptions', $helperMock);
+
+        $postnlOrderMock = $this->getMockBuilder('TIG_PostNL_Model_Core_Order')->getMock();
+        $orderMock = $this->getMockBuilder('Mage_Sales_Model_Order')->getMock();
+
+        $instance = $this->_getInstance();
+        $result = $this->invokeArgs('_getOrderType', array($postnlOrderMock, $orderMock), $instance);
+
+        $this->assertEquals($expected, $result);
     }
 }

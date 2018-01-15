@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2017 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
@@ -104,6 +104,20 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         }
 
         return $options;
+    }
+
+    /**
+     * @param $code
+     *
+     * @return bool|mixed
+     */
+    public function getOptionsByCode($code)
+    {
+        if (!isset($this->_options[$code])) {
+            return false;
+        }
+
+        return $this->_options[$code];
     }
 
     /**
@@ -251,25 +265,16 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _filterAvailable(&$options)
     {
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
-        $canUsePakjegemakBeNotInsured = $helper->canUsePakjegemakBeNotInsured();
+        $canUseEpsBEOnly = $this->getHelper()->canUseEpsBEOnlyOption();
+        $canUsePakjegemakBeNotInsured = $this->getHelper()->canUsePakjegemakBeNotInsured();
 
         $storeId = Mage::app()->getStore()->getId();
 
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        if ($helper->getDomesticCountry() == 'BE') {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE, $storeId);
-        } else {
-            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        }
-
+        $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
         if ($canUseEpsBEOnly) {
             $supportedOptionsArray[] = '4955';
+            $supportedOptionsArray[] = '4941';
         }
 
         if ($canUsePakjegemakBeNotInsured) {
