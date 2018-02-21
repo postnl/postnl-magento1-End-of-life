@@ -2064,33 +2064,33 @@
                                 </country>
                             </depends>
                         </pakjegemak_express_fee>
-                        <enable_pakketautomaat_locations translate="label tooltip" module="postnl">
-                            <label>Enable package dispenser locations</label>
-                            <tooltip>Activate to allow your customers to pick up a parcel at a package dispenser location. The extension will automatically check if this option is available in the area submitted by your customer. Parcels delivered to a package dispenser machine must comply with a certain size. </tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </enable_pakketautomaat_locations>
+                        <!--<enable_pakketautomaat_locations translate="label tooltip" module="postnl">-->
+                            <!--<label>Enable package dispenser locations</label>-->
+                            <!--<tooltip>Activate to allow your customers to pick up a parcel at a package dispenser location. The extension will automatically check if this option is available in the area submitted by your customer. Parcels delivered to a package dispenser machine must comply with a certain size. </tooltip>-->
+                            <!--<frontend_type>checkbox</frontend_type>-->
+                            <!--<backend_model>postnl/system_config_backend_checkbox</backend_model>-->
+                            <!--<source_model>postnl/system_config_source_yesno</source_model>-->
+                            <!--<sort_order>180</sort_order>-->
+                            <!--<show_in_default>1</show_in_default>-->
+                            <!--<show_in_website>1</show_in_website>-->
+                            <!--<show_in_store>1</show_in_store>-->
+                            <!--<depends>-->
+                                <!--<delivery_options_active>1</delivery_options_active>-->
+                                <!--<checkout_extension>-->
+                                    <!--<fieldset>cif_labels_and_confirming</fieldset>-->
+                                    <!--<value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>-->
+                                    <!--<separator>||</separator>-->
+                                <!--</checkout_extension>-->
+                                <!--<use_dutch_products>-->
+                                    <!--<fieldset>cif_labels_and_confirming</fieldset>-->
+                                    <!--<eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>-->
+                                <!--</use_dutch_products>-->
+                                <!--<country>-->
+                                    <!--<fieldset>cif_address</fieldset>-->
+                                    <!--<eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>-->
+                                <!--</country>-->
+                            <!--</depends>-->
+                        <!--</enable_pakketautomaat_locations>-->
                         <allow_streetview translate="label tooltip" module="postnl">
                             <label>Allow Google Streetview</label>
                             <tooltip>If enabled, users may use Google Streetview when choosing a post office location.</tooltip>
