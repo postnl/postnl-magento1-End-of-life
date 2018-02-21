@@ -866,6 +866,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePa($website)
     {
+        //PA is not available yet in SAM.
+        //@todo remove this line when it is.
+        return false;
+
         if (!$this->_getUseDeliveryOptions($website)) {
             return false;
         }

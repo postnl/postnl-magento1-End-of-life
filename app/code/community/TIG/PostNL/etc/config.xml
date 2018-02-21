@@ -976,7 +976,7 @@
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
                 <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
                 <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
-                <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
+                <enable_pakketautomaat_locations>0</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
                 <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
                 <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
                 <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->

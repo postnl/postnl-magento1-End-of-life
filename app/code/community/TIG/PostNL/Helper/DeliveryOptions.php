@@ -1906,6 +1906,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     protected function _canUsePakketAutomaat()
     {
+        //PA is not available yet in SAM.
+        //@todo remove this line when it is.
+        return false;
+        
         $storeId = Mage::app()->getStore()->getId();
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
