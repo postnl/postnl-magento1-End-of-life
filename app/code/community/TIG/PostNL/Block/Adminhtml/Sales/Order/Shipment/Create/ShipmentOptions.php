@@ -180,7 +180,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
         }
 
         /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment = $this->getShipment();
         $postnlShipment->setShipmentType('buspakje')
                        ->setStoreId($this->getShipment()->getStoreId());
 
