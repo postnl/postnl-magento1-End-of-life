@@ -7,5 +7,5 @@ if (strpos(__DIR__, '.modman') !== false) {
 }
 
 ini_set('display_errors', true);
-error_reporting(1);
+error_reporting(-1);
 TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase::resetMagento();

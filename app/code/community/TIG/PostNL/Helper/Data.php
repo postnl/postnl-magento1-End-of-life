@@ -2672,11 +2672,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $level  = is_null($level) ? Zend_Log::DEBUG : $level;
         $file = empty($file) ? 'system.log' : $file;
 
-        // Validate file extension before save. Allowed file extensions: log, txt, html, csv
-        if (!Mage::helper('log')->isLogFileExtensionValid($file)) {
-            return;
-        }
-
         try {
             if (!isset($loggers[$file])) {
                 $logDir  = Mage::getBaseDir('var') . DS . 'log';
