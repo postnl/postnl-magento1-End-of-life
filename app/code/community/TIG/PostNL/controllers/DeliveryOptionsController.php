@@ -963,7 +963,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        $removeCharacters = ['(', ')', '.'];
+        $removeCharacters = array('(', ')', '.');
         $city        = str_replace($removeCharacters, '', $address['City']);
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
