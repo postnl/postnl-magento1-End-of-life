@@ -1191,8 +1191,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $order    = $shipment->getOrder();
         $address  = $postnlShipment->getShippingAddress();
 
-        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnOptions */
-        $returnOptions = Mage::helper('postnl/returnOptionsBe');
+        /** @var TIG_PostNL_Helper_ReturnOptions $returnOptions */
+        $returnOptions = Mage::helper('postnl/returnOptions');
 
         $returnAddress = $this->_getAddress('Return', $address);
         $returnAddress['AddressType'] = '01';
