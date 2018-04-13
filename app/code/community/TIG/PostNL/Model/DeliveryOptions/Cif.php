@@ -709,7 +709,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         if ($country == 'NL' && $sameDayDelivery && $dayOfWeek == 7) {
-            return $this->_getSundayCutoffGapOptions($country);
+            $sundayCutOffGapOptions = $this->_getSundayCutoffGapOptions($country);
+            if ($sundayCutOffGapOptions) {
+                return $sundayCutOffGapOptions;
+            }
         }
 
         $sundayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SUNDAY_DELIVERY, $storeId);
