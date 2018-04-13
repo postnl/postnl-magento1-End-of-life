@@ -1197,15 +1197,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $returnAddress = $this->_getAddress('Return', $address);
         $returnAddress['AddressType'] = '01';
 
-        $returnCode = $returnOptions->get($address->getCountryId());
-
         return array(
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
             'CollectionTimeStampStart' => '',
             'DownPartnerBarcode'       => $postnlShipment->getDownPartnerBarcode(),
             'DownPartnerID'            => $postnlShipment->getDownPartnerId(),
-            'ProductCodeDelivery'      => $returnCode ?: 2285,
+            'ProductCodeDelivery'      => $returnOptions->get($address->getCountryId()),
             'Contacts'                 => array(
                 'Contact' => $this->_getContact($address, $postnlShipment, $order),
             ),
