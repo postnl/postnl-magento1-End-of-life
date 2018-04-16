@@ -200,8 +200,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
-        /** @var TIG_PostNL_Helper_ReturnOptionsBe $returnHelper */
-        $returnHelper = Mage::helper('postnl/returnOptionsBe');
+        /** @var TIG_PostNL_Helper_ReturnOptions $returnHelper */
+        $returnHelper = Mage::helper('postnl/returnOptions');
         $country = $shipment->getShippingAddress()->getCountryId();
         $isBe = $shipment->getShippingAddress()->getCountryId() == 'BE';
 
