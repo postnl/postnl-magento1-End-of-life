@@ -2651,7 +2651,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $this->createLogDir();
 
-        $this->folderLog($message, $level, $file);
+        $this->folderLog($message, $level, $file, $forced);
 
         return $this;
     }
@@ -2665,7 +2665,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * https://github.com/OpenMage/magento-mirror/commit/a5ad2ee47599400ef0066562315b300c7f581938 stopping us from
      * logging to the TIG_PostNL folders
      */
-    private function folderLog($message, $level = null, $file = '')
+    private function folderLog($message, $level = null, $file = '', $forced)
     {
         static $loggers = array();
 
@@ -2703,6 +2703,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $loggers[$file]->log($message, $level);
         }
         catch (Exception $e) {
+            Mage::log($message, $level, $file, $forced);
         }
     }
 
