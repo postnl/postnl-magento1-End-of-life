@@ -1262,7 +1262,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
-        $productCode = $this->getHelper('productCode')->getDefault($storeId, $shipmentType, $postnlOrder);
+        $productCode = $this->getHelper('productCode')->getDefault($storeId, $shipmentType, $postnlOrder, $this);
 
         /**
          * Get a list of available product codes.
