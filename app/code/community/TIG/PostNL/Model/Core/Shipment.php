@@ -1255,7 +1255,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0020',
                 'warning',
                 $helper->__(
-                    'Something went wrong getting the Shipping information from the database. De default shipping ' .
+                    'Something went wrong getting the Shipping information from the database for order ' .
+                    $this->getOrder()->getIncrementId() . '. De default shipping ' .
                     'product option was selected.'
                 )
             );
@@ -1488,7 +1489,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $postnlOrder = Mage::getModel('postnl_core/order')->load($this->getOrderId(), 'order_id');
         if (!$postnlOrder->getId()) {
-            $this->setPostnlOrder(false);
+            $this->setPostnlOrder(null);
 
             return null;
         }

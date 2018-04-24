@@ -279,7 +279,7 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
     protected function getOrderInfo($postnlOrder = false)
     {
         $orderInfo = null;
-        if ($postnlOrder !== false) {
+        if ($postnlOrder) {
             /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
             $orderInfo = $postnlOrder->getOrder();
         }
