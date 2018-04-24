@@ -1246,7 +1246,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = $this->getShipmentType();
 
         $postnlOrder = $this->getPostnlOrder();
-        $productCode = $this->getHelper('productCode')->getDefault($postnlOrder, $storeId, $shipmentType);
+
+        $helper = $this->getHelper();
+
+        if (!$postnlOrder) {
+            $helper->addSessionMessage(
+                'adminhtml',
+                'POSTNL-0020',
+                'warning',
+                $helper->__(
+                    'Something went wrong getting the Shipping information from the database. De default shipping ' .
+                    'product option was selected.'
+                )
+            );
+        }
+
+        $productCode = $this->getHelper('productCode')->getDefault($storeId, $shipmentType, $postnlOrder);
 
         /**
          * Get a list of available product codes.
@@ -1263,7 +1278,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              */
             if (empty($availableProductCodes)) {
                 throw new TIG_PostNL_Exception(
-                    $this->getHelper()->__(
+                    $helper->__(
                         "No default product options are available for this shipment. Please check that you have " .
                         "correctly configured the available product options in the PostNL extension's configuration."
                     ),
@@ -1279,7 +1294,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              *
              * @var TIG_PostNL_Helper_Data $helper
              */
-            $helper = $this->getHelper();
             $helper->addSessionMessage(
                 'adminhtml',
                 'POSTNL-0189',
@@ -1464,7 +1478,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL order associated with this shipment (if any exist)
      *
-     * @return false|TIG_PostNL_Model_Core_Order
+     * @return null|TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -1476,7 +1490,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$postnlOrder->getId()) {
             $this->setPostnlOrder(false);
 
-            return false;
+            return null;
         }
 
         $this->setPostnlOrder($postnlOrder);
