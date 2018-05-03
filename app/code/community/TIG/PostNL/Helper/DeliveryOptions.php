@@ -2279,27 +2279,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $cache = $this->getCache();
-
-        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseEveningTimeframes()) {
-            /**
-             * Check if the result of this method has been cached in the PostNL cache.
-             */
-            $allowed = $cache->getPostnlDeliveryOptionsCanUseEveningTimeframes();
-
-            Mage::register($registryKey, $allowed);
-            return $allowed;
-        }
-
         $allowed = $this->_canUseEveningTimeframes($quote);
-
-        if ($cache) {
-            /**
-             * Save the result in the PostNL cache.
-             */
-            $cache->setPostnlDeliveryOptionsCanUseEveningTimeframes($allowed)
-                  ->saveCache();
-        }
 
         Mage::register($registryKey, $allowed);
         return $allowed;
