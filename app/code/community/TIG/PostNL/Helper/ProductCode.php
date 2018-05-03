@@ -44,9 +44,9 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
      * @return mixed
      */
     public function getDefault(
-        TIG_PostNL_Model_Core_Order $postnlOrder,
         $storeId,
         $shipmentType,
+        TIG_PostNL_Model_Core_Order $postnlOrder = null,
         TIG_PostNL_Model_Core_Shipment $shipment = null
     ) {
         $orderInfo = $this->getOrderInfo($postnlOrder);
@@ -279,7 +279,7 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
     protected function getOrderInfo($postnlOrder = false)
     {
         $orderInfo = null;
-        if ($postnlOrder !== false) {
+        if ($postnlOrder) {
             /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
             $orderInfo = $postnlOrder->getOrder();
         }

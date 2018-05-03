@@ -120,7 +120,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
     {
         $postnlOrderMock = $this->prepareMocks();
 
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals($expectedProductOption, $result);
     }
 
@@ -131,7 +131,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $isPakjeGemak->willReturn(true);
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AGECHECK;
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals('agecheck_pickup', $result);
     }
 
@@ -142,7 +142,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $isPakjeGemak->willReturn(true);
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_BIRTHDAYCHECK;
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals('birthdaycheck_pickup', $result);
     }
 
@@ -153,7 +153,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $isPakjeGemak->willReturn(true);
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_IDCHECK;
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals('idcheck_pickup', $result);
     }
 
@@ -167,7 +167,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
 
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AVOND;
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals('stated_address_only', $result);
     }
 
@@ -176,7 +176,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $postnlOrderMock = $this->prepareMocks();
 
         $shipmentType = TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EXTRAATHOME;
-        $result = $this->_getInstance()->getDefault($postnlOrderMock, 0, $shipmentType);
+        $result = $this->_getInstance()->getDefault(0, $shipmentType, $postnlOrderMock);
         $this->assertEquals('extra_at_home', $result);
     }
 
