@@ -342,6 +342,17 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $storeId = $this->getStoreId();
 
         $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $date   = $helper->getDateTime('now');
+
+        $sundayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+
+        if ($this->checkIsSunday() && $date->getTimestamp() > $sundayDeliveryCutoff->getTimestamp()) {
+            // Get The sameday cutoff time
+            $cutOffTime = Mage::getStoreConfig($helper::XPATH_SAMEDAY_CUTOFF_TIME, $storeId);
+        }
+
         if (!$cutOffTime) {
             $cutOffTime = '23:59:59';
         }
@@ -639,7 +650,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $options = array(self::DOMESTIC_DELIVERY_OPTION);
 
-        if ($country == 'NL' && $helper->canUseSameDayDelivery(true)) {
+        $checkCutOffTime = false;
+
+        if ($helper->getShippingDuration() > 0) {
+            $checkCutOffTime = true;
+        }
+
+        if ($country == 'NL' && $helper->canUseSameDayDelivery($checkCutOffTime)) {
             $options[] = self::SAMEDAY_DELIVERY_OPTION;
             $options[] = self::EVENING_DELIVERY_OPTION;
         }
@@ -690,6 +707,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          * Sameday must be combined with evening, and can't be combined with other options.
          */
         if ($country == 'NL' && $sameDayDelivery && $shippingDuration == 0 && $for == 'delivery') {
+
+            $sundayOptions = $this->_getSundayOptions($country);
+            if ($sundayOptions) {
+                return $sundayOptions;
+            }
+
             if (
                 $date->getTimestamp() < $sameDayDeliveryCutoff->getTimestamp() ||
                 (
@@ -732,6 +755,36 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return $options;
+    }
+
+    /**
+     * @param $country
+     * @return array|bool
+     */
+    protected function _getSundayOptions($country)
+    {
+        $storeId = $this->getStoreId();
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $date = $helper->getDateTime('now');
+        $regularDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_CUTOFF_TIME, $storeId);
+        $sundayDeliveryCutoff = $this->_getCutoff($date, $helper::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+
+        if (!$this->checkIsSunday()) {
+            return false;
+        }
+
+        if (
+            $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp()
+        ) {
+            return $this->_getMondaySameDayOptions($country);
+        }
+
+        return array(
+            self::SUNDAY_DELIVERY_OPTION,
+            self::SAMEDAY_DELIVERY_OPTION,
+            self::EVENING_DELIVERY_OPTION,
+        );
     }
 
     /**
@@ -799,7 +852,12 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getMondaySameDayOptions($country)
     {
-        if ($this->_getSundaySortingAllowed($country)) {
+        $storeId = $this->getStoreId();
+
+        $helper = $this->_getHelper('deliveryOptions');
+        $sameDayDelivery = Mage::getStoreConfig($helper::XPATH_ENABLE_SAMEDAY_DELIVERY, $storeId);
+
+        if ($this->checkIsSunday() && $sameDayDelivery && $this->_getSundaySortingAllowed($country)) {
             // Its allowed to ask for sameday and evening for monday on a sunday
             return array(
                 self::SAMEDAY_DELIVERY_OPTION,
@@ -808,5 +866,17 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function checkIsSunday()
+    {
+        $helper    = $this->_getHelper('deliveryOptions');
+        $date      = $helper->getDateTime('now');
+        $dayOfWeek = $date->format('N');
+
+        return $dayOfWeek == 7;
     }
 }
