@@ -152,13 +152,14 @@
             customerCode    : getConfigValue('postnl_cif_customer_code'),
             locationCode    : getConfigValue('postnl_cif_collection_location'),
             website         : '<?php echo $_website; ?>',
-            isTestMode      : getConfigValue('postnl_cif_mode') == '1' ? 'true' : 'false'
+            isTestMode      : getConfigValue('postnl_cif_mode') == '1' ? 'true' : 'false',
+            apikey          : getConfigValue('postnl_cif_live_apikey'),
         };
 
         if (params.isTestMode == 'true') {
             params['apikey'] = getConfigValue('postnl_cif_test_apikey');
-        } else {
-            params['apikey'] = getConfigValue('postnl_cif_live_apikey');
+            params['customerNumber'] = getConfigValue('postnl_cif_test_customer_number');
+            params['customerCode'] = getConfigValue('postnl_cif_test_customer_code');
         }
 
         new Ajax.Request('<?php echo $_validateUrl; ?>',{
