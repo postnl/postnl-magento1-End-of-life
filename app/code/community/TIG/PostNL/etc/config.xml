@@ -1032,8 +1032,10 @@
             </delivery_options_int>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
-                <customer_number>11223344</customer_number> <!-- Demo customer number -->
-                <customer_code>TOTA</customer_code> <!-- Demo customer code -->
+                <customer_number>11223344</customer_number>
+                <customer_code>TOTA</customer_code>
+                <test_customer_number>31337</test_customer_number> <!-- Demo customer number -->
+                <test_customer_code>TOTA</test_customer_code> <!-- Demo customer code -->
                 <live_apikey/>
                 <test_apikey/> <!-- Demo apikey -->
                 <collection_location>103861</collection_location> <!-- Demo collection location -->

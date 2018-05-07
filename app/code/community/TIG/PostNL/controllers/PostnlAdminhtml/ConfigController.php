@@ -168,6 +168,14 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
 
         $baseXpath = self::XML_BASE_PATH;
 
+        $customerNumberXpath = $baseXpath . '/customer_number';
+        $customerCodeXpath = $baseXpath . '/customer_code';
+
+        if ($this->_isTestMode) {
+            $customerNumberXpath = $baseXpath . '/test_customer_number';
+            $customerCodeXpath = $baseXpath . '/test_customer_code';
+        }
+
         foreach ($data as $key => &$value) {
             if ($value != 'inherit') {
                 continue;
@@ -175,10 +183,10 @@ class TIG_PostNL_PostnlAdminhtml_ConfigController extends TIG_PostNL_Controller_
 
             switch ($key) {
                 case 'customerNumber':
-                    $value = Mage::getStoreConfig($baseXpath . '/customer_number', $storeId);
+                    $value = Mage::getStoreConfig($customerNumberXpath, $storeId);
                     break;
                 case 'customerCode':
-                    $value = Mage::getStoreConfig($baseXpath . '/customer_code', $storeId);
+                    $value = Mage::getStoreConfig($customerCodeXpath, $storeId);
                     break;
                 case 'locationCode':
                     $value = Mage::getStoreConfig($baseXpath . '/collection_location', $storeId);
