@@ -310,7 +310,7 @@ class TIG_PostNL_Test_Unit_Model_Payment_CodTest extends TIG_PostNL_Test_Unit_Fr
         Mage::app()->getStore()->setConfig('payment/postnl_cod/allowspecific', 1);
         Mage::app()->getStore()->setConfig('payment/postnl_cod/active', $isActive);
         Mage::app()->getStore()->setConfig('payment/postnl_cod/allow_for_non_postnl', $allowForNonPostNL);
-        Mage::app()->getStore()->setConfig('payment/postnl_cod/specificcountry', 'NL,BE');
+        Mage::app()->getStore()->setConfig('payment/postnl_cod/specificcountry', 'NL');
 
         $bicnumber = $ibannumber = $accountnumber = '';
         if ($codSettings) {
