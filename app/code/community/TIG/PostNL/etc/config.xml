@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.15.1</version>
+            <version>1.15.2</version>
         </TIG_PostNL>
     </modules>
 
@@ -863,7 +863,7 @@
                 <order_status>processing</order_status> <!-- Pending status -->
                 <instructions/>
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
-                <specificcountry>NL,BE</specificcountry> <!-- Allow only NL and BE -->
+                <specificcountry>NL</specificcountry> <!-- Allow only NL -->
                 <min_order_total/>
                 <max_order_total>2000</max_order_total> <!-- PostNL COD is only available for orders whose base grand total amount is less than 2000 EUR -->
                 <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
@@ -1032,8 +1032,10 @@
             </delivery_options_int>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
-                <customer_number>11223344</customer_number> <!-- Demo customer number -->
-                <customer_code>TOTA</customer_code> <!-- Demo customer code -->
+                <customer_number>11223344</customer_number>
+                <customer_code>TOTA</customer_code>
+                <test_customer_number>31337</test_customer_number> <!-- Demo customer number -->
+                <test_customer_code>TOTA</test_customer_code> <!-- Demo customer code -->
                 <live_apikey/>
                 <test_apikey/> <!-- Demo apikey -->
                 <collection_location>103861</collection_location> <!-- Demo collection location -->

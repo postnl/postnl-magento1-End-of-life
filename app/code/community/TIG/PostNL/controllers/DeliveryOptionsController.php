@@ -914,7 +914,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!array_key_exists('address', $params)) {
             return $data;
         }
-        
+
         if (in_array($type, array('PG', 'PGE'))) {
             if (empty($params['locationCode']) || empty($params['retailNetworkId'])) {
                 throw new TIG_PostNL_Exception(
@@ -963,7 +963,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        $city        = $address['City'];
+        $removeCharacters = array('(', ')', '.');
+        $city        = str_replace($removeCharacters, '', $address['City']);
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
         $houseNumber = str_replace('-', '', $address['HouseNr']);

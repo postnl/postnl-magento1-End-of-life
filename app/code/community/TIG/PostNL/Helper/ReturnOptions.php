@@ -29,7 +29,7 @@
  * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Helper_ReturnOptions extends TIG_PostNL_Helper_Data
 {
     /**
      * Product code: dependent on the origin country.
@@ -45,6 +45,11 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
         array(
             'value'   => '4882',
             'route'   => 'be_be',
+            'default' => true
+        ),
+        array(
+            'value'   => '2285',
+            'route'   => 'nl_nl',
             'default' => true
         )
     );
@@ -63,6 +68,10 @@ class TIG_PostNL_Helper_ReturnOptionsBe extends TIG_PostNL_Helper_Data
 
         if ($this->_domesticCountry() == 'NL' && $shippingCountry == 'BE') {
             return $this->getReturnCodeByRoute('nl_be', $asArray);
+        }
+
+        if ($this->_domesticCountry() == 'NL' && $shippingCountry == 'NL') {
+            return $this->getReturnCodeByRoute('nl_nl', $asArray);
         }
 
         return false;

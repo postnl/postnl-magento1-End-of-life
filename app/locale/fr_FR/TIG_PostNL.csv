@@ -1399,3 +1399,4 @@ TIG_PostNL::View the documentation.,Examinez la documentation.
 TIG_PostNL::Documentation,Documentation
 TIG_PostNL::Unable to save down partner data.,Impossible d'enregistrer les données down partner pour cet envoi.
 TIG_PostNL::Regular,Régulier
+TIG_PostNL::Something went wrong getting the shipping information from the database for order %s. The default shipping product option was selected.,Une erreur s'est produite lors de l'obtention des informations d'expédition de la base de données pour la commande %s. L'option de produit d'expédition par défaut a été sélectionnée.

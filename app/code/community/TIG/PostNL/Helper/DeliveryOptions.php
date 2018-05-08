@@ -1236,7 +1236,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
-                && $product->getData('postnl_shipping_duration') !== -1
+                && $product->getData('postnl_shipping_duration') != -1
             ) {
                 $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             } else {
@@ -1909,7 +1909,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         //PA is not available yet in SAM.
         //@todo remove this line when it is.
         return false;
-        
+
         $storeId = Mage::app()->getStore()->getId();
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
@@ -2279,27 +2279,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        $cache = $this->getCache();
-
-        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseEveningTimeframes()) {
-            /**
-             * Check if the result of this method has been cached in the PostNL cache.
-             */
-            $allowed = $cache->getPostnlDeliveryOptionsCanUseEveningTimeframes();
-
-            Mage::register($registryKey, $allowed);
-            return $allowed;
-        }
-
         $allowed = $this->_canUseEveningTimeframes($quote);
-
-        if ($cache) {
-            /**
-             * Save the result in the PostNL cache.
-             */
-            $cache->setPostnlDeliveryOptionsCanUseEveningTimeframes($allowed)
-                  ->saveCache();
-        }
 
         Mage::register($registryKey, $allowed);
         return $allowed;

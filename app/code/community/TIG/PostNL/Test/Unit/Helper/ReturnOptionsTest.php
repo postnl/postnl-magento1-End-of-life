@@ -29,14 +29,14 @@
  * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Unit_Helper_ReturnOptionsBeTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Unit_Helper_ReturnOptionsTest extends TIG_PostNL_Test_Unit_Framework_TIG_Test_TestCase
 {
     /**
-     * @return TIG_PostNL_Helper_ReturnOptionsBe
+     * @return TIG_PostNL_Helper_ReturnOptions
      */
     protected function _getInstance()
     {
-        return Mage::helper('postnl/returnOptionsBe');
+        return Mage::helper('postnl/returnOptions');
     }
 
     public function getDataProvider()
@@ -46,7 +46,17 @@ class TIG_PostNL_Test_Unit_Helper_ReturnOptionsBeTest extends TIG_PostNL_Test_Un
                 'NL',
                 'NL',
                 false,
-                false
+                '2285'
+            ),
+            'when shipping is NL and return country as well, as array' => array(
+                'NL',
+                'NL',
+                true,
+                array(
+                    'value'   => '2285',
+                    'route'   => 'nl_nl',
+                    'default' => true,
+                )
             ),
 
             'when shipping is NL and return country is BE' => array(

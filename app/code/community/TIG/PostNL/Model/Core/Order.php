@@ -606,7 +606,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     protected function calculateProductCode()
     {
         $type        = strtolower($this->getType());
-        $productCode = Mage::helper('postnl/productCode')->getDefault($this, $this->getStoreId(), $type);
+        $productCode = Mage::helper('postnl/productCode')->getDefault($this->getStoreId(), $type, $this);
         $this->setProductCode($productCode);
     }
 

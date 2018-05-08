@@ -3189,7 +3189,7 @@
                             <show_in_store>0</show_in_store>
                         </mode>
                         <customer_number translate="label tooltip" module="postnl">
-                            <label>Customer Number</label>
+                            <label>Live Customer Number</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
@@ -3197,9 +3197,28 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits postnl-validate-empty</validate>
+                            <depends>
+                                <mode>
+                                    <value>0||2</value>
+                                    <separator>||</separator>
+                                </mode>
+                            </depends>
                         </customer_number>
+                        <test_customer_number translate="label tooltip" module="postnl">
+                            <label>Test Customer Number</label>
+                            <tooltip>The test customer number of PostNL. This should default to '31337'.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits postnl-validate-empty</validate>
+                            <depends>
+                                <mode>1</mode>
+                            </depends>
+                        </test_customer_number>
                         <customer_code translate="label tooltip" module="postnl">
-                            <label>Customer Code</label>
+                            <label>Live Customer Code</label>
                             <tooltip>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
@@ -3207,7 +3226,26 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
+                            <depends>
+                                <mode>
+                                    <value>0||2</value>
+                                    <separator>||</separator>
+                                </mode>
+                            </depends>
                         </customer_code>
+                        <test_customer_code translate="label tooltip" module="postnl">
+                            <label>Test Customer Code</label>
+                            <tooltip>The test customer code of PostNL. Must contain between 3 and 4 letters. This should default to 'TOTA'.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
+                            <depends>
+                                <mode>1</mode>
+                            </depends>
+                        </test_customer_code>
                         <live_apikey translate="label tooltip" module="postnl">
                             <label>Live Apikey</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>

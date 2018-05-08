@@ -2651,9 +2651,60 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $this->createLogDir();
 
-        Mage::log($message, $level, $file, $forced);
+        $this->folderLog($message, $level, $file, $forced);
 
         return $this;
+    }
+
+    /**
+     * @param            $message
+     * @param null|int   $level
+     * @param string     $file
+     *
+     * Overwriting Mage::log because Magento added basename() in 1.9.3.7 in commit
+     * https://github.com/OpenMage/magento-mirror/commit/a5ad2ee47599400ef0066562315b300c7f581938 stopping us from
+     * logging to the TIG_PostNL folders
+     */
+    private function folderLog($message, $level = null, $file = '', $forced)
+    {
+        static $loggers = array();
+
+        $level  = is_null($level) ? Zend_Log::DEBUG : $level;
+        $file = empty($file) ? 'system.log' : $file;
+
+        try {
+            if (!isset($loggers[$file])) {
+                $logDir  = Mage::getBaseDir('var') . DS . 'log';
+                $logFile = $logDir . DS . $file;
+
+                if (!file_exists($logFile)) {
+                    file_put_contents($logFile, '');
+                    chmod($logFile, 0640);
+                }
+
+                $format = '%timestamp% %priorityName% (%priority%): %message%' . PHP_EOL;
+                $formatter = new Zend_Log_Formatter_Simple($format);
+                $writerModel = (string)Mage::getConfig()->getNode('global/log/core/writer_model');
+                if (!$writerModel) {
+                    $writer = new Zend_Log_Writer_Stream($logFile);
+                }
+                else {
+                    $writer = new $writerModel($logFile);
+                }
+                $writer->setFormatter($formatter);
+                $loggers[$file] = new Zend_Log($writer);
+            }
+
+            if (is_array($message) || is_object($message)) {
+                $message = print_r($message, true);
+            }
+
+            $message = addcslashes($message, '<?');
+            $loggers[$file]->log($message, $level);
+        }
+        catch (Exception $e) {
+            Mage::log($message, $level, $file, $forced);
+        }
     }
 
     /**
