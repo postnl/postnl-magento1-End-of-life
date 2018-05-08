@@ -774,9 +774,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             return false;
         }
 
-        if (
-            $date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp()
-        ) {
+        if ($date->getTimestamp() < $sundayDeliveryCutoff->getTimestamp()) {
             return $this->_getMondaySameDayOptions($country);
         }
 
