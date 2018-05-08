@@ -529,7 +529,7 @@ FormElementDependenceController.prototype = {
                     shouldShowUp = false;
                 }
             } else if ((typeof valuesFrom[idFrom]) == 'object' && valuesFrom[idFrom].eval) {
-                if (from) {
+                if (typeof from != 'undefined' && from != null) {
                     var fromValue = from.value;
 
                     if (from.type == 'checkbox') {
