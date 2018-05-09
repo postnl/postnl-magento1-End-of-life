@@ -204,7 +204,7 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_CifTest extends \TIG_PostNL_Test_Unit_
         $instance->setData('soap_client', $soapClient);
 
         try {
-            $instance->generateAllLabelsWithoutConfirm($postnlShipment->reveal(), 3);
+            $instance->generateAllLabelsWithConfirm($postnlShipment->reveal(), 3);
         } catch (TIG_PostNL_Exception $exception) {
             $this->assertContains('Invalid generateLabels response:', $exception->getMessage());
             $this->assertEquals('POSTNL-0057', $exception->getCode());
@@ -235,7 +235,7 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_CifTest extends \TIG_PostNL_Test_Unit_
         $instance = $this->_getInstance();
         $instance->setData('soap_client', $soapClient);
 
-        $result = $instance->generateAllLabelsWithoutConfirm($postnlShipment->reveal(), 3);
+        $result = $instance->generateAllLabelsWithConfirm($postnlShipment->reveal(), 3);
 
         $this->assertCount(1, $result->ResponseShipments->ResponseShipment[0]->Labels->Label);
         $this->assertCount(2, $result->ResponseShipments->ResponseShipment[1]->Labels->Label);
