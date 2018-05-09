@@ -768,7 +768,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $parcelCount,
         $printerType = 'GraphicFile|PDF'
     ) {
-        return $this->generateAllLabels($postnlShipment, 'GenerateLabel', $parcelCount, $printerType);
+        return $this->generateAllLabels($postnlShipment, 'GenerateLabelWithoutConfirm', $parcelCount, $printerType);
     }
 
     /**
@@ -785,7 +785,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $parcelCount,
         $printerType = 'GraphicFile|PDF'
     ) {
-        return $this->generateAllLabels($postnlShipment, 'GenerateLabelWithoutConfirm', $parcelCount, $printerType);
+        return $this->generateAllLabels($postnlShipment, 'GenerateLabel', $parcelCount, $printerType);
     }
 
     /**
