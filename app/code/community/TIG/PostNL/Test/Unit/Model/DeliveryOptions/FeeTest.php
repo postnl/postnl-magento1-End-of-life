@@ -56,7 +56,7 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_FeeTest extends TIG_PostNL_Test
      * @param string $type
      * @param float $result
      *
-     * TODO: Change this to an integration test to handle different config values
+     * TODO: Change this to an integration test to handle different config values (use $free_shipping_fee and $path)
      */
     public function testFees($type, $result, $free_shipping_fee, $path)
     {
@@ -79,60 +79,30 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_FeeTest extends TIG_PostNL_Test
                 'free_shipping_fee' => '0',
                 'path'              => 'postnl/delivery_options/evening_timeframe_fee',
             ),
-//            array(
-//                'type'              => 'evening',
-//                'result'            => 0,
-//                'free_shipping_fee' => '1',
-//                'path'              => 'postnl/delivery_options/evening_timeframe_fee',
-//            ),
             array(
                 'type'              => 'sunday',
                 'result'            => 0,
                 'free_shipping_fee' => '0',
                 'path'              => 'postnl/delivery_options/sunday_delivery_fee',
             ),
-//            array(
-//                'type'              => 'sunday',
-//                'result'            => 0,
-//                'free_shipping_fee' => '1',
-//                'path'              => 'postnl/delivery_options/sunday_delivery_fee',
-//            ),
             array(
                 'type'              => 'sameday',
                 'result'            => 0,
                 'free_shipping_fee' => '0',
                 'path'              => 'postnl/delivery_options/sameday_delivery_fee',
             ),
-//            array(
-//                'type'              => 'sameday',
-//                'result'            => 0,
-//                'free_shipping_fee' => '1',
-//                'path'              => 'postnl/delivery_options/sameday_delivery_fee',
-//            ),
             array(
                 'type'              => 'express',
                 'result'            => 2,
                 'free_shipping_fee' => '0',
                 'path'              => 'postnl/delivery_options/pakjegemak_express_fee',
             ),
-//            array(
-//                'type'              => 'express',
-//                'result'            => 0,
-//                'free_shipping_fee' => '1',
-//                'path'              => 'postnl/delivery_options/pakjegemak_express_fee',
-//            ),
             array(
                 'type'              => null,
                 'result'            => 0,
                 'free_shipping_fee' => '0',
                 'path'              => null,
             ),
-//            array(
-//                'type'              => null,
-//                'result'            => 0,
-//                'free_shipping_fee' => '1',
-//                'path'              => null,
-//            ),
         );
     }
 }
