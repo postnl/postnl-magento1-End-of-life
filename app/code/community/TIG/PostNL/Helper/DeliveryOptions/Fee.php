@@ -47,6 +47,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     const XPATH_SAMEDAY_DELIVERY_FEE     = 'postnl/delivery_options/sameday_delivery_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE   = 'postnl/delivery_options/pakjegemak_express_fee';
     const XPATH_ONLY_STATED_ADDRESS_FEE  = 'postnl/delivery_options/stated_address_only_fee';
+    const XPATH_FREE_SHIPPING_FEE        = 'postnl/grid/fee_shipping_Free';
 
     /**
      * Fee limit types
@@ -113,7 +114,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 $fee = 0;
         }
 
-        if ($this->isFreeShippingRuleActive()) {
+        $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->isFreeShippingRuleActive() && Mage::getStoreConfig(self::XPATH_FREE_SHIPPING_FEE, $storeId)) {
             return 0;
         }
 
@@ -403,7 +406,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
-        if ($this->isFreeShippingRuleActive()) {
+        $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->isFreeShippingRuleActive() && Mage::getStoreConfig(self::XPATH_FREE_SHIPPING_FEE, $storeId)) {
             $price = 0;
         }
 
@@ -427,7 +432,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             return 0;
         }
 
-        if ($this->isFreeShippingRuleActive()) {
+        $storeId = Mage::app()->getStore()->getId();
+
+        if ($this->isFreeShippingRuleActive() && Mage::getStoreConfig(self::XPATH_FREE_SHIPPING_FEE, $storeId)) {
             return 0;
         }
 
@@ -435,8 +442,6 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
         if (empty($options)) {
             return 0;
         }
-
-        $storeId = Mage::app()->getStore()->getId();
 
         /**
          * For upgradability reasons this is a switch, rather than an if statement.
@@ -485,7 +490,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        if ($this->isFreeShippingRuleActive()) {
+        if ($this->isFreeShippingRuleActive() && Mage::getStoreConfig(self::XPATH_FREE_SHIPPING_FEE, $storeId)) {
             return 0;
         }
 
