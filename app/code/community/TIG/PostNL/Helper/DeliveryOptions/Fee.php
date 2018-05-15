@@ -47,7 +47,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     const XPATH_SAMEDAY_DELIVERY_FEE     = 'postnl/delivery_options/sameday_delivery_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE   = 'postnl/delivery_options/pakjegemak_express_fee';
     const XPATH_ONLY_STATED_ADDRESS_FEE  = 'postnl/delivery_options/stated_address_only_fee';
-    const XPATH_FREE_SHIPPING_FEE        = 'postnl/grid/fee_shipping_Free';
+    const XPATH_FREE_SHIPPING_FEE        = 'postnl/grid/free_shipping_fee';
 
     /**
      * Fee limit types
