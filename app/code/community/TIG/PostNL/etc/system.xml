@@ -6200,9 +6200,9 @@
                                 </country>
                             </depends>
                         </default_buspakje_product_option>
-                        <free_shipping_fee>
+                        <free_shipping_fee translate="label_tooltip" module="postnl">
                             <label>Extra fee's included in free shipping rules</label>
-                            <tooltip>This setting states if fee's should be included or excluded in free shipping rules. If this is turned on, extra fee's like evening delivery fee's will also be free.</tooltip>
+                            <tooltip>This setting states if fee's should be included or excluded in free shipping rules. If this setting is turned on extra fee's like evening delivery fee's will also be free.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
