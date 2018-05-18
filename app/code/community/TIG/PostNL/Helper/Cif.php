@@ -125,6 +125,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'CZ',
         'SE',
         'NL',
+        'GR',
     );
 
     /**
