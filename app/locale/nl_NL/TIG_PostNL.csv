@@ -1506,3 +1506,7 @@ TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
 TIG_PostNL::Something went wrong getting the shipping information from the database for order %s. The default shipping product option was selected.,Er is iets fout gegaan bij het ophalen van de verzendinformatie uit de database voor order %s. De standaard verzendmethode productoptie is geselecteerd.
 TIG_PostNL::Extra fee's included in free shipping rules,Toeslagen meenemen in gratis verzending regels
 TIG_PostNL::This setting states if fee's should be included or excluded in free shipping rules. If this setting is turned on extra fee's like evening delivery fee's will also be free.,Deze instelling geeft aan of toeslagen meegenomen moeten worden in de gratis verzending regels. Wanneer deze instelling aan staat worden toeslagen zoals avondbezorging toeslag ook gratis.
+"TIG_PostNL::PostNL: Google ApiKey needs to be configured.","PostNL: Google ApiKey dient geconfigureerd te worden"
+"TIG_PostNL::If you want to continue using the Google Map for the pickup locations, please fill in your Google API key.","Indien u gebruik wilt blijven maken van de Google Map bij het selecteren van afhaallocaties, dient u uw Google Apikey in te vullen."
+"TIG_PostNL::Activate Google Maps","Activeer Google Maps"
+"TIG_PostNL::<a href='https://confluence.tig.nl/x/zgCfAg'>More information</a> (Dutch)","<a href='https://confluence.tig.nl/x/zgCfAg'>Meer informatie</a>"

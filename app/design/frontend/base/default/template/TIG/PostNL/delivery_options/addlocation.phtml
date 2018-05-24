@@ -42,6 +42,7 @@
 <?php $_address = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress(); ?>
 <?php $_canUsePakjeGemakExpress = $_helper->canUsePakjeGemakExpress(); ?>
 <?php $_canUsePakketAutomaat = $_helper->canUsePakketAutomaat(); ?>
+<?php $_isGoogleMapsActive = $_helper->isGoogleMapsActive(); ?>
 <div id="postnl_add_location_container" style="display:none;">
     <div id="postnl_add_location">
         <div class="popup-overlay">
@@ -75,6 +76,7 @@
                     </div>
                     <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
                 </div>
+
                 <div class="popup-map" id="map-div"></div>
 
                 <div class="popup-content">

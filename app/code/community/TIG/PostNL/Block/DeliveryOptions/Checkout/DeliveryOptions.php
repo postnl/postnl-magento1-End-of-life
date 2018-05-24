@@ -1054,4 +1054,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
 
         return $helper->getCutOff($storeId, $type);
     }
+
+    /**
+     * @return bool
+     */
+    public function canUseGoogleMaps()
+    {
+        /** @var  $storeId */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $storeId = Mage::app()->getStore()->getStoreId();
+        return (bool) Mage::getStoreConfigFlag(
+            TIG_PostNL_Helper_DeliveryOptions::XPATH_GOOGLE_MAPS_ACTIVE,
+            $storeId
+        );
+    }
 }

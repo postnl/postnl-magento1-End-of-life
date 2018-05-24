@@ -67,6 +67,10 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptio
             Mage::app()->getStore()->getId()
         );
 
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+        $apiKey = trim($helper->decrypt($apiKey));
+
         $this->setApiKey($apiKey);
         return $apiKey;
     }
