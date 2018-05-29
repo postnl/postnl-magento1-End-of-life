@@ -32,7 +32,7 @@
 
 class TIG_PostNL_Helper_DeliveryOptions_Validator extends Mage_Core_Helper_Abstract
 {
-    const CITY_NAME_REGEX = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
+    const CITY_NAME_REGEX = "#^['a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#";
     const STREET_NAME_REGEX = "#^[\p{L}0-9\s,\'-.]*$#u";
 
     /**

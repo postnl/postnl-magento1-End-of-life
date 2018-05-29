@@ -2070,6 +2070,10 @@ PostnlDeliveryOptions.Map = new Class.create({
             throw 'Google maps is required.';
         }
 
+        if (!deliveryOptions.options.canUseGoogleMaps) {
+            $('map-div').hide();
+        }
+
         this.deliveryOptions = deliveryOptions;
         this.fullAddress = fullAddress;
         this.debug = debug;

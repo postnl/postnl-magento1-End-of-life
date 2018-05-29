@@ -258,7 +258,8 @@
         <?php endif; ?>
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency($_store->getCurrentCurrencyCode())->getSymbol(); ?>',
         getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
-        getTimeframesTimeout   : <?php echo $_deliveryOptionsAjaxTimeout; ?>
+        getTimeframesTimeout   : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
+        canUseGoogleMaps : <?php echo $this->canUseGoogleMaps() ? 'true' : 'false'; ?>
     };
 
     try {

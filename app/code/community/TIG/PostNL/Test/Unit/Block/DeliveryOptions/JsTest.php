@@ -56,17 +56,4 @@ class TIG_PostNL_Test_Unit_Block_DeliveryOptions_JsTest extends TIG_PostNL_Test_
 
         $this->assertEquals('test', $block->getApiKey());
     }
-
-    /**
-     * @test
-     */
-    public function apiKeyShouldBeReturnedFromConfig()
-    {
-        $storeCode = Mage::app()->getStore()->getCode();
-        Mage::app()->getConfig()->setNode("stores/{$storeCode}/postnl/google_maps/api_key", 'keyTest');
-
-        $block = $this->_getInstance();
-
-        $this->assertEquals('keyTest', $block->getApiKey());
-    }
 }

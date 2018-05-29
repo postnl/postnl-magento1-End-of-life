@@ -123,7 +123,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpath to the Google Maps API key.
      */
-    const XPATH_GOOGLE_MAPS_API_KEY = 'postnl/google_maps/api_key';
+    const XPATH_GOOGLE_MAPS_API_KEY = 'postnl/cif/maps_api_key';
+
+    /**
+     * Xpath to Google Maps active.
+     */
+    const XPATH_GOOGLE_MAPS_ACTIVE  = 'postnl/cif/maps_active';
 
     /**
      * The time we consider to be the start of the evening.
@@ -3931,5 +3936,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGoogleMapsActive()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+        return (bool) Mage::getStoreConfigFlag(static::XPATH_GOOGLE_MAPS_ACTIVE, $storeId);
     }
 }
