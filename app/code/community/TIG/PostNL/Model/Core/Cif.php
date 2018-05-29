@@ -2183,7 +2183,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $sortedItems = array();
         foreach ($items as $item) {
-            $sortingAttributeValue = $attributeValues[$item->getProductId()];
+            $sortingAttributeValue = isset($attributeValues[$item->getProductId()])
+                ? $attributeValues[$item->getProductId()] : null;
 
             $sortedItems[$item->getId()] = $sortingAttributeValue;
         }
