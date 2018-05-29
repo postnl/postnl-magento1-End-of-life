@@ -1038,6 +1038,7 @@
                 <test_customer_code>TOTA</test_customer_code> <!-- Demo customer code -->
                 <live_apikey/>
                 <test_apikey/> <!-- Demo apikey -->
+                <maps_active>1</maps_active>
                 <collection_location>103861</collection_location> <!-- Demo collection location -->
                 <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
