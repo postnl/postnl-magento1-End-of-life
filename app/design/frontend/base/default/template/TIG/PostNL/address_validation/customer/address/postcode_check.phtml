@@ -155,6 +155,10 @@
             postcodeCheck.errorMax = <?php echo $_maxAttempts; ?>;
             postcodeCheck.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
             postcodeCheck.init();
+
+            $('country').observe('change', function () {
+                postcodeCheck.changePostcodeCheckDisabledFields($('country').getValue());
+            });
         });
     //]]>
 </script>
