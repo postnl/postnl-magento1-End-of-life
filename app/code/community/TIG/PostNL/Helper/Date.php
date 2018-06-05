@@ -178,7 +178,7 @@ class TIG_PostNL_Helper_Date extends TIG_PostNL_Helper_DeliveryOptions
             && in_array(self::SATURDAY, $shippingDays)
         ) {
             $this->_validDeliveryDays[self::MONDAY] = 1;
-        } elseif (!$sundaySorting
+        } elseif (!$sundaySorting && !$sundayDelivery
             && in_array(self::SATURDAY, $shippingDays)
         ) {
             /**
