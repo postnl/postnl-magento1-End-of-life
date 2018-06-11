@@ -3769,7 +3769,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Confirm and generate labels for each parcel in the shipment
          */
-        $labels = $this->_generateLabels(false, $parcelCount);
+        $labels = $this->_generateLabels(true, $parcelCount);
         $this->addLabels($labels);
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
