@@ -1375,6 +1375,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function fitsAsBuspakje($items, $registerReason = false)
     {
+
+        $nobuspakje = false;
+        Mage::dispatchEvent('postnl_fitasbuspakje_before',
+            array(
+                'items' => $items,
+                'nobuspakje' => $nobuspakje;
+            )
+        );
+        if ($nobuspakje) {
+            return false;    
+        }
+        
         $totalQtyRatio = 0;
         $totalWeight = 0;
 
