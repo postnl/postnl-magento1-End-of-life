@@ -2365,13 +2365,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getCustomerCode($useReturnCustomerCode = false)
     {
-        $path = self::XPATH_CUSTOMER_CODE;
-        if ($useReturnCustomerCode) {
-            $path = self::XPATH_RETURN_CUSTOMER_CODE;
-        }
-
         $storeId      = $this->getStoreId();
+        $path = self::XPATH_RETURN_CUSTOMER_CODE;
         $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+
+        if (!$customerCode || !$useReturnCustomerCode) {
+            $path = self::XPATH_CUSTOMER_CODE;
+            $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+        }
 
         return $customerCode;
     }
