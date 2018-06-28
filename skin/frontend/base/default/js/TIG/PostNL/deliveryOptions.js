@@ -2831,7 +2831,6 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         this.unselectMarker();
-        this.disableSaveButton();
 
         this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
 
@@ -4049,13 +4048,10 @@ PostnlDeliveryOptions.Map = new Class.create({
             $('no_locations_error_responsive').hide();
             if (this.hasSelectedMarker()) {
                 this.enableSaveButton();
-            } else {
-                this.disableSaveButton();
             }
         } else {
             $('no_locations_error').show();
             $('no_locations_error_responsive').show();
-            this.disableSaveButton();
         }
 
         this.recalculateScrollbar();
@@ -4065,6 +4061,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     /**
      * @returns {PostnlDeliveryOptions.Map}
+     * deprecated since v1.15.1
      */
     disableSaveButton : function() {
         if (this.getSaveButton().disabled) {
