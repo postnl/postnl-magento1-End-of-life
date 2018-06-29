@@ -32,6 +32,12 @@
  */
 class TIG_PostNL_Model_Order_Api extends Mage_Sales_Model_Order_Api
 {
+    /**
+     * Retrieve full order information
+     *
+     * @param string $orderIncrementId
+     * @return array
+     */
     public function info($orderIncrementId)
     {
         $result = parent::info($orderIncrementId);
