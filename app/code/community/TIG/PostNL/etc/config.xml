@@ -163,6 +163,11 @@
                     </matrixrate>
                 </entities>
             </postnl_carrier_resource>
+            <sales>
+                <rewrite>
+                    <order_api>TIG_PostNL_Model_Order_Api</order_api>
+                </rewrite>
+            </sales>
         </models>
         <resources>
             <postnl_setup>
