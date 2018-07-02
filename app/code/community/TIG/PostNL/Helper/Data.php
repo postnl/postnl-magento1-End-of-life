@@ -1378,6 +1378,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $totalQtyRatio = 0;
         $totalWeight = 0;
 
+        /**
+         * Allow more control from outside over brievenbuspakje
+         */
+        $handledBuspakje = false;
+        Mage::dispatchEvent('postnl_fitsasbuspakje_before',
+            array(
+                'items' => $items,
+                'dispatched' => $handledBuspakje,
+            )
+        );
+
+        if ($handledBuspakje) {
+            return false;
+        }
+
         if ($registerReason) {
             Mage::unregister('postnl_reason_not_buspakje');
         }
