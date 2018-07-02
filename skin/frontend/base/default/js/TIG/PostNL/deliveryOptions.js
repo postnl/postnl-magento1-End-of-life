@@ -3592,7 +3592,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.getMap().panTo(marker.getPosition());
 
         var streetView = this.getMap().getStreetView();
-        if (streetView.getVisible()) {
+
+        if (streetView !== undefined && streetView.getVisible()) {
             streetView.setPosition(marker.getPosition());
         }
 
