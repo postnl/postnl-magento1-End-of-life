@@ -970,13 +970,6 @@ PostnlDeliveryOptions.prototype = {
 
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
-        } else if (this.getOptions().isOsc) {
-            selectPostnlShippingMethod = true;
-
-            if ($$('[name="shipping_method"]:checked').length == 0) {
-                checkbox.checked = true;
-                checkbox.click();
-            }
         }
 
         /**
