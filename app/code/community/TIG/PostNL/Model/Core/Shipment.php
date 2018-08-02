@@ -1446,7 +1446,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _getBarcodeCollection($type)
     {
         $barcodeCollection = Mage::getResourceModel('postnl_core/shipment_barcode_collection');
-        $barcodeCollection->addFieldToSelect(array('barcode', 'barcode_number'))
+        $barcodeCollection->addFieldToSelect('*')
                           ->addFieldToFilter('parent_id', array('eq' => $this->getId()));
 
         /**
@@ -4105,7 +4105,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shipment = $this->getShipment();
+        $shipmentType = 'shipment';
         if (true === $isReturn) {
+            $shipmentType = 'return';
             $barcode = $this->getReturnBarcode();
         } else {
             $barcode = $this->getMainBarcode();
@@ -4135,6 +4137,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $track = Mage::getModel('sales/order_shipment_track')->addData($data);
         $shipment->addTrack($track);
+
+        foreach ($this->getBarcodes(true) as $barcode) {
+            if ($barcode->getBarcodeType() !== $shipmentType) {
+                continue;
+            }
+
+            $data = array(
+                'carrier_code' => $carrierCode,
+                'title'        => $carrierTitle,
+                'number'       => $barcode->getBarcode()
+            );
+
+            $track = Mage::getModel('sales/order_shipment_track')->addData($data);
+            $shipment->addTrack($track);
+        }
 
         /**
          * Save the Mage_Sales_Order_Shipment object and the TIG_PostNL_Model_Core_Shipment objects simultaneously.
