@@ -970,12 +970,6 @@ PostnlDeliveryOptions.prototype = {
 
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
-        } else if (this.getOptions().isOsc) {
-            selectPostnlShippingMethod = true;
-
-            if ($$('[name="shipping_method"]:checked').length == 0) {
-                checkbox.checked = true;
-            }
         }
 
         /**
@@ -1703,6 +1697,11 @@ PostnlDeliveryOptions.prototype = {
         });
 
         selectedOption.renderAsOsc(selectedType);
+
+        var shippingMethodName = this.getOptions().shippingMethodName;
+        var checkbox = $(shippingMethodName);
+        checkbox.checked = true;
+        checkbox.click();
 
         $(this.getOptions().oscOptionsPopup).hide();
 
