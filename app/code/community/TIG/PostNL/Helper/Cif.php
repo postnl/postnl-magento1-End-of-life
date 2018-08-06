@@ -83,12 +83,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XPATH_HOUSE_NUMBER_REQUIRED_COUNTRIES_XPATH = 'postnl/cif/house_number_required_countries';
 
     /**
-     * Regular expression used to split street name from house number. This regex works well for dutch addresses, but
-     * may fail for international addresses. We strongly recommend using split address lines instead.
-     */
-    const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
-
-    /**
      * Regular expression used to split house number and house number extension
      */
     const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
@@ -1313,12 +1307,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $streetData;
         }
 
-        /**
-         * All other countries must split them using PREG
-         */
-        $streetData = $this->_getSplitStreetData($fullStreet);
+        /** @var TIG_PostNL_Helper_AddressEnhancer $helper */
+        $helper = Mage::helper('postnl/addressEnhancer');
+        $helper->set($fullStreet);
 
-        return $streetData;
+        return $helper->get();
     }
 
     /**
@@ -1376,56 +1369,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
         if (empty($housenumber)) {
             return false;
-        }
-
-        $streetData = array(
-            'streetname'           => $streetname,
-            'housenumber'          => $housenumber,
-            'housenumberExtension' => $housenumberExtension,
-            'fullStreet'           => '',
-        );
-
-        return $streetData;
-    }
-
-    /**
-     * Splits street data into separate parts for street name, house number and extension.
-     *
-     * @param string $fullStreet The full street name including all parts
-     *
-     * @return array
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _getSplitStreetData($fullStreet)
-    {
-        $result = preg_match(self::SPLIT_STREET_REGEX, $fullStreet, $matches);
-        if (!$result || !is_array($matches)) {
-            $streetData = array(
-                'streetname'           => $fullStreet,
-                'housenumber'          => '',
-                'housenumberExtension' => '',
-                'fullStreet'           => '',
-            );
-
-            return $streetData;
-        }
-
-        $streetname = '';
-        $housenumber = '';
-        $housenumberExtension = '';
-        if (isset($matches[1])) {
-            $streetname = $matches[1];
-        }
-
-        if (isset($matches[2])) {
-            $housenumber = $matches[2];
-        }
-
-        if (!empty($housenumber)) {
-            $housenumberParts     = $this->_splitHousenumber($housenumber);
-            $housenumber          = $housenumberParts['number'];
-            $housenumberExtension = $housenumberParts['extension'];
         }
 
         $streetData = array(
