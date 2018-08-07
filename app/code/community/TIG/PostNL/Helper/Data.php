@@ -179,8 +179,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_requiredFields = array(
-        'postnl/cif/customer_code',
-        'postnl/cif/customer_number',
         'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
         array(
@@ -200,6 +198,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_liveModeRequiredFields = array(
         'postnl/cif/live_apikey',
+        'postnl/cif/customer_code',
+        'postnl/cif/customer_number',
     );
 
     /**
@@ -209,6 +209,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_testModeRequiredFields = array(
         'postnl/cif/test_apikey',
+        'postnl/cif/test_customer_code',
+        'postnl/cif/test_customer_number',
     );
 
     /**
