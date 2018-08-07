@@ -63,8 +63,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Constants containing xpaths to cif configuration options.
      */
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
+    const XPATH_TEST_CUSTOMER_CODE          = 'postnl/cif/test_customer_code';
     const XPATH_DUTCH_CUSTOMER_CODE         = 'postnl/cif/dutch_customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
+    const XPATH_TEST_CUSTOMER_NUMBER        = 'postnl/cif/test_customer_number';
     const XPATH_DUTCH_CUSTOMER_NUMBER       = 'postnl/cif/dutch_customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
@@ -2366,12 +2368,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustomerCode($useReturnCustomerCode = false)
     {
         $storeId      = $this->getStoreId();
-        $path = self::XPATH_RETURN_CUSTOMER_CODE;
-        $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+        $path         = self::XPATH_RETURN_CUSTOMER_CODE;
+        $customerCode = (string)Mage::getStoreConfig($path, $storeId);
 
         if (!$customerCode || !$useReturnCustomerCode) {
-            $path = self::XPATH_CUSTOMER_CODE;
-            $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+            $path         = self::XPATH_CUSTOMER_CODE;
+            $customerCode = (string)Mage::getStoreConfig($path, $storeId);
+        }
+
+        if (!$useReturnCustomerCode && $this->isTestMode()) {
+            $path         = self::XPATH_TEST_CUSTOMER_CODE;
+            $customerCode = (string)Mage::getStoreConfig($path, $storeId);
         }
 
         return $customerCode;
@@ -2398,7 +2405,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustomerNumber()
     {
         $storeId = $this->getStoreId();
-        $customerNumber = (string) Mage::getStoreConfig(self::XPATH_CUSTOMER_NUMBER, $storeId);
+        $path    = self::XPATH_CUSTOMER_NUMBER;
+
+        if ($this->isTestMode()) {
+            $path = self::XPATH_TEST_CUSTOMER_NUMBER;
+        }
+
+        $customerNumber = (string)Mage::getStoreConfig($path, $storeId);
 
         return $customerNumber;
     }
