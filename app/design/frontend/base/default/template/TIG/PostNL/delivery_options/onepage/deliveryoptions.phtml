@@ -395,7 +395,9 @@
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
 
         window.setSiteWidth = function() {
-            console.log('resize triggered');
+            if (postnlDebugMode) {
+                console.log('resize triggered');
+            }
             $("postnl_pickup").setStyle({
                 minWidth : siteWidth + "px"
             });
