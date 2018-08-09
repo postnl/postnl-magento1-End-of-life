@@ -1,20 +1,19 @@
-# PostNL Magento 1 Extensie
+PostNL Magento 1 Extension
 
 [![Build Status](https://travis-ci.org/tig-nl/postnl-magento1.svg?branch=master)](https://travis-ci.org/tig-nl/postnl-magento1)
 
-### Installatie 
+### Installation
 
-Via de onderstaande link kunt u de installatiehandleiding van de PostNL Magento extensie vinden. Hierin wordt stap voor stap beschreven hoe u de extensie op uw omgeving kan installeren.
+The link below redirects to the installation manual for the PostNL Magento extension. Within this manual we describe all the steps that are needed to install the extension in your environment.
 
-https://servicedesk.tig.nl/hc/nl/articles/206495958
+https://confluence.tig.nl/display/TIGSD/English+PostNL+extension+installation+guide
 
-### Gebruikershandleiding
+### User manual
 
-Na installatie kunt u de PostNL Magento extensie naar wens configureren. De gebruikershandleiding beschrijft uitvoerig welke opties kunnen worden geconfigureerd. U kunt de handleiding vinden via de onderstaande link.
+After installing you can configure the PostNL Magento extension to suit your needs. The user manual describes what options can be configured. 
+The user manual can be found trough the following link: https://servicedesk.tig.nl/hc/nl/articles/206496008
 
-https://servicedesk.tig.nl/hc/nl/articles/206496008
-
-### Aanvullende informatie
+### Additional information
 
 Release notes:
 
@@ -24,12 +23,12 @@ Knowledge base & FAQ:
 
 https://servicedesk.tig.nl/hc/nl/categories/200427077
 
-### Installatie via Modman (voor gevorderde gebruikers).
+### Installation trough Modman (for advanced users)
 
-Zorg er eerst voor dat de symlinks aanstaan in uw Magento installatie.
-Ga naar ``System > Configuration > Advanced > Developer`` en schakel ``Allow Symlinks`` in.
+Make sure that you have enabled symlinks in your Magento installation.
+To enable this go to "System > Configuration > Advanced > Developer" and activate "Allow Symlinks".
 
-Login via ssh en ga naar de Root van uw Magento installatie. Voer de onderstaande commando's uit.
+Login trough SSH and go to the root of the Magento installation. Execute the following command:
 
 ````
 cd .modman
