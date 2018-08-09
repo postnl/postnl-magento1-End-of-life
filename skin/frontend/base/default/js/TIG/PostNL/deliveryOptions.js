@@ -1773,7 +1773,7 @@ PostnlDeliveryOptions.prototype = {
 
         var options = {
             only_stated_address : false
-        }
+        };
 
         var params = {
             isAjax  : true,
@@ -1801,9 +1801,10 @@ PostnlDeliveryOptions.prototype = {
 
         if (this.getOptions().isOsc) {
             params['isOsc'] = true;
-            options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
-            params['options'] = Object.toJSON(options);
         }
+
+        options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
+        params['options'] = Object.toJSON(options);
 
         if (this.saveOptionCostsRequest) {
             try {

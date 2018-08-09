@@ -591,26 +591,6 @@
                     </checkout_deliveryoptions>
                 </observers>
             </core_block_abstract_to_html_after>
-            <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
-                <observers>
-                    <!-- Saves selected PostNL options for Onepage checkout. -->
-                    <checkout_shipping_method_save_options>
-                        <type>singleton</type>
-                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
-                        <method>saveOptions</method>
-                    </checkout_shipping_method_save_options>
-                </observers>
-            </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
-            <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
-                <observers>
-                    <!-- Saves a selected PostNL options for OneStepCheckout. -->
-                    <checkout_shipping_method_save_options>
-                        <type>singleton</type>
-                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
-                        <method>saveOptions</method>
-                    </checkout_shipping_method_save_options>
-                </observers>
-            </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
             <controller_action_predispatch_gomage_checkout_onepage_ajax>
                 <observers>
                     <!-- Set a registry flag to prevent the PostNL order from being reset. -->

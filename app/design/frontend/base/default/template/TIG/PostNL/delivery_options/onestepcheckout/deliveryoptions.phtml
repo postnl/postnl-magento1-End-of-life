@@ -92,6 +92,8 @@
 <?php $_expressFeeExcl    = $this->getFee('express', false); ?>
 <?php $_pakjeGemakFeeIncl = $this->getFee('pakje_gemak', true); ?>
 <?php $_pakjeGemakFeeExcl = $this->getFee('pakje_gemak', false); ?>
+<?php $_statedAddressFeeIncl = $this->getFee('stated_address'); ?>
+<?php $_statedAddressFeeExcl = $this->getFee('stated_address'); ?>
 
 <?php $_methodName = $this->getMethodName(); ?>
 <?php $_methodRate = $this->getMethodRate(); ?>
@@ -394,6 +396,8 @@
                     ]
                 }
             },
+            onlyStatedAddressFeeIncl   : <?php echo $_statedAddressFeeIncl; ?>,
+            onlyStatedAddressFeeExcl   : <?php echo $_statedAddressFeeExcl; ?>,
             <?php endif; ?>
             optionsContainer       : 'osc_scrollbar_container',
             getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
