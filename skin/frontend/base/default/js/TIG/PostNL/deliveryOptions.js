@@ -1771,13 +1771,18 @@ PostnlDeliveryOptions.prototype = {
             from = '09:00:00'
         }
 
+        var options = {
+            only_stated_address : false
+        }
+
         var params = {
-            isAjax : true,
-            type   : selectedType,
-            date   : selectedOption.getDate(),
-            from   : from,
-            to     : selectedOption.to,
-            costs  : Object.toJSON(extraCosts)
+            isAjax  : true,
+            type    : selectedType,
+            date    : selectedOption.getDate(),
+            from    : from,
+            to      : selectedOption.to,
+            costs   : Object.toJSON(extraCosts),
+            options : null
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
@@ -1796,6 +1801,8 @@ PostnlDeliveryOptions.prototype = {
 
         if (this.getOptions().isOsc) {
             params['isOsc'] = true;
+            options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
+            params['options'] = Object.toJSON(options);
         }
 
         if (this.saveOptionCostsRequest) {
@@ -1849,6 +1856,10 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().sameDayFeeIncl;
             }
 
+            if (this.getOptions().extraOptions.only_stated_address.element.checked) {
+                extraCosts += this.getOptions().onlyStatedAddressFeeIncl;
+            }
+
             if (this.debug) {
                 console.log('Extra costs incl. VAT:', extraCosts);
             }
@@ -1864,6 +1875,10 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().sundayFeeExcl;
         } else if (selectedType == 'Sameday') {
             extraCosts = this.getOptions().sameDayFeeExcl;
+        }
+
+        if (this.getOptions().extraOptions.only_stated_address.element.checked) {
+            extraCosts += this.getOptions().onlyStatedAddressFeeExcl;
         }
 
         if (this.debug) {

@@ -199,6 +199,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * @param array $data
      *
      * @return $this
+     * @throws Exception
      */
     public function saveDeliveryOption($data)
     {
@@ -340,6 +341,12 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setStreet($street);
 
             $quote->addAddress($pakjeGemakAddress);
+        }
+
+        if (isset($data['options'])) {
+            $postnlOrder->setOptions($data['options'])
+                ->validateOptions()
+                ->save();
         }
 
         $quote->save();

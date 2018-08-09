@@ -431,6 +431,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             case 'pakje_gemak':
                 $fee = $this->getPakjeGemakFee(false, $includingTax);
                 break;
+            case 'stated_address';
+                $fee = $this->getStatedAddressFee(false, $includingTax);
+                break;
             default:
                 return 0;
         }
@@ -530,6 +533,21 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getExpressFee($formatted, $includingTax);
+    }
+
+    /**
+     * Get the fee charged for Stated Address Only.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getStatedAddressFee($formatted = false, $includingTax = true)
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions_Fee $helper */
+        $helper = Mage::helper('postnl/deliveryOptions_fee');
+        return $helper->getStatedAddressFee($formatted, $includingTax);
     }
 
     /**

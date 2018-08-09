@@ -77,7 +77,8 @@
 <?php endif; ?>
 
 <?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
-
+<?php $_statedAddressFeeIncl = $this->getFee('stated_address'); ?>
+<?php $_statedAddressFeeExcl = $this->getFee('stated_address'); ?>
 <?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
 <?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
 <?php $_sundayFeeIncl     = $this->getFee('sunday', true); ?>
@@ -384,6 +385,8 @@
                     ]
                 }
             },
+            onlyStatedAddressFeeIncl   : <?php echo $_statedAddressFeeIncl; ?>,
+            onlyStatedAddressFeeExcl   : <?php echo $_statedAddressFeeExcl; ?>,
             <?php endif; ?>
             optionsContainer       : 'osc_scrollbar_container',
             getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
