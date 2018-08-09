@@ -445,10 +445,6 @@
             </block>
         </reference>
 
-        <reference name="onestepcheckout.checkout">
-            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onestepcheckout/login_button.phtml" output="toHtml"/>
-        </reference>
-
         <reference name="onestepcheckout.billing.address">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/onestepcheckout/postcode_check.phtml"/>
         </reference>
