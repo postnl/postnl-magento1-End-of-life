@@ -863,6 +863,10 @@ PostnlDeliveryOptions.prototype = {
         }
         this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCity(), this.getCountry(), this.getDeliveryDate());
 
+        this.getOptions().extraOptions.only_stated_address.element.observe('click', function(event) {
+            this.updateShippingPrice();
+        }.bind(this));
+
         return this;
     },
 
@@ -1966,7 +1970,6 @@ PostnlDeliveryOptions.prototype = {
         var updateText   = this.getOptions().currencySymbol
                          + ' '
                          + defaultCurrencyIncl;
-
         if (extraCostsIncl) {
             updateText += ' + '
                        + this.getOptions().currencySymbol
