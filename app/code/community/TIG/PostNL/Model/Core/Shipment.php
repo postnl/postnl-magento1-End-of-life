@@ -1703,18 +1703,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getDefaultExtraCoverAmount()
     {
-        if ($this->isGlobalShipment()) {
-            return 200;
-        }
-
-        $shipmentAmount = $this->getShipmentBaseGrandTotal();
-        $extraCoverAmount = ceil($shipmentAmount / 500) * 500;
-
-        if ($extraCoverAmount < 500) {
-            $extraCoverAmount = 500;
-        }
-
-        return $extraCoverAmount;
+        return $this->getShipmentBaseGrandTotal();
     }
 
     /**
@@ -5626,7 +5615,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             /**
              * If this is an extra cover shipment and no extra cover amount has been set, set the default of 500 EUR.
              */
-            if ($this->isExtraCover() && $this->getExtraCoverAmount() < 200) {
+            if ($this->isExtraCover()) {
                 $this->setExtraCoverAmount();
             }
         }
