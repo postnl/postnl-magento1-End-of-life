@@ -3790,7 +3790,7 @@
                         </return_labels_active>
                         <return_customer_code translate="label" module="postnl">
                             <label>Return customer code</label>
-                            <tooltip>To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.</tooltip>
+                            <tooltip>To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -5878,7 +5878,7 @@
                         </default_evening_product_option>
                         <default_evening_be_product_option translate="label tooltip" module="postnl">
                             <label>Default evening BE delivery shipping option</label>
-                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to BE evening delivery shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_euProductOptions::getAvailableAvondOptions</source_model>

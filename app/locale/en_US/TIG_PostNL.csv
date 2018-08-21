@@ -1415,7 +1415,7 @@ TIG_PostNL::Enable Extra@Home,Enable Extra@Home
 TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.
 TIG_PostNL::Activate Extra@Home for your customers.,Activate Extra@Home for your customers.
 TIG_PostNL::Return customer code,Return customer code
-TIG_PostNL::To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.
+TIG_PostNL::To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.,To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.
 This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.
 TIG_PostNL::PostNL product parcel count,PostNL product parcel count
 "TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume."
@@ -1430,3 +1430,8 @@ TIG_PostNL::This setting states if fee's should be included or excluded in free 
 "TIG_PostNL::If you want to continue using the Google Map for the pickup locations, please fill in your Google API key.","If you want to continue using the Google Map for the pickup locations, please fill in your Google API key."
 "TIG_PostNL::Activate Google Maps","Activate Google Maps"
 "TIG_PostNL::<a href='https://confluence.tig.nl/x/zgCfAg'>More information</a> (Dutch)","<a href='https://confluence.tig.nl/x/zgCfAg'>More information</a> (Dutch)"
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.,This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.
+TIG_PostNL::Default evening BE delivery shipping option,Default evening BE delivery shipping option
+TIG_PostNL::Default ID check pickup option,Default ID check pickup option
+TIG_PostNL::Default Age check pickup option,Default Age check pickup option
+TIG_PostNL::Default Birthday check pickup option,Default Birthday check pickup option
