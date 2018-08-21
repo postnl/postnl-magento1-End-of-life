@@ -844,6 +844,20 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         /**
+         * Parse the options to an array. For now, only used to determine if packages can be delivered at neighbours,
+         * but other options can be included in the future.
+         */
+        if (isset($params['options'])) {
+            $options = $coreHelper->jsonDecode($params['options']);
+
+            if (isset($options['only_stated_address']) && $options['only_stated_address'] == true) {
+                $options['only_stated_address'] = (int)$options['only_stated_address'];
+            } else {
+                $options = false;
+            }
+        }
+
+        /**
          * Get validation classes for the postcode and housenumber values.
          */
         $validTypes = $this->getValidTypes();
@@ -893,9 +907,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         $data = array(
-            'type'  => $type,
-            'date'  => $date,
-            'costs' => $costs,
+            'type'      => $type,
+            'date'      => $date,
+            'costs'     => $costs,
+            'options'   => $options
         );
 
         if ($from && $timeValidator->isValid($from)) {

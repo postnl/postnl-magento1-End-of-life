@@ -199,6 +199,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * @param array $data
      *
      * @return $this
+     * @throws Exception
      */
     public function saveDeliveryOption($data)
     {
@@ -342,9 +343,54 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             $quote->addAddress($pakjeGemakAddress);
         }
 
+        if (isset($data['options'])) {
+            $postnlOrder = $this->saveOptions($postnlOrder, $quote, $data['options']);
+        }
+
         $quote->save();
         $postnlOrder->save();
 
         return $this;
+    }
+
+    /**
+     * @param $postnlOrder TIG_PostNL_Model_Core_Order
+     * @param $quote       Mage_Sales_Model_Quote
+     * @param $options
+     *
+     * @return TIG_PostNL_Model_Core_Order
+     * @throws Exception
+     */
+    private function saveOptions($postnlOrder, $quote, $options)
+    {
+        /**
+         * Get all shipping methods that are considered to be PostNL.
+         */
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+
+        /**
+         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any options that
+         * may have been saved.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        /** @var TIG_PostNL_Helper_Carrier $helper */
+        $helper          = Mage::helper('postnl/carrier');
+        $domesticCountry = $helper->getDomesticCountry();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != $domesticCountry
+            || !$helper->isPostnlShippingMethod($shippingMethod)
+
+        ) {
+            $postnlOrder->setOptions(false)
+                ->save();
+
+            return $postnlOrder;
+        }
+
+        $postnlOrder->setOptions($options)
+            ->validateOptions()
+            ->save();
+
+        return $postnlOrder;
     }
 }
