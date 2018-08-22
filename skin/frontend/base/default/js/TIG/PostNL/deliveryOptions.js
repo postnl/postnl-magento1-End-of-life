@@ -862,10 +862,11 @@ PostnlDeliveryOptions.prototype = {
                 .hideSpinner();
         }
         this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCity(), this.getCountry(), this.getDeliveryDate());
-
-        this.getOptions().extraOptions.only_stated_address.element.observe('click', function(event) {
-            this.updateShippingPrice();
-        }.bind(this));
+        if (this.getOptions().extraOptions.only_stated_address) {
+            this.getOptions().extraOptions.only_stated_address.element.observe('click', function (event) {
+                this.updateShippingPrice();
+            }.bind(this));
+        }
 
         return this;
     },
@@ -1881,8 +1882,7 @@ PostnlDeliveryOptions.prototype = {
         } else if (selectedType == 'Sameday') {
             extraCosts = this.getOptions().sameDayFeeExcl;
         }
-
-        if (this.getOptions().extraOptions.only_stated_address.element.checked) {
+        if (this.getOptions().extraOptions.only_stated_address && this.getOptions().extraOptions.only_stated_address.element.checked) {
             extraCosts += this.getOptions().onlyStatedAddressFeeExcl;
         }
 
