@@ -1808,7 +1808,9 @@ PostnlDeliveryOptions.prototype = {
             params['isOsc'] = true;
         }
 
-        options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
+        if (this.getOptions().extraOptions.only_stated_address) {
+            options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
+        }
         params['options'] = Object.toJSON(options);
 
         if (this.saveOptionCostsRequest) {
