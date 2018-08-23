@@ -1862,7 +1862,7 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().sameDayFeeIncl;
             }
 
-            if (this.getOptions().extraOptions.only_stated_address.element.checked) {
+            if (this.getOptions().extraOptions.only_stated_address && this.getOptions().extraOptions.only_stated_address.element.checked) {
                 extraCosts += this.getOptions().onlyStatedAddressFeeIncl;
             }
 
