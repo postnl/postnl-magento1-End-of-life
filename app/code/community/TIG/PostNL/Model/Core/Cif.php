@@ -1847,9 +1847,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if ($postnlShipment->isExtraCover()) {
             $extraCoverAmount = $postnlShipment->getExtraCoverAmount();
-            if ($extraCoverAmount < 500) {
-                $extraCoverAmount = 500;
-            }
 
             $extraCover = number_format($extraCoverAmount, 2, '.', '');
             $amount[] = array(
