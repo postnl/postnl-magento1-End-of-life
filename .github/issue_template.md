@@ -1,9 +1,9 @@
 ### Submitting issues trough Github
 ## Please follow the guide below
 
-- You will be asked some questions and requested to provide some information, please read them **carefully** and answer honestly
 - Put an `x` into all the boxes [ ] relevant to your *issue* (like this: `[x]`)
-- Use the *Preview* tab to see what your issue will actually look like
+- Use the *Preview* tab to see what your issue will actually look like.
+- We may ask some questions or ask you to provide addition information after you placed your request.
 
 ---
 
@@ -11,22 +11,33 @@
 Issues with outdated version will be rejected.
 - [ ] I've **verified** and **I assure** that I'm running the latest version of the TIG PostNL Magento extension.
 
+
 ---
 
 ### What is the purpose of your *issue*?
-- [ ] Bug report (encountered problems with the TIG PostNL Magento extension)
-- [ ] Site support request (request for adding support for a new site)
 - [ ] Feature request (request for a new functionality)
-- [ ] Question
+- [ ] Bug report (encountered problems with the TIG PostNL Magento extension)
+- [ ] Extension support request (request for adding support for a new extension)
 - [ ] Other
 
 ---
 
-### Description of your *issue*, suggested solution and other information
+### If the purpose of your issue is a *feature request*
+- As a *..certain type of user..* I’d like to *..describe what you want..* in order to *..write goal(s)..*
+- Suggestions and background: 
+  If you have ideas for the solution write them down here. Include images, a picture is more worth than 1,000 words. If none, remove this line.
 
-Explanation of your *issue* in arbitrary form goes here. Please make sure the [description is worded well enough to be understood]. Provide as much context and examples as possible.
-If work on your *issue* requires account credentials please provide them or explain how one can obtain them.
+### If the purpose of your issue is a *bug report*
+**Please describe the precise steps to reproduce your issue:**
+- Step 1, Step 2, ...
+- Expected result
+- Actual result (Please provide screenshots if applicable)
+- Workaround (If available, otherwise just write "None")
 
-### TIG supportdesk
+### If the purpose of your issue is about anything else, please describe your issue here
+- Explain your issue here
 
-On Github we will respond in English even when the question was asked in Dutch.
+### TIG support
+
+- Please ask your question in English to ensure that your issue can help other people internationally. Nevertheless we will respond in English.
+- If you want support with installing the PostNL extension, please contact citservicedesk@postnl.nl for free support, or contact us directly at support@tig.nl for paid support plans.
