@@ -1,4 +1,4 @@
-### Submitting issues trough Github
+### Submitting issues through Github
 ## Please follow the guide below
 
 - Put an `x` into all the boxes [ ] relevant to your *issue* (like this: `[x]`)
