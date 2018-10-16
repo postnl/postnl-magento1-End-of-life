@@ -45,11 +45,16 @@ class TIG_PostNL_Model_Order_Api extends Mage_Sales_Model_Order_Api
         /** @var TIG_PostNL_Model_Core_Order $postnlOrder */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($result['order_id'], 'order_id');
 
-        if (!$postnlOrder->getPakjeGemakAddress()) {
+        if (!$postnlOrder->getId()) {
             return $result;
         }
 
-        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress()->getData();
+        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
+        if (!$pakjeGemakAddress) {
+            return $result;
+        }
+
+        $pakjeGemakAddress = $pakjeGemakAddress->getData();
         $result['pakjegemak_address_id'] = array_shift($pakjeGemakAddress);
 
         $pakjeGemakAddress['address_id'] = $result['pakjegemak_address_id'];
