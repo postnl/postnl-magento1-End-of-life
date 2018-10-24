@@ -580,7 +580,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * we need the original shipment, not a related shipment (such as a return shipment).
              */
-            if ($shipment->Barcode === $barcode) {
+            if (isset($shipment->Barcode) && $shipment->Barcode === $barcode) {
                 return $shipment;
             }
         }
