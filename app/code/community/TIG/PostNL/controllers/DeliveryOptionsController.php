@@ -674,8 +674,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     {
         /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
         $helper = Mage::helper('postnl/deliveryOptions');
+        $storeId = Mage::app()->getStore()->getId();
 
-        if ($helper->canUsePakjeGemak()) {
+        $postData = $this->getRequest()->getPost();
+
+        if ($helper->canUsePakjeGemak($storeId, false, $postData['country'])) {
             return true;
         }
 
