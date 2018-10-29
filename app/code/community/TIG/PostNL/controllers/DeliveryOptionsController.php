@@ -432,7 +432,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        if (!$this->_canUseDeliveryOptions()) {
+        if (!$this->_canUseDeliveryOptions() && !$this->_canUseNearestLocations()) {
             $this->getResponse()
                  ->setBody('not_allowed');
 
@@ -665,6 +665,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
         return $canUseDeliveryOptions;
+    }
+
+    /**
+     * Check to see if PostNL nearest locations are active
+     */
+    protected function _canUseNearestLocations()
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if ($helper->canUsePakjeGemak()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
