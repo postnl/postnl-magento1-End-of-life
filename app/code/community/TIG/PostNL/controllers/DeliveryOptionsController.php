@@ -432,7 +432,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        if (!$this->_canUseDeliveryOptions() && !$this->_canUseNearestLocations()) {
+        if (!$this->_canUseDeliveryOptions() || !$this->_canUseNearestLocations()) {
             $this->getResponse()
                  ->setBody('not_allowed');
 
