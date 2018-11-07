@@ -185,15 +185,25 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
          */
         if (!$xpath) {
             $helper = $this->getHelper('deliveryOptions');
+
+            if ($helper->getDomesticCountry() == 'NL') {
+                $xpath = PostNLShipment::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
+            }
+
             $shippingAddress = $orderInfo->getShippingAddress();
-            if (
+            if (!$xpath &&
                 $shippingAddress->getCountryId() == 'NL' &&
                 $helper->canUseDutchProducts()
             ) {
                 $xpath = PostNLShipment::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION_NETHERLANDS;
-            } else {
-                $xpath = PostNLShipment::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
             }
+        }
+
+        /**
+         * If xpath is still empty, fall back to the default product option
+         */
+        if (!$xpath) {
+            $xpath = PostNLShipment::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
         }
 
         /**
