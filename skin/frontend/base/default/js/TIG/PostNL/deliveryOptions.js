@@ -1708,6 +1708,10 @@ PostnlDeliveryOptions.prototype = {
         checkbox.checked = true;
         checkbox.click();
 
+        if (window.innerWidth <= 953 && typeof Lightcheckout === 'function') {
+            Lightcheckout.prototype.hideLoadinfo();
+        }
+
         $(this.getOptions().oscOptionsPopup).hide();
 
         this.saveSelectedOption();
@@ -1836,6 +1840,10 @@ PostnlDeliveryOptions.prototype = {
                 document.fire('postnl:selectOptionSaved');
             }
         });
+
+        if (window.innerWidth <= 953 && typeof Lightcheckout === 'function') {
+            Lightcheckout.prototype.hideLoadinfo();
+        }
 
         return true;
     },
