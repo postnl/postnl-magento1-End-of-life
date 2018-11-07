@@ -5671,15 +5671,6 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
             spanClass += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
-        } else if (this.getDeliveryOptions().country == 'BE') {
-            spanClass    += ' no-timeframe-buspakje';
-
-            var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
-            if (date.getDay() == 6) {
-                openingHours += '09:00 - 18:00';
-            } else {
-                openingHours += '09:00 - 21:30';
-            }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()
         ) {
