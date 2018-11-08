@@ -1440,6 +1440,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
+        if (!$country) {
+            $country = $quote->getShippingAddress()->getCountryId();
+        }
+
         $allowed = $this->_canUsePakjeGemak($country);
 
         if ($cache) {
@@ -1564,6 +1568,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_BE, $storeId);
         if ($country && $country == 'BE' && !$enabled) {
+            return false;
+        }
+
+        $dependency = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        if ($country == 'BE') {
+            $dependency = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $storeId);
+        }
+
+        if (!$dependency) {
             return false;
         }
 
@@ -1935,10 +1948,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Checks if delivery days are available.
      *
      * @param bool $checkQuote
+     * @param bool $storeId
+     * @param bool $country
      *
      * @return bool
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
      */
-    public function canUseDeliveryDays($checkQuote = true)
+    public function canUseDeliveryDays($checkQuote = true, $storeId = false, $country = false)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
@@ -1982,19 +1999,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        if (!$this->canUseDutchProducts()) {
-            $allowed = false;
-        } else {
-            $storeId = Mage::app()->getStore()->getId();
+        $allowed = false;
 
-            $quote = $this->getQuote();
-
-            $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS;
-            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
-                $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS_BE;
-            }
-
-            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
+        if ($this->canUseDutchProducts()) {
+            $allowed = $this->deliveryDaysEnabled($storeId, $country);
         }
 
         if ($cache) {
@@ -2006,6 +2014,40 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         Mage::register($registryKey, $allowed);
+        return $allowed;
+    }
+
+    /**
+     * @param bool|int    $storeId
+     * @param bool|string $country
+     *
+     * @return bool
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    private function deliveryDaysEnabled($storeId = false, $country = false)
+    {
+        $quote = $this->getQuote();
+        $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS;
+        $parentPath = self::XPATH_DELIVERY_OPTIONS_ACTIVE;
+
+        if (!$country && $quote && $quote->getShippingAddress()) {
+            $country = $quote->getShippingAddress()->getCountryId();
+        }
+
+        if ($country && $country == 'BE') {
+            $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS_BE;
+            $parentPath = self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE;
+        }
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
+        if (!Mage::getStoreConfigFlag($parentPath, $storeId)) {
+            $allowed = false;
+        }
+
         return $allowed;
     }
 

@@ -683,4 +683,52 @@ class TIG_PostNL_Test_Unit_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Un
 
         $this->assertEquals($expected, $result['formatted_type']);
     }
+
+    public function deliveryDaysEnabledProvider()
+    {
+        return array(
+            'Country by arg, BE, days enabled' => array('BE', 'NL', false, true, true, true, true),
+            'Country by arg, BE, days disabled' => array('BE', 'NL', false, false, true, true, false),
+            'Country by arg, NL, days enabled' => array('NL', 'BE', true, false, true, true, true),
+            'Country by arg, NL, days disabled' => array('NL', 'BE', false, false, true, true, false),
+            'Country by quote, BE, days enabled' => array(false, 'BE', false, true, true, true, true),
+            'Country by quote, BE, days disabled' => array(false, 'BE', false, false, true, true, false),
+            'Country by quote, NL, days enabled' => array(false, 'NL', true, false, true, true, true),
+            'Country by quote, NL, days disabled' => array(false, 'NL', false, false, true, true, false),
+            'BE delivery options disabled' => array('BE', 'BE', true, true, true, false, false),
+            'NL delivery options disabled' => array('NL', 'NL', true, true, false, true, false),
+        );
+    }
+
+    /**
+     * @param $argCountry
+     * @param $quoteCountry
+     * @param $nlEnable
+     * @param $beEnable
+     * @param $nlParent
+     * @param $beParent
+     * @param $expected
+     *
+     * @dataProvider deliveryDaysEnabledProvider
+     */
+    public function testDeliveryDaysEnabled($argCountry, $quoteCountry, $nlEnable, $beEnable, $nlParent, $beParent, $expected)
+    {
+        $quoteMock = $this->getMockBuilder('Mage_Sales_Model_Quote')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getShippingAddress', 'getCountryId'))
+            ->getMock();
+        $quoteMock->method('getShippingAddress')->willReturnSelf();
+        $quoteMock->method('getCountryId')->willReturn($quoteCountry);
+
+        $instance = $this->_getInstance();
+        $this->setProperty('_quote', $quoteMock, $instance);
+
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_DeliveryOptions::XPATH_DELIVERY_OPTIONS_ACTIVE, $nlParent);
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_DeliveryOptions::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $beParent);
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_DeliveryOptions::XPATH_ENABLE_DELIVERY_DAYS, $nlEnable);
+        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_DeliveryOptions::XPATH_ENABLE_DELIVERY_DAYS_BE, $beEnable);
+
+        $result = $this->invokeArgs('deliveryDaysEnabled', array(false, $argCountry), $instance);
+        $this->assertEquals($expected, $result);
+    }
 }

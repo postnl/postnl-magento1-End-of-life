@@ -1284,7 +1284,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $deliveryDate = null;
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
-        if ($deliveryOptionsHelper->canUseDeliveryDays(false) && !$postnlShipment->isExtraAtHome()) {
+
+        $shippingStoreId = $postnlShipment->getStoreId();
+        $shippingCountry = $postnlShipment->getShippingAddress()->getCountryId();
+        $canUseDeliverDays = $deliveryOptionsHelper->canUseDeliveryDays(false, $shippingStoreId, $shippingCountry);
+        if ($canUseDeliverDays && !$postnlShipment->isExtraAtHome()) {
             $deliveryDate = $postnlShipment->getDeliveryDate();
             if ($deliveryDate) {
                 $deliveryTime = new DateTime($deliveryDate, new DateTimeZone('UTC'));
