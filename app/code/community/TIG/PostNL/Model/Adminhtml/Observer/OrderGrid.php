@@ -1500,6 +1500,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         /**
+         * It should not happen, but if it may, filter out the postnl orders where the order id is not set or found.
+         * Because theses will break the filter results.
+         */
+        $collection->addFieldToFilter(
+            'postnl_order.order_id', array('notnull' => true)
+        );
+
+        /**
          * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
          */
         if ($filterCond == 'pakje_gemak_express') {
@@ -1567,20 +1575,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 )
             );
 
-            return $this;
-        }
-
-        /**
-         * If the filter condition is Domestic, filter out all non-Overdag orders.
-         */
-        if ($filterCond == 'nl') {
-            $collection->addFieldToFilter(
-                'postnl_order.type',
-                array(
-                    array('eq'   => 'overdag'),
-                    array('null' => true)
-                )
-            );
             return $this;
         }
 
