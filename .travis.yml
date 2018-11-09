@@ -1,8 +1,6 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
@@ -14,14 +12,14 @@ env:
     - TEST_RUNNER_OPTIONS=""
 
   matrix:
-    - MAGENTO_VERSION=magento-mirror-1.9.3.1
+    - MAGENTO_VERSION=magento-mirror-1.9.3.10
 
 matrix:
   include:
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.3.2 ENABLE_FLAT_CATALOG=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.10 ENABLE_FLAT_CATALOG=true
   - php: 7.0
-    env: MAGENTO_VERSION=magento-mirror-1.9.3.2 CODE_COVERAGE=true
+    env: MAGENTO_VERSION=magento-mirror-1.9.3.10 CODE_COVERAGE=true
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.2.4
   - php: 7.0
