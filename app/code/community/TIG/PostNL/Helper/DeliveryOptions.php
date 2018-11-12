@@ -2054,15 +2054,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Check if delivery days are allowed for the current quote.
      *
+     * @param $quote
      * @return bool
      */
-    public function canUseDeliveryDaysForQuote()
+    public function canUseDeliveryDaysForQuote($quote = null)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.
          */
-        $quote = $this->getQuote();
+        $quote = $quote ?: $this->getQuote();
         if (!$quote) {
             return true;
         }

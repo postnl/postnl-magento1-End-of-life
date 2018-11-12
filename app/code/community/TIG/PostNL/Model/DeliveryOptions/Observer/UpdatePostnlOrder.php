@@ -401,10 +401,18 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      */
     protected function _setDates(TIG_PostNL_Model_Core_Order $postnlOrder, Mage_Sales_Model_Order $order)
     {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionHelper */
+        $deliveryOptionHelper = Mage::helper('postnl/deliveryOptions');
+        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+        if (!$deliveryOptionHelper->canUseDeliveryOptions($quote)) {
+            return $postnlOrder;
+        }
+
         /** @var TIG_PostNL_Helper_Date $helper */
         $helper = Mage::helper('postnl/date');
         /** @var TIG_PostNL_Helper_Data $postnlHelper */
         $postnlHelper = Mage::helper('postnl');
+
 
         $dateObject = new DateTime($order->getCreatedAt(), new DateTimeZone('UTC'));
         $deliveryDate = clone $dateObject;

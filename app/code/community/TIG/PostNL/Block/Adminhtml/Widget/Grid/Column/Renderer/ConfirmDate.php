@@ -66,6 +66,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
+        // Confirm date in shipments can not be null, so sql will automaticly insert 0000-00-00 00:00:00
+        if ($value == null || $value == '0000-00-00 00:00:00') {
+            return $helper->__('ASAP');
+        }
 
         $value = new DateTime($value, new DateTimeZone('UTC'));
 

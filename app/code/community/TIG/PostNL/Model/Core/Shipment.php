@@ -1667,14 +1667,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $deliveryDate;
         }
 
-        /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
-        /** @var Mage_Core_Model_Date $dateModel */
-        $dateModel = Mage::getSingleton('core/date');
-        $orderDate = $dateModel->date(null, $this->getOrder()->getCreatedAt());
-        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId())->format('Y-m-d H:i:s');
-
-        return $deliveryDate;
+        return null;
     }
 
     /**
@@ -1882,6 +1875,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Get the requested delivery date for this shipment.
          */
         $deliveryDate = $this->getDeliveryDate();
+        if (!$deliveryDate) {
+            $this->setData('confirm_date', null);
+            return $this;
+        }
 
         /**
          * Calculate the confirm based on the delivery date.
@@ -5591,6 +5588,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->setConfirmedAt($currentTimestamp);
         }
 
+
+        $isConfirmed = in_array($this->getConfirmStatus(),
+            array(self::CONFIRM_STATUS_BUSPAKJE, self::CONFIRM_STATUS_CONFIRMED)
+        );
+
+        if ((!$this->getConfirmDate() || $this->getConfirmDate() == '0000-00-00 00:00:00')  && $isConfirmed) {
+            $confirmDate = $this->getConfirmedAt() ?: $dateModel->gmtTimestamp();
+            $this->setConfirmDate($confirmDate);
+        }
+
+        if (!$this->getDeliveryDate() && $isConfirmed) {
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp($this->getConfirmedAt())
+                ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
+            $this->setDeliveryDate($deliveryDate);
+        }
+
         /**
          * Set whether labels have printed or not.
          */
@@ -5647,6 +5662,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (!$this->_getData('order_id')) {
             $this->getOrderId();
+        }
+
+        /**
+         * Update order for grid information.
+         */
+        $order = $this->getPostnlOrder();
+        if ($order) {
+            $order->setDeliveryDate($this->getDeliveryDate());
+            $order->setConfirmDate($this->getConfirmDate());
+            $order->save();
         }
 
         return parent::_beforeSave();

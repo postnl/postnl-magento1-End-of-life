@@ -71,6 +71,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $value = $row->getData($this->getColumn()->getIndex());
+        if ($value == null) {
+            return Mage::helper('postnl')->__('ASAP');
+        }
 
         /**
          * If no delivery date is specified, calculate the date as being 1 day after the confirm date

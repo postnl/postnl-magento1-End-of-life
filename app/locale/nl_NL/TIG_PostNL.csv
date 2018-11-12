@@ -1515,3 +1515,4 @@ TIG_PostNL::Default evening BE delivery shipping option,Standaard avondbezorging
 TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie optie
 TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
+TIG_PostNL::ASAP, Zo snel mogelijk
