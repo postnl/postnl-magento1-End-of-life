@@ -78,6 +78,7 @@ class TIG_PostNL_Test_Unit_Model_Core_Cif_CifTest extends \TIG_PostNL_Test_Unit_
         $postnlShipment->getBarcode(1)->willReturn('barcode 1');
         $postnlShipment->getBarcode(2)->willReturn('barcode 2');
         $postnlShipment->isBelgiumShipment()->willReturn(false);
+        $postnlShipment->getShipmentType()->willReturn('Overdag');
 
         return $postnlShipment;
     }

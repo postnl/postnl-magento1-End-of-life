@@ -619,11 +619,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customer    = $this->_getCustomer($shipment);
         $helper      = Mage::helper('postnl');
 
-        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         /**
          * Create a single shipment object
@@ -700,11 +697,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $helper = Mage::helper('postnl');
 
-        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         $shipments = array();
         for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
@@ -826,11 +820,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
         }
 
-        $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId(), $postnlShipment->isBelgiumShipment()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
             $barcode = $postnlShipment->getBarcode($parcelNumber);

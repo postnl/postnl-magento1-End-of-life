@@ -2321,13 +2321,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if return labels can be printed along with shipping labels for the specified store view.
      *
-     * @param boolean|int $storeId
-     * @param boolean $isBe
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return boolean
      */
-    public function canPrintReturnLabelsWithShippingLabels($storeId = false, $isBe = false)
+    public function canPrintReturnLabelsWithShippingLabels($shipment)
     {
+        $isBe    = $shipment->isBelgiumShipment();
+        $storeId = $shipment->getStoreId();
+        if ($shipment->getShipmentType() == 'ExtraAtHome') {
+            return false;
+        }
+
         if (false === $storeId) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }

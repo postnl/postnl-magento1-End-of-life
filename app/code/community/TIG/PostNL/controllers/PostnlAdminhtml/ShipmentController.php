@@ -86,9 +86,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 );
             }
 
-            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                $shipment->getStoreId()
-            );
+            /** @var TIG_PostNL_Model_Core_Shipment $postnlShipment */
+            $postnlShipment = $this->_loadShipment($shipment->getId(), true);
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
 
             /**
              * Get the labels from CIF.
@@ -281,10 +281,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * Load the shipment and check if it exists and is valid.
              */
             $shipment = $this->_loadShipment($shipmentId, true);
-
-            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                $shipment->getStoreId()
-            );
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
 
             /**
              * Get the labels from CIF and create the packing slip.
@@ -1669,10 +1666,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                        $shipment->getStoreId()
-                    );
-
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
                     $shipmentLabels = $this->_getLabels($shipment, true, $printReturnLabels);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
@@ -1940,10 +1934,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                        $shipment->getStoreId()
-                    );
-
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
                     $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Exception $e) {
@@ -2139,10 +2130,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                         );
                     }
 
-                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                        $shipment->getStoreId()
-                    );
-
+                    $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
                     $shipmentLabels = $this->_getLabels($shipment, false, $printReturnLabels);
                     $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
                 } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {

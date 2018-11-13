@@ -767,10 +767,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
         $labels = array();
         foreach ($shipments as $shipment) {
             try {
-                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                    $shipment->getStoreId()
-                );
-
+                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
                 $shipmentLabels = $this->getLabels($shipment, true, $printReturnLabels);
                 $labels = array_merge($labels, $shipmentLabels);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
@@ -869,11 +866,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
                     );
                 }
 
-                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                    $shipment->getStoreId()
-                );
-
-                $showLabelsOption = Mage::getStoreConfig(self::XPATH_SHOW_LABEL, Mage_Core_Model_App::ADMIN_STORE_ID);
+                $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($shipment);
+                $showLabelsOption  = Mage::getStoreConfig(self::XPATH_SHOW_LABEL, Mage_Core_Model_App::ADMIN_STORE_ID);
                 if ($showLabelsOption == 'none') {
                     $shipmentLabels = array();
                 } else {

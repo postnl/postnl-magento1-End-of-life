@@ -638,19 +638,15 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
 
         $errors = array();
         try {
-            $isBe = $this->isBeShipment($postnlShipment);
             /**
              * Check whether we should also get the return labels based on the shop's configuration.
              */
-            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-                $postnlShipment->getStoreId(),
-                $isBe
-            );
+            $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
 
             /**
              * Get the actual labels.
              */
-            $labels = $serviceModel->getLabels($postnlShipment, $confirm, $printReturnLabels, $isBe);
+            $labels = $serviceModel->getLabels($postnlShipment, $confirm, $printReturnLabels, $postnlShipment->isBelgiumShipment());
 
             /**
              * Get the label model which will convert the base64_encoded pdf strings to a single, merged pdf.
@@ -982,18 +978,5 @@ class TIG_PostNL_Model_Core_Api_V2 extends TIG_PostNL_Model_Core_Api
         }
 
         return $response;
-    }
-
-    /**
-     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     *
-     * @return bool
-     */
-    protected function isBeShipment($postnlShipment)
-    {
-        $shippingAddress = $postnlShipment->getShippingAddress();
-        $shippingCountry = $shippingAddress->getCountryId();
-
-        return $shippingCountry == 'BE';
     }
 }
