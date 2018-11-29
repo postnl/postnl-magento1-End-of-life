@@ -16,7 +16,9 @@ env:
 
 matrix:
   include:
-  - php: 7.0
+  - php: 7.2
+    env: MAGENTO_VERSION=magento-mirror-1.9.4.0
+  - php: 7.1
     env: MAGENTO_VERSION=magento-mirror-1.9.3.10 ENABLE_FLAT_CATALOG=true
   - php: 7.0
     env: MAGENTO_VERSION=magento-mirror-1.9.3.10 CODE_COVERAGE=true
