@@ -149,7 +149,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 break;
             case 'Overdag':
                 if ($countryId != $domesticCountry) {
-                    continue;
+                    break;
                 }
                 $shipmentType  = $this->__('Domestic');
                 break;

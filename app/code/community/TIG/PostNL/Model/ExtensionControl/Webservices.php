@@ -194,24 +194,19 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
 
         /**
          * Prepare the private key for encryption and get the IV (initialization vector) we'll use with mcrypt.
-         *
-         * @link http://www.php.net/manual/en/function.mcrypt-get-iv-size.php
-         * @link http://www.php.net/manual/en/function.mcrypt-create-iv.php
          */
         $mcryptKey = pack('H*', $privateKey);
-        $ivSize    = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-        $iv        = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+        $ivSize    = openssl_cipher_iv_length('aes-256-cbc');
+        $iv        = openssl_random_pseudo_bytes($ivSize);
 
         /**
          * Encrypt the data.
-         *
-         * @link http://www.php.net/manual/en/function.mcrypt-encrypt.php
          */
-        $encryptedData = mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_256,
-            $this->_padKey($mcryptKey),
+        $encryptedData = openssl_encrypt(
             $serializedData,
-            MCRYPT_MODE_CBC,
+            'aes-256-cbc',
+            $this->_padKey($mcryptKey),
+            OPENSSL_RAW_DATA,
             $iv
         );
 

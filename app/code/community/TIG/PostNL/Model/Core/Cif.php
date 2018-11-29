@@ -1713,7 +1713,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Street'           => $streetData['streetname'],
             'HouseNr'          => $streetData['housenumber'],
             'HouseNrExt'       => $streetData['housenumberExtension'],
-            'StreetHouseNrExt' => $streetData['fullStreet'],
+            'StreetHouseNrExt' => (isset($streetData['fullStreet']) ? $streetData['fullStreet'] : ''),
             'Zipcode'          => strtoupper(str_replace(' ', '', $address->getPostcode())),
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
@@ -2586,7 +2586,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $doorcodeField = (string) Mage::getStoreConfig(self::XPATH_DOORCODE_FIELD, $storeId);
-        if (!$doorcodeField) {
+        if ($doorcodeField) {
             $doorcode = $address->getStreet($doorcodeField);
 
             return $doorcode;

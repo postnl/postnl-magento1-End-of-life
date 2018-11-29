@@ -1969,16 +1969,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
-        if (!extension_loaded('mcrypt')) {
-            $errors[] = array(
-                'code'    => 'POSTNL-0137',
-                'message' => $this->__(
-                    'The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to '
-                    . 'secure the communications with the PostNL servers.'
-                ),
-            );
-        }
-
         /**
          * Register any errors that may have occurred and return false.
          */
