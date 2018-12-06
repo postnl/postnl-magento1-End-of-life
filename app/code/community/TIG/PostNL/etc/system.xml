@@ -1092,6 +1092,10 @@
                                     <fieldset>cif_address</fieldset>
                                     <value>BE</value>
                                 </country>
+                                <use_dutch_address>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </use_dutch_products_header>
                         <use_dutch_products translate="label" module="postnl">
@@ -1109,6 +1113,10 @@
                                     <fieldset>cif_address</fieldset>
                                     <value>BE</value>
                                 </country>
+                                <use_dutch_address>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </use_dutch_products>
                         <printer_settings_header translate="label" module="postnl">
@@ -5799,12 +5807,12 @@
                             <depends>
                                 <use_dutch_products>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                    <value>1</value>
                                 </use_dutch_products>
-                                <country>
+                                <use_dutch_address>
                                     <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </default_product_option_netherlands>
                         <use_alternative_default translate="label tooltip" module="postnl">
