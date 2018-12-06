@@ -1319,16 +1319,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
             $postcode = $postData['postcode'];
             $postcode = strtoupper(str_replace(' ', '', $postcode));
-            $validatorHelper->validatePostcode($country, $postcode);
-
+            if ($country) {
+                $validatorHelper->validatePostcode($country, $postcode);
+            }
             $street = $postData['street'];
-            $validatorHelper->validateStreet($street);
-
+            if ($street) {
+                $validatorHelper->validateStreet($street);
+            }
             $housenumber = $postData['housenumber'];
-            $validatorHelper->validateHousenumber($housenumber);
-
+            if ($housenumber) {
+                $validatorHelper->validateHousenumber($housenumber);
+            }
             $city = $postData['city'];
-            $validatorHelper->validateCity($city);
+            if ($city) {
+                $validatorHelper->validateCity($city);
+            }
 
             $data = array(
                 'postcode'     => $postcode,
@@ -1338,6 +1343,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 'housenumber'  => $housenumber,
                 'city'         => $city,
             );
+
             return $data;
         }
 

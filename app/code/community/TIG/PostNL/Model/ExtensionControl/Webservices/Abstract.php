@@ -68,15 +68,6 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             );
         }
 
-        if (!extension_loaded('mcrypt')) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('The MCrypt extension is not installed. The PostNL extension requires the '
-                    . 'MCrypt extension to secure the communications with the PostNL servers.'
-                ),
-                'POSTNL-0137'
-            );
-        }
-
         parent::_construct();
     }
 

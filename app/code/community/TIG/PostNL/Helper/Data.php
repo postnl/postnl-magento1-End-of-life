@@ -1942,7 +1942,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if the required SOAP, OpenSSL and MCrypt PHP extensions are loaded.
+     * Check if the required SOAP and OpenSSL PHP extensions are loaded.
      *
      * @return bool
      */
