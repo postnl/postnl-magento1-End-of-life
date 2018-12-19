@@ -111,7 +111,8 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             }
 
             if ($postnlOrder->hasDeliveryDate()) {
-                $deliveryDate = new DateTime($postnlOrder->getDeliveryDate(), new DateTimeZone('UTC'));
+                $date = $postnlOrder->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
+                $deliveryDate = new DateTime($date, new DateTimeZone('UTC'));
                 $postnlShipment->setDeliveryDate($deliveryDate->format('Y-m-d H:i:s'));
             }
 

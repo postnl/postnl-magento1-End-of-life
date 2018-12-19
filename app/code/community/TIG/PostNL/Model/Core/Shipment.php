@@ -4940,9 +4940,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Buspakje shipments can't be delivered on a monday or tuesday.
+         * Buspakje shipments can't be delivered on a sunday or monday.
          */
-        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $this->getDeliveryDate(), new DateTimeZone('UTC'));
+        $date = $this->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $date, new DateTimeZone('UTC'));
+
         if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
             return false;
         }
@@ -4961,11 +4963,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Get the current delivery date.
          */
-        $deliveryDate = $this->getDeliveryDate();
+        $deliveryDate = $this->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
         $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
         /**
-         * Letter box parcels cannot be delivered on mondays or tuesdays.
+         * Letter box parcels cannot be delivered on sunday or monday.
          */
         if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') == '1') {
             /** @var TIG_PostNL_Helper_Date $helper */

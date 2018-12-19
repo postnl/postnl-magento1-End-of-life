@@ -292,10 +292,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
         if (!$postnlOrder || !$postnlOrder->getId()) {
             return true;
         }
-
+        $date = $postnlOrder->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
         $deliveryDate = DateTime::createFromFormat(
             'Y-m-d H:i:s',
-            $postnlOrder->getDeliveryDate(),
+            $date,
             new DateTimeZone('UTC')
         );
         $deliveryDate->setTimezone(new DateTimeZone('Europe/Amsterdam'));
