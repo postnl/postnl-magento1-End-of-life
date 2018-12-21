@@ -34,8 +34,8 @@ matrix:
   allow_failures:
   - php: nightly
   #  Allowed to fail since the 1.9.4.0 is not available yet in the magerun magento mirror.
-  - php: 7.2
-      env: MAGENTO_VERSION=magento-mirror-1.9.4.0
+#  - php: 7.2
+#      env: MAGENTO_VERSION=magento-mirror-1.9.4.0
 
 before_script:
   - composer config -a -g http-basic.repo.magento.com $COMPOSER_MAGENTO_USERNAME $COMPOSER_MAGENTO_PASSWORD
