@@ -16,8 +16,6 @@ env:
 
 matrix:
   include:
-  - php: 7.2
-    env: MAGENTO_VERSION=magento-mirror-1.9.4.0
   - php: 7.1
     env: MAGENTO_VERSION=magento-mirror-1.9.3.10 ENABLE_FLAT_CATALOG=true
   - php: 7.0
@@ -33,9 +31,6 @@ matrix:
 
   allow_failures:
   - php: nightly
-  #  Allowed to fail since the 1.9.4.0 is not available yet in the magerun magento mirror.
-  - php: 7.2
-      env: MAGENTO_VERSION=magento-mirror-1.9.4.0
 
 before_script:
   - composer config -a -g http-basic.repo.magento.com $COMPOSER_MAGENTO_USERNAME $COMPOSER_MAGENTO_PASSWORD
