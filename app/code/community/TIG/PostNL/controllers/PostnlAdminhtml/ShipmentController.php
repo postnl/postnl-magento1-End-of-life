@@ -2006,7 +2006,9 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection')
                                           ->addFieldToSelect('entity_id')
                                           ->addFieldToFilter('order_id', array('in', $orderIds));
-
+                
+                $shipmentCollection->getSelect()->order(new Zend_Db_Expr('FIELD(order_id, ' . "'" . implode("','", $orderIds) . "'".')'));
+                
                 $shipmentIds = $shipmentCollection->getColumnValues('entity_id');
                 unset($shipmentCollection);
 
