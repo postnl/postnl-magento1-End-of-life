@@ -238,6 +238,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
                 )
             );
 
+            $shipments->getSelect()->order(new Zend_Db_Expr('FIELD(shipment_id, ' . "'" . implode("','", $shipmentIds) . "'".')'));        
+            
             $processedShipmentIds = $shipments->getColumnValues('shipment_id');
         } else {
             /** @var TIG_PostNL_Model_Core_Resource_Shipment_Collection $shipments */
@@ -258,6 +260,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
                 )
             );
 
+            $shipments->getSelect()->order(new Zend_Db_Expr('FIELD(main_table.entity_id, ' . "'" . implode("','", $shipmentIds) . "'".')'));            
+            
             $processedShipmentIds = $shipments->getColumnValues('entity_id');
         }
 
@@ -422,8 +426,10 @@ class TIG_PostNL_Model_Core_Service_Shipment
                 $orderShipmentIds = $shipmentCollection->getColumnValues('entity_id');
 
                 if ($shipmentCollection->getSize() > 0) {
-                    $shipmentIds = array_merge($orderShipmentIds, $shipmentIds);
-
+                    // $shipmentIds = array_merge($orderShipmentIds, $shipmentIds);
+                    foreach ($shipmentCollection as $_allreadyshipped) {
+                        $shipmentIds[] = $_allreadyshipped;
+                    }
                     if ($registerExisting) {
                         $existingShipmentsLoaded = array_merge($orderShipmentIds, $existingShipmentsLoaded);
                     }
@@ -954,6 +960,8 @@ class TIG_PostNL_Model_Core_Service_Shipment
                       ->addFieldToFilter('entity_id', array('in' => $orderIds))
                       ->addFieldToFilter('shipping_method', array('regexp' => $postnlShippingMethodsRegex));
 
+        $orders->getSelect()->order(new Zend_Db_Expr('FIELD(entity_id, ' . "'" . implode("','", $orderIds) . "'".')'));        
+        
         return $orders;
     }
 
