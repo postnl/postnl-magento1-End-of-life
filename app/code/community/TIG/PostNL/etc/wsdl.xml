@@ -126,6 +126,7 @@
     <message name="postnlCreateShipmentsConfirmAndPrintLabelsRequest">
         <part name="sessionId" type="xsd:string" />
         <part name="orderIds" type="typens:ArrayOfString" />
+        <part name="type" type="xsd:string" />
     </message>
     <message name="postnlCreateShipmentsConfirmAndPrintLabelsResponse">
         <part name="result" type="typens:postnlPrintedLabelEntityArray" />
@@ -141,9 +142,10 @@
 
     <message name="postnlPrintShippingLabelsRequest">
         <part name="sessionId" type="xsd:string" />
-        <part name="orderIds" type="typens:ArrayOfString" />
+        <part name="shipmentIds" type="typens:ArrayOfString" />
         <part name="labelSize" type="xsd:string" />
-        <part name="labelStartPosition" type="xsd:int"  />
+        <part name="labelStartPosition" type="xsd:int" />
+        <part name="type" type="xsd:string" />
     </message>
     <message name="postnlPrintShippingLabelsResponse">
         <part name="result" type="typens:postnlPrintedLabelEntityArray" />
@@ -154,6 +156,7 @@
         <part name="orderIds" type="typens:ArrayOfString" />
         <part name="labelSize" type="xsd:string" />
         <part name="labelStartPosition" type="xsd:int" />
+        <part name="type" type="xsd:string" />
     </message>
     <message name="postnlConfirmAndPrintShippingLabelsResponse">
         <part name="result" type="typens:postnlPrintedLabelEntityArray" />
@@ -182,7 +185,7 @@
             <output message="typens:postnlCreateShipmentsResponse" />
         </operation>
         <operation name="postnlCreateShipmentsConfirmAndPrintLabels">
-            <documentation>Create PostNL Shipments, Confirm and Print Shipping Labels</documentation>
+            <documentation>Create PostNL Shipments, Confirm and Print Shipping Labels or Packingslips</documentation>
             <input message="typens:postnlCreateShipmentsConfirmAndPrintLabelsRequest" />
             <output message="typens:postnlCreateShipmentsConfirmAndPrintLabelsResponse" />
         </operation>
@@ -192,12 +195,12 @@
             <output message="typens:postnlConfirmShipmentsResponse" />
         </operation>
         <operation name="postnlPrintShippingLabels">
-            <documentation>Print PostNL Shipping Labels</documentation>
+            <documentation>Print PostNL Shipping Labels or Packingslips</documentation>
             <input message="typens:postnlPrintShippingLabelsRequest" />
             <output message="typens:postnlPrintShippingLabelsResponse" />
         </operation>
         <operation name="postnlConfirmAndPrintShippingLabels">
-            <documentation>Confirm PostNL Shipments and Print Shipping Labels</documentation>
+            <documentation>Confirm PostNL Shipments and Print Shipping Labels or Packingslips</documentation>
             <input message="typens:postnlConfirmAndPrintShippingLabelsRequest" />
             <output message="typens:postnlConfirmAndPrintShippingLabelsResponse" />
         </operation>
