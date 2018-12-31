@@ -286,10 +286,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
     const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
     const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
-    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION            = 'postnl/grid/default_extra_at_home_product_option';
+    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION             = 'postnl/grid/default_extra_at_home_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/grid/default_global_product_option';
     const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION                  = 'postnl/grid/default_buspakje_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT                          = 'postnl/grid/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT                   = 'postnl/grid/alternative_default_max_amount';
@@ -5689,6 +5689,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $helper = $this->getHelper();
 
         return in_array($address->getCountryId(), $helper->getMultiColliCountries());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPepsShipment()
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
+        $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $pepsProducts = $allOptions->getPepsOptions(true);
+
+        if (in_array($this->getProductCode(), $pepsProducts)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

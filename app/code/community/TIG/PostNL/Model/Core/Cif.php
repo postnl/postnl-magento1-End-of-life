@@ -71,6 +71,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
     const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif_globalpack_settings/global_barcode_range';
+    const XPATH_PEPS_BARCODE_TYPE           = 'postnl/cif_peps_settings/peps_barcode_type';
+    const XPATH_PEPS_BARCODE_RANGE          = 'postnl/cif_peps_settings/peps_barcode_range';
     const XPATH_RETURN_CUSTOMER_CODE        = 'postnl/returns/return_customer_code';
 
     /**
@@ -1802,6 +1804,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $range = $this->_getGlobalBarcodeRange();
                 $serie = self::GLOBAL_BARCODE_SERIE;
                 break;
+            case 'PEPS':
+                $type  = $this->_getPepsBarcodeType();
+                $range = $this->_getPepsBarcodeRange();
+                $serie = self::EU_BARCODE_SERIE_LONG;
+                break;
             default:
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('Invalid barcodetype requested: %s', $barcodeType),
@@ -2456,6 +2463,32 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $barcodeRange = (string) Mage::getStoreConfig(self::XPATH_GLOBAL_BARCODE_RANGE, $storeId);
+
+        return $barcodeRange;
+    }
+
+    /**
+     * Gets the PEPS barcode type from system/config
+     *
+     * @return string
+     */
+    protected function _getPepsBarcodeType()
+    {
+        $storeId = $this->getStoreId();
+        $barcodeType = (string) Mage::getStoreConfig(self::XPATH_PEPS_BARCODE_TYPE, $storeId);
+
+        return $barcodeType;
+    }
+
+    /**
+     * Gets the PEPS barcode range from config.xml => fixed on NL.
+     *
+     * @return string
+     */
+    protected function _getPepsBarcodeRange()
+    {
+        $storeId = $this->getStoreId();
+        $barcodeRange = (string) Mage::getStoreConfig(self::XPATH_PEPS_BARCODE_RANGE, $storeId);
 
         return $barcodeRange;
     }

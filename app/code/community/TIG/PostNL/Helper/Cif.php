@@ -58,6 +58,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
+    const PEPS_BARCODE_TYPE   = 'PEPS';
 
     /**
      * XML path to infinite label printing setting
@@ -486,7 +487,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getGlobalProductCodes($flat = true)
     {
-        /** @var TIG_PostNL_Model_Core_System_Config_Source_GlobalpackShipmentType $globalProductCodes */
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions $globalProductCodes */
         $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
         return $globalProductCodes->getAvailableOptions($flat);
     }
@@ -733,6 +734,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * - NL
      * - EU
      * - GLOBAL
+     * - PEPS
      *
      * @param TIG_PostNL_Model_Core_Shipment $shipment
      *
@@ -743,18 +745,20 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getBarcodeTypeForShipment($shipment)
     {
         if ($shipment->isDomesticShipment() || $shipment->isPakjeGemakShipment()) {
-            $barcodeType = self::DUTCH_BARCODE_TYPE;
-            return $barcodeType;
+            return self::DUTCH_BARCODE_TYPE;
+        }
+
+        $pepsProduct = false;
+        if ($pepsProduct && ($shipment->isEuShipment() || $shipment->isGlobalShipment())) {
+            return self::PEPS_BARCODE_TYPE;
         }
 
         if ($shipment->isEuShipment()) {
-            $barcodeType = self::EU_BARCODE_TYPE;
-            return $barcodeType;
+            return self::EU_BARCODE_TYPE;
         }
 
         if ($shipment->isGlobalShipment()) {
-            $barcodeType = self::GLOBAL_BARCODE_TYPE;
-            return $barcodeType;
+            return self::GLOBAL_BARCODE_TYPE;
         }
 
         throw new TIG_PostNL_Exception(

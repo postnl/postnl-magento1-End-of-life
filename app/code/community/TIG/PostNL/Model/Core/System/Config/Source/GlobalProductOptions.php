@@ -49,4 +49,27 @@ class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
             'isExtraCover' => true,
         ),
     );
+
+    /**
+     * Gets all possible options.
+     *
+     * @param array $flags
+     * @param bool  $asFlatArray
+     * @param bool  $checkAvailable
+     *
+     * @return array
+     */
+    public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
+    {
+        $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
+
+        if ($this->getHelper()->isPepsAllowed()) {
+            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
+            $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+            $pepsProducts = $allOptions->getPepsOptions($asFlatArray);
+            $options = array_merge($options, $pepsProducts);
+        }
+
+        return $options;
+    }
 }

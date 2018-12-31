@@ -1570,6 +1570,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
          * Load the shipments and check if they are valid
          */
         $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+        $shipments = $this->_validatePepsShipments($shipments);
 
         switch ($type) {
             case 'label':
@@ -1658,6 +1659,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * Load the shipments and check if they are valid
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+            $shipments = $this->_validatePepsShipments($shipments);
 
             /**
              * Get the labels from CIF.
@@ -1803,6 +1805,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                  * Load the shipments and check if they are valid
                  */
                 $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+                $shipments = $this->_validatePepsShipments($shipments);
 
                 $output = $this->_getMassPackingSlipsOutput($shipments);
                 $this->_checkForWarnings();
@@ -2242,6 +2245,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
              * Load the shipments and check if they are valid
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+            $shipments = $this->_validatePepsShipments($shipments);
 
             /**
              * Confirm the shipments.

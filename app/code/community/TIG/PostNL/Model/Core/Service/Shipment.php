@@ -616,6 +616,17 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment = $shipment;
         }
 
+        if ($shipment->isPepsShipment() && $shipment->getParcelCount() < 5) {
+            throw new TIG_PostNL_Exception(
+                $helper->__(
+                    "Shipment #%s could not be confirmed.".
+                    "When using Priority EPS products the colli amount should be at least five",
+                    $postnlShipment->getShipment()->getIncrementId()
+                ),
+                'POSTNL-0247'
+            );
+        }
+
         /**
          * Prevent EU shipments from being confirmed if their labels are not yet printed.
          */
