@@ -1968,6 +1968,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $registryKey .= '_' . $quote->getId();
         }
 
+        $registryKey .= $country ? '_' . $country : '';
+        $registryKey .= $storeId ? '_' . $storeId : '';
+
         /**
          * Check if the result of this method has been cached in the registry.
          */
