@@ -67,7 +67,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
             /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
             $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
             $pepsProducts = $allOptions->getPepsOptions($asFlatArray);
-            $options = array_merge($options, $pepsProducts);
+            $options += $pepsProducts;
         }
 
         return $options;

@@ -245,6 +245,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 204.2,
             ),
         ),
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS => array(
+            array(
+                'x' => 3.9,
+                'y' => 4.5,
+                'w' => 204.2,
+            )
+        )
     );
 
     /**
@@ -719,6 +726,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS
         ) {
             $pdf->addOrientedPage('P', 'A4');
         }
@@ -759,14 +767,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE:
-                $position = $this->_getLabelPosition($labelType);
-
-                /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page.
-                 */
-                $this->setLabelCounter(5);
-                break;
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS:
                 $position = $this->_getLabelPosition($labelType);
 
                 /**
@@ -978,6 +980,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
             if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71])) {
                 $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71];
+            }
+
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS];
             }
 
             if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE])) {
