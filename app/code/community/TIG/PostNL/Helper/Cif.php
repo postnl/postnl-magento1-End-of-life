@@ -748,8 +748,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return self::DUTCH_BARCODE_TYPE;
         }
 
-        $pepsProduct = false;
-        if ($pepsProduct && ($shipment->isEuShipment() || $shipment->isGlobalShipment())) {
+        if ($shipment->isPepsShipment() && ($shipment->isEuShipment() || $shipment->isGlobalShipment())) {
             return self::PEPS_BARCODE_TYPE;
         }
 

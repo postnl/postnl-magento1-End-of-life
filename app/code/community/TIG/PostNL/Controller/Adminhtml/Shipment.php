@@ -299,41 +299,6 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends TIG_PostNL_Controller_Adm
     }
 
     /**
-     * @param TIG_PostNL_Model_Core_Shipment[] $shipments
-     *
-     * @return TIG_PostNL_Model_Core_Shipment[]
-     */
-    protected function _validatePepsShipments($shipments)
-    {
-        return array_filter($shipments, function ($shipment) {
-            $valid = false;
-            /** @var TIG_PostNL_Model_Core_Shipment $shipment */
-            if ($shipment->isPepsShipment() && $shipment->getParcelCount() >= 5) {
-                $valid = true;
-            }
-
-            if ($shipment->isPepsShipment() && $shipment->getParcelCount() < 5) {
-                $this->getServiceModel()->addWarning(
-                    array(
-                        'entity_id'   => $shipment->getShipmentIncrementId(),
-                        'code'        => 'POSTNL-0247',
-                        'description' => $this->__(
-                            'When using Priority EPS products the colli amount should be at least five. '
-                        ),
-                    )
-                );
-                $valid = false;
-            }
-
-            if (!$shipment->isPepsShipment()) {
-                $valid = true;
-            }
-
-            return $valid == true;
-        });
-    }
-
-    /**
      * Add an array of warning messages to the adminhtml session.
      *
      * @param        $warnings

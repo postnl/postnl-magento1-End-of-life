@@ -4464,6 +4464,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $labelType = 'Label-combi';
         }
 
+        if ($this->isPepsShipment()) {
+            $labelType = 'Peps';
+        }
+
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $postnlLabel
          */
@@ -5699,7 +5703,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
         $pepsProducts = $allOptions->getPepsOptions(true);
 
-        if (in_array($this->getProductCode(), $pepsProducts)) {
+        if (array_key_exists($this->getProductCode(), $pepsProducts)) {
             return true;
         }
 
