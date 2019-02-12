@@ -1131,12 +1131,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              * The base price of a shipment item is only available through it's associated order item.
              */
             $orderItem = $shipmentItem->getOrderItem();
-            $basePrice = $orderItem->getBasePriceInclTax() + $orderItem->getBaseDiscountAmount();
 
-            /**
-             * Calculate and add the shipment item's row total.
-             */
-            $totalBasePrice = $basePrice * $qty;
+            $basePrice = $orderItem->getBasePriceInclTax() * $qty;
+            $discountPrice = abs($orderItem->getBaseDiscountAmount());
+            $totalBasePrice = $basePrice - $discountPrice;
+
             $baseGrandTotal += $totalBasePrice;
         }
 
