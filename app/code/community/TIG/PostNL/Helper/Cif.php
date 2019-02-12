@@ -60,6 +60,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
     const PEPS_BARCODE_TYPE   = 'PEPS';
 
+    const SHIPMENT_TYPE_EPS        = 'eps';
+    const SHIPMENT_TYPE_GLOBALPACK = 'globalpack';
+
     /**
      * XML path to infinite label printing setting
      */
@@ -122,6 +125,63 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'NL',
         'GR',
         'MC',
+    );
+
+    /**
+     * Priority Pakjes Tracked use a different EPS and Globalpack list.
+     *
+     * @var array
+     */
+    protected $_euPepsCountries = array(
+        'AT',
+        'BE',
+        'CY',
+        'DE',
+        'DK',
+        'EE',
+        'ES',
+        'FI',
+        'FR',
+        'GB',
+        'GR',
+        'HR',
+        'HU',
+        'IE',
+        'IT',
+        'LT',
+        'LU',
+        'LV',
+        'MT',
+        'PL',
+        'PT',
+        'RS',
+        'SE',
+        'SI',
+        'SK'
+    );
+
+    protected $_rowPepsCountries = array(
+        'AU',
+        'BR',
+        'BY',
+        'CA',
+        'CH',
+        'HK',
+        'ID',
+        'IL',
+        'IS',
+        'JP',
+        'KR',
+        'LB',
+        'MY',
+        'NO',
+        'NZ',
+        'RU',
+        'SA',
+        'SG',
+        'TH',
+        'TR',
+        'US'
     );
 
     /**
@@ -282,6 +342,21 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getEuCountries()
     {
         return $this->_euCountries;
+    }
+
+    /**
+     * @param $country
+     *
+     * @return string
+     */
+    public function getPepsTypeByCountryId($country)
+    {
+        $type = static::SHIPMENT_TYPE_EPS;
+        if (in_array($country, $this->_rowPepsCountries)) {
+            $type = static::SHIPMENT_TYPE_GLOBALPACK;
+        }
+
+        return $type;
     }
 
     /**
