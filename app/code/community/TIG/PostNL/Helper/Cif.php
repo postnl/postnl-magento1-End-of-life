@@ -360,6 +360,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * @param $countryId
+     *
+     * @return bool
+     */
+    public function countryAvailableInPepsLists($countryId)
+    {
+        return in_array($countryId, $this->_rowPepsCountries) || in_array($countryId, $this->_euPepsCountries);
+    }
+
+    /**
      * @param int|Mage_Core_Model_Store|null $storeId
      *
      * @return array|mixed

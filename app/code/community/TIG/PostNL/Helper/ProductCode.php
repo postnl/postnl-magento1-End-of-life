@@ -209,7 +209,34 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
         /**
          * Get the product code configured to the xpath.
          */
-        return Mage::getStoreConfig($xpath, $storeId);
+        $productCode = Mage::getStoreConfig($xpath, $storeId);
+
+        // If the country doesn't exist in either Priority EPS or Priority RoW list, fall back to regular shipment
+        $pepsProducts = array_keys(
+            Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getPepsOptions(true)
+        );
+        
+        if (in_array($productCode, $pepsProducts)
+            && !$this->getHelper('cif')->countryAvailableInPepsLists($shipment->getShippingAddress()->getCountryId())
+        ) {
+            $productCode = $this->getNonPriorityProductcode($shipmentType);
+        }
+
+        return $productCode;
+    }
+
+    /**
+     * @param $shipmentType
+     *
+     * @return int
+     */
+    private function getNonPriorityProductcode($shipmentType)
+    {
+        if ($shipmentType == 'globalpack') {
+            return "4945";
+        }
+
+        return "4952";
     }
 
     /**

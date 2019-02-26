@@ -785,6 +785,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param boolean $checkBuspakje
      *
      * @return string
+     * @throws TIG_PostNL_Exception
      */
     public function getShipmentType($checkBuspakje = true)
     {
@@ -802,8 +803,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         // Overwrite the set shipmentType because Priority Package has different EPS and GLOBALPACK lists
         if ($this->isPepsShipment()) {
-            $shipmentType = $this->getHelper('cif')->getPepsTypeByCountryId($this->getShippingAddress()->getCountryId());
+            $helper = $this->getHelper('cif');
+
+            $shipmentType = $helper->getPepsTypeByCountryId($this->getShippingAddress()->getCountryId());
             $this->setShipmentType($shipmentType);
+
+            return $shipmentType;
         }
 
         return $shipmentType;
