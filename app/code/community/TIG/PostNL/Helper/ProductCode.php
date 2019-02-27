@@ -35,6 +35,11 @@ use \TIG_PostNL_Model_Core_Shipment as PostNLShipment;
 class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
 {
     /**
+     * @var Mage_Core_Model_Abstract
+     */
+    protected $allProductOptions;
+
+    /**
      * @param TIG_PostNL_Model_Core_Order    $postnlOrder
      * @param                                $storeId
      * @param                                $shipmentType
@@ -209,7 +214,44 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
         /**
          * Get the product code configured to the xpath.
          */
-        return Mage::getStoreConfig($xpath, $storeId);
+        $productCode = Mage::getStoreConfig($xpath, $storeId);
+
+        // If the country doesn't exist in either Priority EPS or Priority RoW list, fall back to regular shipment
+        $pepsProducts = $this->getAllProductOptionsSingleton()->getPepsOptions(true);
+        $pepsProductKeys = array_keys($pepsProducts);
+        if (in_array($productCode, $pepsProductKeys)
+            && !$this->getHelper('cif')->countryAvailableInPepsLists($shipment->getShippingAddress()->getCountryId())
+        ) {
+            $productCode = $this->getNonPriorityProductcode($shipmentType);
+        }
+
+        return $productCode;
+    }
+
+    /**
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function getAllProductOptionsSingleton()
+    {
+        if (!$this->allProductOptions) {
+            $this->allProductOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        }
+
+        return $this->allProductOptions;
+    }
+
+    /**
+     * @param $shipmentType
+     *
+     * @return int
+     */
+    protected function getNonPriorityProductcode($shipmentType)
+    {
+        if ($shipmentType == PostNLShipment::SHIPMENT_TYPE_GLOBALPACK) {
+            return "4945";
+        }
+
+        return "4952";
     }
 
     /**
