@@ -1419,8 +1419,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             /**
              * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
              */
-            $confirmDate  = $postnlShipment->getConfirmDate();
-            $deliveryDate = $postnlShipment->getDeliveryDate();
+            $confirmDate  = $postnlShipment->getConfirmDate() ?: date('Y-m-d H:i:s', time() + 86400);
+            $deliveryDate = $postnlShipment->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
 
             /**
              * Modify the dates to the UTC timezone.
@@ -1491,8 +1491,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             /**
              * Get the confirm and delivery dates in their current timezone (whichever timezone the storeview is in).
              */
-            $confirmDate  = $postnlOrder->getConfirmDate();
-            $deliveryDate = $postnlOrder->getDeliveryDate();
+            $confirmDate  = $postnlOrder->getConfirmDate() ?: date('Y-m-d H:i:s', time() + 86400);
+            $deliveryDate = $postnlOrder->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
 
             /**
              * Modify the dates to the UTC timezone.
