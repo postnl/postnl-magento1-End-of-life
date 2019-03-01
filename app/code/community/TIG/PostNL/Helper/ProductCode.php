@@ -247,11 +247,11 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
      */
     protected function getNonPriorityProductcode($shipmentType)
     {
-        if ($shipmentType == PostNLShipment::SHIPMENT_TYPE_GLOBALPACK) {
-            return "4945";
+        if ($shipmentType != PostNLShipment::SHIPMENT_TYPE_GLOBALPACK) {
+            return "4952";
         }
 
-        return "4952";
+        return "4945";
     }
 
     /**
