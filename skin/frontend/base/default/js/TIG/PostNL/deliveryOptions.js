@@ -1462,7 +1462,6 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         $('postnl_pickup').hide();
-        $('responsive_switch').hide();
 
         if (this.debug) {
             console.info('Delivery locations are hidden.');
