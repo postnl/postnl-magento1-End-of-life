@@ -862,6 +862,11 @@ PostnlDeliveryOptions.prototype = {
                 .hideSpinner();
         }
         this.getLocations(this.getPostcode(), this.getHousenumber(), this.getStreet(), this.getCity(), this.getCountry(), this.getDeliveryDate());
+        if (this.getOptions().extraOptions.only_stated_address) {
+            this.getOptions().extraOptions.only_stated_address.element.observe('click', function (event) {
+                this.updateShippingPrice();
+            }.bind(this));
+        }
 
         return this;
     },
@@ -970,12 +975,6 @@ PostnlDeliveryOptions.prototype = {
 
         if (checkbox.checked) {
             selectPostnlShippingMethod = true;
-        } else if (this.getOptions().isOsc) {
-            selectPostnlShippingMethod = true;
-
-            if ($$('[name="shipping_method"]:checked').length == 0) {
-                checkbox.checked = true;
-            }
         }
 
         /**
@@ -1704,6 +1703,15 @@ PostnlDeliveryOptions.prototype = {
 
         selectedOption.renderAsOsc(selectedType);
 
+        var shippingMethodName = this.getOptions().shippingMethodName;
+        var checkbox = $(shippingMethodName);
+        checkbox.checked = true;
+        checkbox.click();
+
+        if (window.innerWidth <= 953 && typeof Lightcheckout === 'function') {
+            Lightcheckout.prototype.hideLoadinfo();
+        }
+
         $(this.getOptions().oscOptionsPopup).hide();
 
         this.saveSelectedOption();
@@ -1772,13 +1780,18 @@ PostnlDeliveryOptions.prototype = {
             from = '09:00:00'
         }
 
+        var options = {
+            only_stated_address : false
+        };
+
         var params = {
-            isAjax : true,
-            type   : selectedType,
-            date   : selectedOption.getDate(),
-            from   : from,
-            to     : selectedOption.to,
-            costs  : Object.toJSON(extraCosts)
+            isAjax  : true,
+            type    : selectedType,
+            date    : selectedOption.getDate(),
+            from    : from,
+            to      : selectedOption.to,
+            costs   : Object.toJSON(extraCosts),
+            options : null
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
@@ -1798,6 +1811,11 @@ PostnlDeliveryOptions.prototype = {
         if (this.getOptions().isOsc) {
             params['isOsc'] = true;
         }
+
+        if (this.getOptions().extraOptions.only_stated_address) {
+            options['only_stated_address'] = this.getOptions().extraOptions.only_stated_address.element.checked;
+        }
+        params['options'] = Object.toJSON(options);
 
         if (this.saveOptionCostsRequest) {
             try {
@@ -1822,6 +1840,10 @@ PostnlDeliveryOptions.prototype = {
                 document.fire('postnl:selectOptionSaved');
             }
         });
+
+        if (window.innerWidth <= 953 && typeof Lightcheckout === 'function') {
+            Lightcheckout.prototype.hideLoadinfo();
+        }
 
         return true;
     },
@@ -1850,6 +1872,10 @@ PostnlDeliveryOptions.prototype = {
                 extraCosts = this.getOptions().sameDayFeeIncl;
             }
 
+            if (this.getOptions().extraOptions.only_stated_address && this.getOptions().extraOptions.only_stated_address.element.checked) {
+                extraCosts += this.getOptions().onlyStatedAddressFeeIncl;
+            }
+
             if (this.debug) {
                 console.log('Extra costs incl. VAT:', extraCosts);
             }
@@ -1865,6 +1891,9 @@ PostnlDeliveryOptions.prototype = {
             extraCosts = this.getOptions().sundayFeeExcl;
         } else if (selectedType == 'Sameday') {
             extraCosts = this.getOptions().sameDayFeeExcl;
+        }
+        if (this.getOptions().extraOptions.only_stated_address && this.getOptions().extraOptions.only_stated_address.element.checked) {
+            extraCosts += this.getOptions().onlyStatedAddressFeeExcl;
         }
 
         if (this.debug) {
@@ -1951,7 +1980,6 @@ PostnlDeliveryOptions.prototype = {
         var updateText   = this.getOptions().currencySymbol
                          + ' '
                          + defaultCurrencyIncl;
-
         if (extraCostsIncl) {
             updateText += ' + '
                        + this.getOptions().currencySymbol
@@ -2088,26 +2116,29 @@ PostnlDeliveryOptions.Map = new Class.create({
             this.getOptions().scrollbarTrack
         );
 
-        this.searchAndPanToAddress(this.getFullAddress(), true, false);
+        if (deliveryOptions.options.canUseGoogleMaps) {
+            this.searchAndPanToAddress(this.getFullAddress(), true, false);
+        }
 
-        /**
-         * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
-         * may contain only addresses.
-         */
-        this.autocomplete = new google.maps.places.Autocomplete(
-            $('search_field'),
-            {
-                componentRestrictions : {
-                    country : country
-                },
-                types : [
-                    'establishment',
-                    'geocode'
-                ]
-            }
-        );
-        this.autocomplete.bindTo('bounds', this.map);
-
+        if (deliveryOptions.options.canUseGoogleMaps) {
+            /**
+             * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
+             * may contain only addresses.
+             */
+            this.autocomplete = new google.maps.places.Autocomplete(
+                $('search_field'),
+                {
+                    componentRestrictions : {
+                        country : country
+                    },
+                    types                 : [
+                        'establishment',
+                        'geocode'
+                    ]
+                }
+            );
+            this.autocomplete.bindTo('bounds', this.map);
+        }
         this.registerObservers();
     },
 
@@ -2615,9 +2646,9 @@ PostnlDeliveryOptions.Map = new Class.create({
                 this.getLocationsWithinBounds();
             }
         }.bind(this));
-
-        google.maps.event.addListener(this.autocomplete, 'place_changed', this.placeSearch.bind(this));
-
+        if (deliveryOptions.options.canUseGoogleMaps) {
+            google.maps.event.addListener(this.autocomplete, 'place_changed', this.placeSearch.bind(this));
+        }
         return this;
     },
 
@@ -2764,10 +2795,16 @@ PostnlDeliveryOptions.Map = new Class.create({
             console.log('Searching for address:', address);
         }
 
-        /**
-         * Search for an address, pan the map to the new location and search for locations nearby.
-         */
-        this.searchAndPanToAddress(address, true, true);
+        if (deliveryOptions.options.canUseGoogleMaps) {
+            /**
+             * Search for an address, pan the map to the new location and search for locations nearby.
+             */
+            this.searchAndPanToAddress(address, true, true);
+
+            return this;
+        }
+
+        this.getNearestLocationsWithoutMaps();
 
         return this;
     },
@@ -3115,6 +3152,88 @@ PostnlDeliveryOptions.Map = new Class.create({
                  */
                 this.addMarkers(locations, checkBounds);
 
+                return this;
+            }.bind(this),
+            onFailure : function() {
+                return false;
+            },
+            onComplete : function() {
+                this.setNearestLocationsRequestObject(false);
+                locationsLoader.hide();
+                responsiveLocationsLoader.hide();
+            }.bind(this)
+        });
+
+        /**
+         * Store the request. That way we can abort it if we need to send another request before this one is done.
+         */
+        this.setNearestLocationsRequestObject(nearestLocationsRequestObject);
+
+        return this;
+    },
+
+    /**
+     * Get nearest locations without the fancy Google Maps stuff.
+     */
+    getNearestLocationsWithoutMaps : function() {
+        if (this.debug) {
+            console.info('Getting nearest locations...');
+        }
+
+        var locationsLoader            = $(this.getOptions().locationsLoader);
+        var responsiveLocationsLoader = $(this.getOptions().responsiveLocationsLoader);
+
+        /**
+         * Abort any in-progress requests.
+         */
+        if (this.getNearestLocationsRequestObject()) {
+            try {
+                this.getNearestLocationsRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        if (this.getLocationsInAreaRequestObject()) {
+            try {
+                this.getLocationsInAreaRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        var country = this.getDeliveryOptions().getCountry();
+
+        /**
+         * Send a new getNearestLocations request.
+         */
+        var nearestLocationsRequestObject = new Ajax.PostnlRequest(this.getDeliveryOptions().getLocationsUrl(), {
+            method : 'post',
+            parameters : {
+                postcode     : $(this.getOptions().searchField).getValue(),
+                country      : country,
+                deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
+                isAjax       : true
+            },
+            onCreate : function() {
+                locationsLoader.show();
+                responsiveLocationsLoader.show();
+            },
+            onSuccess : function(response) {
+                var responseText = response.responseText;
+                if (responseText == 'not_allowed'
+                    || responseText == 'invalid_data'
+                    || responseText == 'error'
+                    || responseText == 'no_result'
+                ) {
+                    this.showSearchErrorDiv();
+                    return this;
+                }
+
+                var locations = responseText.evalJSON(true);
+                this.removeMarkers();
+                this.addMarkers(locations);
+                this.hideSearchErrorDiv();
                 return this;
             }.bind(this),
             onFailure : function() {
@@ -5643,15 +5762,6 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
             spanClass += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
-        } else if (this.getDeliveryOptions().country == 'BE') {
-            spanClass    += ' no-timeframe-buspakje';
-
-            var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
-            if (date.getDay() == 6) {
-                openingHours += '09:00 - 18:00';
-            } else {
-                openingHours += '09:00 - 21:30';
-            }
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()
             && !this.getDeliveryOptions().isDeliveryDaysAllowed()
         ) {

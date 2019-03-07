@@ -1092,6 +1092,10 @@
                                     <fieldset>cif_address</fieldset>
                                     <value>BE</value>
                                 </country>
+                                <use_dutch_address>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </use_dutch_products_header>
                         <use_dutch_products translate="label" module="postnl">
@@ -1109,6 +1113,10 @@
                                     <fieldset>cif_address</fieldset>
                                     <value>BE</value>
                                 </country>
+                                <use_dutch_address>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </use_dutch_products>
                         <printer_settings_header translate="label" module="postnl">
@@ -3790,7 +3798,7 @@
                         </return_labels_active>
                         <return_customer_code translate="label" module="postnl">
                             <label>Return customer code</label>
-                            <tooltip>To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.</tooltip>
+                            <tooltip>To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -5799,12 +5807,12 @@
                             <depends>
                                 <use_dutch_products>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                    <value>1</value>
                                 </use_dutch_products>
-                                <country>
+                                <use_dutch_address>
                                     <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
+                                    <value>1</value>
+                                </use_dutch_address>
                             </depends>
                         </default_product_option_netherlands>
                         <use_alternative_default translate="label tooltip" module="postnl">
@@ -5878,7 +5886,7 @@
                         </default_evening_product_option>
                         <default_evening_be_product_option translate="label tooltip" module="postnl">
                             <label>Default evening BE delivery shipping option</label>
-                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to BE evening delivery shipments.</tooltip>
+                            <tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_euProductOptions::getAvailableAvondOptions</source_model>

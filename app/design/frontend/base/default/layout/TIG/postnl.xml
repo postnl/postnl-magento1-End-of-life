@@ -375,8 +375,6 @@
         <reference name="before_body_end">
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
-            <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
-            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login_button.phtml"/>
             <block type="postnl_deliveryoptions/pickupNotification" name="postnl_billing_pickup_notification" template="TIG/PostNL/delivery_options/onepage/pickup_notification.phtml"/>
         </reference>
     </checkout_onepage_index>
@@ -447,10 +445,6 @@
             </block>
         </reference>
 
-        <reference name="onestepcheckout.checkout">
-            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onestepcheckout/login_button.phtml" output="toHtml"/>
-        </reference>
-
         <reference name="onestepcheckout.billing.address">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/onestepcheckout/postcode_check.phtml"/>
         </reference>
@@ -465,10 +459,6 @@
                 <block type="postnl_deliveryoptions/checkout_addPhoneNumber" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
                 <block type="postnl_deliveryoptions/checkout_idCheck" name="postnl_billing_idcheck" template="TIG/PostNL/delivery_options/idcheck.phtml"/>
             </block>
-        </reference>
-
-        <reference name="before_body_end">
-            <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
         </reference>
     </onestepcheckout_index_index>
 
@@ -530,8 +520,6 @@
 
         <reference name="before_body_end">
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
-            <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/gomage_checkout/js.phtml"/>
-            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/gomage_checkout/login_button.phtml"/>
         </reference>
     </gomage_checkout_onepage_index>
 

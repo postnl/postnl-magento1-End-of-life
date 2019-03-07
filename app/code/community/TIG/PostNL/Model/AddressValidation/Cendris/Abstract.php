@@ -65,6 +65,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
             $soapOptions = array(
                 'soap_version' => SOAP_1_1,
                 'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
+                'trace'        => true,
             );
 
             /**

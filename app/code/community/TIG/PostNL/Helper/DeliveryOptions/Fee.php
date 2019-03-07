@@ -58,11 +58,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
     /**
      * Fee types
      */
-    const FEE_TYPE_EVENING    = 'Evening';
-    const FEE_TYPE_EVENING_BE = 'Evening_BE';
-    const FEE_TYPE_SUNDAY     = 'Sunday';
-    const FEE_TYPE_SAMEDAY    = 'Sameday';
-    const FEE_TYPE_EXPRESS    = 'Express';
+    const FEE_TYPE_EVENING              = 'Evening';
+    const FEE_TYPE_EVENING_BE           = 'Evening_BE';
+    const FEE_TYPE_SUNDAY               = 'Sunday';
+    const FEE_TYPE_SAMEDAY              = 'Sameday';
+    const FEE_TYPE_EXPRESS              = 'Express';
+    const FEE_TYPE_STATED_ADDRESS_ONLY  = 'StatedAddressOnly';
 
     /**
      * Evening timeframes fee limits
@@ -75,6 +76,12 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
      */
     const EXPRESS_FEE_MIN = 0;
     const EXPRESS_FEE_MAX = 2;
+
+    /**
+     * Stated Address Only fee limits
+     */
+    const STATED_ADDRESS_ONLY_FEE_MIN = 0;
+    const STATED_ADDRESS_ONLY_FEE_MAX = 2;
 
     /**
      * Sunday delivery fee limits
@@ -145,6 +152,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $fee = self::EXPRESS_FEE_MIN;
                 break;
+            case self::FEE_TYPE_STATED_ADDRESS_ONLY:
+                $fee = self::STATED_ADDRESS_ONLY_FEE_MIN;
+                break;
             default:
                 $fee = 0;
         }
@@ -173,6 +183,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 break;
             case self::FEE_TYPE_EXPRESS:
                 $fee = self::EXPRESS_FEE_MAX;
+                break;
+            case self::FEE_TYPE_STATED_ADDRESS_ONLY:
+                $fee = self::STATED_ADDRESS_ONLY_FEE_MAX;
                 break;
             default:
                 $fee = 0;
@@ -244,6 +257,24 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
 
         return $this->_getFee($feeType, $formatted, $includingTax, $convert);
     }
+
+    /**
+     * Get the fee charged for Stated Address Only.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     * @param boolean $convert
+     *
+     * @return float
+     */
+    public function getStatedAddressFee($formatted = false, $includingTax = true, $convert = true)
+    {
+        $feeType = self::FEE_TYPE_STATED_ADDRESS_ONLY;
+
+        return $this->_getFee($feeType, $formatted, $includingTax, $convert);
+    }
+
+
 
     /**
      * Get the fee for the supplied type
@@ -319,6 +350,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             case self::FEE_TYPE_EXPRESS:
                 $registryKey = 'postnl_express_fee';
                 break;
+            case self::FEE_TYPE_STATED_ADDRESS_ONLY:
+                $registryKey = 'postnl_stated_address_only_fee';
+                break;
             default:
                 throw new InvalidArgumentException("Invalid feeType supplied.");
         }
@@ -348,6 +382,9 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
                 break;
             case self::FEE_TYPE_EXPRESS:
                 $xpath = self::XPATH_PAKJEGEMAK_EXPRESS_FEE;
+                break;
+            case self::FEE_TYPE_STATED_ADDRESS_ONLY:
+                $xpath = self::XPATH_ONLY_STATED_ADDRESS_FEE;
                 break;
             default:
                 throw new InvalidArgumentException("Invalid feeType supplied.");

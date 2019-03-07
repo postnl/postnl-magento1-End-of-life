@@ -75,6 +75,8 @@
     <?php $_canAddLocation = false; ?>
 <?php endif; ?>
 
+<?php $_statedAddressFeeIncl = $this->getFee('stated_address'); ?>
+<?php $_statedAddressFeeExcl = $this->getFee('stated_address'); ?>
 <?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
 <?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
 <?php $_sundayFeeIncl     = $this->getFee('sunday', true); ?>
@@ -255,6 +257,8 @@
                     ]
                 }
             },
+        onlyStatedAddressFeeIncl   : <?php echo $_statedAddressFeeIncl; ?>,
+        onlyStatedAddressFeeExcl   : <?php echo $_statedAddressFeeExcl; ?>,
         <?php endif; ?>
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency($_store->getCurrentCurrencyCode())->getSymbol(); ?>',
         getLocationsTimeout    : <?php echo $_deliveryOptionsAjaxTimeout; ?>,
@@ -395,7 +399,9 @@
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
 
         window.setSiteWidth = function() {
-            console.log('resize triggered');
+            if (postnlDebugMode) {
+                console.log('resize triggered');
+            }
             $("postnl_pickup").setStyle({
                 minWidth : siteWidth + "px"
             });

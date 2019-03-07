@@ -25,7 +25,7 @@
     .postnl-container .title { margin-bottom:11px; }
     .postnl-container .title h2 { display:inline-block; }
     .postnl-container .title #postnl_back_link { display:inline-block; width:12px; padding-right:18px; height:20px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_back_link.png) 0 0 no-repeat; text-indent:-999em; vertical-align:middle; margin-top:-4px; }
-      
+
     /* Revert Popup Behavior  */
     #postnl_delivery_options { display:block !important; }
     #postnl_delivery_options .popup-overlay { position:static; }
@@ -35,7 +35,7 @@
     #postnl_delivery_options .button-set,
     #initial_loader,
     #osc_scrollbar_track { display:none; }
-    #osc_scrollbar_container { width:100%; border:1px solid #bbbbbc; border-left:none; border-right:none; padding:11px 0; margin:16px 0 24px; }
+    #osc_scrollbar_container { border:1px solid #bbbbbc; border-left:none; border-right:none; padding:11px 0; margin:16px 0 24px; }
 
     /* Fix Default OSC   */
     .checkoutcontainer div.onestepcheckout-column-left,
@@ -50,12 +50,12 @@
              -o-transition:-o-transform 250ms linear;
                 transition:transform 250ms linear;
     }
-    
+
     /* Rating Table */
     .responsive-switch-wrapper ul { margin-bottom:30px; }
     .responsive-switch-wrapper.show-rates ul { margin-bottom:0; }
     .responsive-protector p.rate { display:block !important; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_rwd_rate-line.png) left bottom no-repeat; padding:8px 8px 19px; margin-bottom:8px; font-weight:bold; font-size:13px; }
-      
+
     /* Tooltip */
     .responsive-tooltip { display:block; }
     .responsive-tooltip-open { display:block; width:19px; height:19px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent:-9999em; float:right; }

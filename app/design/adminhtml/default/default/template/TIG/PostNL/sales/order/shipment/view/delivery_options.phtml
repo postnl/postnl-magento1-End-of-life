@@ -171,7 +171,7 @@
                             <?php continue; ?>
                         <?php endif; ?>
 
-                        <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                        <?php if (isset($_option['isBelgiumOnly']) && $_option['isBelgiumOnly'] === true && $_isBelgium === false): ?>
                             <?php continue; ?>
                         <?php endif; ?>
 

@@ -1404,3 +1404,4 @@ TIG_PostNL::Extra fee's included in free shipping rules,Des frais supplémentair
 TIG_PostNL::This setting states if fee's should be included or excluded in free shipping rules. If this setting is turned on extra fee's like evening delivery fee's will also be free.,Ce paramètre indique si les frais doivent être inclus ou exclus dans les règles de livraison gratuite. Si ce paramètre est activé, des frais supplémentaires tels que les frais de livraison le soir seront également gratuits.
 "TIG_PostNL::PostNL: Google ApiKey needs to be configured.","PostNL: Google ApiKey doit être configuré."
 "TIG_PostNL::Activate Google Maps","Activer Google Maps"
+TIG_PostNL::ASAP,Dès que possible

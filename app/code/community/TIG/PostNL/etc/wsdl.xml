@@ -141,7 +141,7 @@
 
     <message name="postnlPrintShippingLabelsRequest">
         <part name="sessionId" type="xsd:string" />
-        <part name="orderIds" type="typens:ArrayOfString" />
+        <part name="shipmentIds" type="typens:ArrayOfString" />
         <part name="labelSize" type="xsd:string" />
         <part name="labelStartPosition" type="xsd:int"  />
     </message>

@@ -1379,7 +1379,7 @@ TIG_PostNL::The domestic country is not set to NL. Please keep in mind that Food
 "TIG_PostNL::You have enabled food delivery, but have not yet enabled a Food product code. Please enable a Food product code in Advanced -> User Settings.","U heeft Food delivery geactiveerd, maar nog geen Food productopties geactiveerd. Hierdoor zal het in de frontend niet mogelijk zijn om een Food bestelling aan te maken. Activeer de Food productopties in Geavanceerd -> Gebruikersinstellingen."
 TIG_PostNL::You currently selected the options to ship to multiple countries. It seems that these countries also include non-domestic countries. Please keep in mind that Food deliveries can only be shipped to the Netherlands.,Volgens de instellingen is het op het moment mogelijk om te verzenden naar landen buiten Nederland. Houdt er rekening mee dat het enkel mogelijk is om Food bestellingen binnen Nederland te versturen.
 TIG_PostNL::Enable food delivery,Activeer Food bezorging
-TIG_PostNL::Default product type,Default producttype
+TIG_PostNL::Default product type,Standaard producttype
 TIG_PostNL::This value is used to determine the product type of newly created products.,Deze waarde wordt gebruikt om het producttype van nieuw aangemaakte producten te bepalen.
 TIG_PostNL::This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.,Dit heeft enkel effect op nieuw aangemaakte producten. Voor bestaande producten is het noodzakelijk om deze handmatig naar het gewenste producttype aan te passen.
 TIG_PostNL::Warnings:,Let op:
@@ -1489,7 +1489,7 @@ TIG_PostNL::Enable Extra@Home,Activeer Extra@Home
 TIG_PostNL::Extra@Home can be used to ship large and heavy Products. Please consult your PostNL account manager for more information about activating this service for your account.,Extra@Home kan gebruikt worden voor het verzenden van grote en zware producten. Vraag uw PostNL accountmanager voor meer informatie over het activeren en in gebruik nemen van deze optie.
 TIG_PostNL::Activate Extra@Home for your customers.,Activeer Exra@Home voor uw klanten.
 TIG_PostNL::Return customer code,Retouren klant code
-TIG_PostNL::"To offer returns to your customer, you need to use a different customer code. Ask you accountmanager to retrieve yours.","Om retouren aan te bieden aan uw klanten, heeft een uw afwijkende klantcode nodig. U kunt deze klantcode bij uw accountmanager opvragen."
+TIG_PostNL::To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.,Om retouren aan te bieden aan uw klanten heeft u afwijkende klantcode nodig. U kunt deze klantcode bij uw accountmanager opvragen.
 TIG_PostNL::This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,Dit product moet over dit aantal colli verspreid worden. Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.
 TIG_PostNL::This product(s) can only be delivered within the Netherlands.,Deze bestelling kan alleen verzonden worden naar bestemmingen in Nederland.
 TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
@@ -1510,3 +1510,9 @@ TIG_PostNL::This setting states if fee's should be included or excluded in free 
 "TIG_PostNL::If you want to continue using the Google Map for the pickup locations, please fill in your Google API key.","Indien u gebruik wilt blijven maken van de Google Map bij het selecteren van afhaallocaties, dient u uw Google Apikey in te vullen."
 "TIG_PostNL::Activate Google Maps","Activeer Google Maps"
 "TIG_PostNL::<a href='https://confluence.tig.nl/x/zgCfAg'>More information</a> (Dutch)","<a href='https://confluence.tig.nl/x/zgCfAg'>Meer informatie</a>"
+TIG_PostNL::This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op Belgische avondlevering zendingen.
+TIG_PostNL::Default evening BE delivery shipping option,Standaard avondbezorging BE verzendoptie
+TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie optie
+TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
+TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
+TIG_PostNL::ASAP, Zo snel mogelijk

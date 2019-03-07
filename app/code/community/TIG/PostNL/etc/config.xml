@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.15.5</version>
+            <version>1.15.8</version>
         </TIG_PostNL>
     </modules>
 
@@ -591,26 +591,6 @@
                     </checkout_deliveryoptions>
                 </observers>
             </core_block_abstract_to_html_after>
-            <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
-                <observers>
-                    <!-- Saves selected PostNL options for Onepage checkout. -->
-                    <checkout_shipping_method_save_options>
-                        <type>singleton</type>
-                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
-                        <method>saveOptions</method>
-                    </checkout_shipping_method_save_options>
-                </observers>
-            </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
-            <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
-                <observers>
-                    <!-- Saves a selected PostNL options for OneStepCheckout. -->
-                    <checkout_shipping_method_save_options>
-                        <type>singleton</type>
-                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
-                        <method>saveOptions</method>
-                    </checkout_shipping_method_save_options>
-                </observers>
-            </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
             <controller_action_predispatch_gomage_checkout_onepage_ajax>
                 <observers>
                     <!-- Set a registry flag to prevent the PostNL order from being reset. -->
@@ -910,13 +890,13 @@
                 <private_key/>
                 <is_activated>0</is_activated> <!-- Not activated -->
                 <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
-                <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
+                <changelog_url>https://confluence.tig.nl/x/sISC</changelog_url> <!-- URL of the extension's changelog -->
                 <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
-                <knowledgebase_url>http://kb.tig.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
-                <new_ticket_url>http://kb.tig.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
-                <installation_manual_url>http://kb.tig.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
-                <user_guide_url>http://kb.tig.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
-                <kb_url>http://kb.tig.nl/forum/23046087</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
+                <knowledgebase_url>https://confluence.tig.nl/</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
+                <new_ticket_url>https://confluence.tig.nl/x/awFtAQ</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
+                <installation_manual_url>https://confluence.tig.nl/x/s4SC</installation_manual_url> <!-- URL to the extension's installation manual -->
+                <user_guide_url>https://confluence.tig.nl/x/tISC</user_guide_url> <!-- URL to the extension's user guide -->
+                <kb_url>https://confluence.tig.nl/x/GIKC</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
                 <postnl_documentation_url>http://www.postnl.nl/klantenservice/veelgestelde-vragen/versturen/verzendopties/wat-kan-ik-doen-als-ik-problemen-heb-met-de-magento-plugin.html?searchResult=position7</postnl_documentation_url>
                 <cit_servicedesk_email>citservicedesk@postnl.nl</cit_servicedesk_email>
             </general>
@@ -1037,9 +1017,9 @@
             </delivery_options_int>
             <cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
-                <customer_number>11223344</customer_number>
-                <customer_code>TOTA</customer_code>
-                <test_customer_number>31337</test_customer_number> <!-- Demo customer number -->
+                <customer_number/>
+                <customer_code/>
+                <test_customer_number>11223344</test_customer_number> <!-- Demo customer number -->
                 <test_customer_code>TOTA</test_customer_code> <!-- Demo customer code -->
                 <live_apikey/>
                 <test_apikey/> <!-- Demo apikey -->
@@ -1276,7 +1256,7 @@
         <!-- Version compatibility per Magento edition as well as PHP version compatibility -->
         <compatibility>
             <postnl>
-                <php>5.3,5.4,5.5,5.6,7.0</php>
+                <php>5.6,7.0,7.1</php>
                 <magento>
                     <enterprise>1.12,1.13,1.14</enterprise>
                     <community>1.7,1.8,1.9</community>
@@ -2590,7 +2570,7 @@
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
-                <url>http://kb.tig.nl/topic/32432076</url>
+                <url>https://confluence.tig.nl/x/h4WC</url>
                 <type>warning</type>
             </LIRS_0>
         </errors>

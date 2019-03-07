@@ -63,8 +63,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Constants containing xpaths to cif configuration options.
      */
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
+    const XPATH_TEST_CUSTOMER_CODE          = 'postnl/cif/test_customer_code';
     const XPATH_DUTCH_CUSTOMER_CODE         = 'postnl/cif/dutch_customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
+    const XPATH_TEST_CUSTOMER_NUMBER        = 'postnl/cif/test_customer_number';
     const XPATH_DUTCH_CUSTOMER_NUMBER       = 'postnl/cif/dutch_customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
@@ -578,7 +580,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * we need the original shipment, not a related shipment (such as a return shipment).
              */
-            if ($shipment->Barcode === $barcode) {
+            if (isset($shipment->Barcode) && $shipment->Barcode === $barcode) {
                 return $shipment;
             }
         }
@@ -617,11 +619,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customer    = $this->_getCustomer($shipment);
         $helper      = Mage::helper('postnl');
 
-        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         /**
          * Create a single shipment object
@@ -698,11 +697,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $helper = Mage::helper('postnl');
 
-        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = $helper->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         $shipments = array();
         for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
@@ -824,11 +820,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             );
         }
 
-        $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels(
-            $postnlShipment->getStoreId(), $postnlShipment->isBelgiumShipment()
-        );
-
-        $returnBarcode = $postnlShipment->getReturnBarcode();
+        $printReturnLabels = Mage::helper('postnl')->canPrintReturnLabelsWithShippingLabels($postnlShipment);
+        $returnBarcode = $printReturnLabels ? $postnlShipment->getReturnBarcode() : false;
 
         for ($parcelNumber = 0; $parcelNumber < $parcelCount; $parcelNumber++) {
             $barcode = $postnlShipment->getBarcode($parcelNumber);
@@ -1282,7 +1275,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $deliveryDate = null;
         /** @var TIG_PostNL_Helper_DeliveryOptions $deliveryOptionsHelper */
         $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
-        if ($deliveryOptionsHelper->canUseDeliveryDays(false) && !$postnlShipment->isExtraAtHome()) {
+
+        $shippingStoreId = $postnlShipment->getStoreId();
+        $shippingCountry = $postnlShipment->getShippingAddress()->getCountryId();
+        $canUseDeliverDays = $deliveryOptionsHelper->canUseDeliveryDays(false, $shippingStoreId, $shippingCountry);
+        if ($canUseDeliverDays && !$postnlShipment->isExtraAtHome()) {
             $deliveryDate = $postnlShipment->getDeliveryDate();
             if ($deliveryDate) {
                 $deliveryTime = new DateTime($deliveryDate, new DateTimeZone('UTC'));
@@ -1716,7 +1713,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Street'           => $streetData['streetname'],
             'HouseNr'          => $streetData['housenumber'],
             'HouseNrExt'       => $streetData['housenumberExtension'],
-            'StreetHouseNrExt' => $streetData['fullStreet'],
+            'StreetHouseNrExt' => (isset($streetData['fullStreet']) ? $streetData['fullStreet'] : ''),
             'Zipcode'          => strtoupper(str_replace(' ', '', $address->getPostcode())),
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
@@ -1845,9 +1842,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if ($postnlShipment->isExtraCover()) {
             $extraCoverAmount = $postnlShipment->getExtraCoverAmount();
-            if ($extraCoverAmount < 500) {
-                $extraCoverAmount = 500;
-            }
 
             $extraCover = number_format($extraCoverAmount, 2, '.', '');
             $amount[] = array(
@@ -2366,12 +2360,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustomerCode($useReturnCustomerCode = false)
     {
         $storeId      = $this->getStoreId();
-        $path = self::XPATH_RETURN_CUSTOMER_CODE;
-        $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+        $path         = self::XPATH_RETURN_CUSTOMER_CODE;
+        $customerCode = (string)Mage::getStoreConfig($path, $storeId);
 
         if (!$customerCode || !$useReturnCustomerCode) {
-            $path = self::XPATH_CUSTOMER_CODE;
-            $customerCode = (string) Mage::getStoreConfig($path, $storeId);
+            $path         = self::XPATH_CUSTOMER_CODE;
+            $customerCode = (string)Mage::getStoreConfig($path, $storeId);
+        }
+
+        if (!$useReturnCustomerCode && $this->isTestMode()) {
+            $path         = self::XPATH_TEST_CUSTOMER_CODE;
+            $customerCode = (string)Mage::getStoreConfig($path, $storeId);
         }
 
         return $customerCode;
@@ -2398,7 +2397,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustomerNumber()
     {
         $storeId = $this->getStoreId();
-        $customerNumber = (string) Mage::getStoreConfig(self::XPATH_CUSTOMER_NUMBER, $storeId);
+        $path    = self::XPATH_CUSTOMER_NUMBER;
+
+        if ($this->isTestMode()) {
+            $path = self::XPATH_TEST_CUSTOMER_NUMBER;
+        }
+
+        $customerNumber = (string)Mage::getStoreConfig($path, $storeId);
 
         return $customerNumber;
     }
@@ -2581,7 +2586,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $doorcodeField = (string) Mage::getStoreConfig(self::XPATH_DOORCODE_FIELD, $storeId);
-        if (!$doorcodeField) {
+        if ($doorcodeField) {
             $doorcode = $address->getStreet($doorcodeField);
 
             return $doorcode;

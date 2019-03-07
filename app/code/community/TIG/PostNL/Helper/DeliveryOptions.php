@@ -339,8 +339,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getEveningFee($formatted, $includingTax, $convert);
@@ -360,8 +358,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getExpressFee($formatted, $includingTax, $convert);
@@ -382,8 +378,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getPakjeGemakFee($currentRate, $formatted, $includingTax, $convert);
@@ -404,8 +398,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getOptionsFee($postnlOrder, $formatted, $includingTax, $convert);
@@ -426,8 +418,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getOptionFee($option, $formatted, $includingTax, $convert);
@@ -1040,7 +1030,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return $this->getQuoteShippingDuration($quote);
     }
 
@@ -1267,8 +1256,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
-
         /** @var TIG_PostNL_Helper_DeliveryOptions_fee $helper */
         $helper = Mage::helper('postnl/deliveryOptions_fee');
         return $helper->getPriceWithTax($price, $includingTax, $formatted, $convert);
@@ -1453,6 +1440,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
+        if (!$country) {
+            $country = $quote->getShippingAddress()->getCountryId();
+        }
+
         $allowed = $this->_canUsePakjeGemak($country);
 
         if ($cache) {
@@ -1577,6 +1568,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_BE, $storeId);
         if ($country && $country == 'BE' && !$enabled) {
+            return false;
+        }
+
+        $dependency = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
+        if ($country == 'BE') {
+            $dependency = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE, $storeId);
+        }
+
+        if (!$dependency) {
             return false;
         }
 
@@ -1948,10 +1948,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Checks if delivery days are available.
      *
      * @param bool $checkQuote
+     * @param bool $storeId
+     * @param bool $country
      *
      * @return bool
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
      */
-    public function canUseDeliveryDays($checkQuote = true)
+    public function canUseDeliveryDays($checkQuote = true, $storeId = false, $country = false)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
@@ -1963,6 +1967,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($quote) {
             $registryKey .= '_' . $quote->getId();
         }
+
+        $registryKey .= $country ? '_' . $country : '';
+        $registryKey .= $storeId ? '_' . $storeId : '';
 
         /**
          * Check if the result of this method has been cached in the registry.
@@ -1995,19 +2002,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $allowed;
         }
 
-        if (!$this->canUseDutchProducts()) {
-            $allowed = false;
-        } else {
-            $storeId = Mage::app()->getStore()->getId();
+        $allowed = false;
 
-            $quote = $this->getQuote();
-
-            $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS;
-            if ($quote && $quote->getShippingAddress() && $quote->getShippingAddress()->getCountryId() == 'BE') {
-                $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS_BE;
-            }
-
-            $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
+        if ($this->canUseDutchProducts()) {
+            $allowed = $this->deliveryDaysEnabled($storeId, $country);
         }
 
         if ($cache) {
@@ -2023,17 +2021,52 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if delivery days are allowed for the current quote.
+     * @param bool|int    $storeId
+     * @param bool|string $country
      *
      * @return bool
+     * @throws Mage_Core_Model_Store_Exception
      */
-    public function canUseDeliveryDaysForQuote()
+    private function deliveryDaysEnabled($storeId = false, $country = false)
+    {
+        $quote = $this->getQuote();
+        $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS;
+        $parentPath = self::XPATH_DELIVERY_OPTIONS_ACTIVE;
+
+        if (!$country && $quote && $quote->getShippingAddress()) {
+            $country = $quote->getShippingAddress()->getCountryId();
+        }
+
+        if ($country && $country == 'BE') {
+            $allowedXpath = self::XPATH_ENABLE_DELIVERY_DAYS_BE;
+            $parentPath = self::XPATH_DELIVERY_OPTIONS_BE_ACTIVE;
+        }
+
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $allowed = Mage::getStoreConfigFlag($allowedXpath, $storeId);
+        if (!Mage::getStoreConfigFlag($parentPath, $storeId)) {
+            $allowed = false;
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Check if delivery days are allowed for the current quote.
+     *
+     * @param $quote
+     * @return bool
+     */
+    public function canUseDeliveryDaysForQuote($quote = null)
     {
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.
          */
-        $quote = $this->getQuote();
+        $quote = $quote ?: $this->getQuote();
         if (!$quote) {
             return true;
         }

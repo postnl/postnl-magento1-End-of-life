@@ -371,7 +371,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $stream_context = stream_context_create(
             array(
                 'http' => array(
-                    'header' => 'apikey:' . $this->getApiKey()
+                    'header' =>
+                        'apikey:' . $this->getApiKey() . "\r\n" .
+                        'SourceSystem:36'
                 ),
             )
         );

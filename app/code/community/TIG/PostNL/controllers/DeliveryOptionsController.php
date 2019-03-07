@@ -191,7 +191,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      */
     public function saveOptionCostsAction()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         /**
          * This action may only be called using AJAX requests
          */
@@ -433,7 +432,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        if (!$this->_canUseDeliveryOptions()) {
+        if (!$this->_canUseDeliveryOptions() || !$this->_canUseNearestLocations()) {
             $this->getResponse()
                  ->setBody('not_allowed');
 
@@ -669,6 +668,24 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     }
 
     /**
+     * Check to see if PostNL nearest locations are active
+     */
+    protected function _canUseNearestLocations()
+    {
+        /** @var TIG_PostNL_Helper_DeliveryOptions $helper */
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $storeId = Mage::app()->getStore()->getId();
+
+        $postData = $this->getRequest()->getPost();
+
+        if ($helper->canUsePakjeGemak($storeId, false, $postData['country'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Validates input for the saveOptionCosts action.
      *
      * @param array $params
@@ -844,6 +861,20 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         /**
+         * Parse the options to an array. For now, only used to determine if packages can be delivered at neighbours,
+         * but other options can be included in the future.
+         */
+        if (isset($params['options'])) {
+            $options = $coreHelper->jsonDecode($params['options']);
+
+            if (isset($options['only_stated_address']) && $options['only_stated_address'] == true) {
+                $options['only_stated_address'] = (int)$options['only_stated_address'];
+            } else {
+                $options = false;
+            }
+        }
+
+        /**
          * Get validation classes for the postcode and housenumber values.
          */
         $validTypes = $this->getValidTypes();
@@ -893,9 +924,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         $data = array(
-            'type'  => $type,
-            'date'  => $date,
-            'costs' => $costs,
+            'type'      => $type,
+            'date'      => $date,
+            'costs'     => $costs,
+            'options'   => $options
         );
 
         if ($from && $timeValidator->isValid($from)) {
@@ -1287,16 +1319,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
             $postcode = $postData['postcode'];
             $postcode = strtoupper(str_replace(' ', '', $postcode));
-            $validatorHelper->validatePostcode($country, $postcode);
-
+            if ($country) {
+                $validatorHelper->validatePostcode($country, $postcode);
+            }
             $street = $postData['street'];
-            $validatorHelper->validateStreet($street);
-
+            if ($street) {
+                $validatorHelper->validateStreet($street);
+            }
             $housenumber = $postData['housenumber'];
-            $validatorHelper->validateHousenumber($housenumber);
-
+            if ($housenumber) {
+                $validatorHelper->validateHousenumber($housenumber);
+            }
             $city = $postData['city'];
-            $validatorHelper->validateCity($city);
+            if ($city) {
+                $validatorHelper->validateCity($city);
+            }
 
             $data = array(
                 'postcode'     => $postcode,
@@ -1306,6 +1343,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 'housenumber'  => $housenumber,
                 'city'         => $city,
             );
+
             return $data;
         }
 

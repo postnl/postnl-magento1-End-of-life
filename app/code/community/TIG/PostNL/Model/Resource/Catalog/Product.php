@@ -147,8 +147,7 @@ class TIG_PostNL_Model_Resource_Catalog_Product extends Mage_Catalog_Model_Resou
         }
 
         if (sizeof($attributesData) == 1) {
-            $_data = each($attributesData);
-            $attributesData = $_data[1];
+            $attributesData = current($attributesData);
         }
 
         /**

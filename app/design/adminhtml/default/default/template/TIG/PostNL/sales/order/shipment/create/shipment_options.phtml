@@ -136,16 +136,6 @@
             <?php endforeach; ?>
         </select>
     </p>
-    <?php if ($_isGlobalPackShipment): ?>
-        <p id="postnl_extra_cover_container" style="display:none;">
-            <input type="hidden" name="postnl[extra_cover_amount]" class="input-text" id="postnl_extra_cover" value="200"/>
-        </p>
-    <?php else: ?>
-        <p id="postnl_extra_cover_container">
-            <label class="normal" for="postnl_extra_cover"><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>
-            <input type="text" name="postnl[extra_cover_amount]" class="input-text validate-increment-500 validate-not-negative-number" id="postnl_extra_cover" value="500"/>
-        </p>
-    <?php endif; ?>
     <?php if ($_isMultiColliAllowed && !$_isCod): ?>
         <p id="postnl_parcel_count_container" style="display:none;">
             <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
@@ -178,24 +168,9 @@
             }
         );
 
-        var productOptionsField = $('postnl_product_option');
-        var toggleExtraCoverField = function() {
-            var selectedOption = productOptionsField.options[productOptionsField.selectedIndex];
-
-            if (selectedOption.hasClassName('extra_cover')) {
-                $('postnl_extra_cover_container').show();
-            } else {
-                $('postnl_extra_cover_container').hide();
-            }
-        };
-
-        productOptionsField.observe('change', toggleExtraCoverField);
-
         $$('.order-totals-bottom div.a-right')[0].insert({
             before: $('postnl_product_options')
         });
-
-        toggleExtraCoverField();
 
         var isBuspakjeField      = $('postnl_is_buspakje');
         var isBuspakjeCheckbox   = $('postnl_is_buspakje_checkbox');
@@ -207,7 +182,6 @@
 
                     $('postnl_buspakje_product_option_container').show();
                     $('postnl_product_option_container').hide();
-                    $('postnl_extra_cover_container').hide();
                     parcelCountContainer.hide();
                 } else {
                     isBuspakjeField.setValue(0);
@@ -216,7 +190,6 @@
                     $('postnl_product_option_container').show();
                     parcelCountContainer.show();
 
-                    toggleExtraCoverField();
                 }
             };
 

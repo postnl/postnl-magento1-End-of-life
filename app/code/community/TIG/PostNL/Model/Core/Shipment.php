@@ -1131,12 +1131,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              * The base price of a shipment item is only available through it's associated order item.
              */
             $orderItem = $shipmentItem->getOrderItem();
-            $basePrice = $orderItem->getBasePriceInclTax() + $orderItem->getBaseDiscountAmount();
 
-            /**
-             * Calculate and add the shipment item's row total.
-             */
-            $totalBasePrice = $basePrice * $qty;
+            $basePrice = $orderItem->getBasePriceInclTax() * $qty;
+            $discountPrice = abs($orderItem->getBaseDiscountAmount());
+            $totalBasePrice = $basePrice - $discountPrice;
+
             $baseGrandTotal += $totalBasePrice;
         }
 
@@ -1667,14 +1666,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $deliveryDate;
         }
 
-        /** @var TIG_PostNL_Helper_Date $helper */
-        $helper = Mage::helper('postnl/date');
-        /** @var Mage_Core_Model_Date $dateModel */
-        $dateModel = Mage::getSingleton('core/date');
-        $orderDate = $dateModel->date(null, $this->getOrder()->getCreatedAt());
-        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId())->format('Y-m-d H:i:s');
-
-        return $deliveryDate;
+        return null;
     }
 
     /**
@@ -1703,18 +1695,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getDefaultExtraCoverAmount()
     {
-        if ($this->isGlobalShipment()) {
-            return 200;
-        }
-
-        $shipmentAmount = $this->getShipmentBaseGrandTotal();
-        $extraCoverAmount = ceil($shipmentAmount / 500) * 500;
-
-        if ($extraCoverAmount < 500) {
-            $extraCoverAmount = 500;
-        }
-
-        return $extraCoverAmount;
+        return $this->getShipmentBaseGrandTotal();
     }
 
     /**
@@ -1893,6 +1874,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Get the requested delivery date for this shipment.
          */
         $deliveryDate = $this->getDeliveryDate();
+        if (!$deliveryDate) {
+            $this->setData('confirm_date', null);
+            return $this;
+        }
 
         /**
          * Calculate the confirm based on the delivery date.
@@ -4970,9 +4955,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Buspakje shipments can't be delivered on a monday or tuesday.
+         * Buspakje shipments can't be delivered on a sunday or monday.
          */
-        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $this->getDeliveryDate(), new DateTimeZone('UTC'));
+        $date = $this->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
+        $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $date, new DateTimeZone('UTC'));
+
         if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') === '1') {
             return false;
         }
@@ -4991,11 +4978,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Get the current delivery date.
          */
-        $deliveryDate = $this->getDeliveryDate();
+        $deliveryDate = $this->getDeliveryDate() ?: date('Y-m-d H:i:s', time() + 86400);
         $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
         /**
-         * Letter box parcels cannot be delivered on mondays or tuesdays.
+         * Letter box parcels cannot be delivered on sunday or monday.
          */
         if ($deliveryDate->format('N') === '0' || $deliveryDate->format('N') == '1') {
             /** @var TIG_PostNL_Helper_Date $helper */
@@ -5619,6 +5606,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->setConfirmedAt($currentTimestamp);
         }
 
+
+        $isConfirmed = in_array($this->getConfirmStatus(),
+            array(self::CONFIRM_STATUS_BUSPAKJE, self::CONFIRM_STATUS_CONFIRMED)
+        );
+
+        if ((!$this->getConfirmDate() || $this->getConfirmDate() == '0000-00-00 00:00:00')  && $isConfirmed) {
+            $confirmDate = $this->getConfirmedAt() ?: $dateModel->gmtTimestamp();
+            $this->setConfirmDate($confirmDate);
+        }
+
+        if (!$this->getDeliveryDate() && $isConfirmed) {
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp($this->getConfirmedAt())
+                ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
+            $this->setDeliveryDate($deliveryDate);
+        }
+
         /**
          * Set whether labels have printed or not.
          */
@@ -5643,7 +5648,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             /**
              * If this is an extra cover shipment and no extra cover amount has been set, set the default of 500 EUR.
              */
-            if ($this->isExtraCover() && $this->getExtraCoverAmount() < 200) {
+            if ($this->isExtraCover()) {
                 $this->setExtraCoverAmount();
             }
         }
@@ -5677,6 +5682,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->getOrderId();
         }
 
+        /**
+         * Update order for grid information.
+         */
+        $order = $this->getPostnlOrder();
+        if ($order) {
+            $order->setDeliveryDate($this->getDeliveryDate());
+            $order->setConfirmDate($this->getConfirmDate());
+            $order->save();
+        }
+
         return parent::_beforeSave();
     }
 
@@ -5687,6 +5702,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $address = $this->getShippingAddress();
         $helper = $this->getHelper();
+
+        if (!$address) {
+            return false;
+        }
 
         return in_array($address->getCountryId(), $helper->getMultiColliCountries());
     }

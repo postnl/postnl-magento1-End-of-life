@@ -1067,7 +1067,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $templateIndex = $pdf->ImportPage(1);
 
         $pdf->Rotate('-90');
-        $pdf->useTemplate($templateIndex, 0, -128, $this->pix2pt(405), $this->pix2pt(570), true);
+        $pdf->useTemplate($templateIndex, 0, -128, 105.5, 149, true);
 
         return $pdf;
     }

@@ -179,8 +179,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_requiredFields = array(
-        'postnl/cif/customer_code',
-        'postnl/cif/customer_number',
         'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
         array(
@@ -200,6 +198,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_liveModeRequiredFields = array(
         'postnl/cif/live_apikey',
+        'postnl/cif/customer_code',
+        'postnl/cif/customer_number',
     );
 
     /**
@@ -209,6 +209,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_testModeRequiredFields = array(
         'postnl/cif/test_apikey',
+        'postnl/cif/test_customer_code',
+        'postnl/cif/test_customer_number',
     );
 
     /**
@@ -1741,7 +1743,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isTestModeAllowed()
     {
-        trigger_error('This method is deprecated and may be removed in the future.', E_USER_NOTICE);
         return true;
     }
 
@@ -1941,7 +1942,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if the required SOAP, OpenSSL and MCrypt PHP extensions are loaded.
+     * Check if the required SOAP and OpenSSL PHP extensions are loaded.
      *
      * @return bool
      */
@@ -1963,16 +1964,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 'code'    => 'POSTNL-0135',
                 'message' => $this->__(
                     'The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to '
-                    . 'secure the communications with the PostNL servers.'
-                ),
-            );
-        }
-
-        if (!extension_loaded('mcrypt')) {
-            $errors[] = array(
-                'code'    => 'POSTNL-0137',
-                'message' => $this->__(
-                    'The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to '
                     . 'secure the communications with the PostNL servers.'
                 ),
             );
@@ -2320,13 +2311,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if return labels can be printed along with shipping labels for the specified store view.
      *
-     * @param boolean|int $storeId
-     * @param boolean $isBe
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return boolean
      */
-    public function canPrintReturnLabelsWithShippingLabels($storeId = false, $isBe = false)
+    public function canPrintReturnLabelsWithShippingLabels($shipment)
     {
+        $isBe    = $shipment->isBelgiumShipment();
+        $storeId = $shipment->getStoreId();
+        if ($shipment->getShipmentType() == 'ExtraAtHome') {
+            return false;
+        }
+
         if (false === $storeId) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
