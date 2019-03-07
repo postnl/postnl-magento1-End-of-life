@@ -111,6 +111,23 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
 
         $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
 
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->loadByShipment($row);
+
+        if ($postnlShipment->getParcelCount() < 2) {
+            return $barcodeHtml;
+        }
+
+        /** Reset barcodeHtml to prevent duplicate of mainbarcode */
+        $barcodeHtml = '';
+
+        $barcodes = $postnlShipment->getBarcodes(true);
+
+        foreach($barcodes as $barcode) {
+            $barcodeUrl = $helper->getBarcodeUrl($barcode->getBarcode(), $destinationData, false, true);
+            $barcodeHtml .= "<a href='{$barcodeUrl}' target='_blank'>{$barcode->getBarcode()}</a><br/>";
+        }
+
+
         return $barcodeHtml;
     }
 }
