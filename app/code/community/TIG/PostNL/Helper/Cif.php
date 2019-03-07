@@ -134,7 +134,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     protected $_euPepsCountries = array(
         'AT',
-        'BE',
         'CY',
         'DE',
         'DK',
