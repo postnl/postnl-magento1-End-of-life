@@ -1155,6 +1155,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     {
         /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $optionsModel */
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euOptionsModel */
+        $euOptionsModel = Mage::getModel('postnl_core/system_config_source_euProductOptions');
+
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $globalOptionsModel */
+        $globalOptionsModel = Mage::getModel('postnl_core/system_config_source_GlobalProductOptions');
+
         $options = array(
             'postnl_domestic_options' => $optionsModel->getOptions(
                 array(
@@ -1207,14 +1214,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 false,
                 true
             ),
-            'postnl_eps_options' => $optionsModel->getOptions(
+            'postnl_eps_options' => $euOptionsModel->getOptions(
                 array(
                     'group' => 'eu_options',
                 ),
                 false,
                 true
             ),
-            'postnl_globalpack_options' => $optionsModel->getOptions(
+            'postnl_globalpack_options' => $globalOptionsModel->getOptions(
                 array(
                     'group' => 'global_options',
                 ),

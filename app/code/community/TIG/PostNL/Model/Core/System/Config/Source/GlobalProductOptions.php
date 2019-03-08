@@ -44,9 +44,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
      */
     protected $_options = array(
         array(
-            'value'        => '4945',
-            'label'        => 'GlobalPack',
-            'isExtraCover' => true,
+            'value'             => '4945',
+            'label'             => 'GlobalPack',
+            'isExtraCover'      => true,
+            'isSunday'          => false,
+            'countryLimitation' => false,
+            'group'             => 'global_options',
         ),
     );
 
