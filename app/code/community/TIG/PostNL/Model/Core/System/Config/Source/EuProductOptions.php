@@ -44,14 +44,23 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     protected $_options = array(
         array(
-            'value'   => '4952',
-            'label'   => 'EU Pack Special Consumer (incl. signature)',
-            'isAvond' => false,
+            'value'             => '4952',
+            'label'             => 'EU Pack Special Consumer (incl. signature)',
+            'isExtraCover'      => false,
+            'isSunday'          => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
         ),
         array(
-            'value'   => '4938',
-            'label'   => 'EU Pack Special Evening (incl. signature)',
-            'isAvond' => true,
+            'value'             => '4938',
+            'label'             => 'EU Pack Special Evening (incl. signature)',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
         ),
         array(
             'value'         => '4955',
@@ -59,6 +68,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             'isAvond'       => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
+            'group'         => 'eu_options',
         ),
         array(
             'value'         => '4941',
@@ -66,6 +76,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             'isAvond'       => true,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
+            'group'         => 'eu_options',
         )
     );
 
