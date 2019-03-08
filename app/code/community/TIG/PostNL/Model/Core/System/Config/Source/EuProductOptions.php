@@ -97,6 +97,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             $options = $this->removeOptions(array('4955', '4941'), $options);
         }
 
+        /** PEPS is not compatible with Evening */
+        if (isset($flags['isAvond']) && $flags['isAvond']) {
+            return $options;
+        }
+
         if ($this->getHelper()->isPepsAllowed()) {
             /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
             $allOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions');
