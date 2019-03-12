@@ -66,7 +66,7 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
     /**
      * Regex to determine whether a label is actually a combi-label.
      */
-    const COMBI_LABEL_REGEX = '#/MediaBox \[0 0 ([\d]+) ([\d]+) \]#';
+    const COMBI_LABEL_REGEX = '#/MediaBox \[ ?0 0 ([\d]+.?[\d]*) ([\d]+.?[\d]*) \]#';
 
     /**
      * Prefix of model events names
