@@ -105,8 +105,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'EE',
         'FI',
         'FR',
-        'GB',
-        'UK', //alias for GB
         'HU',
         'IE',
         'IT',
