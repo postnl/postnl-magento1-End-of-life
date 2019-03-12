@@ -1570,6 +1570,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
          * Load the shipments and check if they are valid
          */
         $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+        $this->_getPepsWarning($shipments);
 
         switch ($type) {
             case 'label':
@@ -1603,6 +1604,27 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
 
         $this->_preparePdfResponse($filename, $output);
         return $this;
+    }
+
+    /**
+     * @param $shipments
+     */
+    protected function _getPepsWarning($shipments)
+    {
+        array_filter(
+            $shipments->getItems(), function ($shipment) {
+            if ($shipment->isPepsShipment()) {
+                /** @var TIG_PostNL_Helper_Data $helper */
+                $helper = Mage::helper('postnl');
+                $helper->addSessionMessage('adminhtml/session', null, 'warning',
+                    $this->__(
+                        'This product requires at least 5 shipments to be supplied in a postbag with a special '
+                        . 'label intended for that purpose. Click <link>here<link> for the instructions.'
+                    )
+                );
+            }
+        }
+        );
     }
 
     /**

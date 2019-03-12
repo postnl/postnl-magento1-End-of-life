@@ -1516,3 +1516,4 @@ TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie opti
 TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
 TIG_PostNL::ASAP, Zo snel mogelijk
+TIG_PostNL::"This product requires at least 5 shipments to be supplied in a postbag with a special label intended for that purpose. Click <link>here<link> for the instructions.","Van dit product moeten minimaal 5 zendingen aangeleverd worden in een daarvoor bedoelde postzak met een speciaal label. Zie <link>hier<link> de handleiding."

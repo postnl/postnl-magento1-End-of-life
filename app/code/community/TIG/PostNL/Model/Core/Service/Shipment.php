@@ -616,14 +616,12 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment = $shipment;
         }
 
-        if ($shipment->isPepsShipment() && $shipment->getParcelCount() < 5) {
-            throw new TIG_PostNL_Exception(
+        if ($shipment->isPepsShipment()) {
+            $helper->addSessionMessage('adminhtml/session', null, 'warning',
                 $helper->__(
-                    "Shipment #%s could not be confirmed.".
-                    "When using Priority EPS products the colli amount should be at least five",
-                    $postnlShipment->getShipment()->getIncrementId()
-                ),
-                'POSTNL-0247'
+                    'This product requires at least 5 shipments to be supplied in a postbag with a special '
+                    . 'label intended for that purpose. Click <link>here<link> for the instructions.'
+                )
             );
         }
 
