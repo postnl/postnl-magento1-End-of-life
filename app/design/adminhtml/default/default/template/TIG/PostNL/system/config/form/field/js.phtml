@@ -193,6 +193,13 @@
     }
 
     /**
+     * Add webservice version number field validation.
+     */
+    Validation.add('postnl-validate-webservice-version', '<?php echo $_helper->__('Please enter a valid webservice version number. A valid webservice version number consists of a digit, an underscore and then another digit, e.g.: 1_1 or 2_0.'); ?>', {
+        pattern : new RegExp("^([0-9]+_[0-9]+)$", "i")
+    });
+
+    /**
      * Add packing slip column header validation.
      */
     Validation.add('validate-packing-slip-column-header', '<?php echo $_helper->__('Please use only letters (a-z A-Z), numbers (0-9) or one of the following characters: [( ) , . _ - #] in this field.') ?>', {
