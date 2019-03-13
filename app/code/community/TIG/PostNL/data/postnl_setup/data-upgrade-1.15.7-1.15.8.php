@@ -44,4 +44,4 @@ $installer = $this;
 
 set_time_limit(0);
 
-$installer->resetWebserviceVersions(['cif_version_labelling']);
+$installer->resetWebserviceVersions(array('cif_version_labelling'));
