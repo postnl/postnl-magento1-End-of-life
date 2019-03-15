@@ -1462,7 +1462,6 @@ PostnlDeliveryOptions.prototype = {
             .hideSpinner();
 
         $('postnl_pickup').hide();
-        $('responsive_switch').hide();
 
         if (this.debug) {
             console.info('Delivery locations are hidden.');
@@ -5743,7 +5742,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isDeliveryDaysAllowed() && this.getDeliveryOptions().country != 'BE') {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
             spanClass += ' no-display';
         }
         html += '<span class="' + spanClass + '">';

@@ -43,6 +43,8 @@
  * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid   setBlock(Mage_Adminhtml_Block_Sales_Order_Grid $value)
  * @method Mage_Adminhtml_Block_Sales_Order_Grid           getBlock()
  */
+use \TIG_PostNL_Model_Core_Shipment as PostNLShipment;
+
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
     /**
@@ -924,6 +926,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /** @var Mage_Adminhtml_Helper_Data $adminhtmlHelper */
         $adminhtmlHelper = Mage::helper('adminhtml');
 
+        /** @var TIG_PostNL_Helper_ProductCode $productCodeHelper */
+        $productCodeHelper = Mage::helper('postnl/productCode');
+
         /**
          * Build an array of options for the massaction item.
          */
@@ -979,6 +984,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_domestic_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_DOMESTIC)
                 );
             }
 
@@ -988,6 +994,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_avond_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_AVOND)
                 );
             }
 
@@ -1006,6 +1013,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_sunday_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_SUNDAY)
                 );
             }
 
@@ -1015,6 +1023,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_sameday_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_SAMEDAY)
                 );
             }
 
@@ -1024,6 +1033,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pg_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_PG)
                 );
             }
 
@@ -1042,6 +1052,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pge_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_PGE)
                 );
             }
 
@@ -1051,6 +1062,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_eps_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_EPS)
                 );
             }
 
@@ -1060,6 +1072,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_globalpack_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_GLOBALPACK)
                 );
             }
 
@@ -1069,6 +1082,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_domestic_cod_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_DOMESTIC_COD)
                 );
             }
 
@@ -1078,6 +1092,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_avond_cod_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_AVOND_COD)
                 );
             }
 
@@ -1087,6 +1102,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pg_cod_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_PG_COD)
                 );
             }
 
@@ -1096,6 +1112,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pge_cod_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_PGE_COD)
                 );
             }
 
@@ -1114,6 +1131,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_pa_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_PA)
                 );
             }
 
@@ -1123,6 +1141,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'label'  => $optionLabel,
                     'values' => $options['postnl_buspakje_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_BUSPAKJE)
                 );
             }
 
@@ -1131,7 +1150,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'name'   => 'product_options[extra_at_home_options]',
                     'type'   => 'select',
                     'label'  => $optionLabel,
-                    'values' => $options['postnl_extra_at_home_options']
+                    'values' => $options['postnl_extra_at_home_options'],
+                    'value'  => $productCodeHelper->getDefault($storeId, PostNLShipment::SHIPMENT_TYPE_EXTRAATHOME)
                 );
             }
 
