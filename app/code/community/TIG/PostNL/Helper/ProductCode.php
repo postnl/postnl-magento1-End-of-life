@@ -220,7 +220,7 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
         $pepsProducts = $this->getAllProductOptionsSingleton()->getPepsOptions(true);
         $pepsProductKeys = array_keys($pepsProducts);
         if (in_array($productCode, $pepsProductKeys)
-            && !$this->getHelper('cif')->countryAvailableInPepsLists($shipment->getShippingAddress()->getCountryId())
+            && !$this->getHelper('cif')->countryAvailableInPepsLists($orderInfo->getShippingAddress()->getCountryId())
         ) {
             $productCode = $this->getNonPriorityProductcode($shipmentType);
         }
