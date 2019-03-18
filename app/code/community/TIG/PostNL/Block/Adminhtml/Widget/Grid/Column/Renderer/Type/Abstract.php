@@ -614,7 +614,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $deliveryDate = $row->getData(self::DELIVERY_DATE_COLUMN);
                 $deliveryDate = DateTime::createFromFormat('Y-m-d H:i:s', $deliveryDate, new DateTimeZone('UTC'));
 
-                if ($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') {
+                if (($deliveryDate && $deliveryDate->format('N') !== '0' && $deliveryDate->format('N') !== '1') ||
+                    !$deliveryDate ||
+                    $deliveryDate == '0000-00-00 00:00:00')
+                {
                     $renderedValue .= '<br /><em>(' . $deliveryOptionsHelper->__('possibly letter box parcel') . ')</em>';
                 }
             }
