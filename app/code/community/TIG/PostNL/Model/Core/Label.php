@@ -245,12 +245,49 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 204.2,
             ),
         ),
-        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS => array(
-            array(
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 102.1,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 102.1,
+            ),
+            3 => array(
                 'x' => 3.9,
-                'y' => 4.5,
-                'w' => 204.2,
-            )
+                'y' => 3.9,
+                'w' => 102.1,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 102.1,
+            ),
+        ),
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
         )
     );
 
@@ -691,6 +728,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP
         ) {
             $contents = file_get_contents($tempFilename);
             preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
@@ -726,7 +765,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         } elseif ($labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CODCARD
-            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS
         ) {
             $pdf->addOrientedPage('P', 'A4');
         }
@@ -761,6 +799,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP:
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
@@ -768,7 +808,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71:
-            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS:
                 $position = $this->_getLabelPosition($labelType);
 
                 /**
@@ -982,8 +1021,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71];
             }
 
-            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS])) {
-                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS];
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS];
+            }
+
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP];
             }
 
             if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE])) {
@@ -1054,6 +1097,31 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @throws TIG_PostNL_Exception
      */
     public function resizeLabel(TIG_PostNL_Model_Core_Shipment_Label $label)
+    {
+        $tempFilename = $this->_saveTempLabel($label);
+
+        $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        /** @noinspection PhpUndefinedMethodInspection */
+        $pdf->open();
+        /** @noinspection PhpUndefinedMethodInspection */
+        $pdf->SetTitle('PostNL Label');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $pdf->SetAuthor('PostNL');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $pdf->SetCreator('PostNL');
+
+        $pdf->addOrientedPage('L', 'A6');
+
+        $pdf->setSourceFile($tempFilename);
+        $templateIndex = $pdf->ImportPage(1);
+
+        $pdf->Rotate('-90');
+        $pdf->useTemplate($templateIndex, 0, -128, 105.5, 149, true);
+
+        return $pdf;
+    }
+
+    public function resizePepsLabel(TIG_PostNL_Model_Core_Shipment_Label $label)
     {
         $tempFilename = $this->_saveTempLabel($label);
 

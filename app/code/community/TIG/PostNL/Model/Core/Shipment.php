@@ -4493,7 +4493,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         if ($this->isPepsShipment()) {
-            $labelType = 'Peps';
+            $labelType = 'Peps-eps';
+        }
+
+        if ($this->isPepsShipment() &&
+            $this->getShipmentType() == 'globalpack' &&
+            $this->getShippingAddress()->getCountryId() != 'US'
+        ) {
+            $labelType = 'Peps-gp';
         }
 
         /**
