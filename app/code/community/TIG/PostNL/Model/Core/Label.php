@@ -1120,29 +1120,4 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         return $pdf;
     }
-
-    public function resizePepsLabel(TIG_PostNL_Model_Core_Shipment_Label $label)
-    {
-        $tempFilename = $this->_saveTempLabel($label);
-
-        $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->open();
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetTitle('PostNL Label');
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetAuthor('PostNL');
-        /** @noinspection PhpUndefinedMethodInspection */
-        $pdf->SetCreator('PostNL');
-
-        $pdf->addOrientedPage('L', 'A6');
-
-        $pdf->setSourceFile($tempFilename);
-        $templateIndex = $pdf->ImportPage(1);
-
-        $pdf->Rotate('-90');
-        $pdf->useTemplate($templateIndex, 0, -128, 105.5, 149, true);
-
-        return $pdf;
-    }
 }
