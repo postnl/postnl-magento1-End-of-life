@@ -62,7 +62,8 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
     const LABEL_TYPE_CN23              = 'CN23';
     const LABEL_TYPE_COMMERCIALINVOICE = 'CommercialInvoice';
     const LABEL_TYPE_CP71              = 'CP71';
-    const LABEL_TYPE_PEPS              = 'Peps';
+    const LABEL_TYPE_PEPS_EPS          = 'Peps-eps';
+    const LABEL_TYPE_PEPS_GP           = 'Peps-gp';
 
     /**
      * Regex to determine whether a label is actually a combi-label.
