@@ -443,9 +443,7 @@ class TIG_PostNL_Helper_DeliveryOptions_Fee extends TIG_PostNL_Helper_Data
             $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
-        $storeId = Mage::app()->getStore()->getId();
-
-        if ($this->isFreeShippingRuleActive() || Mage::getStoreConfig(self::XPATH_FREE_SHIPPING_FEE, $storeId)) {
+        if ($this->isFreeShippingRuleActive()) {
             $price = 0;
         }
 
