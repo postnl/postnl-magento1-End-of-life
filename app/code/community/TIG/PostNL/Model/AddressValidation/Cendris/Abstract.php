@@ -129,7 +129,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
     /**
      * Includes the API key into the headers.
      */
-    private function setHeaders()
+    protected function setHeaders()
     {
         $apikey = $this->cifModel->getApiKey();
 
@@ -140,7 +140,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
         );
     }
 
-    private function setParameters($restParams)
+    protected function setParameters($restParams)
     {
         $this->client->setRawData(json_encode($restParams), 'application/json');
         $this->client->setMethod(Zend_Http_Client::POST);
