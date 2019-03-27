@@ -39,80 +39,111 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
 class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 {
     /**
+     * Log filename to log all non-specific PostNL exceptions.
+     */
+    const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
+
+    /**
      * Wsdl location
      */
     const WEBSERVICE_WSDL_URL = 'http://www.cendris.nl/webservices/services/soap_rpcenc?wsdl';
 
+    const XPATH_POSTCODE_BASE_URL = 'postnl/cif/postcode_base_url';
+    const ENDPOINT = 'postalcodecheck';
+    const XPATH_POSTCODE_BASE_URL_VERSION = 'postnl/advanced/cif_version_postcode';
+
+    private $client;
+
     /**
      * Calls a webservice method
      *
-     * @param string $method     The method that will be called
-     * @param array  $soapParams An array of parameters to be sent
-     *
-     * @throws Exception
-     * @throws SoapFault
-     *
+     * @param $restParams
      * @return object
+     * @throws TIG_PostNL_Exception
      */
-    public function call($method, $soapParams)
+    public function call($restParams)
     {
+        $this->setUri();
+        $this->setHeaders();
+        $this->setParameters($restParams);
+
         try {
-            $wsdl = self::WEBSERVICE_WSDL_URL;
-
-            /**
-             * Array of soap options used when connecting to the webservice
-             */
-            $soapOptions = array(
-                'soap_version' => SOAP_1_1,
-                'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
-                'trace'        => true,
-            );
-
-            /**
-             * try to create a new SoapClient instance based on the supplied wsdl. if it fails, try again without using the
-             * wsdl cache.
-             */
-            try {
-                $client  = new SoapClient(
-                    $wsdl,
-                    $soapOptions
-                );
-            } catch (Exception $e) {
-                /**
-                 * Disable wsdl cache and try again
-                 */
-                $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
-
-                $client  = new SoapClient(
-                    $wsdl,
-                    $soapOptions
-                );
+            $response = $this->client->request();
+            if ($response->getStatus() != 200) {
+                throw new TIG_PostNL_Exception(
+                    $response->getBody(),
+                    'POSTNL-0247');
             }
 
-            /**
-             * Call the SOAP method
-             */
-            $response = $client->__call(
-                $method,
-                $soapParams
-            );
+            $response = $this->convertResponse($response->getBody());
+        } catch (\Zend_Http_Client_Exception $exception) {
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->logCifException($exception);
 
-            /** @var TIG_PostNL_Helper_AddressValidation $helper */
-            $helper = Mage::helper('postnl/addressValidation');
-            $helper->logCendrisCall($client);
-            return $response;
-        } catch(SoapFault $e) {
-            /**
-             * Log a possible SoapFault exception.
-             */
-            if (!isset($client)) {
-                $client = false;
-            }
-            /** @var TIG_PostNL_Helper_AddressValidation $helper */
-            $helper = Mage::helper('postnl/addressValidation');
-            $helper->logCendrisException($e, $client);
+            return false;
+        } catch (TIG_PostNL_Exception $exception) {
+            /** @var TIG_PostNL_Helper_Cif $cifHelper */
+            $cifHelper = Mage::helper('postnl/cif');
+            $cifHelper->logCifException($exception);
 
-            throw $e;
+            return false;
         }
+
+        return (object)array(
+            'woonplaats' => $response->city,
+            'straatnaam' => $response->streetName
+        );
+    }
+
+    /**
+     *
+     */
+    private function setUri()
+    {
+        $url = Mage::getStoreConfig(self::XPATH_POSTCODE_BASE_URL) .'v' . Mage::getStoreConfigFlag(self::XPATH_POSTCODE_BASE_URL_VERSION) .'/';
+        $uri = $url . self::ENDPOINT;
+        $this->client = new Zend_Http_Client($uri);
+    }
+
+    /**
+     * @param $response
+     * @return mixed
+     * @throws TIG_PostNL_Exception
+     */
+    public function convertResponse($response)
+    {
+        if(!isset($response[0])) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Error received getting postcode data from PostNL.'),
+                'POSTNL-0247'
+            );
+        };
+
+        $data = json_decode($response)[0];
+
+        return $data;
+    }
+
+    /**
+     * Includes the API key into the headers.
+     */
+    private function setHeaders()
+    {
+        $cif = Mage::getModel('postnl_core/cif');
+
+        $apikey = $cif->getApiKey();
+
+        $this->client->setHeaders(
+            array(
+                'apikey' => $apikey
+            )
+        );
+    }
+
+    private function setParameters($restParams)
+    {
+        $this->client->setRawData(json_encode($restParams), 'application/json');
+        $this->client->setMethod(Zend_Http_Client::POST);
     }
 }
