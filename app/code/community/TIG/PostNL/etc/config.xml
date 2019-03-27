@@ -1032,7 +1032,7 @@
                 <track_and_trace_base_url>http://postnl.nl/tracktrace/?</track_and_trace_base_url> <!-- Base URL for track & trace page -->
                 <house_number_required_countries>NL</house_number_required_countries>
                 <postcode_base_url>https://api.postnl.nl/shipment/checkout/</postcode_base_url>
-                <test_address_base_url>https:://api-sandbox.postnl.nl/shipment/checkout/</test_address_base_url>
+                <test_postcode_base_url>https:://api-sandbox.postnl.nl/shipment/checkout/</test_postcode_base_url>
             </cif>
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->

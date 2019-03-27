@@ -38,21 +38,13 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  */
 class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 {
-    /**
-     * Log filename to log all non-specific PostNL exceptions.
-     */
-    const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
-
-    /**
-     * Wsdl location
-     */
-    const WEBSERVICE_WSDL_URL = 'http://www.cendris.nl/webservices/services/soap_rpcenc?wsdl';
-
     const XPATH_POSTCODE_BASE_URL = 'postnl/cif/postcode_base_url';
-    const ENDPOINT = 'postalcodecheck';
+    const XPATH_POSTCODE_TEST_BASE_URL = 'postnl/cif/test_postcode_base_url';
     const XPATH_POSTCODE_BASE_URL_VERSION = 'postnl/advanced/cif_version_postcode';
+    const ENDPOINT = 'postalcodecheck';
 
-    private $client;
+    protected $client;
+    protected $cifModel;
 
     /**
      * Calls a webservice method
@@ -63,6 +55,13 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
      */
     public function call($restParams)
     {
+        /** @var TIG_PostNL_Helper_Cif $cifHelper */
+        $cifHelper = Mage::helper('postnl/cif');
+
+        /** @var TIG_PostNL_Model_Core_Cif_Abstract $cif */
+        $this->cifModel = Mage::getModel('postnl_core/cif');
+
+
         $this->setUri();
         $this->setHeaders();
         $this->setParameters($restParams);
@@ -77,14 +76,10 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 
             $response = $this->convertResponse($response->getBody());
         } catch (\Zend_Http_Client_Exception $exception) {
-            /** @var TIG_PostNL_Helper_Cif $cifHelper */
-            $cifHelper = Mage::helper('postnl/cif');
             $cifHelper->logCifException($exception);
 
             return false;
         } catch (TIG_PostNL_Exception $exception) {
-            /** @var TIG_PostNL_Helper_Cif $cifHelper */
-            $cifHelper = Mage::helper('postnl/cif');
             $cifHelper->logCifException($exception);
 
             return false;
@@ -99,16 +94,22 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
     /**
      *
      */
-    private function setUri()
+    protected function setUri()
     {
-        $url = Mage::getStoreConfig(self::XPATH_POSTCODE_BASE_URL) .'v' . Mage::getStoreConfigFlag(self::XPATH_POSTCODE_BASE_URL_VERSION) .'/';
-        $uri = $url . self::ENDPOINT;
+        $xpath = self::XPATH_POSTCODE_BASE_URL;
+        if ($this->cifModel->isTestMode()) {
+            $xpath = self::XPATH_POSTCODE_TEST_BASE_URL;
+        }
+
+        $url = Mage::getStoreConfig($xpath);
+        $version = 'v' . Mage::getStoreConfigFlag(self::XPATH_POSTCODE_BASE_URL_VERSION) . '/';
+        $uri = $url . $version . self::ENDPOINT;
         $this->client = new Zend_Http_Client($uri);
     }
 
     /**
      * @param $response
-     * @return mixed
+     * @return object
      * @throws TIG_PostNL_Exception
      */
     public function convertResponse($response)
@@ -130,9 +131,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
      */
     private function setHeaders()
     {
-        $cif = Mage::getModel('postnl_core/cif');
-
-        $apikey = $cif->getApiKey();
+        $apikey = $this->cifModel->getApiKey();
 
         $this->client->setHeaders(
             array(

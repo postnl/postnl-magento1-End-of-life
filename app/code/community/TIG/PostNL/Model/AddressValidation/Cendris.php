@@ -38,9 +38,6 @@
  */
 class TIG_PostNL_Model_AddressValidation_Cendris extends TIG_PostNL_Model_AddressValidation_Cendris_Abstract
 {
-    const postcode = '?postalcode=';
-    const housenumber = '&housenumber';
-
     /**
      * Validates and enriches the postcode and housenumber with a city and streetname
      *
@@ -48,7 +45,6 @@ class TIG_PostNL_Model_AddressValidation_Cendris extends TIG_PostNL_Model_Addres
      * @param string $housenumber
      *
      * @return StdClass
-     * @throws SoapFault
      * @throws TIG_PostNL_Exception
      */
     public function getAdresxpressPostcode($postcode, $housenumber)
