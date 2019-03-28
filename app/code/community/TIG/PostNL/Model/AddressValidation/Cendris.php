@@ -39,67 +39,23 @@
 class TIG_PostNL_Model_AddressValidation_Cendris extends TIG_PostNL_Model_AddressValidation_Cendris_Abstract
 {
     /**
-     * Xpaths to cendris username and password.
-     */
-    const XPATH_USERNAME = 'postnl/cendris/username';
-    const XPATH_PASSWORD = 'postnl/cendris/password';
-
-    /**
      * Validates and enriches the postcode and housenumber with a city and streetname
      *
      * @param string $postcode
      * @param string $housenumber
      *
      * @return StdClass
+     * @throws TIG_PostNL_Exception
      */
     public function getAdresxpressPostcode($postcode, $housenumber)
     {
-        $username = $this->_getUsername();
-        $password = $this->_getPassword();
-
-        $soapParams = array(
-            'gebruikersnaam' => $username,
-            'wachtwoord'     => $password,
-            'postcode'       => $postcode,
-            'huisnummer'     => $housenumber,
+        $restParams = array(
+            'postalcode'       => $postcode,
+            'housenumber'     => $housenumber,
         );
 
-        $result = $this->call('getAdresxpressPostcode', $soapParams);
-
-        if (is_array($result)) {
-            $result = current($result);
-        }
+        $result = $this->call($restParams);
 
         return $result;
-    }
-
-    /**
-     * Get the Cendris username.
-     *
-     * @return string
-     */
-    protected function _getUsername()
-    {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        $username = Mage::getStoreConfig(self::XPATH_USERNAME, $storeId);
-
-        return $username;
-    }
-
-    /**
-     * Get the Cendris password.
-     *
-     * TIG exception notice: The unencrypted form is used in line with the available communication options with the
-     * Cendris API at the moment of writing this. PostNL is aware of this and may change this at any time in the
-     * upcoming versions of their API.
-     *
-     * @return string
-     */
-    protected function _getPassword()
-    {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        $password = Mage::getStoreConfig(self::XPATH_PASSWORD, $storeId);
-
-        return $password;
     }
 }
