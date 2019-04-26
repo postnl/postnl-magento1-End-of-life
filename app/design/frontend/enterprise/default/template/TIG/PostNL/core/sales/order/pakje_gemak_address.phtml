@@ -56,9 +56,11 @@
     document.observe('dom:loaded', function() {
         var pakjeGemakAddress = $('pakje_gemak_address');
         var orderPage = $$('.order-page')[0];
-        orderPage.insert({
-            bottom : pakjeGemakAddress
-        });
+        if (orderPage) {
+            orderPage.insert({
+                bottom: pakjeGemakAddress
+            });
+        }
     });
     //]]>
 </script>

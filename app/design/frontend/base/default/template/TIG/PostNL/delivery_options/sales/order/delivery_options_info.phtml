@@ -68,9 +68,11 @@
     document.observe('dom:loaded', function() {
         var deliveryOptionsInfo = $('delivery_options_info');
         var orderPage = $$('div.col2-set div.col-2 div.box-content')[0];
-        orderPage.insert({
-            bottom : deliveryOptionsInfo
-        });
+        if (orderPage) {
+            orderPage.insert({
+                bottom: deliveryOptionsInfo
+            });
+        }
     });
     //]]>
 </script>
