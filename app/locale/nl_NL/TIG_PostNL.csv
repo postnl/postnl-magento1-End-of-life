@@ -1033,7 +1033,7 @@ TIG_PostNL::Are you sure you wish to convert this shipment to a package? You wil
 TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Omzetten naar Brievenbuspakje
 TIG_PostNL::PostNL - Convert to Package,PostNL - Omzetten naar Pakket
 TIG_PostNL::possibly letter box parcel,mogelijk brievenbuspakje
-TIG_PostNL::Expected delivery date,Verwachtte bezorgdatum
+TIG_PostNL::Expected delivery date,Verwachte bezorgdatum
 TIG_PostNL::Change,Wijzigen
 TIG_PostNL::Change Product Option,Wijzig Productoptie
 TIG_PostNL::Please choose a product option.,Kies s.v.p. een productoptie
@@ -1191,7 +1191,7 @@ TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
 TIG_PostNL::The shipment's parcel count has been changed succesfully.,Het aantal pakketten van deze zending is succesvol gewijzigd.
 TIG_PostNL::The changeParcelCount action is currently unavailable.,De changeParcelCount actie is momenteel niet beschikbaar.
-TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
+TIG_PostNL::Expected delivery time,Verwachte bezorgtijd
 TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
 TIG_PostNL::Post office address:,Postkantoor adres:
 TIG_PostNL::Return Phase,Retourfase
