@@ -3264,14 +3264,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If the shipment has labels, but no return labels it cannot print a return label. Instead the existing labels
-         * need to be deleted first.
-         */
-        if ($this->hasLabels() && !$this->isBelgiumShipment()) {
-            return false;
-        }
-
-        /**
          * If the shipment has a barcode, but no return barcode it cannot print a return label. The barcodes need to be
          * deleted first so new ones may be requested.
          */
