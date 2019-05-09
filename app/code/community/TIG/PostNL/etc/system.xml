@@ -1349,24 +1349,6 @@
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
                             </depends>
                         </postcode_check_in_addressbook>
-                        <postcode_check_max_attempts translate="label tooltip" module="postnl">
-                            <label>Maximum number of attempts</label>
-                            <tooltip>After this number of attempts your customer will be prompted to fill in his address manually. Leave this field empty to allow an infinite number of attempts. Please note however that in rare cases a correct address might not be validated, leaving your customer unable to complete the order process. We therefore recommend always filling in a maximum number of attempts.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <use_postcode_check>1</use_postcode_check>
-                                <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <postcode_nl_extension_active>0</postcode_nl_extension_active>
-                            </depends>
-                            <validate>validate-int validate-greater-than-zero</validate>
-                        </postcode_check_max_attempts>
                         <postcode_check_timeout translate="label tooltip" module="postnl">
                             <label>Connection timeout duration</label>
                             <tooltip>After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.</tooltip>
