@@ -47,7 +47,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3085',
             'label'             => 'Standard shipment',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -57,7 +57,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3087',
             'label'             => 'Extra Cover',
             'isExtraCover'      => true,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -67,7 +67,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3094',
             'label'             => 'Extra cover + Return when not home',
             'isExtraCover'      => true,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -77,7 +77,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3189',
             'label'             => 'Signature on delivery',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -87,7 +87,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3089',
             'label'             => 'Signature on delivery + Delivery to stated address only',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => true,
@@ -97,7 +97,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3389',
             'label'             => 'Signature on delivery + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -107,7 +107,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3096',
             'label'             => 'Signature on delivery + Deliver to stated address only + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => true,
@@ -117,7 +117,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3090',
             'label'             => 'Delivery to neighbour + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -127,7 +127,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3385',
             'label'             => 'Deliver to stated address only',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => true,
@@ -137,7 +137,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3390',
             'label'             => 'Deliver to stated address only + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => false,
             'isSameDay'         => true,
             'statedAddressOnly' => true,
@@ -147,7 +147,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3086',
             'label'             => 'COD',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => true,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -157,7 +157,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3091',
             'label'             => 'COD + Extra cover',
             'isExtraCover'      => true,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => true,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -167,7 +167,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3093',
             'label'             => 'COD + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => true,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -177,7 +177,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '3097',
             'label'             => 'COD + Extra cover + Return when not home',
             'isExtraCover'      => true,
-            'isAvond'           => true,
+            'isEvening'           => true,
             'isCod'             => true,
             'isSameDay'         => true,
             'statedAddressOnly' => false,
@@ -187,7 +187,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4970',
             'label'             => 'Belgium Deliver to stated address only + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => true,
@@ -197,7 +197,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4971',
             'label'             => 'Belgium Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => false,
             'statedAddressOnly' => false,
             'isSameDay'         => false,
@@ -207,7 +207,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4972',
             'label'             => 'Belgium Signature on delivery + Deliver to stated address only + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => true,
@@ -217,7 +217,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4973',
             'label'             => 'Belgium Signature on delivery + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -227,7 +227,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4974',
             'label'             => 'Belgium COD + Return when not home',
             'isExtraCover'      => false,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => true,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -237,7 +237,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4975',
             'label'             => 'Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only',
             'isExtraCover'      => true,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => false,
             'isSameDay'         => false,
             'statedAddressOnly' => true,
@@ -248,7 +248,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             'value'             => '4976',
             'label'             => 'Belgium COD + Extra cover (EUR 500) + Return when not home',
             'isExtraCover'      => true,
-            'isAvond'           => false,
+            'isEvening'           => false,
             'isCod'             => true,
             'isSameDay'         => false,
             'statedAddressOnly' => false,
@@ -275,7 +275,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvondOptions($asFlatArray = false)
     {
-        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $asFlatArray);
+        return $this->getOptions(array('isEvening' => true, 'isCod' => false), $asFlatArray);
     }
 
     /**
@@ -287,7 +287,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvondCodOptions($asFlatArray = false)
     {
-        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $asFlatArray);
+        return $this->getOptions(array('isEvening' => true, 'isCod' => true), $asFlatArray);
     }
 
     /**
@@ -410,7 +410,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableAvondOptions($flat = false)
     {
-        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $flat, true);
+        return $this->getOptions(array('isEvening' => true, 'isCod' => false), $flat, true);
     }
 
     /**
@@ -422,7 +422,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvailableAvondCodOptions($flat = false)
     {
-        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
+        return $this->getOptions(array('isEvening' => true, 'isCod' => true), $flat, true);
     }
 
     /**

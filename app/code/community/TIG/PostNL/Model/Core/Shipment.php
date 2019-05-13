@@ -819,7 +819,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 return self::SHIPMENT_TYPE_PGE_COD;
             }
 
-            if ($this->isAvondShipment()) {
+            if ($this->isEveningShipment()) {
                 return self::SHIPMENT_TYPE_AVOND_COD;
             }
 
@@ -848,7 +848,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return self::SHIPMENT_TYPE_PGE;
         }
 
-        if ($this->isAvondShipment()) {
+        if ($this->isEveningShipment()) {
             return self::SHIPMENT_TYPE_AVOND;
         }
 
@@ -2331,7 +2331,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return bool
      */
-    public function isAvondShipment()
+    public function isEveningShipment()
     {
         /**
          * We can check the PostNL order's type to see if it's evening delivery.

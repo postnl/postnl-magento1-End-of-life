@@ -1294,7 +1294,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * Check if the location is open in the evening and mark it accordingly.
              */
             $businessHours = $location->OpeningHours->$weekDay->string;
-            if ($this->_businessHoursIsEvening($businessHours)) {
+            if ($this->_businessHoursisEvening($businessHours)) {
                 $location->isEvening = true;
 
                 continue;
@@ -1315,7 +1315,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return bool
      */
-    protected function _businessHoursIsEvening($businessHours)
+    protected function _businessHoursisEvening($businessHours)
     {
         foreach ($businessHours as $businessHour) {
             if ($this->_isEvening($businessHour)) {

@@ -844,9 +844,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment::isAvondShipment();
+     * @see TIG_PostNL_Model_Core_Shipment::isEveningShipment();
      */
-    public function isAvondShipment($shipment)
+    public function isEveningShipment($shipment)
     {
         /** @noinspection PhpParamsInspection */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
@@ -854,14 +854,14 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             /**
              * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
-            return $shipment->isAvondShipment();
+            return $shipment->isEveningShipment();
         }
 
         /** @var TIG_PostNL_Model_Core_Shipment $tempPostnlShipment */
         $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
         $tempPostnlShipment->setShipment($shipment);
 
-        return $tempPostnlShipment->isAvondShipment();
+        return $tempPostnlShipment->isEveningShipment();
     }
 
     /**
