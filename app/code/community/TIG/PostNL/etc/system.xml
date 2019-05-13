@@ -3199,7 +3199,7 @@
                         </mode>
                         <customer_number translate="label tooltip" module="postnl">
                             <label>Live Customer Number</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3228,7 +3228,7 @@
                         </test_customer_number>
                         <customer_code translate="label tooltip" module="postnl">
                             <label>Live Customer Code</label>
-                            <tooltip>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
+                            <tooltip>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3257,7 +3257,7 @@
                         </test_customer_code>
                         <live_apikey translate="label tooltip" module="postnl">
                             <label>Live Apikey</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -3316,7 +3316,7 @@
                         </maps_api_key>
                         <collection_location translate="label tooltip" module="postnl">
                             <label>BLS (location) Code</label>
-                            <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
+                            <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
