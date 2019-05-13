@@ -54,7 +54,7 @@
 <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php $_isPakketautomaat      = (bool) $_cifHelper->isPakketautomaatShipment($_shipment);?>
-<?php $_isAvond               = (bool) $_cifHelper->isAvondShipment($_shipment); ?>
+<?php $_isEvening               = (bool) $_cifHelper->isEveningShipment($_shipment); ?>
 <?php $_isSunday              = (bool) $_cifHelper->isSundayShipment($_shipment); ?>
 <?php $_isMonday              = (bool) $_cifHelper->isMondayShipment($_shipment); ?>
 <?php $_parcelCount           = $this->getParcelCount(); ?>
@@ -63,7 +63,7 @@
         && $_isDomesticShipment
         && !$_isCod
         && !$_isPakjeGemak
-        && !$_isAvond
+        && !$_isEvening
         && !$_isPakketautomaat
         && !$_isBelgium
         && !$_isSunday

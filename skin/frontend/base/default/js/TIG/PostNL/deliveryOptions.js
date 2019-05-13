@@ -4127,7 +4127,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
 
             if (filterEvening) {
-                if (!location.getIsEveningLocation()) {
+                if (!location.getisEveningLocation()) {
                     location.getMapElement().hide();
                     location.getResponsiveMapElement().hide();
                     location.getMarker().setVisible(false);
@@ -4455,7 +4455,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         return this;
     },
 
-    getIsEveningLocation : function() {
+    getisEveningLocation : function() {
         return this.isEveningLocation;
     },
 
@@ -5465,7 +5465,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             locationInfo.push('24/7 ' + Translator.translate('available'));
         }
 
-        if (this.getIsEveningLocation()) {
+        if (this.getisEveningLocation()) {
             locationInfo.push(Translator.translate('Evening pickup available'));
         }
 

@@ -47,7 +47,7 @@
                 'value'             => '3084',
                 'label'             => 'Cooled Products',
                 'isExtraCover'      => false,
-                'isAvond'           => true,
+                'isEvening'           => true,
                 'isCod'             => false,
                 'isSameDay'         => true,
                 'statedAddressOnly' => true,
@@ -125,7 +125,7 @@
          */
         public function getAvailableAvondOptions($flat = false)
         {
-            return $this->getOptions(array('isAvond' => true, 'isCod' => false), $flat, true);
+            return $this->getOptions(array('isEvening' => true, 'isCod' => false), $flat, true);
         }
 
         /**

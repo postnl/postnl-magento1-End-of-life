@@ -46,24 +46,24 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         array(
             'value'   => '4952',
             'label'   => 'EU Pack Special Consumer (incl. signature)',
-            'isAvond' => false,
+            'isEvening' => false,
         ),
         array(
             'value'   => '4938',
             'label'   => 'EU Pack Special Evening (incl. signature)',
-            'isAvond' => true,
+            'isEvening' => true,
         ),
         array(
             'value'         => '4955',
             'label'         => 'EU Pack Standard (Belgium only, no signature)',
-            'isAvond'       => false,
+            'isEvening'       => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
         ),
         array(
             'value'         => '4941',
             'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
-            'isAvond'       => true,
+            'isEvening'       => true,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
         )
@@ -112,6 +112,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     public function getAvailableAvondOptions($flat = false)
     {
-        return $this->getOptions(array('isAvond' => true), $flat, true);
+        return $this->getOptions(array('isEvening' => true), $flat, true);
     }
 }
