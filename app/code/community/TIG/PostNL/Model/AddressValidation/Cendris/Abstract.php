@@ -50,8 +50,7 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
      * Calls a webservice method
      *
      * @param $restParams
-     * @return object
-     * @throws TIG_PostNL_Exception
+     * @return object|boolean
      */
     public function call($restParams)
     {
@@ -60,7 +59,6 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 
         /** @var TIG_PostNL_Model_Core_Cif_Abstract $cif */
         $this->cifModel = Mage::getModel('postnl_core/cif');
-
 
         $this->setUri();
         $this->setHeaders();
@@ -140,6 +138,9 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
         );
     }
 
+    /**
+     * @param $restParams
+     */
     protected function setParameters($restParams)
     {
         $this->client->setRawData(json_encode($restParams), 'application/json');
