@@ -58,6 +58,15 @@ class TIG_PostNL_Model_Order_Api extends Mage_Sales_Model_Order_Api
         $result['pakjegemak_address_id'] = array_shift($pakjeGemakAddress);
 
         $pakjeGemakAddress['address_id'] = $result['pakjegemak_address_id'];
+        
+        if ($postnlOrder->hasPgLocationCode()) {
+            $pakjeGemakAddress['location_code'] = $postnlOrder->getPgLocationCode();
+        }
+        
+        if ($postnlOrder->hasPgRetailNetworkId()) {
+            $pakjeGemakAddress['retail_network_id'] = $postnlOrder->getPgRetailNetworkId();
+        }
+        
         $result['pakjegemak_address'] = $pakjeGemakAddress;
 
         return $result;
