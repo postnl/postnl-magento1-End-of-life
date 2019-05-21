@@ -117,16 +117,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
             return $barcodeHtml;
         }
 
-        /** Reset barcodeHtml to prevent duplicate of mainbarcode */
-        $barcodeHtml = '';
-
         $barcodes = $postnlShipment->getBarcodes(true);
 
-        foreach($barcodes as $barcode) {
-            $barcodeUrl = $helper->getBarcodeUrl($barcode->getBarcode(), $destinationData, false, true);
-            $barcodeHtml .= "<a href='{$barcodeUrl}' target='_blank'>{$barcode->getBarcode()}</a><br/>";
-        }
+        array_walk($barcodes, function($barcode) use ($barcodeHtml, $destinationData, $helper, &$barcodeHtml) {
+            if (strpos($barcodeHtml, $barcode) !== false) {
+                return;
+            }
 
+            $barcodeUrl = $helper->getBarcodeUrl($barcode->getBarcode(), $destinationData, false, true);
+            $barcodeHtml .= "<br/><a href='{$barcodeUrl}' target='_blank'>{$barcode->getBarcode()}</a>";
+        });
 
         return $barcodeHtml;
     }
