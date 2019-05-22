@@ -1195,7 +1195,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group' => 'standard_options',
                     'isCod' => false,
-                    'isAvond' => true,
+                    'isEvening' => true,
                 ),
                 false,
                 true
@@ -1203,7 +1203,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'postnl_avond_be_options' => $optionsModel->getOptions(
                 array(
                     'group' => 'eu_options',
-                    'isAvond' => true,
+                    'isEvening' => true,
                 ),
                 false,
                 true
@@ -1260,7 +1260,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 array(
                     'group'   => 'standard_options',
                     'isCod'   => true,
-                    'isAvond' => true,
+                    'isEvening' => true,
                 ),
                 false,
                 true
@@ -1692,7 +1692,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @return $this
      */
-    protected function _filterConfirmDate($collection, $column)
+    public function _filterConfirmDate($collection, $column)
     {
         $filter = $column->getFilter();
         if (!$filter) {

@@ -1277,7 +1277,7 @@
                             </depends>
                         </osc_google_places_conflict>
                         <use_postcode_check translate="label tooltip" module="postnl">
-                            <label>Use postcode check</label>
+                            <label><![CDATA[Use postcode check and agree with <a href="" target="_blank">the terms</a>]]></label>
                             <tooltip>Automatically complete Dutch addresses after your customer fills in his postcode and house number.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
@@ -1349,24 +1349,6 @@
                                 <postcode_nl_extension_active>0</postcode_nl_extension_active>
                             </depends>
                         </postcode_check_in_addressbook>
-                        <postcode_check_max_attempts translate="label tooltip" module="postnl">
-                            <label>Maximum number of attempts</label>
-                            <tooltip>After this number of attempts your customer will be prompted to fill in his address manually. Leave this field empty to allow an infinite number of attempts. Please note however that in rare cases a correct address might not be validated, leaving your customer unable to complete the order process. We therefore recommend always filling in a maximum number of attempts.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <use_postcode_check>1</use_postcode_check>
-                                <checkout_extension>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <postcode_nl_extension_active>0</postcode_nl_extension_active>
-                            </depends>
-                            <validate>validate-int validate-greater-than-zero</validate>
-                        </postcode_check_max_attempts>
                         <postcode_check_timeout translate="label tooltip" module="postnl">
                             <label>Connection timeout duration</label>
                             <tooltip>After this number of seconds a customer will be prompted to fill in his address manually. Leave this field empty to disable the feature. Please note: if a customer needs to wait too long he might leave the order process.</tooltip>
@@ -3199,7 +3181,7 @@
                         </mode>
                         <customer_number translate="label tooltip" module="postnl">
                             <label>Live Customer Number</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3228,7 +3210,7 @@
                         </test_customer_number>
                         <customer_code translate="label tooltip" module="postnl">
                             <label>Live Customer Code</label>
-                            <tooltip>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.</tooltip>
+                            <tooltip>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -3257,7 +3239,7 @@
                         </test_customer_code>
                         <live_apikey translate="label tooltip" module="postnl">
                             <label>Live Apikey</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <frontend_model>postnl_adminhtml/system_config_form_field_obscure</frontend_model>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -3316,7 +3298,7 @@
                         </maps_api_key>
                         <collection_location translate="label tooltip" module="postnl">
                             <label>BLS (location) Code</label>
-                            <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
+                            <tooltip>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>

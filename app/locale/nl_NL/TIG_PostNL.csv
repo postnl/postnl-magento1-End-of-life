@@ -26,9 +26,9 @@ TIG_PostNL::Live Apikey,Live Apikey
 TIG_PostNL::Test Apikey,Test Apikey
 TIG_PostNL::Customer Number,Klantnummer
 TIG_PostNL::Customer Code,Klantcode
-"TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
+"TIG_PostNL::Your customer code as supplied by PostNL. Must contain between 3 and 4 letters. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.","Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 088-2255651."
 TIG_PostNL::BLS (location) Code,BLS (locatie) code
-"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","De interne code van het dichtstbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
+"TIG_PostNL::The internal code of the nearest PostNL sorting centre. Must contain 6 numbers. If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651","De interne code van het dichtstbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers. Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 088-2255651."
 TIG_PostNL::These fields are only required if you intend to send products to countries outside the EU.,Deze velden zijn alleen verplicht als u van plan bent om producten buiten de EU te gaan versturen.
 TIG_PostNL::Global Barcode Type,Globaal barcode type
 TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 2 letters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
@@ -52,7 +52,7 @@ TIG_PostNL::Select the unit in which you've entered products' weight,Selecteer d
 TIG_PostNL::Shipment reference type,Verzending referentietype
 TIG_PostNL::Select what to use as a shipment's reference. This will be printed on the shipping label,Selecteer wat de referentie van de verzending is. Dit wordt op het label geprint.
 TIG_PostNL::Custom reference value,Alternatieve referentie waarde.
-"TIG_PostNL::If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343.","Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343."
+"TIG_PostNL::If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 088-2255651.","Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 088-2255651."
 TIG_PostNL::From this menu you can add columns containing PostNL specific information to the orders and shipments grid. Here you can also define default values for actions.,U kunt het verzendingen –en bestellingenoverzicht verrijken met extra kolommen die informatie specifiek voor PostNL zendingen bevatten. Ook kunt u hier standaard waardes voor acties selecteren.
 TIG_PostNL::Show product options in order grid,Toon productopties in het bestellingen overzicht
 TIG_PostNL::Activate to show a drop down menu in the order grid containing the product options alongside the bulk action drop down menu. Deactivate to use the default values.,Activeer om in het bestellingenoverzicht naast het bulk actie dropdown menu de mogelijkheid tot het selecteren van andere productopties te tonen. Deactiveer om altijd de standaardwaardes te gebruiken.
@@ -544,7 +544,7 @@ TIG_PostNL::Contract name,Contract naam
 TIG_PostNL::Sender address reference number,Afzender adres referentie nummer
 TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension registration procedure.,"Uw webshop is geregisteerd. Binnen enkele minuten ontvangt u een e-mail op het adres dat u heeft opgegeven. Lees deze e-mail s.v.p. zorgvuldig, aangezien deze verdere instructies bevat om de registratieprocedure af te ronden."
 TIG_PostNL::Product option,Productoptie
-TIG_PostNL::Use postcode check,Gebruik postcode check
+TIG_PostNL::Use postcode check and agree with <a href="" target="_blank">the terms</a>,Gebruik postcode check en ga akkoord met <a href="" target="_blank">de voorwaarden</a>
 TIG_PostNL::Automatically complete Dutch addresses after your customer fills in his postcode and house number.,Nederlandse adressen worden automatisch aangevuld en gecontroleerd als uw klant zijn postcode en huisnummer invult.
 TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de afreken pagina
 TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check in het adresboek van de klant
@@ -1033,7 +1033,7 @@ TIG_PostNL::Are you sure you wish to convert this shipment to a package? You wil
 TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Omzetten naar Brievenbuspakje
 TIG_PostNL::PostNL - Convert to Package,PostNL - Omzetten naar Pakket
 TIG_PostNL::possibly letter box parcel,mogelijk brievenbuspakje
-TIG_PostNL::Expected delivery date,Verwachtte bezorgdatum
+TIG_PostNL::Expected delivery date,Verwachte bezorgdatum
 TIG_PostNL::Change,Wijzigen
 TIG_PostNL::Change Product Option,Wijzig Productoptie
 TIG_PostNL::Please choose a product option.,Kies s.v.p. een productoptie
@@ -1191,7 +1191,7 @@ TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
 TIG_PostNL::The shipment's parcel count has been changed succesfully.,Het aantal pakketten van deze zending is succesvol gewijzigd.
 TIG_PostNL::The changeParcelCount action is currently unavailable.,De changeParcelCount actie is momenteel niet beschikbaar.
-TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
+TIG_PostNL::Expected delivery time,Verwachte bezorgtijd
 TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
 TIG_PostNL::Post office address:,Postkantoor adres:
 TIG_PostNL::Return Phase,Retourfase
@@ -1491,7 +1491,7 @@ TIG_PostNL::Activate Extra@Home for your customers.,Activeer Exra@Home voor uw k
 TIG_PostNL::Return customer code,Retouren klant code
 TIG_PostNL::To offer returns to your customer you will need to use a different customer code. Ask you accountmanager to retrieve yours.,Om retouren aan te bieden aan uw klanten heeft u afwijkende klantcode nodig. U kunt deze klantcode bij uw accountmanager opvragen.
 TIG_PostNL::This product must be divided over this colli amount. This functionality does only work when Extra@Home is enabled.,Dit product moet over dit aantal colli verspreid worden. Deze functionaliteit werkt alleen als Extra@Home geactiveerd is.
-TIG_PostNL::This product(s) can only be delivered within the Netherlands.,Deze bestelling kan alleen verzonden worden naar bestemmingen in Nederland.
+TIG_PostNL::This product(s) can only be delivered within the Netherlands or Belgium.,Deze bestelling kan alleen verzonden worden naar bestemmingen in Nederland.
 TIG_PostNL::PostNL product parcel count,PostNL product colli aantal
 "TIG_PostNL::Warning : To successfully send orders with Extra@Home, you must fill in the product attributes name, weight and volume.","Let op: Om succesvol orders met Extra@Home te versturen moet u de productattributen naam, gewicht en volume ingevuld hebben."
 "TIG_POSTNL::When sending Extra@Home types, this field is mandatory. Enter as cubic centimeters like 30000.","Wanneer het product type Extra@Home is, dan is dit veld verplicht. Vul hier het aantal kubieke centimeters in, bijvoorbeeld 30000"

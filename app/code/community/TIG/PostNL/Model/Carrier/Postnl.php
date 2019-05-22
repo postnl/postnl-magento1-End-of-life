@@ -219,7 +219,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
          * If parcel_type is in array $checkTypes, there can be no rate shown for non-domestic shipments.
          */
         /** @noinspection PhpUndefinedMethodInspection */
-        if (in_array($parcelType, $checkTypes) && $countryId != 'NL') {
+        if (in_array($parcelType, $checkTypes) && ($countryId != 'NL' && $countryId != 'BE')) {
             return $this->_addShippingRateNotFoundError();
         }
 
