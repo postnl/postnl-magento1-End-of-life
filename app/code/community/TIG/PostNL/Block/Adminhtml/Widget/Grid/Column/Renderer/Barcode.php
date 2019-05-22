@@ -119,7 +119,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
 
         $barcodes = $postnlShipment->getBarcodes(true);
 
-        array_walk($barcodes, function($barcode) use ($barcodeHtml, $destinationData, $helper, &$barcodeHtml) {
+        array_walk($barcodes, function($barcode) use ($destinationData, $helper, &$barcodeHtml) {
             if (strpos($barcodeHtml, $barcode) !== false) {
                 return;
             }
