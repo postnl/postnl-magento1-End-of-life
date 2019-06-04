@@ -544,7 +544,7 @@ TIG_PostNL::Contract name,Contract naam
 TIG_PostNL::Sender address reference number,Afzender adres referentie nummer
 TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension registration procedure.,"Uw webshop is geregisteerd. Binnen enkele minuten ontvangt u een e-mail op het adres dat u heeft opgegeven. Lees deze e-mail s.v.p. zorgvuldig, aangezien deze verdere instructies bevat om de registratieprocedure af te ronden."
 TIG_PostNL::Product option,Productoptie
-TIG_PostNL::Use postcode check and agree with <a href="" target="_blank">the terms</a>,Gebruik postcode check en ga akkoord met <a href="" target="_blank">de voorwaarden</a>
+TIG_PostNL::Use postcode check and agree with <a href="https://confluence.tig.nl/x/UoDzAw" target="_blank">the terms</a>,Gebruik postcode check en ga akkoord met <a href="" target="_blank">de voorwaarden</a>
 TIG_PostNL::Automatically complete Dutch addresses after your customer fills in his postcode and house number.,Nederlandse adressen worden automatisch aangevuld en gecontroleerd als uw klant zijn postcode en huisnummer invult.
 TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de afreken pagina
 TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check in het adresboek van de klant
@@ -1517,3 +1517,4 @@ TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallo
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
 TIG_PostNL::ASAP, Zo snel mogelijk
 TIG_PostNL::"This product requires at least 5 shipments to be supplied in a postbag with a special label intended for that purpose. Click <link>here<link> for the instructions.","Van dit product moeten minimaal 5 zendingen aangeleverd worden in een daarvoor bedoelde postzak met een speciaal label. Zie <link>hier<link> de handleiding."
+TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
