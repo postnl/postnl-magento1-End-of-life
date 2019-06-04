@@ -2577,6 +2577,7 @@
             </POSTNL-0246>
             <POSTNL-0247>
                 <message>Error received getting postcode data from PostNL.</message>
+                <url>https://confluence.tig.nl/x/lIAKB</url>
                 <type>error</type>
             </POSTNL-0247>
 
