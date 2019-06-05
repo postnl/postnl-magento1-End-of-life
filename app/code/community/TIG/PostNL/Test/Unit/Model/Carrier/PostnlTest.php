@@ -109,7 +109,8 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
         $helperMock = $this->getMock('TIG_PostNL_Helper_Carrier', array(
             'getDomesticCountry',
             'canUseStandard',
-            'canUseEps'
+            'canUseEps',
+            'canUseGlobalPack'
         ));
         $carrier->setData('helper', $helperMock);
 
@@ -129,6 +130,10 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
 
         $canUseStandard = $helperMock->expects($this->any());
         $canUseStandard->method('canUseEps');
+        $canUseStandard->willReturn(true);
+
+        $canUseStandard = $helperMock->expects($this->any());
+        $canUseStandard->method('canUseGlobalPack');
         $canUseStandard->willReturn(true);
 
         $getParcelType = $requestMock->expects($this->any());
