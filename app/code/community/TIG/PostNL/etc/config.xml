@@ -1352,7 +1352,7 @@
                 <type>error</type>
             </POSTNL-0002>
             <POSTNL-0003>
-                <message>You have not yet configured the extension to use GlobalPack shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
+                <message>You have not yet configured the extension to use Non-EU shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
                 <url>http://kb.tig.nl/topic/31566436</url>
                 <type>notice</type>
             </POSTNL-0003>
@@ -2536,7 +2536,7 @@
                 <type>error</type>
             </POSTNL-0239>
             <POSTNL-0240>
-                <message>Unable to create a shipment for order #%s, because GlobalPack is currently disabled.</message>
+                <message>Unable to create a shipment for order #%s, because Non-EU is currently disabled.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0240>

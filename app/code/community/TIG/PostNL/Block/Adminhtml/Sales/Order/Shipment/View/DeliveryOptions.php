@@ -207,10 +207,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 $shipmentType = $this->__('Parcel Dispenser');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_EPS:
-                $shipmentType = $this->__('EPS');
+                $shipmentType = $this->__('EU');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_GLOBALPACK:
-                $shipmentType = $this->__('GlobalPack');
+                $shipmentType = $this->__('Non-EU');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
                 $shipmentType = $this->__('Letter Box Parcel');

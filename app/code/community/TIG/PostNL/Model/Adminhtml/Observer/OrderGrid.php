@@ -455,8 +455,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'options'                   => array(
                 'nl'                  => $helper->__('Domestic'),
                 'pakje_gemak'         => $helper->__('Post Office'),
-                'eu'                  => $helper->__('EPS'),
-                'global'              => $helper->__('GlobalPack'),
+                'eu'                  => $helper->__('EU'),
+                'global'              => $helper->__('Non-EU'),
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                 'avond'               => $helper->__('Evening Delivery'),
                 'sunday'              => $helper->__('Sunday Delivery'),
