@@ -59,8 +59,8 @@ class TIG_PostNL_Test_Unit_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abst
             'pge'        => array(PostNLShipment::SHIPMENT_TYPE_PGE, array('Post Office', 'Early Pickup')),
             'pge_cod'    => array(PostNLShipment::SHIPMENT_TYPE_PGE_COD, array('Post Office', 'Early Pickup + COD')),
             'pa'         => array(PostNLShipment::SHIPMENT_TYPE_PA, array('Parcel Dispenser')),
-            'eps'        => array(PostNLShipment::SHIPMENT_TYPE_EPS, array('EPS')),
-            'globalpack' => array(PostNLShipment::SHIPMENT_TYPE_GLOBALPACK, array('GlobalPack')),
+            'eps'        => array(PostNLShipment::SHIPMENT_TYPE_EPS, array('EU')),
+            'globalpack' => array(PostNLShipment::SHIPMENT_TYPE_GLOBALPACK, array('Non-EU')),
             'buspakje'   => array(PostNLShipment::SHIPMENT_TYPE_BUSPAKJE, array('Letter Box Parcel')),
             'sunday'     => array(PostNLShipment::SHIPMENT_TYPE_SUNDAY, array('Sunday Delivery')),
             'monday'     => array(PostNLShipment::SHIPMENT_TYPE_MONDAY, array('Monday Delivery')),
@@ -115,8 +115,8 @@ class TIG_PostNL_Test_Unit_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abst
             'idcheck'       => array('IDCheck', 'NL', array('ID Check')),
             'extra_at_home' => array('ExtraAtHome', 'NL', array('Extra@Home')),
             'domestic'      => array('invalidType', 'NL', array('Domestic')),
-            'eps'           => array('invalidType', 'BE', array('EPS')),
-            'globalpack'    => array('invalidType', 'USA', array('GlobalPack')),
+            'eps'           => array('invalidType', 'BE', array('EU')),
+            'globalpack'    => array('invalidType', 'USA', array('Non-EU')),
         );
     }
 

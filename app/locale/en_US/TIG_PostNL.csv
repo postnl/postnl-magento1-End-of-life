@@ -44,7 +44,7 @@ TIG_PostNL::Contact Email,Contact Email
 TIG_PostNL::Confirming & Label Printing Settings,Confirming & Label Printing Settings
 TIG_PostNL::Mode,Mode
 TIG_PostNL::Label size,Label size
-TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.,This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.
+TIG_PostNL::This setting only applies to multiple Dutch and EU labels. GlobalPack labels are always printed as A4.,This setting only applies to multiple Dutch and EU labels. GlobalPack labels are always printed as A4.
 TIG_PostNL::Maximum weight per parcel,Maximum weight per parcel
 TIG_PostNL::Determine the maximum weight per parcel. If an order is too heavy it will be automatically divided into several parcels. You will need to print a separate label for each parcel. This feature is only available for domestic shipments.,Determine the maximum weight per parcel. If an order is too heavy it will be automatically divided into several parcels. You will need to print a separate label for each parcel. This feature is only available for domestic shipments.
 TIG_PostNL::Weight unit,Weight unit

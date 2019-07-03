@@ -81,7 +81,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $label = $helper->__('Domestic');
                 $comment = $helper->__('Evening Delivery');
                 if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
-                    $label = $helper->__('EPS');
+                    $label = $helper->__('EU');
                     $type .= '_be';
                 }
                 break;
@@ -113,10 +113,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $label = $helper->__('Parcel Dispenser');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_EPS:
-                $label = $helper->__('EPS');
+                $label = $helper->__('EU');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_GLOBALPACK:
-                $label = $helper->__('GlobalPack');
+                $label = $helper->__('Non-EU');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_BUSPAKJE:
                 $label = $helper->__('Letter Box Parcel');
@@ -295,7 +295,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 
         if ($this->_isBe($row)) {
             $type = 'avond_be';
-            $label = $helper->__('EPS');
+            $label = $helper->__('EU');
         }
 
         if ($this->_isCod($row)) {
@@ -635,7 +635,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      */
     protected function _getEpsRenderedValue(Varien_Object $row)
     {
-        $label = Mage::helper('postnl')->__('EPS');
+        $label = Mage::helper('postnl')->__('EU');
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='eps'>{$label}</b>";
 
@@ -651,7 +651,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
      */
     protected function _getGlobalpackRenderedValue(Varien_Object $row)
     {
-        $label = Mage::helper('postnl')->__('GlobalPack');
+        $label = Mage::helper('postnl')->__('Non-EU');
 
         $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='globalpack'>{$label}</b>";
 

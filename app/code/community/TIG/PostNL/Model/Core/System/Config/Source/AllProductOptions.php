@@ -352,7 +352,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),*/
         '4945' => array(
             'value'             => '4945',
-            'label'             => 'GlobalPack',
+            'label'             => 'Non-EU',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'countryLimitation' => false,
