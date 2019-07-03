@@ -1516,5 +1516,5 @@ TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie opti
 TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
 TIG_PostNL::ASAP, Zo snel mogelijk
-TIG_PostNL::"This product requires at least 5 shipments to be supplied in a postbag with a special label intended for that purpose. Click <link>here<link> for the instructions.","Van dit product moeten minimaal 5 zendingen aangeleverd worden in een daarvoor bedoelde postzak met een speciaal label. Zie <link>hier<link> de handleiding."
+TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Click <link>here<link> for the instructions.","Een Pakje Tracked is een klein pakket met statusinformatie. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
 TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
