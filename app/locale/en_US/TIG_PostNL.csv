@@ -1437,4 +1437,7 @@ TIG_PostNL::Default Age check pickup option,Default Age check pickup option
 TIG_PostNL::Default Birthday check pickup option,Default Birthday check pickup option
 TIG_PostNL::ASAP,Soon as possible
 TIG_PostNL::Error received getting postcode data from PostNL., PostNL: Error received getting postcode data from PostNL.
-
+TIG_PostNL::Priority Packets Tracked, Priority Packets Tracked
+TIG_PostNL::Priority Packets Tracked Bulk, Priority Packets Tracked Bulk
+TIG_PostNL::Priority Packets Tracked Sort, Priority Packets Tracked Sort
+TIG_PostNL::Priority Packets Tracked Boxable, Priority Packets Tracked Boxable
