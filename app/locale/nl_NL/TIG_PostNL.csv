@@ -1518,3 +1518,7 @@ TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum control
 TIG_PostNL::ASAP, Zo snel mogelijk
 TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Click <link>here<link> for the instructions.","Een Pakje Tracked is een klein pakket met statusinformatie. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
 TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
+TIG_PostNL::Priority Packets Tracked, Priority Pakjes Tracked
+TIG_PostNL::Priority Packets Tracked Bulk, Priority Pakjes Tracked Bulk
+TIG_PostNL::Priority Packets Tracked Sorted, Priority Pakjes Tracked Gesorteerd
+TIG_PostNL::Priority Packets Tracked Boxable, Priority Pakjes Tracked Boxable

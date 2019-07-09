@@ -896,7 +896,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         // PEPS PRODUCTS
         '6350' => array(
             'value'             => '6350',
-            'label'             => 'Priority packets tracked',
+            'label'             => 'Priority Packets Tracked',
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isSunday'          => false,
@@ -908,7 +908,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '6550' => array(
             'value'             => '6550',
-            'label'             => 'Priority packets tracked bulk ',
+            'label'             => 'Priority Packets Tracked Bulk',
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isSunday'          => false,
@@ -920,7 +920,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '6940' => array(
             'value'             => '6940',
-            'label'             => 'Priority packets tracked sorted',
+            'label'             => 'Priority Packets Tracked Sorted',
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isSunday'          => false,
@@ -932,7 +932,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '6942' => array(
             'value'             => '6942',
-            'label'             => 'Priority packets tracked boxable',
+            'label'             => 'Priority Packets Tracked Boxable',
             'isExtraCover'      => false,
             'isAvond'           => false,
             'isSunday'          => false,
