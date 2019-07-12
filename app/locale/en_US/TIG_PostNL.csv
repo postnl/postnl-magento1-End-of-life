@@ -1441,3 +1441,8 @@ TIG_PostNL::Priority Packets Tracked, Priority Packets Tracked
 TIG_PostNL::Priority Packets Tracked Bulk, Priority Packets Tracked Bulk
 TIG_PostNL::Priority Packets Tracked Sort, Priority Packets Tracked Sort
 TIG_PostNL::Priority Packets Tracked Boxable, Priority Packets Tracked Boxable
+TIG_PostNL::Default EPS option,Default EPS option
+TIG_PostNL::Default Globalpack option,Default Globalpack option
+TIG_PostNL::Use PEPS Products,Use PEPS Products
+TIG_PostNL::PEPS Barcode Type,PEPS Barcode Type
+TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.

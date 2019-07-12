@@ -4425,7 +4425,7 @@
                         <use_peps translate="label comment tooltop" module="postnl">
                             <label>Use PEPS Products</label>
                             <tooltip>This allows you the use of the priority parcel products. After you enable this setting the products can be selected in the default EPS and Globalpack selection.</tooltip>
-                            <comment>These products can only be used for an order which contains five or more parcels (colli). Each of these parcels should have a maximum weight of 2kg.</comment>
+                            <comment><![CDATA[Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.]]></comment>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
