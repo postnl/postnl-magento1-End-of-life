@@ -99,7 +99,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         }
 
         /** PEPS is not compatible with Evening */
-        if (isset($flags['isAvond']) && $flags['isAvond']) {
+        if (isset($flags['isEvening']) && $flags['isEvening']) {
             return $options;
         }
 
