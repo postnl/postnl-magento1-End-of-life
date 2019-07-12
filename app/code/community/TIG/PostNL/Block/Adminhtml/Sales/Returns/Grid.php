@@ -193,8 +193,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Returns_Grid extends Mage_Adminhtml_Block
                 'options'                   => array(
                     'nl'                  => $postnlHelper->__('Domestic'),
                     'pakje_gemak'         => $postnlHelper->__('PakjeGemak'),
-                    'eu'                  => $postnlHelper->__('EPS'),
-                    'global'              => $postnlHelper->__('GlobalPack'),
+                    'eu'                  => $postnlHelper->__('EU'),
+                    'global'              => $postnlHelper->__('Non-EU'),
                     'pakketautomaat'      => $postnlHelper->__('Parcel Dispenser'),
                     'avond'               => $postnlHelper->__('Evening Delivery'),
                     'pakje_gemak_express' => $postnlHelper->__('Early Pickup'),

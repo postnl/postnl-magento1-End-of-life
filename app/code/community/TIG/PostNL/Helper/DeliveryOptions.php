@@ -719,10 +719,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $deliveryOptionsInfo['formatted_type'] = 'Pakketautomaat';
                 break;
             case 'eps':
-                $deliveryOptionsInfo['formatted_type'] = 'EPS';
+                $deliveryOptionsInfo['formatted_type'] = 'EU';
                 break;
             case 'globalpack':
-                $deliveryOptionsInfo['formatted_type'] = 'GlobalPack';
+                $deliveryOptionsInfo['formatted_type'] = 'Non-EU';
                 break;
             case 'buspakje':
                 $deliveryOptionsInfo['formatted_type'] = 'Brievenbuspakje';

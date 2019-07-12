@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
     protected $_options = array(
         array(
             'value'             => '4945',
-            'label'             => 'GlobalPack',
+            'label'             => 'Non-EU',
             'isExtraCover'      => true,
             'isSunday'          => false,
             'countryLimitation' => false,

@@ -62,8 +62,8 @@ class TIG_PostNL_Test_Unit_Block_Adminhtml_Sales_Order_View_DeliveryOptionsTest
             'extra_at_home'                => array('ExtraAtHome', 'NL', null, 'Extra@Home'),
             'domestic by domestic country' => array('invalidType', 'NL', false, 'Domestic'),
             'domestic by dutch products'   => array('invalidType', 'NL', true, 'Domestic'),
-            'eps'                          => array('invalidType', 'BE', false, 'EPS'),
-            'globalpack'                   => array('invalidType', 'USA', false, 'GlobalPack'),
+            'eps'                          => array('invalidType', 'BE', false, 'EU'),
+            'globalpack'                   => array('invalidType', 'USA', false, 'Non-EU'),
         );
     }
 

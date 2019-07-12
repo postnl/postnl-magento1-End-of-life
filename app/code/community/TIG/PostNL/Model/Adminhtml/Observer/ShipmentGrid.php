@@ -413,8 +413,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_DOMESTIC_COD  => $helper->__('Domestic (COD)'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_PG            => $helper->__('PakjeGemak'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_PG_COD        => $helper->__('PakjeGemak (COD)'),
-                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EPS           => $helper->__('EPS'),
-                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_GLOBALPACK    => $helper->__('GlobalPack'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_EPS           => $helper->__('EU'),
+                        TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_GLOBALPACK    => $helper->__('Non-EU'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_PA            => $helper->__('Parcel Dispenser'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AVOND         => $helper->__('Evening Delivery'),
                         TIG_PostNL_Model_Core_Shipment::SHIPMENT_TYPE_AVOND_COD     => $helper->__(

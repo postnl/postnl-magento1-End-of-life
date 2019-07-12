@@ -44,7 +44,7 @@ TIG_PostNL::Contact Email,Contact e-mailadres
 TIG_PostNL::Confirming & Label Printing Settings,Voormelden & Label printen Instellingen
 TIG_PostNL::Mode,Modus
 TIG_PostNL::Label size,Label formaat
-TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.,Deze instelling geldt voor Nederlandse en Europese labels. Labels voor buiten de EU worden altijd op A4 formaat geprint.
+TIG_PostNL::This setting only applies to multiple Dutch and EU labels. Non-EU labels are always printed as A4.,Deze instelling geldt voor Nederlandse en Europese labels. Labels voor buiten de EU worden altijd op A4 formaat geprint.
 TIG_PostNL::Maximum weight per parcel,Maximum gewicht per pakje
 TIG_PostNL::Determine the maximum weight per parcel. If an order is too heavy it will be automatically divided into several parcels. You will need to print a separate label for each parcel. This feature is only available for domestic shipments.,Bepaal het maximale gewicht per pakket. Als het gewicht teveel is wordt de order automatisch opgedeeld in meerdere pakketten die apart met een eigen label verstuurd dienen te worden. Deze functionaliteit geldt enkel voor orders binnen Nederland.
 TIG_PostNL::Weight unit,Gewichtseenheid
@@ -217,8 +217,8 @@ TIG_PostNL::No,Nee
 TIG_PostNL::Yes,Ja
 TIG_PostNL::PakjeGemak,PakjeGemak
 TIG_PostNL::Domestic,Binnenland
-TIG_PostNL::EPS,EPS
-TIG_PostNL::GlobalPack,GlobalPack
+TIG_PostNL::EU,EU
+TIG_PostNL::Non-EU,Non-EU
 TIG_PostNL::Confirmed,Voorgemeld
 TIG_PostNL::Confirmation expired,Voormelding verlopen
 TIG_PostNL::Today,Vandaag
@@ -330,7 +330,7 @@ TIG_PostNL::You currently do not use split street lines.,U gebruikt momenteel ge
 "TIG_PostNL::Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in uw webshop. Neem voor meer informatie contact op met PostNL support."
 TIG_PostNL::You have configured the extension for test mode only. You still must enter a live apikey before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live apikey in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
 TIG_PostNL::You have not yet fully configured the extension. You must complete this process before you can use it.,U heeft nog niet de volledige extensie geconfigureerd. U dient dit proces te voltooien voordat u de extensie kunt gebruiken.
-TIG_PostNL::Are you planning to ship outside of the EU? Activate GlobalPack with the details you have received from PostNL. You can ignore the GlobalPack settings for domestic shipping and shipping within the EU.,Gaat u buiten de EU verzenden? Activeer dan GlobalPack met de gegevens die u van PostNL gekregen heeft. Verstuurt u alleen binnen Nederland en de EU? Dan kunt u deze instellingen negeren.
+TIG_PostNL::Are you planning to ship outside of the EU? Activate Non-EU with the details you have received from PostNL. You can ignore the Non-EU settings for domestic shipping and shipping within the EU.,Gaat u buiten de EU verzenden? Activeer dan Non-EU met de gegevens die u van PostNL gekregen heeft. Verstuurt u alleen binnen Nederland en de EU? Dan kunt u deze instellingen negeren.
 TIG_PostNL::You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.,U heeft PostNL Checkout nog niet geconfigureerd. Volgt u a.u.b. het configuratieproces als u PostNL Checkout wenst te gebruiken.
 TIG_PostNL::Previous page,vorige pagina
 TIG_PostNL::Page,pagina
@@ -383,7 +383,7 @@ TIG_PostNL::Invalid Magento edition detected: %s,Ongeldige Magento editie gedete
 TIG_PostNL::Invalid rate type requested: %s,Ongeldige tarief optie gevraagd: %s
 "TIG_PostNL::These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.","Deze instellingen zijn enkel bedoeld voor geavanceerde gebruikers! Indien u niet geheel zeker bent van wat u doet, pas deze instellingen dan niet aan."
 TIG_PostNL::This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.,Hier kunt u aangeven welke betaalmethodes in PostNL Checkout aan uw klanten getoond worden. Tenminste één betaalmethode dient actief te zijn.
-TIG_PostNL::Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.,"Hier kunt u bepalen hoe GlobalPack (internationale) zendingen afgehandeld worden. Dit is uiterst belangrijk indien u van plan bent producten buiten de EU te verzenden. Indien u enkel binnen de EU verstuurt, kunt u deze instellingen negeren."
+TIG_PostNL::Here you can specify the way Non-EU shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.,"Hier kunt u bepalen hoe Non-EU (internationale) zendingen afgehandeld worden. Dit is uiterst belangrijk indien u van plan bent producten buiten de EU te verzenden. Indien u enkel binnen de EU verstuurt, kunt u deze instellingen negeren."
 TIG_PostNL::Shipping preferences,Verzend voorkeuren
 "TIG_PostNL::You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","U kunt een alternatief retouradres opgeven voor zendingen die niet afgeleverd konden worden. Indien u hier geen gebruik van wenst te maken, zal uw afzenderadres gebruikt worden."
 TIG_PostNL::Please fill in your address details. These details are required for the activation of the extension.,Vul hier uw adresgegevens in. Deze zijn noodzakelijk voor de werking van de extensie.
@@ -513,11 +513,11 @@ TIG_PostNL::Post Office options,Postkantoor opties
 "TIG_PostNL::Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation.","Klanten kunnen een specifieke datum en tijd kiezen waarop ze hun bestelling bezorgd willen hebben wanneer ze gebruik maken van PostNL Checkout. Wanneer een klant een bestelling wil plaatsen met daarin een product dat niet op voorraad is, is het mogelijk dat u niet kunt garanderen dat de bestelling op het gekozen tijdstip bezorgd wordt. Indien deze instelling uit staat, zullen klanten in dit geval geen gebruik kunnen maken van PostNL Checkout. Op deze manier kunt u voorkomen dat deze situatie zich voordoet."
 TIG_PostNL::The price overview will contain the order's subtotal and shipping costs only.,Het prijs overzicht bevat enkel het subtotaal en de verzendkosten van de bestelling.
 TIG_PostNL::Shipping Methods,Verzendmethodes
-TIG_PostNL::Use GlobalPack,Gebruik GlobalPack
-TIG_PostNL::GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.,"GlobalPack wordt gebruikt om bestellingen buiten de EU te verzenden. Indien u hier geen gebruik van maakt, kunt u deze instelling uit laten staan."
+TIG_PostNL::Use Non-EU,Gebruik Non-EU
+TIG_PostNL::Non-EU is used to ship orders outside the EU. Otherwise you can leave this field disabled.,"Non-EU wordt gebruikt om bestellingen buiten de EU te verzenden. Indien u hier geen gebruik van maakt, kunt u deze instelling uit laten staan."
 TIG_PostNL::Use PostNL Checkout and Mijnpakket login,Gebruik PostNL Checkout en Mijnpakket login
 "TIG_PostNL::If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'.",Indien u gebruik wilt maken van PostNL Checkout of Mijnpakket login moet u deze instelling op 'ja' zetten.
-TIG_PostNL::You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.,U heeft GlobalPack niet geactiveerd. Activeer GlobalPack onder 'Account Instellingen' om uw GlobalPack voorkeuren te configureren.
+TIG_PostNL::You have not enabled Non-EU. Please enable Non-EU under 'Account Settings' in order to configure your Non-EU preferences.,U heeft Non-EU niet geactiveerd. Activeer Non-EU onder 'Account Instellingen' om uw Non-EU voorkeuren te configureren.
 TIG_PostNL::You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.,U heeft PostNL Checkout niet geactiveerd. Activeer PostNL Checkout onder 'Account Instellingen' om uw PostNL Checkout voorkeuren te configureren.
 TIG_PostNL::Account settings have been succesfully validated. Please save this page to keep these settings.,De account instellingen zijn succesvol gevalideerd. Sla deze pagina op om deze instellingen te bewaren.
 TIG_PostNL::One or more fields are missing. Please fill these fields and try again.,Eén of meerdere velden zijn niet ingevuld. Vul deze velden a.u.b. alsnog in en probeer het dan nog eens.
@@ -719,7 +719,7 @@ TIG_PostNL::Early Pickup,Extra Vroeg Ophalen
 TIG_PostNL::Evening Delivery options,Avondbezorging opties
 TIG_PostNL::Early Pickup options,Extra Vroeg Ophalen opties
 TIG_PostNL::Default shipment type,Standaard verzendtype
-TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,"Selecteer een standaard GlobalPack verzendtype. Wanneer u GlobalPack zendingen aanmaakt, kunt u ook een ander verzendtype specificeren."
+TIG_PostNL::Please select the default Non-EU shipment type. You can also specify this manually when creating Non-EU shipments.,"Selecteer een standaard Non-EU verzendtype. Wanneer u Non-EU zendingen aanmaakt, kunt u ook een ander verzendtype specificeren."
 TIG_PostNL::Confirm,Voormelden
 TIG_PostNL::Print Shipping Label,Print Verzendlabel
 TIG_PostNL::Complete Status History,Volledige Status Geschiedenis
@@ -734,7 +734,7 @@ TIG_PostNL::This setting may be overwritten by manually creating shipments. This
 TIG_PostNL::Default early post office pickup option,Standaard extra vroeg ophalen optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor zendingen.
 TIG_PostNL::Default shipment type,Standaard zending type
-TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,Selecteer het standaard GlobalPack zending type. U kunt dit ook aangeven op het moment dat u een GlobalPack zending aanmaakt.
+TIG_PostNL::Please select the default Non-EU shipment type. You can also specify this manually when creating Non-EU shipments.,Selecteer het standaard Non-EU zending type. U kunt dit ook aangeven op het moment dat u een Non-EU zending aanmaakt.
 TIG_PostNL::PostNL,PostNL
 TIG_PostNL::The PostNL extension v%s has been successfully installed.,De PostNL extensie v%s is succesvol geïnstalleerd.
 TIG_PostNL::Print label,Verzendlabel printen
@@ -1152,7 +1152,7 @@ TIG_PostNL::Use the button below to request help from the PostNL servicedesk.,Ge
 TIG_PostNL::Request help from the servicedesk,Stel een vraag aan de servicedesk
 TIG_PostNL::PostNL Checkout activation,PostNL Checkout activatie
 TIG_PostNL::Shipment and order grids,Verzendingen -en bestellingenoverzicht
-TIG_PostNL::Globalpack and barcode settings,Globalpack en barcode-instellingen
+TIG_PostNL::Non-EU and barcode settings,Non-EU en barcode-instellingen
 TIG_PostNL::Parcelware export,Parcelware export
 TIG_PostNL::Technical settings,Technische instellingen
 TIG_PostNL::Track & trace email,Track & trace e-mail
@@ -1388,8 +1388,8 @@ TIG_PostNL::PHP,PHP
 TIG_PostNL::Post Office Belgium options,Postkantoor België opties
 TIG_PostNL::Letter Box Parcel options,Brievenbuspakje opties
 TIG_PostNL::Cooled Delivery Options,Gekoeld versturen opties
-"TIG_PostNL::Unable to create a shipment for order #%s, because GlobalPack is currently disabled.","Kan geen zending aanmaken voor bestelling #%s, omdat GlobalPack momenteel uitgeschakeld is."
-TIG_PostNL::You cannot manually confirm GlobalPack shipments. Please use the 'print label & confirm' massaction instead.,Het is niet mogelijk om GlobalPack zendingen handmatig voor te melden. Gebruik s.v.p. de 'print label & meld voor' massa-actie.
+"TIG_PostNL::Unable to create a shipment for order #%s, because Non-EU is currently disabled.","Kan geen zending aanmaken voor bestelling #%s, omdat Non-EU momenteel uitgeschakeld is."
+TIG_PostNL::You cannot manually confirm Non-EU shipments. Please use the 'print label & confirm' massaction instead.,Het is niet mogelijk om Non-EU zendingen handmatig voor te melden. Gebruik s.v.p. de 'print label & meld voor' massa-actie.
 TIG_PostNL::You are currently using the PostNL postcode check in combination with OneStepCheckout's Google Places. Please keep in mind that the PostNL postcode check will overwrite OneStepCheckout's address fields and thereby also the Google Places functionality.,U maakt op het moment gebruik van zowel de PostNL postcode check als van de Google Places functionaliteit van OneStepCheckout. Houdt er rekening mee dat de postcode check van PostNL de adresvelden van OneStepCheckout zal overschrijven en daarmee ook de Google Places functionaliteit onbruikbaar zal maken.
 "TIG_PostNL::You are currently using the PostNL Delivery Options in combination with OneStepCheckout's Google Places. Since both functionalities use the Google Maps api, this could lead to unexpected errors.","U maakt op het moment gebruik van zowel de PostNL bezorgopties als de Google Places functionaliteit van OneStepCheckout. Aangezien beide functionaliteiten gebruik maken van de Google Maps API, kan dit mogelijk tot onverwachte resultaten leiden"
 "TIG_PostNL::You are currenlty using both the delivery date functionality from OneStepCheckout and the PostNL Delivery Options. While these functionalities should work side by side without issues, this could be confusing to your clients.","U maakt op het moment gebruik van zowel de delivery date functionaliteit van OneStepCheckout als de PostNL Bezorgopties. Hoewel deze functionaliteiten zij aan zij zouden moeten kunnen werken zonder problemen, kan dit verwarring opleveren voor uw klanten."
