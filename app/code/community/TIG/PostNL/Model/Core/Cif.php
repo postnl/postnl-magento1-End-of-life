@@ -2084,7 +2084,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
              */
             $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
-                $this->getStoreId()
+                $this->getStoreId(),
+                true
             );
 
             /**
