@@ -2087,11 +2087,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             }
 
             /**
-             * Calculate the item's weight in kg
+             * Calculate the item's weight in grams
              */
             $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
-                $this->getStoreId()
+                $this->getStoreId(),
+                true
             );
 
             /**
