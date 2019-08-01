@@ -6275,7 +6275,7 @@
                             </depends>
                         </default_buspakje_product_option>
                         <default_eu_product_option translate="label tooltip" module="postnl">
-                            <label>Default EPS option</label>
+                            <label>Default EU option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
@@ -6287,7 +6287,7 @@
                             <show_in_store>0</show_in_store>
                         </default_eu_product_option>
                         <default_global_product_option translate="label tooltip" module="postnl">
-                            <label>Default Globalpack option</label>
+                            <label>Default Non-EU option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>

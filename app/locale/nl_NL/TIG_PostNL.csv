@@ -734,7 +734,6 @@ TIG_PostNL::This setting may be overwritten by manually creating shipments. This
 TIG_PostNL::Default early post office pickup option,Standaard extra vroeg ophalen optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor zendingen.
 TIG_PostNL::Default shipment type,Standaard zending type
-TIG_PostNL::Please select the default Non-EU shipment type. You can also specify this manually when creating Non-EU shipments.,Selecteer het standaard Non-EU zending type. U kunt dit ook aangeven op het moment dat u een Non-EU zending aanmaakt.
 TIG_PostNL::PostNL,PostNL
 TIG_PostNL::The PostNL extension v%s has been successfully installed.,De PostNL extensie v%s is succesvol geïnstalleerd.
 TIG_PostNL::Print label,Verzendlabel printen
@@ -1518,12 +1517,14 @@ TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum control
 TIG_PostNL::ASAP, Zo snel mogelijk
 TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Click <link>here<link> for the instructions.","Een Pakje Tracked is een klein pakket met statusinformatie. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
 TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
-TIG_PostNL::Priority Packets Tracked, Priority Pakjes Tracked
-TIG_PostNL::Priority Packets Tracked Bulk, Priority Pakjes Tracked Bulk
-TIG_PostNL::Priority Packets Tracked Sorted, Priority Pakjes Tracked Gesorteerd
-TIG_PostNL::Priority Packets Tracked Boxable, Priority Pakjes Tracked Boxable
-TIG_PostNL::Default EPS option,Standaard EPS option
-TIG_PostNL::Default Globalpack option,Standaard Globalpack option
+TIG_PostNL::Priority Packets Tracked,Priority Pakjes Tracked
+TIG_PostNL::Priority Packets Tracked Bulk,Priority Pakjes Tracked Bulk
+TIG_PostNL::Priority Packets Tracked Sorted,Priority Pakjes Tracked Gesorteerd
+TIG_PostNL::Priority Packets Tracked Boxable Sorted,Priority Pakjes Tracked Boxable Gesorteerd
+TIG_PostNL::Default EU option,Standaard EU option
+TIG_PostNL::Default Non-EU option,Standaard Non-EU option
 TIG_PostNL::Use PEPS Products,Gebruik PEPS producten
 TIG_PostNL::PEPS Barcode Type,PEPS Barcode Type
 TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Een Pakje Tracked is een klein pakket met Track & Trace. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Elk van deze pakjes mogen maximaal een gewicht van 2kg bevatten.
+TIG_PostNL::Please note: Some of the priority parcel products require specific contractual agreements with PostNL. Please contact your PostNL account manager for more information about these products.,Let op: voor deze verzendproducten moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager voor meer informatie.
+TIG_PostNL::Product settings,Product instellingen

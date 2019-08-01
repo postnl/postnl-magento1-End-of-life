@@ -932,7 +932,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '6942' => array(
             'value'             => '6942',
-            'label'             => 'Priority Packets Tracked Boxable',
+            'label'             => 'Priority Packets Tracked Boxable Sorted',
             'isExtraCover'      => false,
             'isEvening'           => false,
             'isSunday'          => false,

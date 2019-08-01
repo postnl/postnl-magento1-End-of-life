@@ -190,7 +190,7 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
         $allProductOptionsMock = $this->getMock('TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions');
         $allProductOptionsMock->method('getPepsOptions')->willReturn(
             array(6350 => '6350 - Priority packets tracked', 6550 => '6550 - Priority packets tracked bulk',
-                  6940 => '6940 - Priority packets tracked sorted', 6942 => '6942 - Priority packets tracked boxable')
+                  6940 => '6940 - Priority packets tracked sorted', 6942 => '6942 - Priority packets tracked boxable sorted')
         );
 
         $instance = $this->_getInstance();
