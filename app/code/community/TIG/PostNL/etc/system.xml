@@ -2721,30 +2721,6 @@
                                 </country>
                             </depends>
                         </enable_extra_at_home>
-                        <food_delivery_default_product_type>
-                            <label>Default product type</label>
-                            <comment>This value is used to determine the product type of newly created products.</comment>
-                            <tooltip>This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_productType</backend_model>
-                            <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
-                            <sort_order>430</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <enable_food_delivery>1</enable_food_delivery>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </food_delivery_default_product_type>
                         <!--<mijnpakket_header translate="label" module="postnl">
                             <label>PostNL account</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -6238,6 +6214,36 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </free_shipping_fee>
+                        <food_delivery_default_product_type translate="label_tooltip" module="postnl">
+                            <label>Default product type</label>
+                            <comment>This value is used to determine the product type of newly created products.</comment>
+                            <tooltip>This will only be used to change the default product type for new products. Existing products should still be changed manually to the desired value.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_productType</backend_model>
+                            <source_model>postnl_deliveryoptions/product_attribute_source_productType</source_model>
+                            <sort_order>279</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_food_delivery>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_food_delivery>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <use_dutch_products>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </use_dutch_products>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
+                                </country>
+                            </depends>
+                        </food_delivery_default_product_type>
                         <default_stated_address_only_product_option translate="label tooltip" module="postnl">
                             <label>Default 'stated address only' option</label>
                             <tooltip>This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.</tooltip>
