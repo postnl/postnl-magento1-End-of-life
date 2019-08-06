@@ -3103,55 +3103,6 @@
                                 </checkout_extension>
                             </depends>
                         </allow_sunday_sorting_be>
-                        <!--<allow_avond_be translate="label comment tooltip" module="postnl">-->
-                            <!--<label>Enable evening delivery for Belgium</label>-->
-                            <!--<comment><![CDATA[You can read more about evening delivery <a href="http://www.postnl.nl/zakelijke-oplossingen/webwinkels/bezorgopties-voor-mijn-klanten/avondbezorging/" target="_blank" title="evening delivery">here</a>.]]></comment>-->
-                            <!--<tooltip>Activate evening delivery for your customers. Note: this only applies to home deliveries.</tooltip>-->
-                            <!--<frontend_type>checkbox</frontend_type>-->
-                            <!--<backend_model>postnl/system_config_backend_checkbox</backend_model>-->
-                            <!--<source_model>postnl/system_config_source_yesno</source_model>-->
-                            <!--<sort_order>90</sort_order>-->
-                            <!--<show_in_default>1</show_in_default>-->
-                            <!--<show_in_website>1</show_in_website>-->
-                            <!--<show_in_store>1</show_in_store>-->
-                            <!--<depends>-->
-                                <!--<delivery_options_be_active>1</delivery_options_be_active>-->
-                                <!--<enable_delivery_days_be>1</enable_delivery_days_be>-->
-                                <!--<checkout_extension>-->
-                                    <!--<fieldset>cif_labels_and_confirming</fieldset>-->
-                                    <!--<value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>-->
-                                    <!--<separator>||</separator>-->
-                                <!--</checkout_extension>-->
-                                <!--<country>-->
-                                    <!--<fieldset>cif_address</fieldset>-->
-                                    <!--<value>NL</value>-->
-                                <!--</country>-->
-                            <!--</depends>-->
-                        <!--</allow_avond_be>-->
-                        <!--<evening_be_timeframe_fee translate="label tooltip" module="postnl">-->
-                            <!--<label>Evening BE timeframe fee</label>-->
-                            <!--<tooltip>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs. Leave this field empty to charge no extra fee for BE evening timeframes.</tooltip>-->
-                            <!--<frontend_type>text</frontend_type>-->
-                            <!--<sort_order>100</sort_order>-->
-                            <!--<show_in_default>1</show_in_default>-->
-                            <!--<show_in_website>1</show_in_website>-->
-                            <!--<show_in_store>1</show_in_store>-->
-                            <!--<validate>validate-number validate-not-negative-number</validate>-->
-                            <!--<depends>-->
-                                <!--<delivery_options_be_active>1</delivery_options_be_active>-->
-                                <!--<enable_delivery_days_be>1</enable_delivery_days_be>-->
-                                <!--<allow_avond_be>1</allow_avond_be>-->
-                                <!--<checkout_extension>-->
-                                    <!--<fieldset>cif_labels_and_confirming</fieldset>-->
-                                    <!--<value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>-->
-                                    <!--<separator>||</separator>-->
-                                <!--</checkout_extension>-->
-                                <!--<country>-->
-                                    <!--<fieldset>cif_address</fieldset>-->
-                                    <!--<value>NL</value>-->
-                                <!--</country>-->
-                            <!--</depends>-->
-                        <!--</evening_be_timeframe_fee>-->
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
@@ -5877,36 +5828,6 @@
                                 </country>
                             </depends>
                         </default_evening_product_option>
-                        <!--<default_evening_be_product_option translate="label tooltip" module="postnl">-->
-                            <!--<label>Default evening BE delivery shipping option</label>-->
-                            <!--<tooltip>This setting may be overwritten by manually creating shipments. This option is only applicable to Belgian evening delivery shipments.</tooltip>-->
-                            <!--<frontend_type>select</frontend_type>-->
-                            <!--<backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>-->
-                            <!--<source_model>postnl_core/system_config_source_euProductOptions::getAvailableAvondOptions</source_model>-->
-                            <!--<multidimensional>true</multidimensional>-->
-                            <!--<sort_order>155</sort_order>-->
-                            <!--<show_in_default>1</show_in_default>-->
-                            <!--<show_in_website>0</show_in_website>-->
-                            <!--<show_in_store>0</show_in_store>-->
-                            <!--<depends>-->
-                                <!--<delivery_options_active>-->
-                                    <!--<fieldset>delivery_options</fieldset>-->
-                                    <!--<value>1</value>-->
-                                <!--</delivery_options_active>-->
-                                <!--<enable_timeframes>-->
-                                    <!--<fieldset>delivery_options</fieldset>-->
-                                    <!--<value>1</value>-->
-                                <!--</enable_timeframes>-->
-                                <!--<allow_avond_be>-->
-                                    <!--<fieldset>delivery_options_int</fieldset>-->
-                                    <!--<value>1</value>-->
-                                <!--</allow_avond_be>-->
-                                <!--<country>-->
-                                    <!--<fieldset>cif_address</fieldset>-->
-                                    <!--<value>NL</value>-->
-                                <!--</country>-->
-                            <!--</depends>-->
-                        <!--</default_evening_be_product_option>-->
                         <default_sunday_product_option translate="label tooltip" module="postnl">
                             <label>Default sunday delivery shipping option</label>
                             <tooltip>This setting may be overwritten by manually creating shipments.</tooltip>
