@@ -1620,7 +1620,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                     $this->__(
                         'Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items.'
                         . ' Hand over your Packet Tracked items in a domestic mailbag with a Packet'
-                        . ' Tracked baglabel attached. Click <link>here<link> for the instructions.'
+                        . ' Tracked baglabel attached.'
                     )
                 );
             }
