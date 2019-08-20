@@ -772,7 +772,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $values         = explode(',', $values);
 
         foreach ($shippingPhases as $key => $phase) {
-            $html .= $this->_decorateShippingPhase($phase, $values[$key]);
+            if (array_key_exists($key, $values)) {
+               $html .= $this->_decorateShippingPhase($phase, $values[$key]);
+            }
         }
 
         return $html;
