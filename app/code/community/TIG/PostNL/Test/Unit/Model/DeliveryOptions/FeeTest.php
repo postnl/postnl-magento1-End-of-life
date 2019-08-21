@@ -92,12 +92,6 @@ class TIG_PostNL_Test_Unit_Model_DeliveryOptions_FeeTest extends TIG_PostNL_Test
                 'path'              => 'postnl/delivery_options/sameday_delivery_fee',
             ),
             array(
-                'type'              => 'express',
-                'result'            => 2,
-                'free_shipping_fee' => '0',
-                'path'              => 'postnl/delivery_options/pakjegemak_express_fee',
-            ),
-            array(
                 'type'              => null,
                 'result'            => 0,
                 'free_shipping_fee' => '0',
