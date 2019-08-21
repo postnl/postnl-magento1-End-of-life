@@ -2008,63 +2008,6 @@
                                 </country>
                             </depends>
                         </enable_pakjegemak>
-                        <enable_pakjegemak_express translate="label tooltip" module="postnl">
-                            <label>Enable early delivery locations</label>
-                            <tooltip>Some locations allow package pick-ups early in the morning. The extension will automatically check if this option is available for locations in the area submitted by your customer. You cannot use Premium Sorting or Sunday Sorting for these shipments. </tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <enable_pakjegemak>1</enable_pakjegemak>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </enable_pakjegemak_express>
-                        <pakjegemak_express_fee translate="label tooltip" module="postnl">
-                            <label>Early delivery fee</label>
-                            <tooltip>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs. This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-number validate-not-negative-number</validate>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <enable_pakjegemak>1</enable_pakjegemak>
-                                <enable_pakjegemak_express>1</enable_pakjegemak_express>
-                                <checkout_extension>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout||gomage_lightcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                                <use_dutch_products>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </use_dutch_products>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <eval><![CDATA[($('postnl_cif_address_country').getValue() == 'NL' || ($('postnl_cif_address_country').getValue() != 'NL' && $('postnl_cif_labels_and_confirming_use_dutch_products').getValue() !== null))]]></eval>
-                                </country>
-                            </depends>
-                        </pakjegemak_express_fee>
                         <!--<enable_pakketautomaat_locations translate="label tooltip" module="postnl">-->
                             <!--<label>Enable package dispenser locations</label>-->
                             <!--<tooltip>Activate to allow your customers to pick up a parcel at a package dispenser location. The extension will automatically check if this option is available in the area submitted by your customer. Parcels delivered to a package dispenser machine must comply with a certain size. </tooltip>-->
@@ -4375,32 +4318,6 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </default_pakjegemak_cod_product_option>
-                        <default_pge_cod_product_option translate="label tooltip" module="postnl">
-                            <label>Default early post office pickup COD option</label>
-                            <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <delivery_options_active>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </delivery_options_active>
-                                <enable_pakjegemak>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak>
-                                <enable_pakjegemak_express>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak_express>
-                            </depends>
-                        </default_pge_cod_product_option>
                     </fields>
                 </cod>
                 <cif_globalpack_settings translate="label comment" module="postnl">
@@ -6175,36 +6092,6 @@
                                 </country>
                             </depends>
                         </default_pakjegemak_product_option>
-                        <default_pge_product_option translate="label tooltip" module="postnl">
-                            <label>Default early post office pickup option</label>
-                            <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>260</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <delivery_options_active>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </delivery_options_active>
-                                <enable_pakjegemak>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak>
-                                <enable_pakjegemak_express>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak_express>
-                                <country>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>NL</value>
-                                </country>
-                            </depends>
-                        </default_pge_product_option>
                         <default_buspakje_product_option translate="label tooltip" module="postnl">
                             <label>Default letter box parcel option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</tooltip>

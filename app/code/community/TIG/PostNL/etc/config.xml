@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.15.9</version>
+            <version>1.16.1</version>
         </TIG_PostNL>
     </modules>
 
@@ -959,8 +959,6 @@
                 <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
                 <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
                 <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
-                <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
-                <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
                 <enable_pakketautomaat_locations>0</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
                 <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
                 <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
@@ -1102,7 +1100,6 @@
                 <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
                 <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
                 <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
-                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
             </cod>
             <cif_globalpack_settings>
                 <use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
@@ -1198,7 +1195,6 @@
                 <default_pakjegemak_nl_be_product_option>4932</default_pakjegemak_nl_be_product_option> <!-- Post Office (Belgium). Netherlands -> Belgium flow -->
                 <default_pakjegemak_be_be_product_option>4878</default_pakjegemak_be_be_product_option> <!-- Post Office (Belgium). Belgium -> Belgium flow -->
                 <default_pakjegemak_be_not_insured_product_option>4936</default_pakjegemak_be_not_insured_product_option> <!-- Post Office (Belgium) -->
-                <default_pge_product_option>3544</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
                 <default_sunday_product_option>3385</default_sunday_product_option> <!-- Deliver to stated address only -->
