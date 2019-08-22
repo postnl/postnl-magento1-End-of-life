@@ -616,6 +616,16 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment = $shipment;
         }
 
+        if ($shipment->isPepsShipment()) {
+            $helper->addSessionMessage('adminhtml/session', null, 'warning',
+                $helper->__(
+                    'Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items.'
+                    . ' Hand over your Packet Tracked items in a domestic mailbag with a Packet'
+                    . ' Tracked baglabel attached.'
+                )
+            );
+        }
+
         /**
          * Prevent EU shipments from being confirmed if their labels are not yet printed.
          */

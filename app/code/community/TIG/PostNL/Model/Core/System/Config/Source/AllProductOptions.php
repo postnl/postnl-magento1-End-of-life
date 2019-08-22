@@ -893,6 +893,55 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'extra_at_home_options',
         ),
+        // PEPS PRODUCTS
+        '6350' => array(
+            'value'             => '6350',
+            'label'             => 'Priority Packets Tracked',
+            'isExtraCover'      => false,
+            'isEvening'         => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'peps_options',
+        ),
+        '6550' => array(
+            'value'             => '6550',
+            'label'             => 'Priority Packets Tracked Bulk',
+            'isExtraCover'      => false,
+            'isEvening'         => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'peps_options',
+        ),
+        '6940' => array(
+            'value'             => '6940',
+            'label'             => 'Priority Packets Tracked Sorted',
+            'isExtraCover'      => false,
+            'isEvening'         => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'peps_options',
+        ),
+        '6942' => array(
+            'value'             => '6942',
+            'label'             => 'Priority Packets Tracked Boxable Sorted',
+            'isExtraCover'      => false,
+            'isEvening'           => false,
+            'isSunday'          => false,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'peps_options',
+        ),
     );
 
     /**
@@ -913,6 +962,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'id_check_options'       => 'Parcel with ID check Options',
         'birthday_check_options' => 'Parcel with Birthday Check Options',
         'extra_at_home_options'  => 'Extra@Home Options',
+        'peps_options'           => 'Priority EPS'
     );
 
     /**
@@ -1030,6 +1080,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     public function toArray()
     {
         return $this->getOptions(array(), true);
+    }
+
+    /**
+     * @param bool $valuesOnly
+     *
+     * @return array
+     */
+    public function getPepsOptions($valuesOnly = false)
+    {
+        return $this->getOptions(array('group' => 'peps_options'), $valuesOnly, true);
     }
 
     /**

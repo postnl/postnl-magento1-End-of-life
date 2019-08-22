@@ -36,43 +36,12 @@
  * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
-    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
-{
-    /**
-     * @var array
-     */
-    protected $_options = array(
-        array(
-            'value'             => '4945',
-            'label'             => 'Non-EU',
-            'isExtraCover'      => true,
-            'isSunday'          => false,
-            'countryLimitation' => false,
-            'group'             => 'global_options',
-        ),
-    );
 
-    /**
-     * Gets all possible options.
-     *
-     * @param array $flags
-     * @param bool  $asFlatArray
-     * @param bool  $checkAvailable
-     *
-     * @return array
-     */
-    public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
-    {
-        $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-        if ($this->getHelper()->isPepsAllowed()) {
-            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
-            $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
-            $pepsProducts = $allOptions->getPepsOptions($asFlatArray);
-            $options += $pepsProducts;
-        }
+set_time_limit(0);
 
-        return $options;
-    }
-}
+$installer->resetWebserviceVersions(array('cif_version_labelling'));

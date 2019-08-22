@@ -84,6 +84,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_USE_GLOBALPACK = 'postnl/cif_globalpack_settings/use_globalpack';
 
     /**
+     * XML path to use_peps settings
+     */
+    const XPATH_USE_PEPS = 'postnl/cif_peps_settings/use_peps';
+
+    /**
      * Xpath to use_buspakje setting.
      */
     const XPATH_USE_BUSPAKJE = 'postnl/delivery_options/use_buspakje';
@@ -1703,6 +1708,19 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $useGlobal = Mage::getStoreConfigFlag(self::XPATH_USE_GLOBALPACK, $storeId);
         return $useGlobal;
+    }
+
+    /**
+     * Checks if PEPS products can be used.
+     *
+     * @return bool
+     */
+    public function isPepsAllowed()
+    {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+
+        $usePeps = Mage::getStoreConfigFlag(self::XPATH_USE_PEPS, $storeId);
+        return $usePeps;
     }
 
     /**
