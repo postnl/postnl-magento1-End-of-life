@@ -1515,7 +1515,7 @@ TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie opti
 TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
 TIG_PostNL::ASAP, Zo snel mogelijk
-TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached.","Een Pakje Tracked is een klein pakket met statusinformatie. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
+TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached.","Een Pakje Tracked is een klein pakket met statusinformatie. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
 TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
 TIG_PostNL::Priority Packets Tracked,Priority Pakjes Tracked
 TIG_PostNL::Priority Packets Tracked Bulk,Priority Pakjes Tracked Bulk
@@ -1525,7 +1525,7 @@ TIG_PostNL::Default EU option,Standaard EU option
 TIG_PostNL::Default Non-EU option,Standaard Non-EU option
 TIG_PostNL::Use PEPS Products,Gebruik Pakjes Tracked producten
 TIG_PostNL::PEPS Barcode Type,Pakjes Tracked Barcode Type
-TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Een Pakje Tracked is een klein pakket met Track & Trace. Het minimum aantal is 5 zendingen. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Elk van deze pakjes mogen maximaal een gewicht van 2kg bevatten.
+TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Een Pakje Tracked is een klein pakket met Track & Trace. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Elk van deze pakjes mogen maximaal een gewicht van 2kg bevatten.
 TIG_PostNL::Please note: Some of the priority parcel products require specific contractual agreements with PostNL. Please contact your PostNL account manager for more information about these products.,Let op: voor deze verzendproducten moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager voor meer informatie.
 TIG_PostNL::Product settings,Product instellingen
 TIG_PostNL::Priority EPS parcels,Pakjes Tracked

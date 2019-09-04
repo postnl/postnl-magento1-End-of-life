@@ -1445,5 +1445,5 @@ TIG_PostNL::Default EU option,Default EU option
 TIG_PostNL::Default Non-EU option,Default Non-EU option
 TIG_PostNL::Use PEPS Products,Use PEPS Products
 TIG_PostNL::PEPS Barcode Type,PEPS Barcode Type
-TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.
+TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.
 TIG_PostNL::Product settings,Product settings

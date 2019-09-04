@@ -1618,7 +1618,7 @@ class TIG_PostNL_PostnlAdminhtml_ShipmentController extends TIG_PostNL_Controlle
                 $helper = Mage::helper('postnl');
                 $helper->addSessionMessage('adminhtml/session', null, 'warning',
                     $this->__(
-                        'Packet Tracked is a small parcel with Track & Trace. The minimum amount is 5 items.'
+                        'Packet Tracked is a small parcel with Track & Trace.'
                         . ' Hand over your Packet Tracked items in a domestic mailbag with a Packet'
                         . ' Tracked baglabel attached.'
                     )
