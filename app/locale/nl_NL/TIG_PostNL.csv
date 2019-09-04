@@ -1515,7 +1515,7 @@ TIG_PostNL::Default ID check pickup option,Standaard ID check afhaallocatie opti
 TIG_PostNL::Default Age check pickup option,Standaard leeftijd controle afhaallocatie optie
 TIG_PostNL::Default Birthday check pickup option,Standaard geboortedatum controle afhaallocatie optie
 TIG_PostNL::ASAP, Zo snel mogelijk
-TIG_PostNL::"Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached.","Een Pakje Tracked is een klein pakket met statusinformatie. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht. Zie <link>hier<link> de handleiding."
+TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached.,Een Pakje Tracked is een klein pakket met statusinformatie. Lever Pakje Tracked zendingen aan in een binnenlandse postzak met een Pakje Tracked zaklabel aangehecht.
 TIG_PostNL::The address check is only available if the plugin is in live mode.,Let op: De adrescheck werkt enkel als de plugin in de live modus staat.
 TIG_PostNL::Priority Packets Tracked,Priority Pakjes Tracked
 TIG_PostNL::Priority Packets Tracked Bulk,Priority Pakjes Tracked Bulk
