@@ -5075,11 +5075,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->isConverted = true;
 
         $productOptions = Mage::registry('postnl_product_option');
-        if ($this->getShipmentType() == 'eps' && in_array($productOptions['globalpack_options'], array(6350, 6550, 6940, 6942))) {
+
+        $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $pepsProducts = $allOptions->getPepsOptions(true);
+
+        if ($this->getShipmentType() == 'eps' && in_array($productOptions['globalpack_options'], array_keys($pepsProducts))) {
             $productOptions['eps_options'] = $productOptions['globalpack_options'];
         }
 
-        if ($this->getShipmentType() == 'globalpack' && in_array($productOptions['eps_options'], array(6350, 6550, 6940, 6942))) {
+        if ($this->getShipmentType() == 'globalpack' && in_array($productOptions['eps_options'], array_keys($pepsProducts))) {
             $productOptions['globalpack_options'] = $productOptions['eps_options'];
         }
 
