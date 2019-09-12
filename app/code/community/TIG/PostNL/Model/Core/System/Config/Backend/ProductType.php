@@ -40,9 +40,13 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_
 {
     const ATTRIBUTE_CODE_PRODUCT_TYPE = 'postnl_product_type';
 
-    const PRODUCTY_TYPE_NON_FOOD      = '0';
-    const PRODUCTY_TYPE_DRY_GROCERIES = '1';
-    const PRODUCTY_TYPE_COOL_PRODUCTS = '2';
+    const PRODUCTY_TYPE_NON_FOOD       = '0';
+    const PRODUCTY_TYPE_DRY_GROCERIES  = '1';
+    const PRODUCTY_TYPE_COOL_PRODUCTS  = '2';
+    const PRODUCTY_AGE_CHECK           = '3';
+    const PRODUCTY_BIRTHDATE_CHECK     = '4';
+    const PRODUCTY_ID_CHECK            = '5';
+    const PRODUCTY_EXTRA_AT_HOME       = '6';
 
     /**
      * @var array
@@ -51,6 +55,10 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ProductType extends Mage_Core_
         self::PRODUCTY_TYPE_NON_FOOD,
         self::PRODUCTY_TYPE_DRY_GROCERIES,
         self::PRODUCTY_TYPE_COOL_PRODUCTS,
+        self::PRODUCTY_AGE_CHECK,
+        self::PRODUCTY_BIRTHDATE_CHECK,
+        self::PRODUCTY_ID_CHECK,
+        self::PRODUCTY_EXTRA_AT_HOME,
     );
 
     /**
