@@ -38,4 +38,11 @@ $installer->startSetup();
 // Reset cif_versions
 $installer->resetWebserviceVersions();
 
+$this->resetConfig(array(
+    'postnl/cod/default_pge_cod_product_option',
+    'postnl/delivery_options/enable_pakjegemak_express',
+    'postnl/delivery_options/pakjegemak_express_fee',
+    'postnl/grid/default_pge_product_option'
+));
+
 $installer->endSetup();
