@@ -379,7 +379,7 @@
                         </matrix_export>
                         <matrix_import translate="label comment">
                             <label>Import Rates</label>
-                            <comment><![CDATA[A prefilled csv file can be found <a href="http://kb.tig.nl/topic/102462196" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[A prefilled csv file can be found <a href="https://confluence.tig.nl/x/soSC" target="_blank">here</a>.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateImport</frontend_model>
                             <backend_model>postnl_carrier/system_config_backend_matrixrate</backend_model>
                             <sort_order>110</sort_order>
@@ -1199,7 +1199,7 @@
                         </sunday_cutoff_time>
                         <shipping_days translate="label comment" module="postnl">
                             <label>Shipping days</label>
-                            <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="https://confluence.tig.nl/x/tYSC" target="_blank">here</a>.]]></comment>
                             <source_model>postnl_core/system_config_source_shippingDays</source_model>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>100</sort_order>
@@ -1379,7 +1379,7 @@
                             <validate>validate-int validate-greater-than-zero</validate>
                         </postcode_check_timeout>
                         <gomage_postcode_check_info translate="comment" module="postnl">
-                            <comment><![CDATA[If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href='http://servicedesk.tig.nl/hc/nl/articles/208889777-GoMage-LightCheckout-Adresinstellingen' target='_blank'>here</a>]]></comment>
+                            <comment><![CDATA[If you are using the Gomage Lightcheckout extension in combination with the PostNL Postcode check;<br/>Please know that the street-settings from the Gomage Lightcheckout extension will be ignored.<br/> Read more about the settings <a href="https://confluence.tig.nl/x/uYWC" target="_blank">here</a>]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1399,7 +1399,7 @@
                             <show_in_store>0</show_in_store>
                         </address_lines>
                         <split_street_unavailable_info translate="comment" module="postnl">
-                            <comment><![CDATA[You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href="http://kb.tig.nl/topic/55961916" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[You are currently using fewer than 2 address lines. In order to guarantee proper address processing, the PostNL extension requires at least 2 address lines. You can read more on how to configure split address lines <a href="https://confluence.tig.nl/x/koWC" target="_blank">here</a>.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1414,7 +1414,7 @@
                         </split_street_unavailable_info>
                         <split_street translate="label comment tooltip" module="postnl">
                             <label>Split street parts</label>
-                            <comment><![CDATA[You can read more on how to configure split address lines <a href="http://kb.tig.nl/topic/55961916" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[You can read more on how to configure split address lines <a href="https://confluence.tig.nl/x/koWC" target="_blank">here</a>.]]></comment>
                             <tooltip>If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
@@ -1737,7 +1737,7 @@
                                 </country>
                         </gomage_delivery_date_conflict>
                         <delivery_options_gomage_conflict_warning translate="comment" module="postnl">
-                            <label><![CDATA[[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href="http://kb.tig.nl/topic/" target="blank">Click here for more information from the TIG knowledgebase.</a>]]></label>
+                            <label><![CDATA[[POSTNL-0222] Warning: possible PostNL and GoMage LightCheckout conflict. <a href="https://confluence.tig.nl/x/goWC" target="blank">Click here for more information from the TIG knowledgebase.</a>]]></label>
                             <comment>You have enabled PostNL delivery options and GoMage LightCheckout's Delivery Date functionality for the same shipping methods. Unfortunately these two functionalities conflict. Please disable one of these features.</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
                             <sort_order>60</sort_order>
@@ -1763,7 +1763,7 @@
                         </delivery_options_gomage_conflict_warning>
                         <theme translate="label comment" module="postnl">
                             <label>Delivery options theme</label>
-                            <comment><![CDATA[You can view an example of the different themes <a href="http://kb.tig.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
+                            <comment><![CDATA[You can view an example of the different themes <a href="https://confluence.tig.nl/x/k4WC" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_themes</source_model>
                             <sort_order>70</sort_order>
@@ -2920,7 +2920,7 @@
                         </use_buspakje>
                         <buspakje_calculation_mode translate="label comment tooltip" module="postnl">
                             <label>Calculation mode</label>
-                            <comment><![CDATA[You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href="http://kb.tig.nl/topic/94905773" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href="https://confluence.tig.nl/x/m4WC" target="_blank">here</a>.]]></comment>
                             <tooltip>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend. If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
@@ -3116,7 +3116,7 @@
                 </delivery_options_int>
                 <cif translate="label comment" module="postnl">
                     <label>Account Settings</label>
-                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.tig.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
+                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="https://confluence.tig.nl/x/kYWC" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>900</sort_order>
@@ -3420,7 +3420,7 @@
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </logo>
                         <show_webshop_info translate="label tooltip" module="postnl">
                             <label>Show webshop information</label>
@@ -5519,7 +5519,7 @@
                 </checkout_payment_methods>-->
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Settings</label>
-                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
+                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="https://confluence.tig.nl/x/nIWC" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1700</sort_order>
                     <show_in_default>1</show_in_default>
@@ -6417,7 +6417,7 @@
                             <show_in_store>0</show_in_store>
                         </uninstall_header>
                         <uninstall_button translate="comment" module="postnl">
-                            <comment><![CDATA[Click <a href="https://kb.tig.nl/topic/94842766" target="_blank">here</a> for more information about the uninstall process.]]></comment>
+                            <comment><![CDATA[Click <a href="https://confluence.tig.nl/x/r4SC" target="_blank">here</a> for more information about the uninstall process.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_uninstallButton</frontend_model>
                             <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
