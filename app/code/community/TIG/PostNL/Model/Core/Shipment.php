@@ -5031,6 +5031,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * PRODUCT CODE METHODS
      ******************************************************************************************************************/
 
+    private $isConverted = false;
+
     /**
      * Gets the product code for this shipment. If specific options have been selected those will be used. Otherwise the
      * default options will be used from system/config
@@ -5043,6 +5045,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Product options were set manually by the user.
          */
         if (Mage::registry('postnl_product_option')) {
+            $this->convertRegistryIfPeps();
+
             $productCode = Mage::registry('postnl_product_option');
 
             if (is_array($productCode)) {
@@ -5060,6 +5064,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getDefaultProductCode();
 
         return $productCode;
+    }
+
+
+    public function convertRegistryIfPeps()
+    {
+        if ($this->isConverted) {
+            return;
+        }
+        $this->isConverted = true;
+
+        $productOptions = Mage::registry('postnl_product_option');
+
+        $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $pepsProducts = $allOptions->getPepsOptions(true);
+
+        if ($this->getShipmentType() == 'eps' && in_array($productOptions['globalpack_options'], array_keys($pepsProducts))) {
+            $productOptions['eps_options'] = $productOptions['globalpack_options'];
+        }
+
+        if ($this->getShipmentType() == 'globalpack' && in_array($productOptions['eps_options'], array_keys($pepsProducts))) {
+            $productOptions['globalpack_options'] = $productOptions['eps_options'];
+        }
+
+        Mage::unregister('postnl_product_option');
+        Mage::register('postnl_product_option', $productOptions);
     }
 
     /**
