@@ -187,7 +187,16 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
      */
     private function prepareMocks($methods = array())
     {
-        $orderMock = $this->getMock('Mage_Sales_Model_Order');
+        $allProductOptionsMock = $this->getMock('TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions');
+        $allProductOptionsMock->method('getPepsOptions')->willReturn(
+            array(6350 => '6350 - Priority packets tracked', 6550 => '6550 - Priority packets tracked bulk',
+                  6940 => '6940 - Priority packets tracked sorted', 6942 => '6942 - Priority packets tracked boxable sorted')
+        );
+
+        $instance = $this->_getInstance();
+        $this->setProperty('allProductOptions', $allProductOptionsMock, $instance);
+
+        $orderMock           = $this->getMock('Mage_Sales_Model_Order');
         $shippingAddressMock = $this->getMockBuilder('Mage_Sales_Model_Order_Address')
             ->setMethods(array('getCountryId'))
             ->getMock();

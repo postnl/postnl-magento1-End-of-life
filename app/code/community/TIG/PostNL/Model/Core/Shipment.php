@@ -286,10 +286,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_BIRTHDAYCHECK_PICKUP_PRODUCT_OPTION      = 'postnl/grid/default_birthday_check_pickup_product_option';
     const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
     const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
-    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION            = 'postnl/grid/default_extra_at_home_product_option';
+    const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION             = 'postnl/grid/default_extra_at_home_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/cif_globalpack_settings/default_global_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/grid/default_global_product_option';
     const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION                  = 'postnl/grid/default_buspakje_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT                          = 'postnl/grid/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT                   = 'postnl/grid/alternative_default_max_amount';
@@ -785,6 +785,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param boolean $checkBuspakje
      *
      * @return string
+     * @throws TIG_PostNL_Exception
      */
     public function getShipmentType($checkBuspakje = true)
     {
@@ -799,6 +800,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = $this->_getShipmentType($checkBuspakje);
 
         $this->setShipmentType($shipmentType);
+
+        // Overwrite the set shipmentType because Priority Package has different EPS and GLOBALPACK lists
+        if ($this->isPepsShipment()) {
+            $helper = $this->getHelper('cif');
+
+            $shipmentType = $helper->getPepsTypeByCountryId($this->getShippingAddress()->getCountryId());
+            $this->setShipmentType($shipmentType);
+
+            return $shipmentType;
+        }
+
         return $shipmentType;
     }
 
@@ -4472,6 +4484,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $labelType = 'Label-combi';
         }
 
+        if ($this->isPepsShipment()) {
+            $labelType = 'Peps-eps';
+        }
+
+        if ($this->isPepsShipment() &&
+            $this->getShipmentType() == 'globalpack' &&
+            $this->getShippingAddress()->getCountryId() != 'US'
+        ) {
+            $labelType = 'Peps-gp';
+        }
+
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $postnlLabel
          */
@@ -5008,6 +5031,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * PRODUCT CODE METHODS
      ******************************************************************************************************************/
 
+    private $isConverted = false;
+
     /**
      * Gets the product code for this shipment. If specific options have been selected those will be used. Otherwise the
      * default options will be used from system/config
@@ -5020,6 +5045,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Product options were set manually by the user.
          */
         if (Mage::registry('postnl_product_option')) {
+            $this->convertRegistryIfPeps();
+
             $productCode = Mage::registry('postnl_product_option');
 
             if (is_array($productCode)) {
@@ -5037,6 +5064,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getDefaultProductCode();
 
         return $productCode;
+    }
+
+
+    public function convertRegistryIfPeps()
+    {
+        if ($this->isConverted) {
+            return;
+        }
+        $this->isConverted = true;
+
+        $productOptions = Mage::registry('postnl_product_option');
+
+        $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $pepsProducts = $allOptions->getPepsOptions(true);
+
+        if ($this->getShipmentType() == 'eps' && in_array($productOptions['globalpack_options'], array_keys($pepsProducts))) {
+            $productOptions['eps_options'] = $productOptions['globalpack_options'];
+        }
+
+        if ($this->getShipmentType() == 'globalpack' && in_array($productOptions['eps_options'], array_keys($pepsProducts))) {
+            $productOptions['globalpack_options'] = $productOptions['eps_options'];
+        }
+
+        Mage::unregister('postnl_product_option');
+        Mage::register('postnl_product_option', $productOptions);
     }
 
     /**
@@ -5700,6 +5752,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return in_array($address->getCountryId(), $helper->getMultiColliCountries());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPepsShipment()
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
+        $allOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions');
+        $pepsProducts = $allOptions->getPepsOptions(true);
+
+        if (array_key_exists($this->getProductCode(), $pepsProducts)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

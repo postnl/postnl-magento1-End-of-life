@@ -44,28 +44,40 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     protected $_options = array(
         array(
-            'value'   => '4952',
-            'label'   => 'EU Pack Special Consumer (incl. signature)',
-            'isEvening' => false,
+            'value'             => '4952',
+            'label'             => 'EU Pack Special Consumer (incl. signature)',
+            'isExtraCover'      => false,
+            'isEvening'         => false,
+            'isSunday'          => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
         ),
         array(
-            'value'   => '4938',
-            'label'   => 'EU Pack Special Evening (incl. signature)',
-            'isEvening' => true,
+            'value'             => '4938',
+            'label'             => 'EU Pack Special Evening (incl. signature)',
+            'isExtraCover'      => false,
+            'isEvening'         => true,
+            'isCod'             => false,
+            'isSameDay'         => false,
+            'statedAddressOnly' => false,
+            'countryLimitation' => false,
+            'group'             => 'eu_options',
         ),
         array(
             'value'         => '4955',
             'label'         => 'EU Pack Standard (Belgium only, no signature)',
-            'isEvening'       => false,
+            'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
+            'group'         => 'eu_options',
         ),
         array(
             'value'         => '4941',
             'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
-            'isEvening'       => true,
+            'isEvening'     => true,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
+            'group'         => 'eu_options',
         )
     );
 
@@ -84,6 +96,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
 
         if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
             $options = $this->removeOptions(array('4955', '4941'), $options);
+        }
+
+        /** PEPS is not compatible with Evening */
+        if (isset($flags['isEvening']) && $flags['isEvening']) {
+            return $options;
+        }
+
+        if ($this->getHelper()->isPepsAllowed()) {
+            /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $allOptions */
+            $allOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+            $pepsProducts = $allOptions->getPepsOptions($asFlatArray);
+            $options += $pepsProducts;
         }
 
         return $options;

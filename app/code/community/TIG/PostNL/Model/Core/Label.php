@@ -245,6 +245,50 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 204.2,
             ),
         ),
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 102.1,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 102.1,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 102.1,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 102.1,
+            ),
+        ),
+        TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+        )
     );
 
     /**
@@ -684,6 +728,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA
             || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS
+            || $labelType == TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP
         ) {
             $contents = file_get_contents($tempFilename);
             preg_match(self::COMBI_LABEL_REGEX, $contents, $matches);
@@ -753,19 +799,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJE:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_BUSPAKJEEXTRA:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_RETURN_LABEL:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS:
+            case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP:
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
                 break;
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CN23:
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE:
-                $position = $this->_getLabelPosition($labelType);
-
-                /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page.
-                 */
-                $this->setLabelCounter(5);
-                break;
             case TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71:
                 $position = $this->_getLabelPosition($labelType);
 
@@ -978,6 +1019,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
             if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71])) {
                 $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_CP71];
+            }
+
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_EPS];
+            }
+
+            if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP])) {
+                $sortedGlobalLabels[] = $shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_PEPS_GP];
             }
 
             if (isset($shipmentLabels[TIG_PostNL_Model_Core_Shipment_Label::LABEL_TYPE_COMMERCIALINVOICE])) {
