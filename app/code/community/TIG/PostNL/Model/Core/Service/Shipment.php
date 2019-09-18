@@ -616,7 +616,7 @@ class TIG_PostNL_Model_Core_Service_Shipment
             $postnlShipment = $shipment;
         }
 
-        if ($shipment->isPepsShipment()) {
+        if ($postnlShipment->isPepsShipment()) {
             $helper->addSessionMessage('adminhtml/session', null, 'warning',
                 $helper->__(
                     'Packet Tracked is a small parcel with Track & Trace.'
