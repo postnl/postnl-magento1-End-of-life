@@ -1358,6 +1358,7 @@ TIG_PostNL::Food Delivery can be used to ship both Dry & Groceries and Cool Prod
 TIG_PostNL::Food Delivery,Livraison alimentaire
 TIG_PostNL::Cooled Food Delivery,Livraison aliments réfrigérés
 TIG_PostNL::Food shipments can only be delivered within the Netherlands.,Les produits frais peuvent uniquement être expédiés au sein des Pays-Bas.
+TIG_PostNL::ID Check shipments can only be delivered within the Netherlands.,Les produits ID Check peuvent uniquement être expédiés au sein des Pays-Bas.
 TIG_PostNL::Non-Food,Non-Food
 TIG_PostNL::Dry & Groceries,Frais non-réfrigéré
 TIG_PostNL::Cooled Products,Frais réfrigéré
