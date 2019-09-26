@@ -208,10 +208,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
          * Types that are only available for addresses in the Netherlands
          */
         $checkTypes = array(
-            self::PARCEL_TYPE_AGECHECK,
+            self::PARCEL_TYPE_FOOD,
             self::PARCEL_TYPE_BIRTHDAYCHECK,
-            self::PARCEL_TYPE_IDCHECK,
-            self::PARCEL_TYPE_FOOD
+            self::PARCEL_TYPE_IDCHECK
         );
 
         /**
@@ -817,7 +816,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 return $this->getConfigData('foodspecificerrmsg');
             case self::PARCEL_TYPE_EXTRAATHOME :
                 return $this->getConfigData('extraathomespecificerrmsg');
-            case self::PARCEL_TYPE_AGECHECK:
             case self::PARCEL_TYPE_BIRTHDAYCHECK:
             case self::PARCEL_TYPE_IDCHECK:
                 return $this->getConfigData('idcheckspecificerrmsg');
