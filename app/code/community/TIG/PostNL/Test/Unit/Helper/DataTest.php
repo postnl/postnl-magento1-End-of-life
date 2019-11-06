@@ -193,8 +193,9 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
 
         /** @var Mage_Sales_Model_Quote|PHPUnit_Framework_MockObject_MockObject $quote */
         $quote = $this->getMock('Mage_Sales_Model_Quote', array('getId', 'getAllItems', 'getProduct'));
+        $quote->getShippingAddress()->setCountryId('NL');
 
-        $quote->expects($this->once())
+        $quote->expects($this->any())
             ->method('getId')
             ->willReturn(1);
 
@@ -244,7 +245,7 @@ class TIG_PostNL_Test_Unit_Helper_DataTest extends TIG_PostNL_Test_Unit_Framewor
         $shippingAddressMock = $this->getMockBuilder('Mage_Sales_Model_Quote_Address')
             ->setMethods(array('getCountryId'))
             ->getMock();
-        $shippingAddressMock->expects($this->once())->method('getCountryId')->willReturn($countryId);
+        $shippingAddressMock->expects($this->any())->method('getCountryId')->willReturn($countryId);
 
         $quote = $this->getMock('Mage_Sales_Model_Quote');
 
