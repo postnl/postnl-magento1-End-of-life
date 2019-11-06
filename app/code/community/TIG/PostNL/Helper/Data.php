@@ -1280,6 +1280,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $quote = $this->getQuote();
         }
 
+        // Agecheck is order-able in non-NL countries, but should fall back to normal product code.
+        if ($quote->getShippingAddress()->getCountryId() != 'NL') {
+            return false;
+        }
+
         $registryKey = 'postnl_quote_is_age_check_' . $quote->getId();
         if (Mage::registry($registryKey) !== null) {
             return Mage::registry($registryKey);
