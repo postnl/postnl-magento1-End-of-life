@@ -57,6 +57,12 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
         $orderInfo = $this->getOrderInfo($postnlOrder);
 
         $xpath = false;
+
+        // Agecheck is accepted for different countries now, but should be pushed as a normal shipment type.
+        if ($shipmentType == 'agecheck' && $orderInfo->getShippingAddress()->getCountryId() != 'NL') {
+            $shipmentType = 'overdag';
+        }
+
         switch ($shipmentType) {
             case PostNLShipment::SHIPMENT_TYPE_DOMESTIC_COD:
                 $xpath = PostNLShipment::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
