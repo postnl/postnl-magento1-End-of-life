@@ -179,16 +179,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         $storeId = Mage::app()->getStore()->getId();
 
+        $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+
         if ($data['country'] == 'BE') {
             $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER_BE, $storeId);
-        } else {
-            $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
-
-            /**
-             * For other countries we need the days minus 1.
-             */
-            $maximumNumberOfDeliveryDays--;
         }
+
+        $maximumNumberOfDeliveryDays--;
 
         $endDate = new DateTime($startDate, new DateTimeZone('UTC'));
         $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));

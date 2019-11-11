@@ -1916,7 +1916,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $this->setData('shipping_phase', $phase);
 
-        if (is_numeric($phase) && $phase != $this->getShippingPhase()) {
+        if (is_numeric($phase)) {
             $phases = $this->getHelper('cif')->getShippingPhaseCodes();
 
             if (isset($phases[$phase])) {
@@ -4502,13 +4502,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $postnlLabel->setParentId($this->getId())
                     ->setLabel(base64_encode($label->Content))
                     ->setLabelType($labelType);
-
-        /**
-         *BE (special) labels are slightly bigger than the rest, so resize them back so they fix everywhere.
-         */
-        if ($this->getShipmentType() == self::SHIPMENT_TYPE_PG && $this->getShippingAddress()->getCountryId() == 'BE') {
-            $postnlLabel->setResize(true);
-        }
 
         $labels = $this->getLabels();
         $labels[] = $postnlLabel;

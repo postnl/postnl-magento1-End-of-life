@@ -72,8 +72,7 @@ class TIG_PostNL_Test_Unit_Model_Carrier_PostnlTest extends TIG_PostNL_Test_Unit
             /** Food error */
             array(true, null, 'BE', true, 'food', $foodErrorMessage),
 
-            /** IDCHeck error */
-            array(true, null, 'BE', true, 'agecheck', $idCheckErrorMessage),
+            /** IDCheck error */
             array(true, null, 'BE', true, 'birthdaycheck', $idCheckErrorMessage),
             array(true, null, 'BE', true, 'idcheck', $idCheckErrorMessage),
 
