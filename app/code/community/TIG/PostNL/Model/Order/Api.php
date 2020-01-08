@@ -70,15 +70,15 @@ class TIG_PostNL_Model_Order_Api extends Mage_Sales_Model_Order_Api
             $result['postnl_type'] = $type;
         }
 
-        if ($type = $postnlOrder->hasDeliveryDate()) {
+        if ($postnlOrder->hasDeliveryDate()) {
             $result['postnl_delivery_date'] = $postnlOrder->getDeliveryDate();
         }
 
-        if ($type = $postnlOrder->hasExpectedDeliveryTimeStart()) {
+        if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
             $result['postnl_expected_delivery_time_start'] = $postnlOrder->getExpectedDeliveryTimeStart();
         }
 
-        if ($type = $postnlOrder->hasExpectedDeliveryTimeEnd()) {
+        if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
             $result['postnl_expected_delivery_time_end'] = $postnlOrder->getExpectedDeliveryTimeEnd();
         }
 
