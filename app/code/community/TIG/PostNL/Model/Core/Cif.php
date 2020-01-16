@@ -1229,6 +1229,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $shipment        = $postnlShipment->getShipment();
         $shippingAddress = $postnlShipment->getShippingAddress();
+
+        $canaryIslands = [35, 38, 51, 52];
+        if ($shippingAddress->getCountryId() === 'ES' && in_array(substr($shippingAddress->getPostcode(), 0, 2), $canaryIslands)) {
+            $shippingAddress->setCountryId("IC");
+            $postnlShipment->setCountryId("IC");
+        }
+
         $order           = $shipment->getOrder();
 
         $parcelCount    = $postnlShipment->getParcelCount();
