@@ -1453,7 +1453,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $housenumberExtension = $housenumberParts['extension'];
         }
 
-        if (empty($housenumber)) {
+        if (($housenumber !== 0 && $housenumber !== "0") && empty($housenumber)) {
             return false;
         }
 
