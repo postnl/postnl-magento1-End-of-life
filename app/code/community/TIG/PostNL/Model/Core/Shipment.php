@@ -2210,7 +2210,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingAddress = $this->getShippingAddress();
-        if (!$shippingAddress || !in_array($shippingAddress->getCountryId(), ['NL', 'BE'])) {
+        if (!$shippingAddress || !in_array($shippingAddress->getCountryId(), array('NL', 'BE'))) {
             return false;
         }
 
