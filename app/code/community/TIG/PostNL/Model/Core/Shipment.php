@@ -1922,7 +1922,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $this->setData('shipping_phase', $phase);
 
-        if (is_numeric($phase) && $phase != $this->getShippingPhase()) {
+        if (is_numeric($phase)) {
             $phases = $this->getHelper('cif')->getShippingPhaseCodes();
 
             if (isset($phases[$phase])) {
