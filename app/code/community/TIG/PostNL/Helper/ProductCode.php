@@ -114,8 +114,7 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                     $xpath = PostNLShipment::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
                 }
 
-                $canaryIslands = [35, 38, 51, 52];
-                if ($orderInfo->getShippingAddress()->getCountryId() === 'ES' && in_array(substr($orderInfo->getShippingAddress()->getPostcode(), 0, 2), $canaryIslands)) {
+                if ($orderInfo->getShippingAddress()->getCountryId() === 'ES' && $orderInfo->getShippingAddress()->getRegion === 'Las Palmas') {
                     $xpath = PostNLShipment::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
                 }
                 break;

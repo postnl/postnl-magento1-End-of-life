@@ -1607,8 +1607,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
 
                 $shippingAddress = $this->getShippingAddress();
-                $canaryIslands = [35, 38, 51, 52];
-                if ($shippingAddress && $shippingAddress->getCountryId() === 'ES' && in_array(substr($shippingAddress->getPostcode(), 0, 2), $canaryIslands)) {
+                if ($shippingAddress && $shippingAddress->getCountryId() === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
                     $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
                 }
                 break;
