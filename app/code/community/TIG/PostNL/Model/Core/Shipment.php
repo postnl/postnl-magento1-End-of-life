@@ -2286,6 +2286,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $shippingDestination = $shippingAddress->getCountryId();
 
+        if ($shippingDestination === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
+            $shippingDestination = 'IC';
+        }
+
         /**
          * @var TIG_PostNL_Helper_Cif $helper
          */
