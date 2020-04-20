@@ -2284,8 +2284,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingDestination = $shippingAddress->getCountryId();
+        $canaryIslands   = [35, 38, 51, 52];
 
-        if ($shippingDestination === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
+        if ($shippingDestination === 'ES' && in_array(substr($shippingAddress->getPostcode(), 0, 2), $canaryIslands)) {
             $shippingDestination = 'IC';
         }
 

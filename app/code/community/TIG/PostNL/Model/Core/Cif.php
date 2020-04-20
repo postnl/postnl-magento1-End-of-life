@@ -1223,20 +1223,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param bool|string                    $returnBarcode
      *
      * @return array
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
+     * @throws TIG_PostNL_Exception
      */
     protected function _getShipment(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
                                     $shipmentNumber = false, $printReturnLabel = false, $returnBarcode = false)
     {
         $shipment        = $postnlShipment->getShipment();
         $shippingAddress = $postnlShipment->getShippingAddress();
+        $canaryIslands   = [35, 38, 51, 52];
 
-        if ($shippingAddress->getCountryId() === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
+        if ($shippingAddress->getCountryId() === 'ES' && in_array(substr($shippingAddress->getPostcode(), 0, 2), $canaryIslands)) {
             $shippingAddress->setCountryId("IC");
             $postnlShipment->setCountryId("IC");
         }
 
         $order           = $shipment->getOrder();
-
         $parcelCount    = $postnlShipment->getParcelCount();
         $shipmentWeight = $postnlShipment->getTotalWeight(true, true);
 
