@@ -1605,6 +1605,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case self::SHIPMENT_TYPE_EPS:
                 $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
+
+                $shippingAddress = $this->getShippingAddress();
+                if ($shippingAddress && $shippingAddress->getCountryId() === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
+                    $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
+                }
                 break;
             case self::SHIPMENT_TYPE_GLOBALPACK:
                 $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
@@ -2279,6 +2284,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingDestination = $shippingAddress->getCountryId();
+        $canaryIslands = array(35, 38, 51, 52);
+
+        if ($shippingDestination === 'ES' && in_array(substr($shippingAddress->getPostcode(), 0, 2), $canaryIslands)) {
+            $shippingDestination = 'IC';
+        }
 
         /**
          * @var TIG_PostNL_Helper_Cif $helper

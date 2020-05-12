@@ -111,12 +111,18 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                 $xpath = PostNLShipment::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case PostNLShipment::SHIPMENT_TYPE_EPS:
+                $xpath = PostNLShipment::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+
                 if ($this->getHelper()->canUseEpsBEOnlyOption($storeId)
                     && $this->isBelgiumShipment($orderInfo)
                 ) {
                     $xpath = PostNLShipment::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
-                } else {
-                    $xpath = PostNLShipment::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                }
+
+                $canaryIslands = array(35, 38, 51, 52);
+
+                if ($orderInfo->getShippingAddress()->getCountryId() === 'ES' && in_array(substr($orderInfo->getShippingAddress()->getPostcode(), 0, 2), $canaryIslands)) {
+                    $xpath = PostNLShipment::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
                 }
                 break;
             case PostNLShipment::SHIPMENT_TYPE_GLOBALPACK:
