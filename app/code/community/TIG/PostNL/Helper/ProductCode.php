@@ -111,12 +111,18 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                 $xpath = PostNLShipment::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case PostNLShipment::SHIPMENT_TYPE_EPS:
+                $xpath = PostNLShipment::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+
                 if ($this->getHelper()->canUseEpsBEOnlyOption($storeId)
                     && $this->isBelgiumShipment($orderInfo)
                 ) {
                     $xpath = PostNLShipment::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
-                } else {
-                    $xpath = PostNLShipment::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                }
+
+                $canaryIslands = array(35, 38, 51, 52);
+
+                if ($orderInfo->getShippingAddress()->getCountryId() === 'ES' && in_array(substr($orderInfo->getShippingAddress()->getPostcode(), 0, 2), $canaryIslands)) {
+                    $xpath = PostNLShipment::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
                 }
                 break;
             case PostNLShipment::SHIPMENT_TYPE_GLOBALPACK:
@@ -173,11 +179,11 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
         }
 
         /**
-         * Dutch shipments may use an alternative default option when the shipment's base grand total exceeds a
+         * Domestic shipments may use an alternative default option when the shipment's base grand total exceeds a
          * specified amount.
          */
         $useAlternativeDefault = Mage::getStoreConfig(PostNLShipment::XPATH_USE_ALTERNATIVE_DEFAULT, $storeId);
-        if (!$xpath && $useAlternativeDefault) {
+        if (!$xpath && $useAlternativeDefault  && $this->getHelper()->getDomesticCountry() == $orderInfo->getShippingAddress()->getCountryId()) {
             /**
              * Alternative default option usage is enabled.
              */
