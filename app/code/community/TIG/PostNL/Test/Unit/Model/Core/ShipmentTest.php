@@ -220,7 +220,7 @@ class TIG_PostNL_Test_Unit_Model_Core_ShipmentTest extends TIG_PostNL_Test_Unit_
         if ($hasShippingAddress) {
             $shippingAddressMock = $this->getMock('Mage_Sales_Model_Order_Address', array('getCountryId'));
 
-            $shippingAddressMock->expects($this->once())->method('getCountryId')->willReturn($country);
+            $shippingAddressMock->expects($this->atLeastOnce())->method('getCountryId')->willReturn($country);
 
             $instance->setData('shipping_address', $shippingAddressMock);
         }
