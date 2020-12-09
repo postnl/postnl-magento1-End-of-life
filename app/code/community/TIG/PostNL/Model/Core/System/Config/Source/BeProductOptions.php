@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
+class TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions
     extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
@@ -44,24 +44,36 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      */
     protected $_options = array(
         array(
-            'value'             => '4952',
-            'label'             => 'EU Pack Special Consumer (incl. signature)',
-            'isExtraCover'      => false,
-            'isEvening'         => false,
-            'isSunday'          => false,
-            'countryLimitation' => false,
-            'group'             => 'eu_options',
+            'value'         => '4946',
+            'label'         => 'EU Pack Standard (Belgium only, no signature)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
         ),
         array(
-            'value'             => '4938',
-            'label'             => 'EU Pack Special Evening (incl. signature)',
-            'isExtraCover'      => false,
-            'isEvening'         => true,
-            'isCod'             => false,
-            'isSameDay'         => false,
-            'statedAddressOnly' => false,
-            'countryLimitation' => false,
-            'group'             => 'eu_options',
+            'value'         => '4941',
+            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'isEvening'     => true,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
+        array(
+            'value'         => '4912',
+            'label'         => 'EPS Standard BE + Signature on delivery (BE)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
+        array(
+            'value'         => '4914',
+            'label'         => 'EPS Standard BE + Signature on delivery + Extra Cover (BE)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => true,
+            'group'         => 'be_options',
         )
     );
 
@@ -77,10 +89,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
-
-        if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
-            $options = $this->removeOptions(array('4955', '4941'), $options);
-        }
 
         /** PEPS is not compatible with Evening */
         if (isset($flags['isEvening']) && $flags['isEvening']) {
@@ -98,17 +106,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     }
 
     /**
-     * @param $optionsToRemove
-     * @param $options
+     * Get a list of available options. This is a filtered/modified version of the array supplied by getOptions();
+     *
+     * @param boolean $flat
      *
      * @return array
      */
-    public function removeOptions($optionsToRemove, $options)
+    public function getAvailableOptions($flat = false)
     {
-        return array_filter($options, function ($option) use ($optionsToRemove) {
-            $option = isset($option['value']) ? $option['value'] : $option;
-            return !in_array($option, $optionsToRemove);
-        });
+        return $this->getOptions(array('isBe' => true), $flat, true);
     }
 
     /**

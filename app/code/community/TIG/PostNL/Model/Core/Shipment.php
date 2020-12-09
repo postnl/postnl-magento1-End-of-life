@@ -287,6 +287,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_IDCHECK_DELIVERY_PRODUCT_OPTION          = 'postnl/grid/default_id_check_delivery_product_option';
     const XPATH_DEFAULT_IDCHECK_PICKUP_PRODUCT_OPTION            = 'postnl/grid/default_id_check_pickup_product_option';
     const XPATH_DEFAULT_EXTRA_AT_HOME_PRODUCT_OPTION             = 'postnl/grid/default_extra_at_home_product_option';
+    const XPATH_DEFAULT_BE_PRODUCT_OPTION                        = 'postnl/grid/default_be_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION                        = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION                     = 'postnl/grid/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION                    = 'postnl/grid/default_global_product_option';
@@ -1609,6 +1610,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $shippingAddress = $this->getShippingAddress();
                 if ($shippingAddress && $shippingAddress->getCountryId() === 'ES' && $shippingAddress->getRegion() === 'Las Palmas') {
                     $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
+                }
+
+                if ($shippingAddress && $shippingAddress->getCountryId() === 'BE') {
+                    $allowedProductCodes = $cifHelper->getBeProductCodes($flat);
                 }
                 break;
             case self::SHIPMENT_TYPE_GLOBALPACK:

@@ -6058,6 +6058,18 @@
                                 </country>
                             </depends>
                         </default_buspakje_product_option>
+                        <default_be_product_option translate="label tooltip" module="postnl">
+                            <label>Default BE option</label>
+                            <tooltip>This setting can be overwritten by manually creating shipments.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultBeOption</backend_model>
+                            <source_model>postnl_core/system_config_source_beProductOptions::getOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>271</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_be_product_option>
                         <default_eu_product_option translate="label tooltip" module="postnl">
                             <label>Default EU option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments.</tooltip>
@@ -6065,7 +6077,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_euProductOptions::getOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>271</sort_order>
+                            <sort_order>272</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -6077,7 +6089,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_globalProductOptions::getOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>272</sort_order>
+                            <sort_order>273</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

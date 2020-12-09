@@ -111,6 +111,12 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                 $xpath = PostNLShipment::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case PostNLShipment::SHIPMENT_TYPE_EPS:
+                if ($orderInfo->getShippingAddress()->getCountryId() == 'BE') {
+                    $xpath = PostNLShipment::XPATH_DEFAULT_BE_PRODUCT_OPTION;
+
+                    break;
+                }
+
                 $xpath = PostNLShipment::XPATH_DEFAULT_EU_PRODUCT_OPTION;
 
                 if ($this->getHelper()->canUseEpsBEOnlyOption($storeId)

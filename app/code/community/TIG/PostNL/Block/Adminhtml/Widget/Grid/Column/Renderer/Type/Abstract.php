@@ -113,6 +113,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 $label = $helper->__('Parcel Dispenser');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_EPS:
+                if ($row->getData(self::COUNTRY_ID_COLUMN) == 'BE') {
+                    $label = $helper->__('Belgium');
+                    break;
+                }
                 $label = $helper->__('EU');
                 break;
             case $postnlShipmentClass::SHIPMENT_TYPE_GLOBALPACK:
@@ -262,6 +266,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
             )
         ) {
             return $this->_getDomesticRenderedValue($row, $value);
+        }
+
+        if ($value == 'BE') {
+            return $this->_getBeRenderedValue($row);
         }
 
         /**
@@ -622,6 +630,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
                 }
             }
         }
+
+        return $renderedValue;
+    }
+
+    /**
+     * Render this column for a BE shipment.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    protected function _getBeRenderedValue(Varien_Object $row)
+    {
+        $label = Mage::helper('postnl')->__('Belgium');
+
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='be'>{$label}</b>";
 
         return $renderedValue;
     }
