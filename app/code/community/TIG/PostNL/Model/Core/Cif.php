@@ -2113,7 +2113,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
             $itemData = array(
                 'Description'     => $this->_getCustomsDescription($item),
-                'Quantity'        => $item->getQty(),
+                'Quantity'        => intval($item->getQty()),
                 'Weight'          => $itemWeight * $item->getQty(),
                 'Value'           => ($this->_getCustomsValue($item) * $item->getQty()),
                 'HSTariffNr'      => $this->_getHSTariff($item),
