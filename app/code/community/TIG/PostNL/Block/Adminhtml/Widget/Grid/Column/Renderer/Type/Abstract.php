@@ -645,7 +645,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     {
         $label = Mage::helper('postnl')->__('Belgium');
 
-        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='be'>{$label}</b>";
+        $renderedValue = "<strong id='postnl-shipmenttype-{$row->getId()}' data-product-type='be'>{$label}</strong>";
 
         return $renderedValue;
     }
