@@ -41,7 +41,7 @@
 <config>
     <modules>
         <TIG_PostNL>
-            <version>1.16.3</version>
+            <version>1.16.4</version>
         </TIG_PostNL>
     </modules>
 
@@ -1234,7 +1234,7 @@
                 <show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
                 <postnl_shipping_methods>postnl_flatrate,postnl_tablerate,postnl_matrixrate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
                 <cif_version_shippingstatus>1_6</cif_version_shippingstatus> <!-- v1.6 -->
-                <cif_version_confirming>1_9</cif_version_confirming> <!-- v1.9 -->
+                <cif_version_confirming>2</cif_version_confirming> <!-- v1.9 -->
                 <cif_version_labelling>2_2</cif_version_labelling> <!-- v2.2 -->
                 <cif_version_barcode>1_1</cif_version_barcode> <!-- v1.1 -->
                 <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
