@@ -332,14 +332,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'group'             => 'eu_options',
         ),
         /**
-         * This option has been removed since v1.1.4.
-         */
-        /*'4955' => array(
-            'value' => '4955',
-            'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-            'isBelgiumOnly' => true,
-        ),*/
-        /**
          * These are not currently implemented.
          */
         /*'4950' => array(
@@ -391,7 +383,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
         ),
         '4971' => array(
             'value'             => '4971',
@@ -402,7 +394,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
         ),
         '4972' => array(
             'value'             => '4972',
@@ -424,7 +416,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
         ),
         '4974' => array(
             'value'             => '4974',
@@ -435,7 +427,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
         ),
         '4975' => array(
             'value'             => '4975',
@@ -447,7 +439,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => false,
             'statedAddressOnly' => true,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
         ),
         '4976' => array(
             'value'             => '4976',
@@ -459,7 +451,39 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isCod'             => true,
             'statedAddressOnly' => false,
             'countryLimitation' => 'BE',
-            'group'             => 'standard_options',
+            'group'             => 'be_options',
+        ),
+        '4955' => array(
+            'value'         => '4955',
+            'label'         => 'EU Pack Standard (Belgium only, no signature)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
+        '4941' => array(
+            'value'         => '4941',
+            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'isEvening'     => true,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
+        '4912' => array(
+            'value'         => '4912',
+            'label'         => 'EPS Standard BE + Signature on delivery (BE)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
+        '4914' => array(
+            'value'         => '4914',
+            'label'         => 'EPS Standard BE + Signature on delivery + Extra Cover (BE)',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => true,
+            'group'         => 'be_options',
         ),
         '3083' => array(
             'value'             => '3083',
@@ -951,6 +975,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'standard_options'       => 'Domestic options',
         'pakjegemak_options'     => 'Post Office options',
         'pakjegemak_be_options'  => 'Post Office Belgium options',
+        'be_options'             => 'BE options',
         'eu_options'             => 'EU options',
         'global_options'         => 'Global options',
         'pakketautomaat_options' => 'Parcel Dispenser options',

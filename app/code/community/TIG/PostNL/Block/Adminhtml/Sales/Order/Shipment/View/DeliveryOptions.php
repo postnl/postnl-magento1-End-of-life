@@ -207,6 +207,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
                 $shipmentType = $this->__('Parcel Dispenser');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_EPS:
+                if ($postnlShipment->isBelgiumShipment()) {
+                    $shipmentType = $this->__('Belgium');
+
+                    break;
+                }
+
                 $shipmentType = $this->__('EU');
                 break;
             case $postnlShipment::SHIPMENT_TYPE_GLOBALPACK:
