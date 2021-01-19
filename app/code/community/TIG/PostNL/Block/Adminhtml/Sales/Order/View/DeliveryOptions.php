@@ -135,7 +135,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
                 $this->setSubType($this->__('Evening Delivery'));
                 $shipmentType  = $this->__('Domestic');
                 if ($countryId == 'BE') {
-                    $shipmentType  = $this->__('EU');
+                    $shipmentType  = $this->__('Belgium');
                 }
                 break;
             case 'Sunday':
@@ -189,6 +189,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_Po
         /** @var TIG_PostNL_Helper_Cif $cifHelper */
         $cifHelper = Mage::helper('postnl/cif');
         $euCountries = $cifHelper->getEuCountries();
+        if ($countryId == 'BE') {
+            $shipmentType = $this->__('Belgium');
+
+            return $shipmentType;
+        }
+
         if (in_array($countryId, $euCountries)) {
             $shipmentType = $this->__('EU');
 

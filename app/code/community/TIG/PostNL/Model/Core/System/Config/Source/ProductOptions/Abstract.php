@@ -85,6 +85,12 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     {
         $options = $this->_options;
 
+        $isBe = false;
+        if (isset($flags['isBe'])) {
+            $isBe = true;
+            unset($flags['isBe']);
+        }
+
         if (!empty($flags)) {
             foreach ($options as $key => $option) {
                 if (!$this->_optionMatchesFlags($option, $flags)) {
@@ -94,7 +100,7 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         }
 
         if ($checkAvailable) {
-            $this->_filterAvailable($options);
+            $this->_filterAvailable($options, $isBe);
         }
 
         $this->_translateOptions($options);
@@ -259,23 +265,23 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     /**
      * Filters the options based on options that are available.
      *
-     * @param array $options
+     * @param array   $options
+     * @param boolean $isBe
      *
      * @return array
      */
-    protected function _filterAvailable(&$options)
+    protected function _filterAvailable(&$options, $isBe = false)
     {
-        $canUseEpsBEOnly = $this->getHelper()->canUseEpsBEOnlyOption();
         $canUsePakjegemakBeNotInsured = $this->getHelper()->canUsePakjegemakBeNotInsured();
 
         $storeId = Mage::app()->getStore()->getId();
 
         $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        $supportedOptionsArray = explode(',', $supportedOptions);
-        if ($canUseEpsBEOnly) {
-            $supportedOptionsArray[] = '4955';
-            $supportedOptionsArray[] = '4941';
+        if ($isBe) {
+            $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS_BE, $storeId);
         }
+
+        $supportedOptionsArray = explode(',', $supportedOptions);
 
         if ($canUsePakjegemakBeNotInsured) {
             $supportedOptionsArray[] = '4936';
