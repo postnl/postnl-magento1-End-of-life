@@ -77,6 +77,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * XML paths to default product options settings
      */
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
+    const XPATH_DEFAULT_BE_PRODUCT_OPTION             = 'postnl/cif_product_options/default_be_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
@@ -105,8 +106,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'EE',
         'FI',
         'FR',
-        'GB',
-        'UK', //alias for GB
         'HU',
         'IE',
         'IT',
@@ -144,7 +143,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'ES',
         'FI',
         'FR',
-        'GB',
         'GR',
         'HR',
         'HU',
@@ -168,6 +166,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'BY',
         'CA',
         'CH',
+        'GB',
         'HK',
         'ID',
         'IL',
@@ -550,6 +549,20 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             'postnl_core/system_config_source_pakketautomaatProductOptions'
         );
         return $pakketautomaatProductCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * Get an array of be product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getBeProductCodes($flat = true)
+    {
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions $beProductCodes */
+        $beProductCodes = Mage::getSingleton('postnl_core/system_config_source_beProductOptions');
+        return $beProductCodes->getAvailableOptions($flat);
     }
 
     /**
@@ -1179,6 +1192,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $storeId = Mage::app()->getStore()->getId();
 
         $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultBeOption             = Mage::getStoreConfig(self::XPATH_DEFAULT_BE_PRODUCT_OPTION, $storeId);
         $defaultEuOption             = Mage::getStoreConfig(self::XPATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
         $defaultGlobalOption         = Mage::getStoreConfig(self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
         $defaultPakketautomaatOption = Mage::getStoreConfig(
@@ -1188,6 +1202,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
         $defaultOptions = array(
             'dutch'          => $defaultDutchOption,
+            'be'             => $defaultBeOption,
             'eu'             => $defaultEuOption,
             'global'         => $defaultGlobalOption,
             'pakketautomaat' => $defaultPakketautomaatOption,

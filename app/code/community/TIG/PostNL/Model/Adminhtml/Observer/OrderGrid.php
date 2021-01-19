@@ -455,6 +455,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'options'                   => array(
                 'nl'                  => $helper->__('Domestic'),
                 'pakje_gemak'         => $helper->__('Post Office'),
+                'be'                  => $helper->__('Belgium'),
                 'eu'                  => $helper->__('EU'),
                 'global'              => $helper->__('Non-EU'),
                 'pakketautomaat'      => $helper->__('Parcel Dispenser'),
@@ -1178,6 +1179,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /** @var TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions $optionsModel */
         $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
 
+        /** @var TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions $beOptionsModel */
+        $beOptionsModel = Mage::getModel('postnl_core/system_config_source_beProductOptions');
+
         /** @var TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions $euOptionsModel */
         $euOptionsModel = Mage::getModel('postnl_core/system_config_source_euProductOptions');
 
@@ -1232,6 +1236,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'group' => 'pakjegemak_options',
                     'isCod' => false,
                     'isPge' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_be_options' => $beOptionsModel->getOptions(
+                array(
+                    'group' => 'be_options',
                 ),
                 false,
                 true
