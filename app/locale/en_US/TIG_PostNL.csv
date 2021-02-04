@@ -304,7 +304,7 @@ TIG_PostNL::Shipment ID,Shipment ID
 TIG_PostNL::Order ID,Order ID
 TIG_PostNL::Use a custom value,Use a custom value
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Special Consumer (incl. signature)
-"TIG_PostNL::EU Pack Standard (Belgium only, no signature)","EU Pack Standard (Belgium only, no signature)"
+"TIG_PostNL::Belgium standard","Belgium standard"
 TIG_PostNL::Ascending,Ascending
 TIG_PostNL::Descending,Descending
 TIG_PostNL::Disabled,Disabled
@@ -318,7 +318,7 @@ TIG_PostNL::Post Office + Signature on Delivery,Post Office + Signature on Deliv
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Post Office + Signature on Delivery + Notification
 TIG_PostNL::EU options,EU options
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Special Consumer (incl. signature)
-"TIG_PostNL::EU Pack Standard (Belgium only, no signature)","EU Pack Standard (Belgium only, no signature)"
+"TIG_PostNL::Belgium standard","Belgium standard"
 TIG_PostNL::Global options,Global options
 TIG_PostNL::Use default,Use default
 TIG_PostNL::Standard options,Standard options
@@ -1447,3 +1447,6 @@ TIG_PostNL::Use PEPS Products,Use PEPS Products
 TIG_PostNL::PEPS Barcode Type,PEPS Barcode Type
 TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.,Packet Tracked is a small parcel with Track & Trace. Hand over your Packet Tracked items in a domestic mailbag with a Packet Tracked baglabel attached. Each of these parcels should have a maximum weight of 2kg.
 TIG_PostNL::Product settings,Product settings
+TIG_PostNL::Belgium standard + Signature on delivery,Belgium standard + Signature on delivery
+TIG_PostNL::Belgium Standard + Signature on delivery + Extra Cover,Belgium Standard + Signature on delivery + Extra Cover
+TIG_PostNL::Belgium standard + Deliver to stated address only,Belgium standard + Deliver to stated address only

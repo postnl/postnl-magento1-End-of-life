@@ -374,28 +374,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'buspakje_options',
         ),
-        '4970' => array(
-            'value'             => '4970',
-            'label'             => 'Belgium Deliver to stated address only + Return when not home',
-            'isExtraCover'      => false,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => false,
-            'statedAddressOnly' => true,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
-        '4971' => array(
-            'value'             => '4971',
-            'label'             => 'Belgium Return when not home',
-            'isExtraCover'      => false,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => false,
-            'statedAddressOnly' => false,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
         '4972' => array(
             'value'             => '4972',
             'label'             => 'Belgium Signature on delivery + Deliver to stated address only + Return when not home',
@@ -407,63 +385,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'standard_options',
         ),
-        '4973' => array(
-            'value'             => '4973',
-            'label'             => 'Belgium Signature on delivery + Return when not home',
-            'isExtraCover'      => false,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => false,
-            'statedAddressOnly' => false,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
-        '4974' => array(
-            'value'             => '4974',
-            'label'             => 'Belgium COD + Return when not home',
-            'isExtraCover'      => false,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => true,
-            'statedAddressOnly' => false,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
-        '4975' => array(
-            'value'             => '4975',
-            'label'             => 'Belgium Extra cover (EUR 500)+ Return when not home + Deliver to stated address only',
-            'isExtraCover'      => true,
-            'extraCover'        => 500,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => false,
-            'statedAddressOnly' => true,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
-        '4976' => array(
-            'value'             => '4976',
-            'label'             => 'Belgium COD + Extra cover (EUR 500) + Return when not home',
-            'isExtraCover'      => true,
-            'extraCover'        => 500,
-            'isEvening'           => false,
-            'isSunday'          => false,
-            'isCod'             => true,
-            'statedAddressOnly' => false,
-            'countryLimitation' => 'BE',
-            'group'             => 'be_options',
-        ),
-        '4955' => array(
-            'value'         => '4955',
-            'label'         => 'EU Pack Standard (Belgium only, no signature)',
-            'isEvening'     => false,
-            'isBelgiumOnly' => true,
-            'isExtraCover'  => false,
-            'group'         => 'be_options',
-        ),
         '4941' => array(
             'value'         => '4941',
-            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'label'         => 'Belgium standard + Deliver to stated address only',
             'isEvening'     => true,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
@@ -471,7 +395,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4912' => array(
             'value'         => '4912',
-            'label'         => 'EPS Standard BE + Signature on delivery (BE)',
+            'label'         => 'Belgium standard + Signature on delivery',
             'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
@@ -479,7 +403,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ),
         '4914' => array(
             'value'         => '4914',
-            'label'         => 'EPS Standard BE + Signature on delivery + Extra Cover (BE)',
+            'label'         => 'Belgium Standard + Signature on delivery + Extra Cover',
             'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => true,
@@ -1014,31 +938,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
 
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
-        /**
-         * Add the EU EPS BE only option if it's allowed and if either EPS options are requested or if all groups are
-         * requested.
-         */
-        if ($helper->canUseEpsBEOnlyOption()
-            && (!isset($flags['group'])
-                || $flags['group'] == 'eu_options'
-            )
-            && (!isset($flags['isExtraCover'])
-                || $flags['isExtraCover'] == false
-            )
-        ) {
-            if (!$asFlatArray) {
-                $options['4955'] = array(
-                    'value'         => '4955',
-                    'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                    'isBelgiumOnly' => true,
-                    'isExtraCover'  => false,
-                );
-            } else {
-                $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
-            }
-
-        }
-
         if (
             $helper->canUsePakjegemakBeNotInsured()
             && (!isset($flags['isBelgiumOnly'])
@@ -1081,20 +980,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      */
     public function toOptionArray()
     {
-        $options = $this->getGroupedOptions();
-
-        /** @var TIG_PostNL_Helper_Data $helper */
-        $helper = Mage::helper('postnl');
-        if ($helper->canUseEpsBEOnlyOption()) {
-            $options['eu_options']['value']['4955'] = array(
-                'value'         => '4955',
-                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                'isBelgiumOnly' => true,
-                'isExtraCover'  => false,
-            );
-        }
-
-        return $options;
+        return $this->getGroupedOptions();
     }
 
     /**

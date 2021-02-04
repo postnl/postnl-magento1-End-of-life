@@ -296,7 +296,7 @@ TIG_PostNL::Shipment ID,Zending ID
 TIG_PostNL::Order ID,Bestelling ID
 TIG_PostNL::Use a custom value,Gebruik een eigen waarde
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Speciaal Consument (inclusief handtekening)
-"TIG_PostNL::EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen België zonder handtekening)
+"TIG_PostNL::Belgium standard",België standaard
 TIG_PostNL::Ascending,Oplopend
 TIG_PostNL::Descending,Aflopend
 TIG_PostNL::Disabled,Gedeactiveerd
@@ -316,7 +316,7 @@ TIG_PostNL::4936 - Post Office Belgium,4936 - Ophalen bij PostNL Locatie België
 TIG_PostNL::4880 - Post Office Belgium,4880 - Ophalen bij PostNL Locatie België
 TIG_PostNL::EU options,EU opties
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
-"TIG_PostNL::EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen België zonder handtekening)
+"TIG_PostNL::Belgium standard",België standaard
 TIG_PostNL::Global options,Globale opties
 TIG_PostNL::Use default,Gebruik de standaardwaarde
 TIG_PostNL::Standard options,Standaard opties
@@ -1529,3 +1529,6 @@ TIG_PostNL::Packet Tracked is a small parcel with Track & Trace. Hand over your 
 TIG_PostNL::Please note: Some of the priority parcel products require specific contractual agreements with PostNL. Please contact your PostNL account manager for more information about these products.,Let op: voor deze verzendproducten moet u specifieke afspraken maken met PostNL. Neem contact op met uw Account Manager voor meer informatie.
 TIG_PostNL::Product settings,Product instellingen
 TIG_PostNL::Priority EPS parcels,Pakjes Tracked
+TIG_PostNL::Belgium standard + Signature on delivery,België standaard + handtekening voor ontvangst
+TIG_PostNL::Belgium Standard + Signature on delivery + Extra Cover,België verhoogd aansprakelijk + handtekening voor ontvangst
+TIG_PostNL::Belgium standard + Deliver to stated address only, Belgié standaard + Lever alleen aan opgegeven adres
