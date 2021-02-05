@@ -79,7 +79,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
         if (!$this->getHelper()->canUseEpsBEOnlyOption()) {
-            $options = $this->removeOptions(array('4955', '4941'), $options);
+            $options = $this->removeOptions(array('4941'), $options);
         }
 
         /** PEPS is not compatible with Evening */

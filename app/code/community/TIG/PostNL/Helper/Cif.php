@@ -195,28 +195,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @var array
      */
     protected $_countryRestrictedProductCodes = array(
-        '4955' => array(
-             'BE',
-         ),
-        '4970' => array(
-            'BE',
-        ),
-        '4971' => array(
-            'BE',
-        ),
         '4972' => array(
-            'BE',
-        ),
-        '4973' => array(
-            'BE',
-        ),
-        '4974' => array(
-            'BE',
-        ),
-        '4975' => array(
-            'BE',
-        ),
-        '4976' => array(
             'BE',
         ),
         '4960' => array(
@@ -313,15 +292,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     protected $_combiLabelProductCodes = array(
         '4940' => '4950',
         '4924' => '4954',
-        '4946' => '4955',
         '4944' => '4952',
-        '4960' => '4970',
-        '4961' => '4971',
         '4962' => '4972',
-        '4963' => '4973',
-        '4964' => '4974',
-        '4965' => '4975',
-        '4966' => '4976',
     );
 
     /**

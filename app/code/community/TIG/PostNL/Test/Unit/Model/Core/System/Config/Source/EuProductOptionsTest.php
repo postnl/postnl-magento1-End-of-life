@@ -46,7 +46,7 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_EuProductOptionsTest
     {
         return array(
             'When EPS script is loaded' => array(
-                array('4952', '4938', '4955', '4941'), true
+                array('4952', '4938', '4941'), true
             ),
             'Without EPS script' => array(
                 array('4952', '4938'), false
@@ -92,7 +92,7 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_EuProductOptionsTest
     {
         Mage::app()->getStore()->setConfig(
             'postnl/grid/supported_product_options',
-            '4952,4938,4955,4941'
+            '4952,4938,4941'
         );
 
         $this->setHelper($epsScriptEnabled);

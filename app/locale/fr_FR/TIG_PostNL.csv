@@ -298,7 +298,7 @@ TIG_PostNL::Shipment ID,Identifiant envoi
 TIG_PostNL::Order ID,Identifiant commande
 TIG_PostNL::Use a custom value,Utilisation d'une valeur propre
 TIG_PostNL::EU Pack Special Consumer (incl. signature),EU Pack Special Consument (signature incluse)
-"TIG_PostNL::EU Pack Standard (Belgium only, no signature)","EU Pack Standard (uniquement pour la Belgique, sans signature)"
+"TIG_PostNL::Belgium standard,"Standard Belgique"
 TIG_PostNL::Ascending,En hausse
 TIG_PostNL::Descending,En baisse
 TIG_PostNL::Disabled,Désactivé

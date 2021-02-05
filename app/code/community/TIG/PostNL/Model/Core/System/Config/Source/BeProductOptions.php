@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions
     protected $_options = array(
         array(
             'value'         => '4946',
-            'label'         => 'EU Pack Standard (Belgium only, no signature)',
+            'label'         => 'Belgium standard',
             'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions
         ),
         array(
             'value'         => '4941',
-            'label'         => 'EU Pack Standard Evening (Belgium only, no signature)',
+            'label'         => 'Belgium standard + Deliver to stated address only',
             'isEvening'     => true,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
@@ -61,7 +61,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions
         ),
         array(
             'value'         => '4912',
-            'label'         => 'EPS Standard BE + Signature on delivery (BE)',
+            'label'         => 'Belgium standard + Signature on delivery',
             'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => false,
@@ -69,7 +69,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_BeProductOptions
         ),
         array(
             'value'         => '4914',
-            'label'         => 'EPS Standard BE + Signature on delivery + Extra Cover (BE)',
+            'label'         => 'Belgium Standard + Signature on delivery + Extra Cover',
             'isEvening'     => false,
             'isBelgiumOnly' => true,
             'isExtraCover'  => true,
