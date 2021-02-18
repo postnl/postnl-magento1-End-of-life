@@ -1531,4 +1531,5 @@ TIG_PostNL::Product settings,Product instellingen
 TIG_PostNL::Priority EPS parcels,Pakjes Tracked
 TIG_PostNL::Belgium standard + Signature on delivery,België standaard + handtekening voor ontvangst
 TIG_PostNL::Belgium Standard + Signature on delivery + Extra Cover,België verhoogd aansprakelijk + handtekening voor ontvangst
-TIG_PostNL::Belgium standard + Deliver to stated address only, Belgié standaard + Lever alleen aan opgegeven adres
+TIG_PostNL::Belgium standard + Deliver to stated address only, België standaard + Lever alleen aan opgegeven adres
+TIG_PostNL::Default BE option,Standaard verzendoptie België
