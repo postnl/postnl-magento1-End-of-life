@@ -273,7 +273,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION                = 'postnl/grid/default_pakjegemak_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION          = 'postnl/grid/default_pakjegemak_nl_be_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION          = 'postnl/grid/default_pakjegemak_be_be_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION = 'postnl/grid/default_pakjegemak_be_not_insured_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION            = 'postnl/cod/default_pakjegemak_cod_product_option';
     const XPATH_DEFAULT_PGE_PRODUCT_OPTION                       = 'postnl/grid/default_pge_product_option';
     const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION                   = 'postnl/cod/default_pge_cod_product_option';

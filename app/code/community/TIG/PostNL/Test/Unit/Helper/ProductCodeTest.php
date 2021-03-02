@@ -59,7 +59,6 @@ class TIG_PostNL_Test_Unit_Helper_ProductCodeTest extends TIG_PostNL_Test_Unit_F
             PostNLShipment::XPATH_DEFAULT_EVENING_PRODUCT_OPTION                   => 'avond',
             PostNLShipment::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION               => 'avond_cod',
             PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION          => 'pg_be_be',
-            PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION => 'pg_be_ni',
             PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION          => 'pg_nl_be',
             PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION                => 'pg',
             PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION            => 'pg_cod',

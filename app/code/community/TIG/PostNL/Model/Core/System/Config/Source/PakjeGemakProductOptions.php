@@ -118,6 +118,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         array(
             'value'             => '4932',
             'label'             => 'Post Office Belgium + Extra Cover',
+            'isExtraCover'      => true,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'default',
+        ),
+        array(
+            'value'             => '4936',
+            'label'             => 'Post Office Belgium',
             'isExtraCover'      => false,
             'isPge'             => false,
             'isCod'             => false,
@@ -280,32 +290,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
 
         /** @var TIG_PostNL_Helper_Data $helper */
         $helper = Mage::helper('postnl');
-        if (
-            $helper->canUsePakjegemakBeNotInsured()
-            && (!isset($flags['isBelgiumOnly'])
-                || $flags['isBelgiumOnly'] == true
-            ) && (!isset($flags['isExtraCover'])
-                || $flags['isExtraCover'] == false
-            ) && (!isset($flags['isCod'])
-                || $flags['isCod'] == false
-            ) && (!isset($flags['isPge'])
-                || $flags['isPge'] == false
-            ) && (!isset($flags['countryLimitation'])
-                || $flags['countryLimitation'] == 'NL'
-            )
-        ) {
-            if (!$asFlatArray) {
-                $options[] = array(
-                    'value'             => '4936',
-                    'label'             => $helper->__('4936 - Post Office Belgium'),
-                    'isBelgiumOnly'     => false,
-                    'isExtraCover'      => false,
-                    'countryLimitation' => 'NL',
-                );
-            } else {
-                $options['4936'] = $helper->__('4936 - Post Office Belgium');
-            }
-        }
 
         ksort($options);
 

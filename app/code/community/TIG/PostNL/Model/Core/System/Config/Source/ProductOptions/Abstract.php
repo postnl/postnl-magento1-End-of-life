@@ -272,8 +272,6 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _filterAvailable(&$options, $isBe = false)
     {
-        $canUsePakjegemakBeNotInsured = $this->getHelper()->canUsePakjegemakBeNotInsured();
-
         $storeId = Mage::app()->getStore()->getId();
 
         $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
@@ -282,10 +280,6 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
         }
 
         $supportedOptionsArray = explode(',', $supportedOptions);
-
-        if ($canUsePakjegemakBeNotInsured) {
-            $supportedOptionsArray[] = '4936';
-        }
 
         foreach ($options as $key => $option) {
             $code = $option['value'];

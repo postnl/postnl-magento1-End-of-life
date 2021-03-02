@@ -74,51 +74,6 @@ class TIG_PostNL_Test_Unit_Model_Core_System_Config_Source_AllProductOptionsTest
         $this->assertArrayHasKey($productCode, $options);
     }
 
-    public function hasPakjegemakNotInsuredDataProvider()
-    {
-        return array(
-            array(true, true),
-            array(false, false),
-            array(true, true, array('isBelgiumOnly' => true)),
-            array(true, false, array('isBelgiumOnly' => false)),
-            array(true, false, array('isExtraCover' => true)),
-            array(true, true, array('isExtraCover' => false)),
-            array(true, true, array('countryLimitation' => 'NL')),
-            array(true, false, array('countryLimitation' => 'BE')),
-        );
-    }
-
-    /**
-     * @dataProvider hasPakjegemakNotInsuredDataProvider
-     *
-     * @param       $enabled
-     * @param       $available
-     * @param array $flags
-     */
-    public function testHasPakjegemakNotInsured($enabled, $available, $flags = array())
-    {
-        $helper = Mage::helper('postnl');
-        $cache = $helper->getCache();
-        $helper->setCache(false);
-
-        $this->setProperty('_helper', $helper);
-
-        Mage::app()->getStore()->setConfig('postnl/cif_address/country', 'NL');
-        Mage::app()->getStore()->setConfig(TIG_PostNL_Helper_Data::XPATH_ALLOW_PAKJEGEMAK_NOT_INSURED, $enabled);
-
-        $hasOption = false;
-        $options = $this->_getInstance()->getOptions($flags);
-        foreach ($options as $option) {
-            if ($option['value'] == 4936) {
-                $hasOption = true;
-                break;
-            }
-        }
-
-        $this->assertEquals($available, $hasOption);
-        $helper->setCache($cache);
-    }
-
     /**
      * @return array
      */

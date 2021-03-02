@@ -1199,7 +1199,6 @@
                 <default_pakjegemak_product_option>3544</default_pakjegemak_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_pakjegemak_nl_be_product_option>4932</default_pakjegemak_nl_be_product_option> <!-- Post Office (Belgium). Netherlands -> Belgium flow -->
                 <default_pakjegemak_be_be_product_option>4878</default_pakjegemak_be_be_product_option> <!-- Post Office (Belgium). Belgium -> Belgium flow -->
-                <default_pakjegemak_be_not_insured_product_option>4936</default_pakjegemak_be_not_insured_product_option> <!-- Post Office (Belgium) -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
                 <default_sunday_product_option>3385</default_sunday_product_option> <!-- Deliver to stated address only -->

@@ -282,6 +282,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         '4932' => array(
             'value'             => '4932',
             'label'             => '4932 - Post Office Belgium + Extra Cover',
+            'isExtraCover'      => true,
+            'isSunday'          => false,
+            'isPge'             => false,
+            'isCod'             => false,
+            'isBelgiumOnly'     => true,
+            'countryLimitation' => 'NL',
+            'group'             => 'pakjegemak_be_options',
+        ),
+        '4936' => array(
+            'value'             => '4936',
+            'label'             => '4936 - Post Office Belgium',
             'isExtraCover'      => false,
             'isSunday'          => false,
             'isPge'             => false,
@@ -945,36 +956,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
-
-        if (
-            $helper->canUsePakjegemakBeNotInsured()
-            && (!isset($flags['isBelgiumOnly'])
-                || $flags['isBelgiumOnly'] == true
-            )
-            && (!isset($flags['isExtraCover'])
-                || $flags['isExtraCover'] == false
-            )
-            && (!isset($flags['countryLimitation'])
-                || $flags['countryLimitation'] == 'NL'
-            )
-        ) {
-            if (!$asFlatArray) {
-                $options[] = array(
-                    'value'             => '4936',
-                    'label'             => $helper->__('Post Office Belgium'),
-                    'isBelgiumOnly'     => true,
-                    'isExtraCover'      => false,
-                    'isEvening'           => false,
-                    'isSunday'          => false,
-                    'isCod'             => false,
-                    'statedAddressOnly' => false,
-                    'countryLimitation' => 'NL',
-                    'group'             => 'pakjegemak_be_options'
-                );
-            } else {
-                $options['4936'] = $helper->__('Post Office Belgium');
-            }
-        }
 
         ksort($options);
 

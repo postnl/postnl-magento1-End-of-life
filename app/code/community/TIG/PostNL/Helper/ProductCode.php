@@ -88,11 +88,7 @@ class TIG_PostNL_Helper_ProductCode extends TIG_PostNL_Helper_Base
                     if ($this->getHelper()->getDomesticCountry() == 'BE') {
                         $xpath = PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_BE_BE_PRODUCT_OPTION;
                     } else {
-                        if ($this->getHelper()->canUsePakjegemakBeNotInsured($storeId)) {
-                            $xpath = PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_BE_NOT_INSURED_PRODUCT_OPTION;
-                        } else {
-                            $xpath = PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
-                        }
+                        $xpath = PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_NL_BE_PRODUCT_OPTION;
                     }
                 } else {
                     $xpath = PostNLShipment::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
