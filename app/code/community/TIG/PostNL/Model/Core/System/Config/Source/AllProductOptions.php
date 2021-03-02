@@ -961,7 +961,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             if (!$asFlatArray) {
                 $options[] = array(
                     'value'             => '4936',
-                    'label'             => $helper->__('4936 - Post Office Belgium'),
+                    'label'             => $helper->__('Post Office Belgium'),
                     'isBelgiumOnly'     => true,
                     'isExtraCover'      => false,
                     'isEvening'           => false,
@@ -972,7 +972,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     'group'             => 'pakjegemak_be_options'
                 );
             } else {
-                $options['4936'] = $helper->__('4936 - Post Office Belgium');
+                $options['4936'] = $helper->__('Post Office Belgium');
             }
         }
 
