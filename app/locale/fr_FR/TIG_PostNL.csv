@@ -98,6 +98,7 @@ TIG_PostNL::The alternative default option will be used when the shipment's tota
 TIG_PostNL::Alternative default shipping option,Option d'envoi standard alternative
 TIG_PostNL::This option will be used as default when the shipment's total value exceeds the given amount.,Cette option devient standard quand la valeur totale de l'envoi est supérieure au montant donné.
 TIG_PostNL::Default 'deliver at the Post Office' option,Option standard « retrait au bureau de poste »
+TIG_PostNL::Default 'deliver at the Post Office' option for Belgium,Option standard « retrait au bureau de poste » pour la Belgique
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.,Ce paramètre peut être remplacé par une réalisation manuelle des envois. Ce paramètre est uniquement applicable pour les envois en bureau de poste.
 TIG_PostNL::Worldwide Shipping,Envois internationaux
 TIG_PostNL::Customs license number,Numéro de licence d'exportation

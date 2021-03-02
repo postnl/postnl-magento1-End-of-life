@@ -6036,6 +6036,32 @@
                                 </country>
                             </depends>
                         </default_pakjegemak_product_option>
+                        <default_pakjegemak_nl_be_product_option translate="label tooltip" module="postnl">
+                            <label>Default 'deliver at the Post Office' option for Belgium</label>
+                            <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments from the Netherlands to Belgium.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableBeOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_pakjegemak>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak>
+                                <country>
+                                    <fieldset>cif_address</fieldset>
+                                    <value>NL</value>
+                                </country>
+                            </depends>
+                        </default_pakjegemak_nl_be_product_option>
                         <default_buspakje_product_option translate="label tooltip" module="postnl">
                             <label>Default letter box parcel option</label>
                             <tooltip>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</tooltip>

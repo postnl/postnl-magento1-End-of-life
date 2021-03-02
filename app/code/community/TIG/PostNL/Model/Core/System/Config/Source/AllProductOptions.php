@@ -385,6 +385,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'BE',
             'group'             => 'standard_options',
         ),
+        '4946' => array(
+            'value'         => '4946',
+            'label'         => 'Belgium standard',
+            'isEvening'     => false,
+            'isBelgiumOnly' => true,
+            'isExtraCover'  => false,
+            'group'         => 'be_options',
+        ),
         '4941' => array(
             'value'         => '4941',
             'label'         => 'Belgium standard + Deliver to stated address only',

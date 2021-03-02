@@ -98,7 +98,9 @@ TIG_PostNL::The alternative default option will be used when the shipment's tota
 TIG_PostNL::Alternative default shipping option,Alternatieve standaard verzendoptie
 TIG_PostNL::This option will be used as default when the shipment's total value exceeds the given amount.,Deze optie wordt gebruikt als standaard indien de totaalwaarde van de zending groter is dan hetopgegeven bedrag.
 TIG_PostNL::Default 'deliver at the Post Office' option,Standaard 'afhalen op postkantoor' optie
+TIG_PostNL::Default 'deliver at the Post Office' option for Belgium,Standaard 'afhalen op postkantoor' optie voor België
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op Postkantoor zendingen.
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments from the Netherlands to Belgium,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op Postkantoor zendingen van Nederland naar België.
 TIG_PostNL::Worldwide Shipping,Wereldwijd Verzenden
 TIG_PostNL::Customs license number,Douane licentie nummer
 "TIG_PostNL::If you do not own a customs license, leave this field empty.","Als u geen douane licentie heeft, laat dit veld dan leeg"
