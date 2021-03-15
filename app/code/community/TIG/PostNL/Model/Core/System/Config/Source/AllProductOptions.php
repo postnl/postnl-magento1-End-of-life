@@ -279,17 +279,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'countryLimitation' => 'NL',
             'group'             => 'pakjegemak_options',
         ),
-        '4932' => array(
-            'value'             => '4932',
-            'label'             => '4932 - Post Office Belgium + Extra Cover',
-            'isExtraCover'      => true,
-            'isSunday'          => false,
-            'isPge'             => false,
-            'isCod'             => false,
-            'isBelgiumOnly'     => true,
-            'countryLimitation' => 'NL',
-            'group'             => 'pakjegemak_be_options',
-        ),
         '4936' => array(
             'value'             => '4936',
             'label'             => '4936 - Post Office Belgium',
