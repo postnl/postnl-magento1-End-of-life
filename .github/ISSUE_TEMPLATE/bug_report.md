@@ -41,4 +41,4 @@ If applicable, add screenshots to help explain your problem.
 ** Please complete the following information**
 - Magento version: [e.g. Magento 1.9.3.4]
 - PHP version: [e.g. 7.2.0]
-- TIG PostNL version: [e.g. 1.8.1]
+- PostNL version: [e.g. 1.8.1]
