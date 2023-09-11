@@ -49,25 +49,38 @@ class TIG_PostNL_Model_Order_Api extends Mage_Sales_Model_Order_Api
             return $result;
         }
 
-        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
-        if (!$pakjeGemakAddress) {
-            return $result;
+        if ($postnlOrder->hasPakjeGemakAddress())  {
+            $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress()->getData();
+            $pakjeGemakAddressId = array_shift($pakjeGemakAddress);
+            $pakjeGemakAddress['address_id'] = $pakjeGemakAddressId;
+
+            if ($postnlOrder->hasPgLocationCode()) {
+                $pakjeGemakAddress['location_code'] = $postnlOrder->getPgLocationCode();
+            }
+
+            if ($postnlOrder->hasPgRetailNetworkId()) {
+                $pakjeGemakAddress['retail_network_id'] = $postnlOrder->getPgRetailNetworkId();
+            }
+
+            $result['pakjegemak_address_id'] = $pakjeGemakAddressId;
+            $result['pakjegemak_address'] = $pakjeGemakAddress;
         }
 
-        $pakjeGemakAddress = $pakjeGemakAddress->getData();
-        $result['pakjegemak_address_id'] = array_shift($pakjeGemakAddress);
-
-        $pakjeGemakAddress['address_id'] = $result['pakjegemak_address_id'];
-
-        if ($postnlOrder->hasPgLocationCode()) {
-            $pakjeGemakAddress['location_code'] = $postnlOrder->getPgLocationCode();
+        if ($type = $postnlOrder->getType()) {
+            $result['postnl_type'] = $type;
         }
 
-        if ($postnlOrder->hasPgRetailNetworkId()) {
-            $pakjeGemakAddress['retail_network_id'] = $postnlOrder->getPgRetailNetworkId();
+        if ($postnlOrder->hasDeliveryDate()) {
+            $result['postnl_delivery_date'] = $postnlOrder->getDeliveryDate();
         }
 
-        $result['pakjegemak_address'] = $pakjeGemakAddress;
+        if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+            $result['postnl_expected_delivery_time_start'] = $postnlOrder->getExpectedDeliveryTimeStart();
+        }
+
+        if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+            $result['postnl_expected_delivery_time_end'] = $postnlOrder->getExpectedDeliveryTimeEnd();
+        }
 
         return $result;
     }
